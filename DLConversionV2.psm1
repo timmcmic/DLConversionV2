@@ -14,3 +14,16 @@
 # ARISING OUT OF THE USE OF OR INABILITY TO USE THE SAMPLE SCRIPTS OR DOCUMENTATION,		#
 # EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES						#
 #############################################################################################
+
+Function Start-DistributionListMigration 
+{
+    [cmdletbinding()]
+
+    Param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]$groupSMTPAddress,
+        [Parameter(Mandatory = $true)]
+        [string]$globalCatalogServer
+    )
+}
