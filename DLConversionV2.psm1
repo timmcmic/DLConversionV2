@@ -15,6 +15,47 @@
 # EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES						#
 #############################################################################################
 
+<#
+    .SYNOPSIS
+
+    This is the trigger function that begins the process of allowing an administrator to migrate a distribution list from
+    on premises to Office 365.
+
+    .DESCRIPTION
+
+    Trigger function.
+
+    .PARAMETER groupSMTPAddress
+
+    The SMTP address of the distribution list to be migrated.
+
+    .PARAMETER userName
+
+    At minimum this must be a domain administrator in the domain where the group resides assuming the object has no dependencies on other forests or trees within active directory.
+    In a multi forest environment where the group may contain objects from multiple forests recommend an enterprise administrator be utilized.
+
+    .PARAMETER password
+
+    The password for the administrator account specified in userName.
+
+    .PARAMETER globalCatalogServer
+
+    A global catalog server in the domain where the group resides. 
+    
+    .PARAMETER logFolder
+
+    The location where logging for the migration should occur including all XML outputs for backups.
+
+	.OUTPUTS
+
+    Logs all activities and backs up all original data to the log folder directory.
+
+    .EXAMPLE
+
+    Get-ExPerfwiz
+
+    #>
+
 Function Start-DistributionListMigration 
 {
     [cmdletbinding()]
@@ -24,6 +65,14 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $true)]
         [string]$groupSMTPAddress,
         [Parameter(Mandatory = $true)]
-        [string]$globalCatalogServer
+        [string]$userName,
+        [Parameter(Mandatory = $true)]
+        [securestring]$password,
+        [Parameter(Mandatory = $true)]
+        [string]$globalCatalogServer,
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath
     )
+    
+    Out-LogFile -logFolderPath $logFolderPath -string "**************************"
 }
