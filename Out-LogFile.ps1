@@ -1,27 +1,53 @@
-Function Out-LogFile 
-{
-    [cmdletbinding()]
+<#
+    .SYNOPSIS
 
-    Param
-    (
-        [Parameter(Mandatory = $true)]
-        [string]$String
-    )
+    This function provides the logging functionality of the script.
 
-    # Get our log file path
+    .DESCRIPTION
 
-    $LogFile = Join-path $env:LOCALAPPDATA ExPefwiz.log
+    Logging
 
-    # Get the current date
+    .PARAMETER string
 
-    [string]$date = Get-Date -Format G
+    The string to be written to the log file.
 
-    # Build output string
+    .PARAMETER path
 
-    [string]$logstring = ( "[" + $date + "] - " + $string)
+    The path of the log file.
 
-    # Write everything to our log file and the screen
+	.OUTPUTS
+
+    Logs all activities and backs up all original data to the log folder directory.
+
+    .EXAMPLE
+
+    Out-LogFile -string "MESSAGE" -path "c:\temp\Start-DistributionListMigration.log"
+
+    #>
+    Function Out-LogFile
+     {
+        [cmdletbinding()]
+
+        Param
+        (
+            [Parameter(Mandatory = $true)]
+            [string]$String
+        )
     
-    $logstring | Out-File -FilePath $LogFile -Append
-    Write-Verbose  $logstring
-}
+        # Get our log file path
+
+        $LogFile = Join-path $env:LOCALAPPDATA ExPefwiz.log
+    
+        # Get the current date
+
+        [string]$date = Get-Date -Format G
+    
+        # Build output string
+
+        [string]$logstring = ( "[" + $date + "] - " + $string)
+    
+        # Write everything to our log file and the screen
+        
+        $logstring | Out-File -FilePath $LogFile -Append
+        Write-Verbose  $logstring
+    }
