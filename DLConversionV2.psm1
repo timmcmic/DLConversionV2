@@ -58,37 +58,37 @@
 
 Function Start-DistributionListMigration 
 {
-    [cmdletbinding(DefaultParameterSetName = 'DEFAULT')]
+    [cmdletbinding()]
 
     Param
     (
-        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string]$groupSMTPAddress,
-        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string]$globalCatalogServer,
-        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
-        [string]$activeDirectoryUserName,
-        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
-        [securestring]$activeDirectoryPassword,
-        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
+        [pscredential]$activeDirectoryCredential,
+        [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string]$aadConnectServer,
-        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $true)]
-        [string]$aadConnectUserName,
-        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $true)]
-        [securestring]$aadConnectPassword,
-        [Parameter(ParameterSetName='EnableExchange',Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
+        [pscredential]$aadConnectCredential,
+        [Parameter(Mandatory = $false)]
         [string]$exchangeServer,
-        [Parameter(ParameterSetName='EnableExchange',Mandatory = $true)]
-        [string]$exchangeUserName,
-        [Parameter(ParameterSetName='EnableExchange',Mandatory = $true)]
-        [securestring]$exchangePassword
+        [Parameter(Mandatory = $false)]
+        [pscredential]$exchangeCredential,
+        [Parameter(Mandatory = $false)]
+        [switch]$exchangeOnlineInteractiveCredentials,
+        [Parameter(Mandatory = $false)]
+        [pscredential]$exchangeOnlineCredential,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineCertificateThumbPrint
     )
 
     #Define variables utilized in the core function that are not defined by parameters.
 
-    
+    [boolean]$useOnPremsiesExchange=$FALSE
 
     #Log file header.
 
@@ -108,7 +108,7 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GlobalCatalogServer"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $globalCatalogServer
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ActiveDirectoryUserName"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $activeDirectoryUserName
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $activeDirectoryCredential.UserName
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "LogFolderPath"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $logFolderPath
 
@@ -118,10 +118,10 @@ Function Start-DistributionListMigration
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectServer
     }
 
-    if ($aadConnectUserName -ne "")
+    if ($aadConnectCredential -ne $null)
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectUserName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectUserName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectCredential.UserName
     }
 
     if ($exchangeServer -ne "")
@@ -130,16 +130,96 @@ Function Start-DistributionListMigration
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeServer
     }
 
-    if ($exchangeUserName -ne "")
+    if ($exchangecredential -ne $null)
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeUserName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeUserName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeCredential.UserName
     }
 
+    if ($exchangeOnlineCredential -ne $null)
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlineUserName"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCredential.UserName
+    }
+
+    if ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlineCertificateThumbprint"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCertificateThumbPrint
+    }
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
 
+    #Perform paramter validation manually.
 
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ENTERING PARAMTER VALIDATION"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that both AADConnectServer and AADConnectCredential are specified"
+   
+    if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
+    }
+    elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectServer and AADConnectCredential were both specified."
+    }
+
+    #Validate that both the exchange credential and exchange server are presented together.
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that both ExchangeServer and ExchangeCredential are specified"
+
+    if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Server is required when specfying Exchange Credential" -isError:$TRUE
+    }
+    elseif (($exchangeCredential -eq $NULL) -and ($exchangetServer -ne ""))
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Credential is required when specfying Exchange Server" -isError:$TRUE
+    }
+    else
+    {
+        $useOnPremsiesExchange=$TRUE
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServer and ExchangeCredential were both specified." 
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The use Exchange Server attribute is set to TRUE."
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useOnPremsiesExchange  
+    }
+
+    #Validate that only one method of engaging exchange online was specified.
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that Exchange Credentials are not specified with Exchange Certificate Thumbprint"
+
+    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Only one method of Exchange Online authentication specified."
+    }
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END PARAMETER VALIDATION"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
+
+    #If exchange server information specified - create the on premises powershell session.
+
+    if ($useOnPremsiesExchange -eq $TRUE)
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnPremsiesPowershell"
+        New-ExchangeOnPremisesPowershell -exchangeServer $exchangeServer -exchangeCredentials $exchangecredential
+    }
+    else
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "No on premises Exchange specified - skipping setup of powershell session."
+    }
 }

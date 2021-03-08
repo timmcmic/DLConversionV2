@@ -39,7 +39,9 @@
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress,
             [Parameter(Mandatory = $true)]
-            [string]$logFolderPath
+            [string]$logFolderPath,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isError=$FALSE
         )
 
         #Define the string separator and then separate the string.
@@ -53,6 +55,7 @@
    
         # Get our log file path
 
+        $logFolderPath = $logFolderPath+"\DLMigration"
         $LogFile = Join-path $logFolderPath $fileName
     
         # Get the current date
@@ -82,5 +85,16 @@
         catch 
         {
             Write-Error $_
+        }
+
+        #Write to the screen the information passed to the log.
+
+        Write-Host $String
+
+        #If the output to the log is terminating exception - throw the same string.
+
+        if ($isError -eq $TRUE)
+        {
+            Write-Error $String -ErrorAction Stop
         }
     }
