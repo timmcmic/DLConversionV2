@@ -58,21 +58,37 @@
 
 Function Start-DistributionListMigration 
 {
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName = 'DEFAULT')]
 
     Param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
         [string]$groupSMTPAddress,
-        [Parameter(Mandatory = $true)]
-        [string]$userName,
-        [Parameter(Mandatory = $true)]
-        [securestring]$password,
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
         [string]$globalCatalogServer,
-        [Parameter(Mandatory = $true)]
-        [string]$logFolderPath
+        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [string]$activeDirectoryUserName,
+        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [securestring]$activeDirectoryPassword,
+        [Parameter(ParameterSetName='DEFAULT',Mandatory = $true)]
+        [string]$logFolderPath,
+        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $false)]
+        [string]$aadConnectServer,
+        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $true)]
+        [string]$aadConnectUserName,
+        [Parameter(ParameterSetName='EnableAADConnect',Mandatory = $true)]
+        [securestring]$aadConnectPassword,
+        [Parameter(ParameterSetName='EnableExchange',Mandatory = $false)]
+        [string]$exchangeServer,
+        [Parameter(ParameterSetName='EnableExchange',Mandatory = $true)]
+        [string]$exchangeUserName,
+        [Parameter(ParameterSetName='EnableExchange',Mandatory = $true)]
+        [securestring]$exchangePassword
     )
+
+    #Define variables utilized in the core function that are not defined by parameters.
+
+    
 
     #Log file header.
 
@@ -82,20 +98,48 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
 
-    #Output variables to the log file for recording.
+    #Output parameters to the log file for recording.
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "VARIABLES"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "PARAMETERS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GroupSMTPAddress"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $groupSMTPAddress
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "UserName"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $userName
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GlobalCatalogServer"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $globalCatalogServer
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ActiveDirectoryUserName"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $activeDirectoryUserName
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "LogFolderPath"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $logFolderPath
+
+    if ($aadConnectServer -ne "")
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectServer"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectServer
+    }
+
+    if ($aadConnectUserName -ne "")
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectUserName"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectUserName
+    }
+
+    if ($exchangeServer -ne "")
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServer"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeServer
+    }
+
+    if ($exchangeUserName -ne "")
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeUserName"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeUserName
+    }
+
+
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
+
+
 }

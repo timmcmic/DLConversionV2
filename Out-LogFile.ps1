@@ -65,7 +65,7 @@
 
         #Test the path to see if this exists if not create.
 
-        [boolean]$pathExists = Test-Path -Path $LogFile
+        [boolean]$pathExists = Test-Path -Path $logFolderPath
 
         if ($pathExists -eq $false)
         {
