@@ -79,8 +79,6 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeCredential,
         [Parameter(Mandatory = $false)]
-        [switch]$exchangeOnlineInteractiveCredentials,
-        [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential,
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineCertificateThumbPrint
@@ -95,8 +93,6 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN DL MIGRATION"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
 
     #Output parameters to the log file for recording.
 
@@ -149,8 +145,6 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
 
     #Perform paramter validation manually.
 
@@ -208,8 +202,6 @@ Function Start-DistributionListMigration
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END PARAMETER VALIDATION"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "."
 
     #If exchange server information specified - create the on premises powershell session.
 
@@ -221,5 +213,20 @@ Function Start-DistributionListMigration
     else
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "No on premises Exchange specified - skipping setup of powershell session."
+    }
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling Test-ExchangeOnlinePowershell to ensure modules are installed."
+
+    #Test to determine if the exchange online powershell module is installed.
+    
+    Test-ExchangeOnlinePowerShell
+
+    #Create the connection to exchange online.
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
+
+    if ($exchangeOnlineCredential -ne $NULL)
+    {
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
     }
 }
