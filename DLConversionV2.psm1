@@ -71,38 +71,41 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         [Parameter(Mandatory = $false)]
-        [string]$aadConnectServer,
+        [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
-        [pscredential]$aadConnectCredential,
+        [pscredential]$aadConnectCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [string]$exchangeServer,
+        [string]$exchangeServer=$NULL,
         [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeCredential,
+        [pscredential]$exchangeCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeOnlineCredential,
+        [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineCertificateThumbPrint
+        [string]$exchangeOnlineCertificateThumbPrint=$NULL
     )
 
     #Define variables utilized in the core function that are not defined by parameters.
 
-    [boolean]$useOnPremsiesExchange=$FALSE
-    [boolean]$useAADConnect=$FALSE
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremsies"
-    [string]$aadConnectPowershellSessionName="AADConnect"
-    [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog"
+    [boolean]$useOnPremsiesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
+    [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
+    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremsies" #Defines universal name for on premises Exchange Powershell session.
+    [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
+    [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
 
-    #Log file header.
+    #Log start of DL migration to the log file.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN DL MIGRATION"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
     #Output parameters to the log file for recording.
+    #For parameters that are optional if statements determine if they are populated for recording.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "PARAMETERS"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GroupSMTPAddress"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $groupSMTPAddress
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GlobalCatalogServer"
@@ -148,58 +151,74 @@ Function Start-DistributionListMigration
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCertificateThumbPrint
     }
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
     #Perform paramter validation manually.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ENTERING PARAMTER VALIDATION"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+
+    #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that both AADConnectServer and AADConnectCredential are specified"
    
     if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
     {
+        #The credential was specified but the server name was not.
+
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
     }
     elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
     {
+        #The server name was specified but the credential was not.
+
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
     }
-    else
+    elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
     {
+        #The server name and credential were specified for AADConnect.
+
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectServer and AADConnectCredential were both specified."
     
-        #The user has specified paramters to allow module to manage aadConnect.
-
+        #Set useAADConnect to TRUE since the parameters necessary for use were passed.
+        
         $useAADConnect=$TRUE
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The administrator has specified criteral to allow module to utilize adconnect."
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "useAADConnect."
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Set useAADConnect to TRUE since the parameters necessary for use were passed."
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useAADConnect
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that both ExchangeServer and ExchangeCredential are specified"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
     if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Server is required when specfying Exchange Credential" -isError:$TRUE
+        #The exchange credential was specified but the exchange server was not specified.
+
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
     }
-    elseif (($exchangeCredential -eq $NULL) -and ($exchangetServer -ne ""))
+    elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Credential is required when specfying Exchange Server" -isError:$TRUE
+        #The exchange server was specified but the exchange credential was not.
+
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
     }
-    else
+    elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
     {
-        #The administrator has sepcified information to allow module to utilize exchange on premises.
+        #The server name and credential were specified for Exchange.
+
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The server name and credential were specified for Exchange."
+
+        #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
         $useOnPremsiesExchange=$TRUE
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServer and ExchangeCredential were both specified." 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The use Exchange Server attribute is set to TRUE."
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useOnPremsiesExchange  
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed."
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useOnPremsiesExchange
     }
 
     #Validate that only one method of engaging exchange online was specified.
@@ -216,7 +235,7 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END PARAMETER VALIDATION"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
 
     #If exchange server information specified - create the on premises powershell session.
 
@@ -247,5 +266,8 @@ Function Start-DistributionListMigration
 
     #If the administrator has specified aad connect information - establish the powershell session.
 
-    New-AADConnectPowershellSession -aadConnectServer $aadConnectServer -aadConnectCredentials $aadConnectCredential -aadConnectPowershellSessionName $aadConnectPowershellSessionName
+    if ($useAADConnect -eq $TRUE)
+    {
+        New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
+    }  
 }

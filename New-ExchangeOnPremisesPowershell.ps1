@@ -52,9 +52,9 @@
 
         #Begin estabilshing the powershell session.
         
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "************************************************************"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN NEW-EXCHANGEONPREMISESPOWERSHELL"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "************************************************************"
 
         #Write function based variables to log files.
 
@@ -92,5 +92,5 @@
         Import-ExchangeOnPremisesPowershell -exchangePowershellSession $exchangeOnPremisesPowershellSession
 
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END NEW-EXCHANGEONPREMISESPOWERSHELL"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************"
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "************************************************************"
     }
