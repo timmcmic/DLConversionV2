@@ -246,6 +246,8 @@ Function Start-DistributionListMigration
 
    #Test to determine if the exchange online powershell module is installed.
    #The exchange online session has to be established first or the commandlet set from on premises fails.
+
+   Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling Test-ExchangeOnlinePowershell to ensure modules are installed."
     
    Test-ExchangeOnlinePowerShell
 
@@ -255,6 +257,8 @@ Function Start-DistributionListMigration
 
    if ($exchangeOnlineCredential -ne $NULL)
    {
+       #User specified non-certifate authentication credentials.
+       
        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
    }
 
@@ -287,8 +291,6 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "No on premises Exchange specified - skipping setup of powershell session."
     }
-
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling Test-ExchangeOnlinePowershell to ensure modules are installed."
 
     #If the administrator has specified aad connect information - establish the powershell session.
 

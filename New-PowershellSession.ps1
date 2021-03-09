@@ -48,10 +48,10 @@
             [string]$authenticationType,
             [Parameter(ParameterSetName="Online",Mandatory = $true)]
             [string]$configurationName,
-            [Parameter(ParameterSetName="Online",Mandatory = $true)]
-            [boolean]$allowRedirection,
-            [Parameter(ParameterSetName="Online",Mandatory = $true)]
-            [boolean]$requiresImport
+            [Parameter(ParameterSetName="Online")]
+            [boolean]$allowRedirection=$FALSE,
+            [Parameter(ParameterSetName="Online")]
+            [boolean]$requiresImport=$FALSE
         )
 
         #Declare function variables.
@@ -66,25 +66,52 @@
 
         #Log the parameters and variables for the function.
 
-        if ($server -eq $NULL)
+        if ($server -ne "")
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Server"
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $Server
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Server = "+$Server)
         }
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Credential"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $Credentials.userName
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "PowershellSessionName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $PowershellSessionName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Credential = "+$Credentials.userName.tostring())
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("PowershellSessionName = "+$PowershellSessionName)
 
+        if ($connectionURI -ne "")
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ConnectionURI = "+$connectionURI)
+        }
+
+        if ($authenticationType -ne "")
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("AuthenticationType = "+$authenticationType)
+        }
+
+        if ($configurationName -ne "")
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ConfigurationName = "+$configurationName)
+        }
+    
+        if ($allowRedirection -ne $FALSE)
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("AllowRedirection = "+$allowRedirection)
+        }
+        
+        if ($requiresImport -ne $FALSE)
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("RequireImport = "+$requiresImport)
+        }
+        
         try 
         {
             if ($requiresImport -eq $FALSE)
             {
+                #The session was flagged by the caller as requiring import.
+                #This would usually be reserved for things like Exchange On Premises / Exchange Online
+
                 Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server." 
                 New-PSSession -computername $Server -credential $Credentials -name $PowershellSessionName -errorAction STOP
             }
             elseif ($requiresImport -eq $TRUE)
             {
+                #No import is required - this is a local powershell session
+                
                 Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server that requires import." 
                 $sessiontoimport=New-PSSession -ConfigurationName $configurationName -ConnectionUri $connectionURI -Credential $credentials -AllowRedirection:$allowRedirection -Authentication $authenticationType -name $PowershellSessionName
             }
@@ -99,5 +126,12 @@
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END NEW-POWERSHELLSESSION"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     
-        return $sessionToImport
+        #This function is designed to open local and remote powershell sessions.
+        #If the session requires import - for example exchange - return the session for later work.
+        #If not no return is required.
+        
+        if ($requiresImport -eq $TRUE)
+        {
+            return $sessionToImport
+        }  
     }

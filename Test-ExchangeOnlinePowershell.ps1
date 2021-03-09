@@ -29,8 +29,7 @@
 
         #Write function parameter information and variables to a log file.
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlinePowershellModuleName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlinePowershellModuleName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlinePowershellModuleName = "+$exchangeOnlinePowershellModuleName)
 
         try 
         {

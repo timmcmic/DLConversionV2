@@ -80,11 +80,10 @@
         try 
         {
             $logstring | Out-File -FilePath $LogFile -Append
-            Write-Verbose  $logstring 
         }
         catch 
         {
-            Write-Error $_
+            throw $_
         }
 
         #Write to the screen the information passed to the log.
