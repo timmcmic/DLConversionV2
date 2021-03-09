@@ -62,7 +62,7 @@
 
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlineCommandPrefix"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCommandPrefix
-             
+               
         try 
         {
             Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the exchange online powershell session."

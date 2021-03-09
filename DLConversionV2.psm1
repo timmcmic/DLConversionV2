@@ -87,6 +87,10 @@ Function Start-DistributionListMigration
     #Define variables utilized in the core function that are not defined by parameters.
 
     [boolean]$useOnPremsiesExchange=$FALSE
+    [boolean]$useAADConnect=$FALSE
+    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremsies"
+    [string]$aadConnectPowershellSessionName="AADConnect"
+    [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog"
 
     #Log file header.
 
@@ -165,6 +169,14 @@ Function Start-DistributionListMigration
     else
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectServer and AADConnectCredential were both specified."
+    
+        #The user has specified paramters to allow module to manage aadConnect.
+
+        $useAADConnect=$TRUE
+
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The administrator has specified criteral to allow module to utilize adconnect."
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "useAADConnect."
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useAADConnect
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -181,7 +193,10 @@ Function Start-DistributionListMigration
     }
     else
     {
+        #The administrator has sepcified information to allow module to utilize exchange on premises.
+
         $useOnPremsiesExchange=$TRUE
+
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServer and ExchangeCredential were both specified." 
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The use Exchange Server attribute is set to TRUE."
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useOnPremsiesExchange  
@@ -208,7 +223,7 @@ Function Start-DistributionListMigration
     if ($useOnPremsiesExchange -eq $TRUE)
     {
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnPremsiesPowershell"
-        New-ExchangeOnPremisesPowershell -exchangeServer $exchangeServer -exchangeCredentials $exchangecredential
+        New-ExchangeOnPremisesPowershell -exchangeServer $exchangeServer -exchangeCredentials $exchangecredential -exchangeOnPremsiesPowershellSessionName $exchangeOnPremisesPowershellSessionName
     }
     else
     {
@@ -229,4 +244,8 @@ Function Start-DistributionListMigration
     {
         New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
     }
+
+    #If the administrator has specified aad connect information - establish the powershell session.
+
+    New-AADConnectPowershellSession -aadConnectServer $aadConnectServer -aadConnectCredentials $aadConnectCredential -aadConnectPowershellSessionName $aadConnectPowershellSessionName
 }

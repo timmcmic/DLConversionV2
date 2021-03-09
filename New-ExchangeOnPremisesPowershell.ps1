@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             [pscredential]$exchangeCredentials,
             [Parameter(Mandatory = $true)]
-            [string]$exchangeServer
+            [string]$exchangeServer,
+            [Parameter(Mandatory = $true)]
+            [string]$exchangeOnPremsiesPowershellSessionName
         )
 
         #Define variables that will be utilzed in the function.
@@ -43,7 +45,6 @@
         [string]$exchangeServerAuthenticationType = "Basic"
         [string]$exchangeServerConfiguration = "Microsoft.Exchange"
         [boolean]$exchangeServerAllowRedirection = $TRUE
-        [string]$exchangePowershellSessionName = "ExchangeOnPremises"
 
         #Create the exchange server powershell URL.
 
@@ -70,13 +71,13 @@
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServerAllowRedirection"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeServerAllowRedirection
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServerPowershellSessionName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangePowershellSessionName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnPremsiesPowershellSessionName
 
         try 
         {
             Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the on premsies powershell session."
 
-            $exchangeOnPremisesPowershellSession = New-PSSession -ConnectionUri $exchangeServerURL -Credential $exchangeCredentials -Name $exchangePowershellSessionName -ConfigurationName $exchangeServerConfiguration -AllowRedirection:$exchangeServerAllowRedirection -Authentication $exchangeServerAuthenticationType -ErrorAction:Stop
+            $exchangeOnPremisesPowershellSession = New-PSSession -ConnectionUri $exchangeServerURL -Credential $exchangeCredentials -Name $exchangeOnPremsiesPowershellSessionName -ConfigurationName $exchangeServerConfiguration -AllowRedirection:$exchangeServerAllowRedirection -Authentication $exchangeServerAuthenticationType -ErrorAction:Stop
         }
         catch 
         {
