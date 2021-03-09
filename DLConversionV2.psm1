@@ -81,24 +81,29 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineCertificateThumbPrint=$NULL
+        [string]$exchangeOnlineCertificateThumbPrint=$NULL,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        [string]$exchangeAuthenticationMethod="Basic"
     )
 
     #Define variables utilized in the core function that are not defined by parameters.
 
     [boolean]$useOnPremsiesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
     [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremsies" #Defines universal name for on premises Exchange Powershell session.
+    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
     [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
 
+    [string]$exchangeServerConfiguration = "Microsoft.Exchange"
+    [boolean]$exchangeServerAllowRedirection = $TRUE
+    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell"
+
     #Log start of DL migration to the log file.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -106,64 +111,50 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "PARAMETERS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GroupSMTPAddress"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $groupSMTPAddress
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "GlobalCatalogServer"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $globalCatalogServer
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ActiveDirectoryUserName"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $activeDirectoryCredential.UserName
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "LogFolderPath"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $logFolderPath
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("GlobalCatalogServer = "+$globalCatalogServer)
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("LogFolderPath = "+$logFolderPath)
 
     if ($aadConnectServer -ne "")
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectServer"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectServer
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("AADConnectServer = "+$aadConnectServer)
     }
 
     if ($aadConnectCredential -ne $null)
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "AADConnectUserName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $aadConnectCredential.UserName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())
     }
 
     if ($exchangeServer -ne "")
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeServer"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeServer
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeServer = "+$exchangeServer)
     }
 
     if ($exchangecredential -ne $null)
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeUserName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeCredential.UserName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeUserName = "+$exchangeCredential.UserName.toString())
     }
 
     if ($exchangeOnlineCredential -ne $null)
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlineUserName"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCredential.UserName
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
     if ($exchangeOnlineCertificateThumbPrint -ne "")
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ExchangeOnlineCertificateThumbprint"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $exchangeOnlineCertificateThumbPrint
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlineCertificateThumbprint = "+$exchangeOnlineCertificateThumbPrint)
     }
 
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
+
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
     #Perform paramter validation manually.
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ENTERING PARAMTER VALIDATION"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
@@ -191,8 +182,11 @@ Function Start-DistributionListMigration
         
         $useAADConnect=$TRUE
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Set useAADConnect to TRUE since the parameters necessary for use were passed."
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useAADConnect
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$useAADConnect)
+    }
+    else
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$useAADConnect)
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -221,8 +215,11 @@ Function Start-DistributionListMigration
 
         $useOnPremsiesExchange=$TRUE
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed."
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $useOnPremsiesExchange
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremsiesExchange)
+    }
+    else
+    {
+        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremsiesExchange)
     }
 
     #Validate that only one method of engaging exchange online was specified.
@@ -240,21 +237,51 @@ Function Start-DistributionListMigration
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END PARAMETER VALIDATION"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
     #If exchange server information specified - create the on premises powershell session.
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
+   #Test to determine if the exchange online powershell module is installed.
+   #The exchange online session has to be established first or the commandlet set from on premises fails.
+    
+   Test-ExchangeOnlinePowerShell
+
+   #Create the connection to exchange online.
+
+   Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
+
+   if ($exchangeOnlineCredential -ne $NULL)
+   {
+       New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
+   }
+
+   #Now we can determine if exchange on premises is utilized and if so establish the connection.
+   
     if ($useOnPremsiesExchange -eq $TRUE)
     {
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnPremsiesPowershell"
-        New-ExchangeOnPremisesPowershell -exchangeServer $exchangeServer -exchangeCredentials $exchangecredential -exchangeOnPremsiesPowershellSessionName $exchangeOnPremisesPowershellSessionName
+        try 
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-PowerShellSession"
+
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        }
+        catch 
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
+        try 
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling import-PowerShellSession"
+
+            import-powershellsession -powershellsession $sessionToImport
+        }
+        catch 
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        } 
     }
     else
     {
@@ -262,19 +289,6 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling Test-ExchangeOnlinePowershell to ensure modules are installed."
-
-    #Test to determine if the exchange online powershell module is installed.
-    
-    Test-ExchangeOnlinePowerShell
-
-    #Create the connection to exchange online.
-
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
-
-    if ($exchangeOnlineCredential -ne $NULL)
-    {
-        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
-    }
 
     #If the administrator has specified aad connect information - establish the powershell session.
 
@@ -286,6 +300,4 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 }

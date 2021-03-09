@@ -34,28 +34,43 @@
 
         Param
         (
-            [Parameter(Mandatory = $true)]
+            [Parameter(ParameterSetName="NotOnline",Mandatory = $true)]
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
             [pscredential]$Credentials,
-            [Parameter(Mandatory = $true)]
+            [Parameter(ParameterSetName="NotOnline",Mandatory = $true)]
             [string]$Server,
-            [Parameter(Mandatory = $true)]
-            [string]$PowershellSessionName
+            [Parameter(ParameterSetName="NotOnline",Mandatory = $true)]
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [string]$PowershellSessionName,
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [string]$connectionURI,
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [string]$authenticationType,
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [string]$configurationName,
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [boolean]$allowRedirection,
+            [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [boolean]$requiresImport
         )
 
         #Declare function variables.
+
+        $sessionToImport=$NULL
 
         #Start function processing.
 
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN NEW-POWERSHELLSESSION"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Server"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $Server
+        if ($server -eq $NULL)
+        {
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Server"
+            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $Server
+        }
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Credential"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $Credentials.userName
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "PowershellSessionName"
@@ -63,8 +78,16 @@
 
         try 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server." 
-            New-PSSession -computername $Server -credential $Credentials -name $PowershellSessionName -errorAction STOP
+            if ($requiresImport -eq $FALSE)
+            {
+                Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server." 
+                New-PSSession -computername $Server -credential $Credentials -name $PowershellSessionName -errorAction STOP
+            }
+            elseif ($requiresImport -eq $TRUE)
+            {
+                Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server that requires import." 
+                $sessiontoimport=New-PSSession -ConfigurationName $configurationName -ConnectionUri $connectionURI -Credential $credentials -AllowRedirection:$allowRedirection -Authentication $authenticationType -name $PowershellSessionName
+            }
         }
         catch 
         {
@@ -75,6 +98,6 @@
 
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END NEW-POWERSHELLSESSION"
         Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string " "
+    
+        return $sessionToImport
     }
