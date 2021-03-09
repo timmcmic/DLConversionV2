@@ -258,7 +258,7 @@ Function Start-DistributionListMigration
    if ($exchangeOnlineCredential -ne $NULL)
    {
        #User specified non-certifate authentication credentials.
-       
+
        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
    }
 
@@ -298,8 +298,15 @@ Function Start-DistributionListMigration
     {
         New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
     }
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Establish powershell session to the global catalog server specified."
+
+    new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
     
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
 }
