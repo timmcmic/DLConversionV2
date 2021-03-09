@@ -95,9 +95,19 @@ Function Start-DistributionListMigration
     [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
 
+    #Static variables utilized for the Exchange On-Premsies Powershell.
+   
     [string]$exchangeServerConfiguration = "Microsoft.Exchange"
     [boolean]$exchangeServerAllowRedirection = $TRUE
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell"
+
+    #On premises variables for the distribution list to be migrated.
+
+    $originalDLConfiguration = $NULL #This holds the on premises DL configuration for the group to be migrated.
+
+    #Cloud variables for the distribution list to be migrated.
+
+    $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
 
     #Log start of DL migration to the log file.
 
@@ -302,10 +312,21 @@ Function Start-DistributionListMigration
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Establish powershell session to the global catalog server specified."
 
     new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
-    
+
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+
+    #At this point we are ready to capture the original DL configuration.  We'll use the global catalog powershell session to do this.
+
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Getting the original DL Configuration"
+
+    $originalDLConfiguration = Get-OriginalDLConfiguration -powershellSessionName $ADGlobalCatalogPowershellSessionName -groupSMTPAddress $groupSMTPAddress
+
+
+
+
+
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
