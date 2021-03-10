@@ -111,7 +111,7 @@
             elseif ($requiresImport -eq $TRUE)
             {
                 #No import is required - this is a local powershell session
-                
+
                 Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the powershell to server that requires import." 
                 $sessiontoimport=New-PSSession -ConfigurationName $configurationName -ConnectionUri $connectionURI -Credential $credentials -AllowRedirection:$allowRedirection -Authentication $authenticationType -name $PowershellSessionName
             }
@@ -132,6 +132,6 @@
         
         if ($requiresImport -eq $TRUE)
         {
-            return $sessionToImport
+            return ,$sessionToImport
         }  
     }

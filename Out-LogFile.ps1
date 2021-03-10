@@ -11,13 +11,9 @@
 
     The string to be written to the log file.
 
-    .PARAMETER logFolderPath
+    .PARAMETER isError
 
-    The path of the log file.
-
-    .PARAMETER groupSMTPAddress
-
-    The SMTP address of the group being migrated - this will be parsed for the log file name.
+    Boolean value to signify exception / log it / terminate script.
 
 	.OUTPUTS
 
@@ -25,7 +21,7 @@
 
     .EXAMPLE
 
-    Out-LogFile -string "MESSAGE" -path "c:\temp\Start-DistributionListMigration.log"
+    Out-LogFile -string "MESSAGE" -isError BOOLEAN
 
     #>
     Function Out-LogFile
@@ -36,27 +32,9 @@
         (
             [Parameter(Mandatory = $true)]
             [string]$String,
-            [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress,
-            [Parameter(Mandatory = $true)]
-            [string]$logFolderPath,
             [Parameter(Mandatory = $false)]
             [boolean]$isError=$FALSE
         )
-
-        #Define the string separator and then separate the string.
-
-        [string]$separator="@"
-        [array]$fileNameSplit = $groupSMTPAddress.Split($separator)
-
-        #First entry in split array is the prefix of the group - use that for log file name.
-
-        [string]$fileName=$fileNameSplit[0]+".log"
-   
-        # Get our log file path
-
-        $logFolderPath = $logFolderPath+"\DLMigration"
-        $LogFile = Join-path $logFolderPath $fileName
     
         # Get the current date
 
@@ -66,15 +44,6 @@
 
         [string]$logstring = ( "[" + $date + "] - " + $string)
 
-        #Test the path to see if this exists if not create.
-
-        [boolean]$pathExists = Test-Path -Path $logFolderPath
-
-        if ($pathExists -eq $false)
-        {
-            New-Item -Path $logFolderPath -Type Directory
-        }
-    
         # Write everything to our log file and the screen
 
         try 

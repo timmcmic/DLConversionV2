@@ -89,6 +89,8 @@ Function Start-DistributionListMigration
 
     #Define variables utilized in the core function that are not defined by parameters.
 
+    [string]$logFile=$NULL #Establishes the log file that will be utilized by called functions to log information.
+    [string]$xmlFile=$NULL
     [boolean]$useOnPremsiesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
     [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
@@ -103,7 +105,8 @@ Function Start-DistributionListMigration
 
     #On premises variables for the distribution list to be migrated.
 
-    $originalDLConfiguration = $NULL #This holds the on premises DL configuration for the group to be migrated.
+    $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    [string]$originalDLConfigurationXML = "originalDLConfigurationXML"
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -111,9 +114,11 @@ Function Start-DistributionListMigration
 
     #Log start of DL migration to the log file.
 
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
-    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
+    new-LogFile -groupSMTPAddress $groupSMTPAddress -logfolderpath $logFolderPath
+
+    Out-LogFile -string "================================================================================"
+    Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "================================================================================"
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -323,9 +328,9 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration = Get-OriginalDLConfiguration -powershellSessionName $ADGlobalCatalogPowershellSessionName -groupSMTPAddress $groupSMTPAddress
 
+    Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Create an XML file backup of the on premises DL Configuration"
 
-
-
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML
 
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "================================================================================"
     Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END START-DISTRIBUTIONLISTMIGRATION"
