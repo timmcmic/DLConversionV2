@@ -41,8 +41,18 @@
         [string]$date = Get-Date -Format G
     
         # Build output string
+        #In this case since I abuse the function to write data to screen and record it in log file
+        #If the input is not a string type do not time it just throw it to the log.
 
-        [string]$logstring = ( "[" + $date + "] - " + $string)
+        if ($string.gettype().name -eq "String")
+        {
+            [string]$logstring = ( "[" + $date + "] - " + $string)
+        }
+        else 
+        {
+            $logString = $String    
+        }
+        
 
         # Write everything to our log file and the screen
 

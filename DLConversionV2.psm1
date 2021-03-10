@@ -335,8 +335,6 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration = Get-OriginalDLConfiguration -powershellSessionName $ADGlobalCatalogPowershellSessionName -groupSMTPAddress $groupSMTPAddress
 
-    Out-LogFile -string $originalDLConfiguration
-
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML -logFolderPath $logFolderPath
