@@ -114,6 +114,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
+    $office365DLConfigurationXML = "office365DLConfigurationXML"
 
     #Log start of DL migration to the log file.
 
@@ -341,6 +342,16 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML -logFolderPath $logFolderPath
+
+    Out-LogFile -string "Capture the original office 365 distribution list information."
+
+    $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress
+
+    Out-LogFile -string $office365DLConfiguration
+
+    Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
+
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameExport $office365DLConfigurationXML -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
