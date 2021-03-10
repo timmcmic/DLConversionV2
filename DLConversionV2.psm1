@@ -52,7 +52,7 @@
 
     .EXAMPLE
 
-    Get-ExPerfwiz
+    Start-DistributionListMigration
 
     #>
 
@@ -352,6 +352,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML -logFolderPath $logFolderPath
+
+    Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
+
+    Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
