@@ -76,11 +76,9 @@
         }
         else 
         {
-            $string | FL   
+            $logstring | FL   
         }
         
-        
-
         #If the output to the log is terminating exception - throw the same string.
 
         if ($isError -eq $TRUE)
