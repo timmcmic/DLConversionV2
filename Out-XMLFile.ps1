@@ -42,6 +42,10 @@
             [string]$logFolderPath
         )
 
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN OUT-XMLFILE"
+        Out-LogFile -string "********************************************************************************"
+
         #Declare function variables.
 
         $fileName = $itemNameToExport+".xml"
@@ -56,6 +60,10 @@
 
         #Write our variables to the log.
 
+        out-logfile -string ("XML File Name = "+$fileName)
+        out-logfile -string ("Log Folder Path = "+$logFolderPath)
+        out-logfile -string ("Log File = "+$LogFile)
+
         # Write everything to our log file and the screen
 
         try 
@@ -66,4 +74,7 @@
         {
             throw $_
         }
+
+        Out-LogFile -string "END OUT-XMLFILE"
+        Out-LogFile -string "********************************************************************************"
     }
