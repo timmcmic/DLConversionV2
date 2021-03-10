@@ -74,7 +74,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties * -server $globalCatalogServer
+            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties * -server $globalCatalogServer -errorAction STOP
             
             #$functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args[0]'" -properties * -server $args[1] -errorAction STOP} -ArgumentList $groupSMTPAddress,$globalCatalogServer -ErrorAction Stop
 
