@@ -23,13 +23,13 @@
 
         #Initiate the test.
         
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN TEST-EXCHANGEONLINEPOWERSHELL"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN TEST-EXCHANGEONLINEPOWERSHELL"
+        Out-LogFile -string "********************************************************************************"
 
         #Write function parameter information and variables to a log file.
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlinePowershellModuleName = "+$exchangeOnlinePowershellModuleName)
+        Out-LogFile -string ("ExchangeOnlinePowershellModuleName = "+$exchangeOnlinePowershellModuleName)
 
         try 
         {
@@ -37,18 +37,18 @@
         }
         catch 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $_ -isError:$TRUE
+            Out-LogFile -string $_ -isError:$TRUE
         }
 
         if ($exchangeOnlinePowershellCommands.count -eq 0)
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The exchange online powershell module v2 was not found." -iserror:$TRUE
+            Out-LogFile -string "The exchange online powershell module v2 was not found." -iserror:$TRUE
         }
         else
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The exchange online powershell module v2 was found.."
+            Out-LogFile -string "The exchange online powershell module v2 was found.."
         }    
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END TEST-EXCHANGEONLINEPOWERSHELL"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "END TEST-EXCHANGEONLINEPOWERSHELL"
+        Out-LogFile -string "********************************************************************************"
     }

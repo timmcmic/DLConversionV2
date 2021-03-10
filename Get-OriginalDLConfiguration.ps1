@@ -43,46 +43,49 @@
 
         #Start function processing.
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN GET-ORIGINALDLCONFIGURATION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN GET-ORIGINALDLCONFIGURATION"
+        Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("PowershellSessionName = "+$PowershellSessionName)
+        Out-LogFile -string ("PowershellSessionName = "+$powershellSessionName)
+        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the named PS session for the domain controller.
 
         try 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Gathering powershell session for the domain controller." 
+            Out-LogFile -string "Getting the PS Session for command invocation."
             $functionPSSession = Get-PSSession -Name $powershellSessionName -ErrorAction Stop
         }
         catch 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $_ -isError:$TRUE
+            out-logFile -string $_ -isError:$TRUE
         }
 
         #Get the group using LDAP / AD providers.
         
         try 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Executing query to global catalog for original DL configuration." 
+            Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
             $functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args'" -properties * -errorAction STOP} -ArgumentList $groupSMTPAddress -ErrorAction Stop
+
+            Out-LogFile -string "Original DL configuration found and recorded."
+            out-logFile -string $functionDLConfiguration
         }
         catch 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $_ -isError:$TRUE
+            #Out-LogFile 
         }
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END GET-ORIGINALDLCONFIGURATION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "********************************************************************************"
+        Out-LogFile -string "END GET-ORIGINALDLCONFIGURATION"
+        Out-LogFile -string "********************************************************************************"
         
         #This function is designed to open local and remote powershell sessions.
         #If the session requires import - for example exchange - return the session for later work.
         #If not no return is required.
         
-        return ,$functionDLConfiguration
+        return $functionDLConfiguration
     }

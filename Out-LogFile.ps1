@@ -31,7 +31,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$String,
+            $String,
             [Parameter(Mandatory = $false)]
             [boolean]$isError=$FALSE
         )
@@ -48,7 +48,7 @@
 
         try 
         {
-            $logstring | Out-File -FilePath $LogFile -Append
+            $logstring | Out-File -FilePath $global:LogFile -Append
         }
         catch 
         {

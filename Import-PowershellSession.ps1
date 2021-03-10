@@ -34,22 +34,22 @@
 
         #Begin estabilshing the powershell session.
         
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN IMPORT-POWERSHELLSESSION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN IMPORT-POWERSHELLSESSION"
+        Out-LogFile -string "********************************************************************************"
 
         try 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Importing powershell session."
+            Out-LogFile -string "Importing powershell session."
 
             Import-PSSession -Session $PowershellSession -ErrorAction Stop
         }
         catch 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $_ -iserror:$TRUE
+            Out-LogFile -string $_ -iserror:$TRUE
         }
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The powershell session imported successfully."
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END IMPORT-POWERSHELLSESSION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "The powershell session imported successfully."
+        Out-LogFile -string "END IMPORT-POWERSHELLSESSION"
+        Out-LogFile -string "********************************************************************************"
     }

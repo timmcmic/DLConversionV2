@@ -37,12 +37,18 @@
             [Parameter(Mandatory = $true)]
             $itemToExport,
             [Parameter(Mandatory = $true)]
-            [string]$itemNameToExport
+            [string]$itemNameToExport,
+            [Parameter(Mandatory = $true)]
+            [string]$logFolderPath
         )
 
         #Declare function variables.
 
         $fileName = $itemNameToExport+".xml"
+
+        #Update the log folder path to include the static folder.
+
+        $logFolderPath = $logFolderPath+$global:staticFolderName
         
         # Get our log file path and combine it with the filename
 

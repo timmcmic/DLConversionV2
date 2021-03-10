@@ -43,36 +43,36 @@
 
         #Initiate the session.
         
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "BEGIN NEW-EXCHANGEONLINEPOWERSHELLSESSION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN NEW-EXCHANGEONLINEPOWERSHELLSESSION"
+        Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
 
         if ($exchangeOnlineCredentials -ne $NULL)
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlineCredentialsUserName = "+$exchangeOnlineCredentials.userName.tostring())
+            Out-LogFile -string ("ExchangeOnlineCredentialsUserName = "+$exchangeOnlineCredentials.userName.tostring())
         }
         elseif ($exchangeOnlineCertificate -ne "")
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlineCertificate = "+$exchangeOnlineCertificate)
+            Out-LogFile -string ("ExchangeOnlineCertificate = "+$exchangeOnlineCertificate)
         }
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string ("ExchangeOnlineCommandPrefix = "+$exchangeOnlineCommandPrefix)
+        Out-LogFile -string ("ExchangeOnlineCommandPrefix = "+$exchangeOnlineCommandPrefix)
                
         try 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "Creating the exchange online powershell session."
+            Out-LogFile -string "Creating the exchange online powershell session."
 
             Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix
         }
         catch 
         {
-            Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string $_ -isError:$TRUE
+            Out-LogFile -string $_ -isError:$TRUE
         }
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "The exchange online powershell session was created successfully."
+        Out-LogFile -string "The exchange online powershell session was created successfully."
 
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "END NEW-EXCHANGEONLINEPOWERSHELLSESSION"
-        Out-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath -string "****************************************"
+        Out-LogFile -string "END NEW-EXCHANGEONLINEPOWERSHELLSESSION"
+        Out-LogFile -string "********************************************************************************"
     }
