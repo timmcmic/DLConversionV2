@@ -48,13 +48,9 @@
         {
             [string]$logstring = ( "[" + $date + "] - " + $string)
         }
-        if ($string.gettype().name -eq "PSObject")
-        {
-            $logString = $string | FL
-        }
         else 
         {
-            $logString = $String    
+            $logString = $String | fl    
         }
         
         # Write everything to our log file and the screen
