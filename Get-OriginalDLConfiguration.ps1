@@ -73,8 +73,6 @@
             $functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args'" -properties * -errorAction STOP} -ArgumentList $groupSMTPAddress -ErrorAction Stop
 
             Out-LogFile -string "Original DL configuration found and recorded."
-
-            $fucntionDLConfiguration
         }
         catch 
         {
