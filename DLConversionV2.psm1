@@ -351,7 +351,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
-    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameExport $office365DLConfigurationXML -logFolderPath $logFolderPath
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
