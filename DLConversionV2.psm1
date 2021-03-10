@@ -110,6 +110,7 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     [string]$originalDLConfigurationXML = "originalDLConfigurationXML"
+    [array]$originalDLMembership=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 

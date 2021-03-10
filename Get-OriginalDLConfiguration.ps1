@@ -33,13 +33,16 @@
             [Parameter(Mandatory = $true)]
             [string]$powershellSessionName,
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $true)]
+            [string]$globalCatalogServer
         )
 
         #Declare function variables.
 
         $functionPSSession=$NULL #Holds the PS session to perform the work.
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
+        $globalCatalogServer=$globalCatalogServer+":3268"
 
         #Start function processing.
 
@@ -51,6 +54,7 @@
 
         Out-LogFile -string ("PowershellSessionName = "+$powershellSessionName)
         Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
 
         #Get the named PS session for the domain controller.
 
@@ -70,7 +74,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args'" -properties * -errorAction STOP} -ArgumentList $groupSMTPAddress -ErrorAction Stop
+            $functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args[0]'" -properties * -server '$args[1]' -errorAction STOP} -ArgumentList $groupSMTPAddress,$globalCatalogServer -ErrorAction Stop
 
             Out-LogFile -string "Original DL configuration found and recorded."
         }
