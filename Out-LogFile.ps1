@@ -48,6 +48,10 @@
         {
             [string]$logstring = ( "[" + $date + "] - " + $string)
         }
+        if ($string.gettype().name -eq "PSObject")
+        {
+            $logString = $string | FL
+        }
         else 
         {
             $logString = $String    
