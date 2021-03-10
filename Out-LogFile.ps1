@@ -53,7 +53,6 @@
             $logString = $String    
         }
         
-
         # Write everything to our log file and the screen
 
         try 
@@ -67,7 +66,16 @@
 
         #Write to the screen the information passed to the log.
 
-        Write-Host $String
+        if ($string.gettype().name -eq "String")
+        {
+            Write-Host $logString
+        }
+        else 
+        {
+            $string | FL   
+        }
+        
+        
 
         #If the output to the log is terminating exception - throw the same string.
 
