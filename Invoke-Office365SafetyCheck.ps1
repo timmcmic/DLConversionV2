@@ -38,9 +38,16 @@
         
         try 
         {
-            if ($o365dlconfiguration.isDirSync -eq $FALSE)
+            Out-LogFile -string ("Distribution list isDirSynced = "+$o365dlconfiguration.isDirSynced)
+
+            if ($o365dlconfiguration.isDirSynced -eq $FALSE)
             {
-                write-error "The distribution list specified is not directory synced." -ErrorAction STOP
+                Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
+            }
+            else 
+            {
+                Out-LogFile -string "The distribution list requested is directory synced."
+
             }
         }
         catch 
