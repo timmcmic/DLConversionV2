@@ -335,7 +335,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Getting the original DL Configuration"
 
-    $originalDLConfiguration = Get-OriginalDLConfiguration -powershellSessionName $ADGlobalCatalogPowershellSessionName -groupSMTPAddress $groupSMTPAddress
+    $originalDLConfiguration = Get-OriginalDLConfiguration -powershellSessionName $ADGlobalCatalogPowershellSessionName -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer
 
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
