@@ -99,6 +99,8 @@ Function Start-DistributionListMigration
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
     [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
+    [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
+    [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -267,9 +269,13 @@ Function Start-DistributionListMigration
    #Test to determine if the exchange online powershell module is installed.
    #The exchange online session has to be established first or the commandlet set from on premises fails.
 
-   Out-LogFile -string "Calling Test-ExchangeOnlinePowershell to ensure modules are installed."
-    
-   Test-ExchangeOnlinePowerShell
+   Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
+
+   Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName
+
+   Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
+
+   Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
 
    #Create the connection to exchange online.
 
