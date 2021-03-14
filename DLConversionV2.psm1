@@ -101,6 +101,7 @@ Function Start-DistributionListMigration
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
     [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
     [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms','dlMemSubmitPerms','extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msExchRecipientDisplayType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -169,6 +170,43 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
+
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "VARIABLES"
+    Out-LogFile -string "********************************************************************************"
+
+    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremsiesExchange)
+
+    Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
+
+    Out-LogFie -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
+
+    Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
+
+    Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
+
+    Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
+
+    Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
+
+    Out-LogFile -string ("DL Properties to collect = ")
+
+    foreach ($dlProperty in $dlProperty)
+    {
+        Out-LogFile -string $dlProperty
+    }
+
+    Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
+
+    Out-LogFile -string ("Exchange on prem powershell allow redirection = "$exchangeServerAllowRedirection)
+
+    Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
+
+    Out-LogFile -string ("Exchange on prem DL configuration XML = "+$originalDLConfigurationXML)
+
+    Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -337,7 +375,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -string "********************************************************************************"
 
-    #At this point we are ready to capture the original DL configuration.  We'll use the global catalog powershell session to do this.
+    #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
     Out-LogFile -string "Getting the original DL Configuration"
 
@@ -363,6 +401,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
+
+    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
