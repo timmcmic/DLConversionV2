@@ -68,6 +68,13 @@
 
             $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -errorAction STOP
 
+            #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
+
+            if ($functionDLConfig -eq $NULL)
+            {
+                throw "The group cannot be found in Active Directory by email address."
+            }
+
             Out-LogFile -string "Original DL configuration found and recorded."
         }
         catch 
