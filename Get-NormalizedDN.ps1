@@ -117,7 +117,7 @@
                 out-logfile -string "This is permissable assuming the user is in sync scope."
 
                 New-Object PSObject -Property @{
-                    Alias = $NULL
+                    Alias = ""
                     Name = $functionTest.Name
                     PrimarySMTPAddressOrUPN = $functionTest.UserprincipalName
                     GUID = $NULL
