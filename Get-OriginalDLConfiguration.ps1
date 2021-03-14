@@ -7,13 +7,17 @@
 
     This function gets the original DL configuration for the on premises group using AD providers.
 
-    .PARAMETER PowershellSessionName
+    .PARAMETER parameterSet
 
-    The name associated with the powershell session to the ad server to invoke the get command.
+    These are the parameters that the GET will gather from AD for the DL.  This should be the full map.
 
     .PARAMETER GroupSMTPAddress
 
     The mail attribute of the group to search.
+
+    .PARAMETER GlobalCatalog
+
+    The global catalog to utilize for the query.
 
     .OUTPUTS
 
@@ -41,7 +45,7 @@
         #Declare function variables.
 
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
-        $globalCatalogServer=$globalCatalogServer+":3268"
+        [string]$globalCatalogServer=$globalCatalogServer+":3268"
 
         #Start function processing.
 

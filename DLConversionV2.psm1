@@ -114,7 +114,7 @@ Function Start-DistributionListMigration
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML"
     [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML"
-    [array]$originalDLMembership=$NULL
+    [array]$exchangeDLMembershipSMTP=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -416,7 +416,26 @@ Function Start-DistributionListMigration
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
 
-    
+    #At this time we have the DL configuration on both sides and have checked to ensure it is dir synced.
+    #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
+
+    #Start with DL membership and normallize.
+
+    Out-LogFile -string "Invoke get-SMTPFromDN to normalize the members DN to SMTP addresses."
+
+    foreach ($DN in $originalDLConfiguration.members)
+    {
+        $exchangeDLMembershipSMTP+=get-SMTPfromDN -globalCatalogServer $globalCatalogServer -DN $DN
+    }
+
+    Out-LogFile -string "The following SMTP addresses are members of the distribution group:"
+
+    foreach ($smtp in $ExchangeDLMembershipSMTP)
+    {
+        out-LogFile -string $smtp
+    }
+
+
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
