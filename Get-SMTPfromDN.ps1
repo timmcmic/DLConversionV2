@@ -58,7 +58,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get the users SMTP Address"
 
-            $functionSMTPAddress = Get-AzureADUser -filter "distinguishedname -eq '$DN'" -property 'Mail' -server $globalCatalogServer -ErrorAction STOP
+            $functionSMTPAddress = Get-AzureADUser -filter "distinguishedname -eq '$DN'" -properties 'Mail' -server $globalCatalogServer -ErrorAction STOP
 
             #If the ad provider command cannot find the user - the variable is NULL.  An error is not thrown.
 
