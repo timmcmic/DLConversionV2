@@ -70,7 +70,7 @@
 
             #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
-            if ($functionDLConfig -eq $NULL)
+            if ($functionDLConfiguration -eq $NULL)
             {
                 throw "The group cannot be found in Active Directory by email address."
             }
