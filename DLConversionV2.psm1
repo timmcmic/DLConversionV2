@@ -181,7 +181,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
 
-    Out-LogFie -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
+    Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
 
     Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
 
