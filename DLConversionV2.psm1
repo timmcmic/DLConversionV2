@@ -424,25 +424,28 @@ Function Start-DistributionListMigration
 
     #Start with DL membership and normallize.
 
-    Out-LogFile -string "Invoke get-SMTPFromDN to normalize the members DN to SMTP addresses."
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
 
-    foreach ($DN in $originalDLConfiguration.members)
+    if ($originalDLConfiguration.members -ne $NULL)
     {
-        $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        foreach ($DN in $originalDLConfiguration.members)
+        {
+            $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    
+        Out-LogFile -string "The following objects are members of the group:"
+    
+        foreach ($object in $exchangeDLMembershipSMTP)
+        {
+            out-LogFile -string $object.Alias
+            out-logfile -string $object.Name
+            out-logfile -string $object.PrimarySMTPAddressOrUPN
+            out-logfile -string $object.RecipientType
+            out-logfile -string $object.RecipientOrUser
+            out-logfile -string $object.isAlreadyMigrated
+        }
     }
-
-    Out-LogFile -string "The following objects are members of the group:"
-
-    foreach ($object in $exchangeDLMembershipSMTP)
-    {
-        out-LogFile -string $object.Alias
-        out-logfile -string $object.Name
-        out-logfile -string $object.PrimarySMTPAddressOrUPN
-        out-logfile -string $object.RecipientType
-        out-logfile -string $object.RecipientOrUser
-        out-logfile -string $object.isAlreadyMigrated
-    }
-
+    
 
 
     Out-LogFile -string "================================================================================"
