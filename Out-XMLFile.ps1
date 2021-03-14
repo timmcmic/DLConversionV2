@@ -37,9 +37,7 @@
             [Parameter(Mandatory = $true)]
             $itemToExport,
             [Parameter(Mandatory = $true)]
-            [string]$itemNameToExport,
-            [Parameter(Mandatory = $true)]
-            [string]$logFolderPath
+            [string]$itemNameToExport
         )
 
         Out-LogFile -string "********************************************************************************"

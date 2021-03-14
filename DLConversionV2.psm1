@@ -112,7 +112,8 @@ Function Start-DistributionListMigration
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
-    [string]$originalDLConfigurationXML = "originalDLConfigurationXML"
+    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML"
+    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML"
     [array]$originalDLMembership=$NULL
 
     #Cloud variables for the distribution list to be migrated.
@@ -204,7 +205,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
 
-    Out-LogFile -string ("Exchange on prem DL configuration XML = "+$originalDLConfigurationXML)
+    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
+
+    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
 
     Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
 
@@ -386,7 +389,18 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML -logFolderPath $logFolderPath
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML
+
+    #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
+
+    $originalDLConfiguration = $originalDLConfiguration | select-object -property $parameterSet
+
+    Out-LogFile -string "Log original DL configuration."
+    out-logFile -string $originalDLConfiguration
+
+    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
+
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationObjectXML
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
@@ -396,7 +410,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
-    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML -logFolderPath $logFolderPath
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
 
     Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
