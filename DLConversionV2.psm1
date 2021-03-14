@@ -393,7 +393,7 @@ Function Start-DistributionListMigration
 
     #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
 
-    $originalDLConfiguration = $originalDLConfiguration | select-object -property $parameterSet
+    $originalDLConfiguration = $originalDLConfiguration | select-object -property $dlPropertySet
 
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
