@@ -143,5 +143,5 @@
         #If the session requires import - for example exchange - return the session for later work.
         #If not no return is required.
         
-        return $functionSMTPAddress
+        return $functionObject
     }
