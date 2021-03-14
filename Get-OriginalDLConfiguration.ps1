@@ -35,7 +35,7 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            [array]$paramaterSet
+            [array]$parameterSet
         )
 
         #Declare function variables.
@@ -55,7 +55,7 @@
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("Parameter Set:")
         
-        foreach ($paramterIncluded in $paramaterSet)
+        foreach ($parameterIncluded in $parameterSet)
         {
             Out-Logfile -string $parameterIncluded
         }
