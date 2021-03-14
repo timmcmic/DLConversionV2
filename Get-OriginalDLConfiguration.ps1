@@ -66,7 +66,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties $paramterSet -server $globalCatalogServer -errorAction STOP
+            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -errorAction STOP
 
             Out-LogFile -string "Original DL configuration found and recorded."
         }

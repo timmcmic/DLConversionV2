@@ -193,7 +193,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string ("DL Properties to collect = ")
 
-    foreach ($dlProperty in $dlProperty)
+    foreach ($dlProperty in $dlPropertySet)
     {
         Out-LogFile -string $dlProperty
     }
