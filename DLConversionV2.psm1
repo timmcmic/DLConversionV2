@@ -101,7 +101,7 @@ Function Start-DistributionListMigration
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
     [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
     [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms','dlMemSubmitPerms','extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msExchRecipientDisplayType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms','dlMemSubmitPerms','extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -115,6 +115,9 @@ Function Start-DistributionListMigration
     [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML"
     [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML"
     [array]$exchangeDLMembershipSMTP=$NULL
+    [array]$exchangeRejectMessagesSMTP=$NULL
+    [array]$acceptMessageSMTP=$NULL
+    [array]$managedBySMTP=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -425,14 +428,19 @@ Function Start-DistributionListMigration
 
     foreach ($DN in $originalDLConfiguration.members)
     {
-        $exchangeDLMembershipSMTP+=get-SMTPfromDN -globalCatalogServer $globalCatalogServer -DN $DN
+        $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
     }
 
-    Out-LogFile -string "The following SMTP addresses are members of the distribution group:"
+    Out-LogFile -string "The following objects are members of the group:"
 
-    foreach ($smtp in $ExchangeDLMembershipSMTP)
+    foreach ($object in $exchangeDLMembershipSMTP)
     {
-        out-LogFile -string $smtp
+        out-LogFile -string $object.Alias
+        out-logfile -string $object.Name
+        out-logfile -string $object.PrimarySMTPAddressOrUPN
+        out-logfile -string $object.RecipientType
+        out-logfile -string $object.RecipientOrUser
+        out-logfile -string $object.isAlreadyMigrated
     }
 
 
