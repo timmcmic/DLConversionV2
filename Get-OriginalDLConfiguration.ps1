@@ -35,12 +35,11 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            [array]$paramterSet
+            [array]$paramaterSet
         )
 
         #Declare function variables.
 
-        $functionPSSession=$NULL #Holds the PS session to perform the work.
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
         $globalCatalogServer=$globalCatalogServer+":3268"
 
