@@ -432,6 +432,8 @@ Function Start-DistributionListMigration
         {
             $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
         }
+
+        out-logfile -string $exchangeDLMembershipSMTP
     
         Out-LogFile -string "The following objects are members of the group:"
     
