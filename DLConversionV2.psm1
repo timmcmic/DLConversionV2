@@ -200,7 +200,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
 
-    Out-LogFile -string ("Exchange on prem powershell allow redirection = "$exchangeServerAllowRedirection)
+    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$exchangeServerAllowRedirection)
 
     Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
 
