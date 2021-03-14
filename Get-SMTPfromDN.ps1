@@ -24,7 +24,7 @@
     get-SMTPfromDN -globalCatalog GC -DN DN
 
     #>
-    Function Get-SMTPfromDN.ps1
+    Function Get-SMTPfromDN
      {
         [cmdletbinding()]
 
