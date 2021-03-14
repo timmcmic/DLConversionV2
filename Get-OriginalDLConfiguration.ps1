@@ -31,11 +31,11 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$powershellSessionName,
-            [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress,
             [Parameter(Mandatory = $true)]
-            [string]$globalCatalogServer
+            [string]$globalCatalogServer,
+            [Parameter(Mandatory = $true)]
+            [array]$paramterSet
         )
 
         #Declare function variables.
@@ -52,20 +52,13 @@
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("PowershellSessionName = "+$powershellSessionName)
         Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-
-        #Get the named PS session for the domain controller.
-
-        try 
+        OUt-LogFile -string ("Parameter Set:")
+        
+        foreach ($paramterIncluded in $paramaterSet)
         {
-            Out-LogFile -string "Getting the PS Session for command invocation."
-            $functionPSSession = Get-PSSession -Name $powershellSessionName -ErrorAction Stop
-        }
-        catch 
-        {
-            out-logFile -string $_ -isError:$TRUE
+            Out-Logfile -string $parameterIncluded
         }
 
         #Get the group using LDAP / AD providers.
@@ -74,9 +67,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties * -server $globalCatalogServer -errorAction STOP
-            
-            #$functionDLConfiguration=Invoke-Command -Session $functionPSSession -ScriptBlock {get-adgroup -filter "mail -eq '$args[0]'" -properties * -server $args[1] -errorAction STOP} -ArgumentList $groupSMTPAddress,$globalCatalogServer -ErrorAction Stop
+            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties $paramterSet -server $globalCatalogServer -errorAction STOP
 
             Out-LogFile -string "Original DL configuration found and recorded."
         }
