@@ -389,7 +389,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationXML
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
 
     #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
 
