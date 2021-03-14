@@ -382,7 +382,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Getting the original DL Configuration"
 
-    $originalDLConfiguration = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySet
+    $originalDLConfiguration = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySet -errorAction STOP
 
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
