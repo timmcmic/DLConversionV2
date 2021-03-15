@@ -437,8 +437,29 @@ Function Start-DistributionListMigration
         
         out-logfile -string $exchangeDLMembershipSMTP
     }
-    
 
+    if ($originalDLConfiguration.unAuthOrig -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.unAuthOrig)
+        {
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    if ($originalDLConfiguration.dlMemRejectPerms -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
+        {
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "The following objects are members of the reject messages from senders:"
+        
+    out-logfile -string $exchangeRejectMessagesSMTP
+    
+    out-logfile -string "The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count
+    out-logfile -string "The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
