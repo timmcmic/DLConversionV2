@@ -438,6 +438,11 @@ Function Start-DistributionListMigration
         out-logfile -string $exchangeDLMembershipSMTP
     }
 
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
+
+    Out-LogFile -string "REJECT USERS"
+
+
     if ($originalDLConfiguration.unAuthOrig -ne $NULL)
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
@@ -445,6 +450,8 @@ Function Start-DistributionListMigration
             $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
         }
     }
+
+    Out-LogFile -string "REJECT GROUPS"
 
     if ($originalDLConfiguration.dlMemRejectPerms -ne $NULL)
     {
@@ -458,7 +465,9 @@ Function Start-DistributionListMigration
         
     out-logfile -string $exchangeRejectMessagesSMTP
 
-    $acceptMessageSMTP
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
+
+    Out-LogFile -string "ACCEPT USERS"
 
     if ($originalDLConfiguration.AuthOrig -ne $NULL)
     {
@@ -467,6 +476,8 @@ Function Start-DistributionListMigration
             $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
         }
     }
+
+    Out-LogFile -string "ACCEPT GROUPS"
 
     if ($originalDLConfiguration.dlMemSubmitPerms -ne $NULL)
     {
@@ -479,10 +490,37 @@ Function Start-DistributionListMigration
     Out-LogFile -string "The following objects are members of the accept messages from senders:"
         
     out-logfile -string $exchangeAcceptMessageSMTP
-    
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process MANAGEDBY"
+
+    if ($originalDLConfiguration.managedBy -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.managedBy)
+        {
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "Process CoMANAGERS"
+
+    if ($originalDLConfiguration.msExchCoManagedByLink -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
+        {
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "The following objects are members of the managedBY:"
+        
+    out-logfile -string $exchangeManagedBySMTP
+
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
     out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
+    out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
 
 
     Out-LogFile -string "================================================================================"
