@@ -76,11 +76,19 @@
 
         try
         {
-            #If the recipient has a mail address stamped we consider the object mail enabled.
+            #In this iteraction of the script were changing how we track recipients - since we're using adsi.
+            #First step check to see if the object has a recipient display type - that means it's mail enabled.
+            #If the object is mail enabled - regardless of object type - look to see if the previous migration was done (group to contact conversion.)
+            #If the group was not migrated or is not a group - take those attributes.
+            #The next case is that we do allow contacts to have a mail attribute but not be a full recipient.  (The only wayt to get them into the group is to use ADUC to do it - but it happens.)
+            #If the object has MAIL and is a CONTACT record information we can.  It can be migrated.
+            #Otherwise we've found non-mail present object (user with mail attribute / bad user / bad group - end.)
 
-            if ($functionTest.mail -ne $NULL)
+            #Check to see if the recipient has a recipient display type.
+
+            if ($functionTest.msExchRecipientDisplayType -ne $NULL)
             {
-                #The mail address is not NULL.  Check to see if either of the custom atttributes used for migration are stamped.
+                #Check to see if the object has been migrated.
 
                 if ($functionTest.extensionAttribute1 -eq "MigratedByScript")
                 {
@@ -93,9 +101,13 @@
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
                         RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
                     }
                 }
+
+                #If the group has not been migrated - take the attributes of the group as is.
+
                 else 
                 {
                     Out-LogFile -string "The object was not previously migrated - using directory information."
@@ -107,24 +119,25 @@
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
                         RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                     }
                 }
             }
-            elseif ($functionTest.objectClass -eq "User")
+            elseif (($functiontest.mail -ne $NULL) -and ($functiontest.msExchRecipientDisplayType -eq $NULL) -and ($functionTest.objectClass -eq "Contact"))
             {
-                out-logFile -string "A user object was found that was not mail enabled."
-                out-logfile -string "This is permissable assuming the user is in sync scope."
-
-                New-Object PSObject -Property @{
-                    Alias = ""
-                    Name = $functionTest.Name
-                    PrimarySMTPAddressOrUPN = $functionTest.UserprincipalName
-                    GUID = $NULL
-                    RecipientType = $functionTest.objectClass
-                    RecipientOrUser = "User"
-                    isAlreadyMigrated = $false
-                }
+                Out-LogFile -string "The object is a contact with a mail attribute - but is not fully exchange enabled."
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $NULL
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $false
+                    }
             }
             else 
             {
