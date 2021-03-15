@@ -160,6 +160,8 @@
                 }
             }
 
+            #Object is not a user, contact with mail, or other mail enabled contact so bail.
+
             else 
             {
                  throw "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue."
