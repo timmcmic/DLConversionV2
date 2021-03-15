@@ -116,8 +116,8 @@ Function Start-DistributionListMigration
     [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML"
     [array]$exchangeDLMembershipSMTP=$NULL
     [array]$exchangeRejectMessagesSMTP=$NULL
-    [array]$acceptMessageSMTP=$NULL
-    [array]$managedBySMTP=$NULL
+    [array]$exchangeAcceptMessageSMTP=$NULL
+    [array]$exchangeManagedBySMTP=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -457,9 +457,33 @@ Function Start-DistributionListMigration
     Out-LogFile -string "The following objects are members of the reject messages from senders:"
         
     out-logfile -string $exchangeRejectMessagesSMTP
+
+    $acceptMessageSMTP
+
+    if ($originalDLConfiguration.AuthOrig -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.AuthOrig)
+        {
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    if ($originalDLConfiguration.dlMemAcceptPerms -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.dlMemAcceptPerms)
+        {
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "The following objects are members of the accept messages from senders:"
+        
+    out-logfile -string $exchangeAcceptMessageSMTP
     
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
+    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
+
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
