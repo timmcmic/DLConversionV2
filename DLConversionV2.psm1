@@ -458,8 +458,8 @@ Function Start-DistributionListMigration
         
     out-logfile -string $exchangeRejectMessagesSMTP
     
-    out-logfile -string "The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count
-    out-logfile -string "The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count
+    out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
+    out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
