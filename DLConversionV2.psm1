@@ -468,9 +468,9 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($originalDLConfiguration.dlMemAcceptPerms -ne $NULL)
+    if ($originalDLConfiguration.dlMemSubmitPerms -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.dlMemAcceptPerms)
+        foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
             $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
         }
