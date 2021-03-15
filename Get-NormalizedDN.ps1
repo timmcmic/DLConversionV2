@@ -124,6 +124,10 @@
                     }
                 }
             }
+
+            #The contact can be created with only an email address and be in sync scope.  It could be added to a group and will appear as a mail contact in the service.
+            #If we find the user with a non-null email, no exchange type, and type contact - we'll normalize it and include it.
+
             elseif (($functiontest.mail -ne $NULL) -and ($functiontest.msExchRecipientDisplayType -eq $NULL) -and ($functionTest.objectClass -eq "Contact"))
             {
                 Out-LogFile -string "The object is a contact with a mail attribute - but is not fully exchange enabled."
@@ -141,12 +145,12 @@
             }
             else 
             {
-                Out-LogFile -string "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue." -isError:$true   
+                 throw "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue."
             }
         }
         catch
         {
-            throw "Error in normalized DN."
+            Out-LogFile -string $_ -isError:$true  
         }
 
         Out-LogFile -string "END GET-NormalizedDN"
