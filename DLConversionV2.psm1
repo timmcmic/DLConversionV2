@@ -381,6 +381,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -string "********************************************************************************"
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
     Out-LogFile -string "Getting the original DL Configuration"
@@ -415,6 +419,10 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
     Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
@@ -423,6 +431,10 @@ Function Start-DistributionListMigration
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
 
     #Start with DL membership and normallize.
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
+    Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
 
@@ -516,6 +528,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "The following objects are members of the managedBY:"
         
     out-logfile -string $exchangeManagedBySMTP
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
+    Out-LogFile -string "********************************************************************************"
 
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
