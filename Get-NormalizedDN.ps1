@@ -146,7 +146,7 @@
 
             #At this point we have users that could be added to managedBy or members that are not mail enabled.  This is permissable through ADUC tools and supported with Exchange commands.
 
-            elseif ($functionTest.objectClass -eq "User"))
+            elseif ($functionTest.objectClass -eq "User")
             {
                 Out-LogFile -string "The object is a user only object hopefully in managedBY or USERS."
                     
