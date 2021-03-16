@@ -167,6 +167,7 @@
                 {
                     if ($functionTest.distinguishedname -eq $dn)
                     {
+                        out-logFile -string "The group has permissions to itself - this is permissable - adding to array."
                         #The group has permissions to itself and this is permissiable.
 
                         $functionObject = New-Object PSObject -Property @{
