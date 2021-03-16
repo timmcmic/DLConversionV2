@@ -776,16 +776,57 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
-    Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
-    out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
-    out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
-    out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
-    out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
-    out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
-    out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
-    out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
-    out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
-    out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
+    }
+
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+    }
+
+    if ($exchangeAcceptMessageSMTP -ne NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+    }
+
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+    }
+
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
+    }
+
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+    }
+
+    if ($allGroupsMemberOf -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
+    }
+    
+    if ($allGroupsReject -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
+    }
+    
+    if ($allGroupsAccept -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
+    }
+
+    if ($allGroupsBypassModeration -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
+    }
+    
+    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
