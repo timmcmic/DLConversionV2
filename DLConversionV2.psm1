@@ -786,7 +786,7 @@ Function Start-DistributionListMigration
         out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
     }
 
-    if ($exchangeAcceptMessageSMTP -ne NULL)
+    if ($exchangeAcceptMessageSMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     }
