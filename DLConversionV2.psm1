@@ -676,7 +676,7 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "The group to be migrated is a member of the following groups."
         out-logfile -string $allGroupsMemberOf
-        out-logfile -string ("The number of groups that the migrated DL is a member of ="+$allGroupsMemberOf.count)
+        out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
     }
     else 
     {

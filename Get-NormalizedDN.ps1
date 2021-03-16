@@ -85,7 +85,7 @@
 
             #Check to see if the recipient has a recipient display type.
 
-            if ($functionTest.msExchRecipientDisplayType -ne $NULL)
+            if (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
             {
                 #Check to see if the object has been migrated.
 
@@ -105,7 +105,7 @@
                     }
                 }
 
-                #If the group has not been migrated - take the attributes of the group as is.
+                #If the object is not a migrated object - take the attributes as is.
 
                 else 
                 {
