@@ -82,7 +82,7 @@
             $functionDomain=$functiontest.canonicalName.split("/")
 
             $functionObject = New-Object PSObject -Property @{
-                canonicalName = $group.canonicalName
+                canonicalName = $functionTest.canonicalName
                 canonicalDomainName = $functionDomain[0]
             }
         }
