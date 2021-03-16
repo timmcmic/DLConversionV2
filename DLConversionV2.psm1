@@ -468,16 +468,22 @@ Function Start-DistributionListMigration
         {
             $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
+    }
 
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
         Out-LogFile -string "The following objects are members of the group:"
         
         out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else 
+    {
+        out-logFile -string "The distribution group has no members."    
     }
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
 
     Out-LogFile -string "REJECT USERS"
-
 
     if ($originalDLConfiguration.unAuthOrig -ne $NULL)
     {
@@ -497,10 +503,17 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "The following objects are members of the reject messages from senders:"
+    if ($exchangeRejectMembersSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the reject messages from senders:"
         
-    out-logfile -string $exchangeRejectMessagesSMTP
-
+        out-logfile -string $exchangeRejectMessagesSMTP
+    }
+    else
+    {
+        out-logfile -string "This group has no reject messages from restrictions."    
+    }
+    
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
 
     Out-LogFile -string "ACCEPT USERS"
@@ -523,10 +536,17 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "The following objects are members of the accept messages from senders:"
+    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the accept messages from senders:"
         
-    out-logfile -string $exchangeAcceptMessageSMTP
-
+        out-logfile -string $exchangeAcceptMessageSMTP
+    }
+    else
+    {
+        out-logFile -string "This group has no accept message from restrictions."    
+    }
+    
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members DN to Office 365 identifier."
 
     Out-LogFile -string "Process MANAGEDBY"
@@ -549,9 +569,16 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "The following objects are members of the managedBY:"
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the managedBY:"
         
-    out-logfile -string $exchangeManagedBySMTP
+        out-logfile -string $exchangeManagedBySMTP
+    }
+    else 
+    {
+        out-logfile -string "The group has no managers."    
+    }
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members DN to Office 365 identifier."
 
@@ -565,11 +592,16 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "The following objects are members of the moderatedBY:"
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the moderatedBY:"
         
-    out-logfile -string $exchangeModeratedBySMTP
-
-    'msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink'
+        out-logfile -string $exchangeModeratedBySMTP    
+    }
+    else 
+    {
+        out-logfile "The group has no moderators."    
+    }
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation users members DN to Office 365 identifier."
 
@@ -595,9 +627,18 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "The following objects are members of the bypass moderation:"
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the bypass moderation:"
         
-    out-logfile -string $exchangeBypassModerationSMTP
+        out-logfile -string $exchangeBypassModerationSMTP 
+    }
+    else 
+    {
+        out-logfile "The group has no bypass moderation."    
+    }
+
+
 
 
     Out-LogFile -string "********************************************************************************"
@@ -613,8 +654,39 @@ Function Start-DistributionListMigration
 
     #At this point we have obtained all the information relevant to the individual group.
     #It is possible that this group was a member of - or other groups have a dependency on this group.
-    #We will implement a function to track those dependencies.
+    #We will implement a function to track those dependen$ocies.
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
+    Out-LogFile -string "********************************************************************************"
+
+    out-logfile -string ("Get all the groups that this user is a member of - normalize to canonicalname.")
+
+    if ($originalDLConfiguration.memberOf -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($group in $originalDLConfiguration.memberof)
+        {
+            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distringuishedname
+        }
+    }
+    else
+    {
+        out-logFile -string "This group is not a member of other groups."
+    }
+
+    if ($allGroupsMemberOf -ne $NULL)
+    {
+        out-logFile -string "The group to be migrated is a member of the following groups."
+        out-logfile -string $allGroupsMemberOf
+        out-logfile -string ("The number of groups that the migrated DL is a member of ="+$allGroupsMemberOf.count)
+    }
+
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
+    Out-LogFile -string "********************************************************************************"
 
 
 
