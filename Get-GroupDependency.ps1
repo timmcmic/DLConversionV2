@@ -80,7 +80,7 @@
 
                 foreach ($dn in $functionTest)
                 {
-                    $functionObject+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $dn.distinguishedname
+                    $functionObject+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $dn.DistinguishedName
                 }
             }
         }
