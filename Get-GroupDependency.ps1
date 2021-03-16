@@ -78,9 +78,11 @@
                 out-logFile -string "Groups were found with the requested dependency."
                 out-logfile -string "Normalizing DN to Canonical Name"
 
-                foreach ($dn in $functionTest)
+                out-logfile -string $functionTest
+
+                foreach ($group in $functionTest)
                 {
-                    $functionObject+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $dn.DistinguishedName
+                    $functionObject+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $group.DistinguishedName
                 }
             }
         }
