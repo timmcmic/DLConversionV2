@@ -118,6 +118,7 @@ Function Start-DistributionListMigration
     [array]$exchangeRejectMessagesSMTP=$NULL
     [array]$exchangeAcceptMessageSMTP=$NULL
     [array]$exchangeManagedBySMTP=$NULL
+    [array]$exchangeModeratedBySMTP=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -529,6 +530,22 @@ Function Start-DistributionListMigration
         
     out-logfile -string $exchangeManagedBySMTP
 
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process MODERATEDBY"
+
+    if ($originalDLConfiguration.msExchModeratedByLink -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
+        {
+            $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "The following objects are members of the moderatedBY:"
+        
+    out-logfile -string $exchangeModeratedBySMTP
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
@@ -537,6 +554,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
     out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
+    out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
 
 
     Out-LogFile -string "================================================================================"
