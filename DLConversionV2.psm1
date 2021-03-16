@@ -777,7 +777,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
     Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
-    out-xmlfile -itemtoexport $exchangeRejectMembersSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+    out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
     out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
     out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
