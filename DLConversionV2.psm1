@@ -666,9 +666,9 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($group in $originalDLConfiguration.memberof)
+        foreach ($DN in $originalDLConfiguration.memberof)
         {
-            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distringuishedname
+            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN
         }
     }
 
