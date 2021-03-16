@@ -102,7 +102,7 @@ Function Start-DistributionListMigration
     [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
     [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
     [string]$globalCatalogPort=":3268"
-    [string]$globalCatalogWithPort=$globalCatalog+$globalCatalogPort
+    [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
 
     #The variables below are utilized to define working parameter sets.
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
@@ -199,6 +199,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "VARIABLES"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
+
+    out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
+
     out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremsiesExchange)
 
     Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
@@ -212,6 +216,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
 
     Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
+
+    out-logFile -string ("Static property for accept messages from members = "+$acceptMessagesFromDLMembers)
 
     Out-LogFile -string ("DL Properties to collect = ")
 
