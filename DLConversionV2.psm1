@@ -257,16 +257,16 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
 
-    Out-LogFile -string $exchangeDLMembershipSMTPXML
-    Out-LogFile -string $exchangeRejectMessagesSMTPXML
-    Out-LogFile -string $exchangeAcceptMessagesSMTPXML
-    Out-LogFile -string $exchangeManagedBySMTPXML
-    Out-LogFile -string $exchangeModeratedBySMTPXML
-    Out-LogFile -string $exchangeBypassModerationSMTPXML
-    Out-LogFile -string $allGroupsMemberOfXML
-    Out-LogFile -string $allGroupsRejectXML
-    Out-LogFile -string $allGroupsAcceptXML
-    Out-LogFile -string $allGroupsBypassModerationXML
+    Out-LogFile -string ("Exchange DL members XML Name - "+$exchangeDLMembershipSMTPXML)
+    Out-LogFile -string ("Exchange Reject members XML Name - "+$exchangeRejectMessagesSMTPXML)
+    Out-LogFile -string ("Exchange Accept members XML Name - "+$exchangeAcceptMessagesSMTPXML)
+    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$exchangeManagedBySMTPXML)
+    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$exchangeModeratedBySMTPXML)
+    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$exchangeBypassModerationSMTPXML)
+    Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
+    Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
+    Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
+    Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
 
     Out-LogFile -string "********************************************************************************"
 
