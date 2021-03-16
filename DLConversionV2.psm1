@@ -706,25 +706,6 @@ Function Start-DistributionListMigration
         out-logfile -string "No groups were found with accept rights for the migrated DL."
     }
 
-     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
-
-     Out-LogFile -string "Calling get-groupDependency for Bypass Moderation"
-     
-     $allGroupsBypassModeration = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $bypassModerationFromDL
-
-     if ($allGroupsBypassModeration-ne $NULL)
-     {
-         #Groups were found that the migrated group had accept permissions.
- 
-         out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
-         out-logfile -string $allGroupsBypassModeration
-         out-logfile -string ("The number of other groups with accept rights = "+$allGroupsBypassModeration.count)
-     }
-     else
-     {
-         out-logfile -string "No groups were found with reject rights for the migrated DL."
-     }
-
     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
     Out-LogFile -string "Calling get-groupDependency for Reject Messages From"
@@ -738,6 +719,25 @@ Function Start-DistributionListMigration
         out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
         out-logfile -string $allGroupsReject
         out-logfile -string ("The number of other groups with accept rights = "+$allGroupsReject.count)
+    }
+    else
+    {
+        out-logfile -string "No groups were found with reject rights for the migrated DL."
+    }
+
+    #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
+
+    Out-LogFile -string "Calling get-groupDependency for Bypass Moderation"
+     
+    $allGroupsBypassModeration = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $bypassModerationFromDL
+
+    if ($allGroupsBypassModeration-ne $NULL)
+    {
+        #Groups were found that the migrated group had accept permissions.
+
+        out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
+        out-logfile -string $allGroupsBypassModeration
+        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsBypassModeration.count)
     }
     else
     {
