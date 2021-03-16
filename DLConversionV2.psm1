@@ -119,6 +119,7 @@ Function Start-DistributionListMigration
     [array]$exchangeAcceptMessageSMTP=$NULL
     [array]$exchangeManagedBySMTP=$NULL
     [array]$exchangeModeratedBySMTP=$NULL
+    [array]$exchangeBypassModerationSMTP=$NULL
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -546,6 +547,37 @@ Function Start-DistributionListMigration
         
     out-logfile -string $exchangeModeratedBySMTP
 
+    'msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink'
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation users members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process BYPASS USERS"
+
+    if ($originalDLConfiguration.msExchBypassModerationLink -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
+        {
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation groups members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process BYPASS GROUPS"
+
+    if ($originalDLConfiguration.msExchBypassModerationFromDLMembersLink -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
+        {
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+        }
+    }
+
+    Out-LogFile -string "The following objects are members of the bypass moderation:"
+        
+    out-logfile -string $exchangeBypassModerationSMTP
+
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
@@ -555,6 +587,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
+    out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
 
 
     Out-LogFile -string "================================================================================"
