@@ -45,7 +45,7 @@
         #Declare function variables.
 
         $functionTest=$NULL #Holds the return information for the group query.
-        $functionObjectArray=$NULL #This is used to hold the object that will be returned.
+        [array]$functionObjectArray=$NULL #This is used to hold the object that will be returned.
 
         #Start function processing.
 
@@ -78,11 +78,9 @@
                 out-logFile -string "Groups were found with the requested dependency."
                 out-logfile -string "Normalizing DN to Canonical Name"
 
-                out-logfile -string $functionTest
-
                 foreach ($group in $functionTest)
                 {
-                    $functionObject+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $group.DistinguishedName
+                    $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $group.DistinguishedName
                 }
             }
         }
