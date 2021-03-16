@@ -60,7 +60,7 @@
         {
             Out-LogFile -string "Attempting to find the AD object associated with the member."
 
-            $functionTest = get-adObject -filter "distinguishedname -eq '$dn'" -properties * -errorAction STOP
+            $functionTest = get-adObject -filter --% "distinguishedname -eq '$dn'" -properties * -errorAction STOP
 
             if ($functionTest -eq $NULL)
             {
