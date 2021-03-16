@@ -57,7 +57,7 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
-        out-logfile -string ("Attribute Type = "$attributeType)
+        out-logfile -string ("Attribute Type = "+$attributeType)
         
         #Get the specific user using ad providers.
         
@@ -88,6 +88,6 @@
         {
             Out-LogFile -string $_ -isError:$TRUE
         }
-              
+
         return $functionObject
     }
