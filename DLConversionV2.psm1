@@ -533,15 +533,14 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($exchangeRejectMembersSMTP -ne $NULL)
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
-        Out-LogFile -string "The following objects are members of the reject messages from senders:"
-        
-        out-logfile -string $exchangeRejectMessagesSMTP
+        out-file -string "The group has reject messages members."
+        Out-File -string $exchangeRejectMessagesSMTP
     }
-    else
+    else 
     {
-        out-logfile -string "This group has no reject messages from restrictions."    
+        out-file "The group to be migrated has no reject messages from members."    
     }
     
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
