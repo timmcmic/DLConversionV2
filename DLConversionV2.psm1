@@ -757,7 +757,7 @@ Function Start-DistributionListMigration
      
     $allGroupsBypassModeration = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $bypassModerationFromDL
 
-    if ($allGroupsBypassModeration-ne $NULL)
+    if ($allGroupsBypassModeration -ne $NULL)
     {
         #Groups were found that the migrated group had accept permissions.
 
