@@ -523,26 +523,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    Out-LogFile -string "REJECT GROUPS"
-
-    if ($originalDLConfiguration.dlMemRejectPerms -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
-        {
-            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
-        }
-    }
-
-    if ($exchangeRejectMembersSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the reject messages from senders:"
-        
-        out-logfile -string $exchangeRejectMessagesSMTP
-    }
-    else
-    {
-        out-logfile -string "This group has no reject messages from restrictions."    
-    }
+    
     
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
 
