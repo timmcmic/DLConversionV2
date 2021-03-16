@@ -671,16 +671,16 @@ Function Start-DistributionListMigration
             $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distringuishedname
         }
     }
-    else
-    {
-        out-logFile -string "This group is not a member of other groups."
-    }
 
     if ($allGroupsMemberOf -ne $NULL)
     {
         out-logFile -string "The group to be migrated is a member of the following groups."
         out-logfile -string $allGroupsMemberOf
         out-logfile -string ("The number of groups that the migrated DL is a member of ="+$allGroupsMemberOf.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
     }
 
 
