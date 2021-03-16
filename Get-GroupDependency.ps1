@@ -89,5 +89,5 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        return $functionObject
+        return $functionObjectArray
     }
