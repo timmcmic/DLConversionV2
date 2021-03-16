@@ -121,14 +121,29 @@ Function Start-DistributionListMigration
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
-    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
-    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
     [array]$exchangeDLMembershipSMTP=$NULL #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=$NULL #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessageSMTP=$NULL #Array of members with accept permissions from AD.
     [array]$exchangeManagedBySMTP=$NULL #Array of members with manage by rights from AD.
     [array]$exchangeModeratedBySMTP=$NULL #Array of members  with moderation rights.
     [array]$exchangeBypassModerationSMTP=$NULL #Array of objects with bypass moderation rights from AD.
+
+    #Define XML files to contain backups.
+
+    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
+    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
+    [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
+    [string]$exchangeDLMembershipSMTPXML = "exchangeDLMemberShipSMTPXML"
+    [string]$exchangeRejectMessagesSMTPXML = "exchangeRejectMessagesSMTPXML"
+    [string]$exchangeAcceptMessagesSMTPXML = "exchangeAcceptMessagesSMTPXML"
+    [string]$exchangeManagedBySMTPXML = "exchangeManagedBySMTPXML"
+    [string]$exchangeModeratedBySMTPXML = "exchangeModeratedBYSMTPXML"
+    [string]$exchangeBypassModerationSMTPXML = "exchangeBypassModerationSMTPXML"
+    [string]$allGroupsMemberOfXML = "allGroupsMemberOfXML"
+    [string]$allGroupsRejectXML = "allGroupsRejectXML"
+    [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
+    [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
+
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -141,7 +156,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
-    $office365DLConfigurationXML = "office365DLConfigurationXML"
+
 
     #Log start of DL migration to the log file.
 
@@ -241,6 +256,17 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
 
     Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
+
+    Out-LogFile -string $exchangeDLMembershipSMTPXML
+    Out-LogFile -string $exchangeRejectMessagesSMTPXML
+    Out-LogFile -string $exchangeAcceptMessagesSMTPXML
+    Out-LogFile -string $exchangeManagedBySMTPXML
+    Out-LogFile -string $exchangeModeratedBySMTPXML
+    Out-LogFile -string $exchangeBypassModerationSMTPXML
+    Out-LogFile -string $allGroupsMemberOfXML
+    Out-LogFile -string $allGroupsRejectXML
+    Out-LogFile -string $allGroupsAcceptXML
+    Out-LogFile -string $allGroupsBypassModerationXML
 
     Out-LogFile -string "********************************************************************************"
 
@@ -749,7 +775,18 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
 
+    Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
+    Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
+    out-xmlfile -itemtoexport $exchangeRejectMembersSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+    out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+    out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+    out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTP
+    out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+    out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
+    out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
+    out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
+    out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
