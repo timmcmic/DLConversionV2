@@ -108,7 +108,8 @@ Function Start-DistributionListMigration
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
     
     [string]$acceptMessagesFromDLMembers="dlMemSubmitPerms" #Attribute for the allow email members.
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms',$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
+    [string]$rejectMessagesFromDLMembers="dlMemRejectPerms"
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -219,6 +220,9 @@ Function Start-DistributionListMigration
 
     out-logFile -string ("Static property for accept messages from members = "+$acceptMessagesFromDLMembers)
 
+    out-logFile -string ("Static property for accept messages from members = "+$rejectMessagesFromDLMembers)
+
+   
     Out-LogFile -string ("DL Properties to collect = ")
 
     foreach ($dlProperty in $dlPropertySet)
@@ -699,6 +703,23 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No groups were found with accept rights for the migrated DL."
     }
+
+     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
+
+     $rejectMessagesFromDLMembers = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
+
+     if ($rejectMessagesFromDLMembers -ne $NULL)
+     {
+         #Groups were found that the migrated group had accept permissions.
+ 
+         out-logfile -string "Groups were found that the distribution list to be migrated had accept messages from members set."
+         out-logfile -string $rejectMessagesFromDLMembers
+         out-logfile -string ("The number of other groups with accept rights = "+$rejectMessagesFromDLMembers.count)
+     }
+     else
+     {
+         out-logfile -string "No groups were found with accept rights for the migrated DL."
+     }
 
 
     Out-LogFile -string "********************************************************************************"
