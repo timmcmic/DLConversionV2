@@ -70,7 +70,7 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Get-ADGroup -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -errorAction STOP
+            $functionDLConfiguration=Get-ADGroup -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -errorAction STOP
 
             #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
