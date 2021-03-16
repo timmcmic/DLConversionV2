@@ -101,25 +101,41 @@ Function Start-DistributionListMigration
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
     [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
     [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms','dlMemSubmitPerms','extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
+    [string]$globalCatalogPort=":3268"
+    [string]$globalCatalogWithPort=$globalCatalog+$globalCatalogPort
+
+    #The variables below are utilized to define working parameter sets.
+    #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
+    
+    [string]$acceptMessagesFromDLMembers="dlMemSubmitPerms" #Attribute for the allow email members.
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname','dlMemRejectPerms',$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange"
-    [boolean]$exchangeServerAllowRedirection = $TRUE
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell"
+    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
+    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
+    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
 
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
-    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML"
-    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML"
-    [array]$exchangeDLMembershipSMTP=$NULL
-    [array]$exchangeRejectMessagesSMTP=$NULL
-    [array]$exchangeAcceptMessageSMTP=$NULL
-    [array]$exchangeManagedBySMTP=$NULL
-    [array]$exchangeModeratedBySMTP=$NULL
-    [array]$exchangeBypassModerationSMTP=$NULL
+    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
+    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
+    [array]$exchangeDLMembershipSMTP=$NULL #Array of DL membership from AD.
+    [array]$exchangeRejectMessagesSMTP=$NULL #Array of members with reject permissions from AD.
+    [array]$exchangeAcceptMessageSMTP=$NULL #Array of members with accept permissions from AD.
+    [array]$exchangeManagedBySMTP=$NULL #Array of members with manage by rights from AD.
+    [array]$exchangeModeratedBySMTP=$NULL #Array of members  with moderation rights.
+    [array]$exchangeBypassModerationSMTP=$NULL #Array of objects with bypass moderation rights from AD.
+
+    #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
+
+    [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
+    [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
+    [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
+    [array]$allGroupsManagedBy=$NULL #Complete AD information for all groups that the migrated group has managed by.
+    [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
+
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -391,7 +407,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Getting the original DL Configuration"
 
-    $originalDLConfiguration = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySet -errorAction STOP
+    $originalDLConfiguration = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
 
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
@@ -444,7 +460,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.members)
         {
-            $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
 
         Out-LogFile -string "The following objects are members of the group:"
@@ -461,7 +477,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
         {
-            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -471,7 +487,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
         {
-            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -487,7 +503,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.AuthOrig)
         {
-            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -497,7 +513,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
-            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -513,7 +529,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.managedBy)
         {
-            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -523,7 +539,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
         {
-            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -539,7 +555,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
         {
-            $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -557,7 +573,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
         {
-            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -569,7 +585,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
         {
-            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $DN
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
     }
 
@@ -588,6 +604,12 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
+
+    #At this point we have obtained all the information relevant to the individual group.
+    #It is possible that this group was a member of - or other groups have a dependency on this group.
+    #We will implement a function to track those dependencies.
+
+
 
 
     Out-LogFile -string "================================================================================"

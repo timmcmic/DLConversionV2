@@ -1,11 +1,11 @@
 <#
     .SYNOPSIS
 
-    This function is used to normalize the DN information of users on premises to SMTP addresses utilized in Office 365.
-
+    This function returns the canonicalName associated with a distinguished name.
+    
     .DESCRIPTION
 
-    This function is used to normalize the DN information of users on premises to SMTP addresses utilized in Office 365.
+    This function returns the canonicalName associated with a distinguished name.
 
     .PARAMETER GlobalCatalog
 
@@ -17,14 +17,14 @@
 
     .OUTPUTS
 
-    Selects the mail address of the user by DN and returns the mail address.
+    The canonical name of a given object.
 
     .EXAMPLE
 
-    get-normalizedDN -globalCatalog GC -DN DN
+    get-canonicalName -globalCatalog GC -DN DN
 
     #>
-    Function Get-NormalizedDN
+    Function get-canonicalName
      {
         [cmdletbinding()]
 
@@ -41,6 +41,7 @@
         $functionTest=$NULL #Holds the return information for the group query.
         $functionObject=$NULL #This is used to hold the object that will be returned.
         [string]$functionSMTPAddress=$NULL
+        [string]$globalCatalogServer=$globalCatalogServer+":3268"
 
         #Start function processing.
 

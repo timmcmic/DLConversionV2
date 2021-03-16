@@ -45,7 +45,6 @@
         #Declare function variables.
 
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
-        [string]$globalCatalogServer=$globalCatalogServer+":3268"
 
         #Start function processing.
 
