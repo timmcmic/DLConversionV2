@@ -47,7 +47,6 @@
             else 
             {
                 Out-LogFile -string "The distribution list requested is directory synced."
-
             }
         }
         catch 
