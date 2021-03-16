@@ -683,6 +683,23 @@ Function Start-DistributionListMigration
         out-logfile -string "The group is not a member of any other groups on premises."
     }
 
+    #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
+
+    $allGroupsAccept = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $acceptMessagesFromDLMembers
+
+    if ($allGroupsAccept -ne $NULL)
+    {
+        #Groups were found that the migrated group had accept permissions.
+
+        out-logfile -string "Groups were found that the distribution list to be migrated had accept messages from members set."
+        out-logfile -string $allGroupsAccept
+        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsAccept.count)
+    }
+    else
+    {
+        out-logfile -string "No groups were found with accept rights for the migrated DL."
+    }
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
