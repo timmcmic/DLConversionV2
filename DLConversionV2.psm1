@@ -781,7 +781,7 @@ Function Start-DistributionListMigration
     out-xmlfile -itemtoexport $exchangeRejectMembersSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
     out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
-    out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTP
+    out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
     out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
     out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
     out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
