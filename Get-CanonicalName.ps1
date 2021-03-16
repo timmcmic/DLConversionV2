@@ -84,6 +84,7 @@
             $functionObject = New-Object PSObject -Property @{
                 canonicalName = $group.canonicalName
                 canonicalDomainName = $functionDomain[0]
+            }
         }
         catch
         {
