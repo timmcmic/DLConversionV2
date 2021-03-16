@@ -706,19 +706,19 @@ Function Start-DistributionListMigration
 
      #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
-     $rejectMessagesFromDLMembers = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
+     $allGroupsReject = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
 
-     if ($rejectMessagesFromDLMembers -ne $NULL)
+     if ($allGroupsReject -ne $NULL)
      {
          #Groups were found that the migrated group had accept permissions.
  
-         out-logfile -string "Groups were found that the distribution list to be migrated had accept messages from members set."
-         out-logfile -string $rejectMessagesFromDLMembers
-         out-logfile -string ("The number of other groups with accept rights = "+$rejectMessagesFromDLMembers.count)
+         out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
+         out-logfile -string $allGroupsReject
+         out-logfile -string ("The number of other groups with accept rights = "+$allGroupsReject.count)
      }
      else
      {
-         out-logfile -string "No groups were found with accept rights for the migrated DL."
+         out-logfile -string "No groups were found with reject rights for the migrated DL."
      }
 
 
