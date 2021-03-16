@@ -664,7 +664,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string ("Get all the groups that this user is a member of - normalize to canonicalname.")
+    out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
 
     if ($originalDLConfiguration.memberOf -ne $NULL)
     {
@@ -689,6 +689,8 @@ Function Start-DistributionListMigration
 
     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
+    Out-LogFile -string "Calling get-groupDependency for AcceptMessagesFrom"
+
     $allGroupsAccept = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $acceptMessagesFromDLMembers
 
     if ($allGroupsAccept -ne $NULL)
@@ -706,6 +708,8 @@ Function Start-DistributionListMigration
 
      #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
+     Out-LogFile -string "Calling get-groupDependency for Bypass Moderation"
+     
      $allGroupsBypassModeration = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $bypassModerationFromDL
 
      if ($allGroupsBypassModeration-ne $NULL)
@@ -722,6 +726,8 @@ Function Start-DistributionListMigration
      }
 
     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
+
+    Out-LogFile -string "Calling get-groupDependency for Reject Messages From"
 
     $allGroupsReject = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
 
