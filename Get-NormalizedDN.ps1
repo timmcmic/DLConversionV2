@@ -163,7 +163,16 @@
 
             else 
             {
-                 throw "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue."
+                if ($functionTest.objectClass -eq "Group")
+                {
+                    out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
+                    out-logfile -string $DN
+                    throw ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN)
+                }
+                else 
+                {
+                    throw "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue."
+                }    
             }
         }
         catch
