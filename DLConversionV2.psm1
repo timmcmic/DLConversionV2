@@ -109,7 +109,8 @@ Function Start-DistributionListMigration
     
     [string]$acceptMessagesFromDLMembers="dlMemSubmitPerms" #Attribute for the allow email members.
     [string]$rejectMessagesFromDLMembers="dlMemRejectPerms"
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members','msExchBypassModerationFromDLMembersLink','msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
+    [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -134,7 +135,6 @@ Function Start-DistributionListMigration
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
     [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
     [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
-    [array]$allGroupsManagedBy=$NULL #Complete AD information for all groups that the migrated group has managed by.
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
 
 
@@ -706,21 +706,38 @@ Function Start-DistributionListMigration
 
      #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
-     $allGroupsReject = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
+     $allGroupsBypassModeration = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $bypassModerationFromDL
 
-     if ($allGroupsReject -ne $NULL)
+     if ($allGroupsBypassModeration-ne $NULL)
      {
          #Groups were found that the migrated group had accept permissions.
  
          out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
-         out-logfile -string $allGroupsReject
-         out-logfile -string ("The number of other groups with accept rights = "+$allGroupsReject.count)
+         out-logfile -string $allGroupsBypassModeration
+         out-logfile -string ("The number of other groups with accept rights = "+$allGroupsBypassModeration.count)
      }
      else
      {
          out-logfile -string "No groups were found with reject rights for the migrated DL."
      }
 
+    #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
+
+    $allGroupsReject = get-groupdependency -globalCatalogServer $globalCatalogWithPort -DN $originalDLConfiguration.distinguishedname -attributeType $rejectMessagesFromDLMembers
+
+    if ($allGroupsReject -ne $NULL)
+    {
+        #Groups were found that the migrated group had accept permissions.
+     
+        out-logfile -string "Groups were found that the distribution list to be migrated had reject messages from members set."
+        out-logfile -string $allGroupsReject
+        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsReject.count)
+    }
+    else
+    {
+        out-logfile -string "No groups were found with reject rights for the migrated DL."
+    }
+    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
