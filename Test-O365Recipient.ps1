@@ -60,6 +60,7 @@
         {
             out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
             $functionDirectoryObjectID = $externalDirectoryObjectID.split("_")
+            out-logfile -string ("Modified directory object id to test ="+$functionDirectoryObjectID[1])
         }
         elseif ($userPrincipalName -ne $NULL)
         {
@@ -78,7 +79,7 @@
             {
                 Out-LogFile -string "Testing for recipient by SMTP Address"
 
-                get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
+                #get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
             }
             elseif ($externalDirectoryObjectID -ne $NULL)
             {
