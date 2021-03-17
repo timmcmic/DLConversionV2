@@ -780,7 +780,7 @@ Function Start-DistributionListMigration
 
     #At this time we need to test users and determine if any of them have forwardingAddress set.
 
-    $allUsersForwardingAddress = Get-GroupDependency -globalCatalogServer $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedname -attributeType $forwardingAddressForDL $attributeUserorGroup:User
+    $allUsersForwardingAddress = Get-GroupDependency -globalCatalogServer $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedname -attributeType $forwardingAddressForDL $attributeUserorGroup "User"
     
 
     Out-LogFile -string "********************************************************************************"

@@ -42,7 +42,7 @@
             [string]$attributeType,
             [Parameter(Mandatory = $false)]
             [ValidateSet("User","UserSMTP","Group")]
-            [string]$attributeUserorGroup="GROUP"
+            [string]$attributeUserorGroup="Group"
         )
 
         #Declare function variables.
