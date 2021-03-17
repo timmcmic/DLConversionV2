@@ -84,6 +84,7 @@
             $functionObject = New-Object PSObject -Property @{
                 canonicalName = $functionTest.canonicalName
                 canonicalDomainName = $functionDomain[0]
+                distinguishedName = $functiontest.distinguishedName
             }
         }
         catch

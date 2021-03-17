@@ -84,7 +84,9 @@ Function Start-DistributionListMigration
         [string]$exchangeOnlineCertificateThumbPrint=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
-        [string]$exchangeAuthenticationMethod="Basic"
+        [string]$exchangeAuthenticationMethod="Basic",
+        [Parameter(Mandatory = $false)]
+        [boolen]$retainOffice365Settings=$false
     )
 
     #Define global variables.
@@ -208,6 +210,8 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
+
+    out-logfile -string ("Retain Office 365 Settings = "+$retainOffice365Settings)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1033,6 +1037,12 @@ Function Start-DistributionListMigration
             }
         }
     }
+
+    #Ok so at this point we have preserved all of the information regarding the on premises DL.
+    #It is possible that there could be cloud only objects that this group was made dependent on.
+    #For example - the dirSync group could have been added as a member of a cloud only group - or another group that was migrated.
+    #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
+    #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
 
     Out-LogFile -string "********************************************************************************"

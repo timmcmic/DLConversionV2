@@ -39,7 +39,10 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
-            [string]$attributeType
+            [string]$attributeType,
+            [Parameter(Mandatory = $false)]
+            [Validation("User","Group")]
+            [string]$attributeUserorGroup="GROUP"
         )
 
         #Declare function variables.
@@ -58,6 +61,7 @@
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
         out-logfile -string ("Attribute Type = "+$attributeType)
+        out-logfile -string ("Attribute User or Group = "+$attributeUserOrGroup)
         
         #Get the specific user using ad providers.
         
@@ -65,11 +69,14 @@
         {
             Out-LogFile -string "Attempting to search directory for any groups that have the requested dependency."
 
-            $functionTest = get-adgroup -filter {$attributeType -eq $dn} -errorAction STOP
+            if ($attributeUserOrGroup -eq "GROUP")
+            {
+                $functionTest = get-adgroup -filter {$attributeType -eq $dn} -errorAction STOP
+            }
 
             if ($functionTest -eq $NULL)
             {
-                out-logfile -string "There were no groups with the request dependency."
+                out-logfile -string "There were no groups or users with the request dependency."
             }
             else 
             {
@@ -78,9 +85,9 @@
                 out-logFile -string "Groups were found with the requested dependency."
                 out-logfile -string "Normalizing DN to Canonical Name"
 
-                foreach ($group in $functionTest)
+                foreach ($member in $functionTest)
                 {
-                    $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $group.DistinguishedName
+                    $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $member.DistinguishedName
                 }
             }
         }
