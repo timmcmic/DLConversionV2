@@ -843,6 +843,8 @@ Function Start-DistributionListMigration
             {
                 out-LogFile -string "Testing based on External Directory Object ID"
                 out-logfile -string $member.ExternalDirectoryObjectID
+
+                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID
             }
         }
     }

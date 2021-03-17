@@ -42,6 +42,7 @@
         #Declare local variables.
 
         $functionDirectoryObjectID = $NULL
+        $functionTest=$NULL
 
         #Start function processing.
 
@@ -81,8 +82,11 @@
             }
             elseif ($externalDirectoryObjectID -ne $NULL)
             {
-                Out-LogFile -string "Testing for recipient by exteral directory object id."
-                get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                Out-LogFile -string "Function received external directory object ID to test."
+
+                $functionTest=get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+
+                out-logfile -string $functionTest
             }
             elseif ($userPrincipalName -ne $NULL)
             {
