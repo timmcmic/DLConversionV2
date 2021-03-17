@@ -900,22 +900,138 @@ Function Start-DistributionListMigration
 
     if ($exchangeAcceptMessageSMTP -ne $NULL)
     {
-        
+        out-logfile -string "Ensuring each accept messages member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeAcceptMessageSMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on External Directory Object ID"
+                out-logfile -string $member.ExternalDirectoryObjectID
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on Primary SMTP Address"
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
+            {
+                out-LogFile -string "Testing based on user principal name."
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+            }
+        }
     }
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        
+        out-logfile -string "Ensuring each managedBy messages member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeManagedBySMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on External Directory Object ID"
+                out-logfile -string $member.ExternalDirectoryObjectID
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on Primary SMTP Address"
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
+            {
+                out-LogFile -string "Testing based on user principal name."
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+            }
+        }
     }
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
-        
+        out-logfile -string "Ensuring each moderatedby member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeModeratedBySMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on External Directory Object ID"
+                out-logfile -string $member.ExternalDirectoryObjectID
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on Primary SMTP Address"
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
+            {
+                out-LogFile -string "Testing based on user principal name."
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+            }
+        }
     }
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
-        
+        out-logfile -string "Ensuring each bypass moderation member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeBypassModerationSMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on External Directory Object ID"
+                out-logfile -string $member.ExternalDirectoryObjectID
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on Primary SMTP Address"
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
+            {
+                out-LogFile -string "Testing based on user principal name."
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+            }
+        }
     }
 
 
