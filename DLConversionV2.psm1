@@ -1084,7 +1084,10 @@ Function Start-DistributionListMigration
 
         $allOffice365DistributionGroups = get-office365groups -groupType "Normal"
 
-        out-logfile -string $allOffice365DistributionGroups
+        foreach ($group in $allOffice365DistributionGroups)
+        {
+            out-logfile -string $group
+        }
     }
 
     Out-LogFile -string "********************************************************************************"

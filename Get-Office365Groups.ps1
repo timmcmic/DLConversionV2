@@ -56,14 +56,7 @@
             {
                 Out-LogFile -string "Locating all non-dir synced distribution groups."
 
-                $functionCommand = "get-o365DistributionGroup -resultsize unlimited -filter { IsDirSynced -eq `$FALSE}"
-
-                $groups=get-o365DistributionGroup -resultsize unlimited
-                out-logFile -string $groups.count
-                
-                $functionGroups = Invoke-Expression $functionCommand
-
-                out-logfile -string $functionGroups
+                $functionGroups = get-O365DistributionGroup -resultsize unlimited   
             }
             
             Out-LogFile -string "All cloud only groups were located."
