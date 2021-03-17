@@ -837,27 +837,27 @@ Function Start-DistributionListMigration
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+        
     }
 
     if ($exchangeAcceptMessageSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+        
     }
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+        
     }
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
+        
     }
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+        
     }
 
 
