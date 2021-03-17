@@ -59,6 +59,7 @@
         {
             out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
             $functionDirectoryObjectID = $externalDirectoryObjectID.split("_")
+            out-logfile -string $functionDirectoryObjectID
         }
         elseif ($userPrincipalName -ne $NULL)
         {
@@ -77,7 +78,7 @@
             {
                 Out-LogFile -string "Testing for recipient by SMTP Address"
 
-                get-o365recipient -identity $recipientSMTPAddress -errorAction STOP
+                get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
             }
             elseif ($externalDirectoryObjectID -ne $NULL)
             {
