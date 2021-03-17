@@ -781,6 +781,20 @@ Function Start-DistributionListMigration
     #At this time we need to test users and determine if any of them have forwardingAddress set.
 
     $allUsersForwardingAddress = Get-GroupDependency -globalCatalogServer $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedname -attributeType $forwardingAddressForDL -attributeUserorGroup "User"
+
+    if ( $allUsersForwardingAddress -ne $NULL)
+    {
+        #Groups were found that the migrated group had accept permissions.
+
+        out-logfile -string "Users were found that were set to forward to the distribution group that is being migrated."
+        out-logfile -string  $allUsersForwardingAddress
+        out-logfile -string ("The number of other groups with accept rights = "+$allUsersForwardingAddress.count)
+    }
+    else
+    {
+        out-logfile -string "No groups were found with the forwarding to the migrated DL."
+    }
+
     
 
     Out-LogFile -string "********************************************************************************"
