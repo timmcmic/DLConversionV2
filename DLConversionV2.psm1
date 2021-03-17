@@ -833,6 +833,12 @@ Function Start-DistributionListMigration
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeDLMembershipSMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+        }
     }
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
