@@ -156,7 +156,11 @@ Function Start-DistributionListMigration
     [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
     [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
-    [array]$allUsersForwardingAddress=$NULL
+    [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
+
+    #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
+
+    [array]$allOffice365DistributionGroups=$NULL
 
 
     #Cloud variables for the distribution list to be migrated.
@@ -852,6 +856,11 @@ Function Start-DistributionListMigration
     {
         out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
     }
+
+    if ($allUsersForwardingAddress -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $allUsersForwardingAddressXML
+    }
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -1067,6 +1076,16 @@ Function Start-DistributionListMigration
     #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
     #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
+    if ($retainOffice365Settings -eq $TRUE)
+    {
+        out-logFile -string "Office 365 settings are to be retained."
+
+        out-LogFile -string "Getting all office 365 distribution groups."
+
+        $allOffice365DistributionGroups = get-office365groups -groupType "Normal"
+
+        out-logfile -string $allOffice365DistributionGroups
+    }
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
