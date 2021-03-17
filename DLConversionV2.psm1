@@ -836,6 +836,9 @@ Function Start-DistributionListMigration
 
         foreach ($object in $exchangeDLMembershipSMTP)
         {
+            out-logFile -string "Testing:"
+            out-logfile -string $object
+
             if ($object.recipientoruser -eq "Recipient")
             {
                 out-logfile -string "The object is a recipient."
@@ -846,7 +849,7 @@ Function Start-DistributionListMigration
 
                     test-o365recipient -externalDirectoryObjectID $object.externalDirectoryObjectID
                 }
-                elseif ($object.primaySMTPAddressOrUPN -ne $NULL)
+                elseif ($object.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-logFile -string ("Object has primary SMTP Address: "+$object.PrimarySMTPAddress)
 
