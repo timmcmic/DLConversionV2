@@ -83,7 +83,8 @@
 
                 $functionTest=get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
 
-                out-logfile -string $functionTest
+                out-logfile -string $functionTest.externalDirectoryObjectID
+                out-logfile -string $functionTest.primarySMTPAddress
             }
             elseif ($userPrincipalName -ne $NULL)
             {

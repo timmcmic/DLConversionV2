@@ -839,12 +839,21 @@ Function Start-DistributionListMigration
             out-LogFile -string "Testing"
             out-logfile -string $member
 
-            if ($member.externalDirectoryObjectID -ne $NULL)
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
             {
                 out-LogFile -string "Testing based on External Directory Object ID"
                 out-logfile -string $member.ExternalDirectoryObjectID
+                out-logfile -string $member.recipientOrUser
 
                 test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+            }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
+            {
+                out-LogFile -string "Testing based on Primary SMTP Address"
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+
+                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
             }
         }
     }
