@@ -34,7 +34,9 @@
             [Parameter(Mandatory = $false)]
             [string]$recipientSMTPAddress=$NULL,
             [Parameter(Mandatory = $false)]
-            [string]$externalDirectoryObjectID=$NULL
+            [string]$externalDirectoryObjectID=$NULL,
+            [Parameter(Mandatory = $false)]
+            [string]$userPrincipalName=$NULL
         )
 
         #Declare local variables.
@@ -58,6 +60,10 @@
             out-logfile -string ("External directory object id to test = "$externalDirectoryObjectID)
             $functionDirectoryObjectID = $externalDirectoryObjectID.split("_")
         }
+        elseif ($userPrincipalName -ne $NULL)
+        {
+            out-logfile -string ("User principal name to test = "+$userPrincipalName)
+        }
         else 
         {
             out-logfile -string "Function called without parameter - failure." -isError:$TRUE    
@@ -69,20 +75,21 @@
         {
             if ($recipientSMTPAddress -ne $NULL)
             {
-                Out-File -string "Testing for recipient by SMTP Address"
+                Out-LogFile -string "Testing for recipient by SMTP Address"
 
-                get-o365recipient -identity $recipientSMTPAddress
+                get-o365recipient -identity $recipientSMTPAddress -errorAction STOP
             }
             elseif ($externalDirectoryObjectID -ne $NULL)
             {
-                Out-File -string "Testing for recipient by exteral directory object id."
-                get-o365Recipient -identity $functionDirectoryObjectID[1]
+                Out-LogFile -string "Testing for recipient by exteral directory object id."
+                get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
             }
-            Out-LogFile -string "Test if recipient exists in Exchange Online."
+            elseif ($userPrincipalName -ne $NULL)
+            {
+                Out-LogFile -string "Testing for user by user principal name."
 
-            get-O365DistributionGroup -identity $groupSMTPAddress -errorAction STOP
-            
-            Out-LogFile -string "Original DL configuration found and recorded."
+                get-o365User -identity $userPrincipalName -errorAction STOP
+            }
         }
         catch 
         {
