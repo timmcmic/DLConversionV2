@@ -34,6 +34,7 @@
         #Declare function variables.
 
         $functionGroups=$NULL #Holds the return information for the group query.
+        $functionCommand=$NULL #Command to hold the invoke expression.
 
         #Start function processing.
 
@@ -55,7 +56,11 @@
             {
                 Out-LogFile -string "Locating all non-dir synced distribution groups."
 
-                $functionGroups = get-O365DistributionGroup -resultsize unlimited -filter {isDirSynced -eq $FALSE} -errorAction STOP
+                $functionCommand = "get-o365DistributionGroup -resultsize unlimited -filter { IsDirSynced -eq `$FALSE}"
+
+			    $functionAllCloudOnlyGroups = 
+
+                $functionGroups = Invoke-Expression $functionCommand
 
                 out-logfile -string $functionGroups
             }
