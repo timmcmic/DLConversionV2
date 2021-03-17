@@ -57,7 +57,7 @@
         }
         elseif ($externalDirectoryObjectID -ne $NULL)
         {
-            out-logfile -string ("External directory object id to test = "$externalDirectoryObjectID)
+            out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
             $functionDirectoryObjectID = $externalDirectoryObjectID.split("_")
         }
         elseif ($userPrincipalName -ne $NULL)
