@@ -67,11 +67,15 @@
         
         try 
         {
-            Out-LogFile -string "Attempting to search directory for any groups that have the requested dependency."
+            Out-LogFile -string "Attempting to search directory for any groups or users that have the requested dependency."
 
             if ($attributeUserOrGroup -eq "GROUP")
             {
                 $functionTest = get-adgroup -filter {$attributeType -eq $dn} -errorAction STOP
+            }
+            elseif ($attributeUserOrGroup -eq "User")
+            {
+                $functionTest = get-adUser -filter {$attributeType -eq $DN} -errorAction STOP
             }
 
             if ($functionTest -eq $NULL)

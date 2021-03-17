@@ -66,7 +66,6 @@
             if ($userOrGroup -eq "GROUP")
             {
                 $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
-
             }
 
             if ($functionTest -eq $NULL)
