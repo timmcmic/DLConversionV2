@@ -35,7 +35,7 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("User","UserSMTP","Group")]
+            [ValidateSet("User","Group")]
             [string]$userOrGroup="Group"
         )
 
