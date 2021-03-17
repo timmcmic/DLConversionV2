@@ -43,6 +43,7 @@
 
         [array]$functionDirectoryObjectID = $NULL
         $functionTest=$NULL
+        [string]$errorID=$NULL
 
         #Start function processing.
 
@@ -83,6 +84,8 @@
             {
                 Out-LogFile -string "Testing for recipient by SMTP Address"
 
+                $errorID = $recipientSMTPAddress
+
                 $functionTest=get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
 
                 out-logfile -string $functionTest.externalDirectoryObjectID
@@ -91,6 +94,8 @@
             elseif ($externalDirectoryObjectID -ne "None")
             {
                 Out-LogFile -string "Function received external directory object ID to test."
+
+                $errorID = $externalDirectoryObjectID
 
                 $functionTest=get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
 
@@ -101,6 +106,8 @@
             {
                 Out-LogFile -string "Testing for user by user principal name."
 
+                $errorid = $userPrincipalName
+
                 $functionTest=get-o365User -identity $userPrincipalName -errorAction STOP
 
                 out-logfile -string $functionTest.externalDirectoryObjectID
@@ -109,6 +116,8 @@
         }
         catch 
         {
+            out-logfile -string "The recipient was not found in Office 365.  The migrateion cannot proceed."
+            out-logfile -string $errorID
             Out-LogFile -string $_ -isError:$TRUE
         }
 
