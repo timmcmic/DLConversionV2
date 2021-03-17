@@ -91,7 +91,14 @@
 
                 foreach ($member in $functionTest)
                 {
-                    $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $member.DistinguishedName
+                    if ($attributeUserOrGroup -eq "GROUP")
+                    {
+                        $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $member.DistinguishedName
+                    }
+                    else 
+                    {
+                        $functionObjectArray+=get-canonicalName -globalCatalogServer $globalCatalogServer -dn $member.DistinguishedName -userOrGroup "User"
+                    }
                 }
             }
         }
