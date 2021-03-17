@@ -34,7 +34,7 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
-            [Paramater(Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [ValidateSet("User","UserSMTP","Group")]
             [string]$userOrGroup="Group"
         )
