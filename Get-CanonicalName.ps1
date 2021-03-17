@@ -33,7 +33,10 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            [string]$DN
+            [string]$DN,
+            [Paramter(Mandator = $true)
+            [ValidateSet("User","UserSMTP","Group")]
+            [string]$userOrGroup="Group"
         )
 
         #Declare function variables.
@@ -52,6 +55,7 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
+        out-logfile -string ("User or Group Attribute = "+$userOrGroup)
         
         #Get the specific user using ad providers.
         
@@ -59,8 +63,12 @@
         {
             Out-LogFile -string "Attempting to get the canonical name of the object."
 
-            $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
+            if ($userOrGroup -eq "GROUP")
+            {
+                $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
 
+            }
+            
             if ($functionTest -eq $NULL)
             {
                 throw "The array member cannot be found by DN in Active Directory."
