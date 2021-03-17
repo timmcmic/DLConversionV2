@@ -71,13 +71,13 @@
         
         try 
         {
-            if ($recipientSMTPAddress -ne $NULL)
+            if ($recipientSMTPAddress -ne "None")
             {
                 Out-LogFile -string "Testing for recipient by SMTP Address"
 
                 #get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
             }
-            elseif ($externalDirectoryObjectID -ne $NULL)
+            elseif ($externalDirectoryObjectID -ne "None")
             {
                 Out-LogFile -string "Function received external directory object ID to test."
 
