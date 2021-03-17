@@ -112,6 +112,7 @@ Function Start-DistributionListMigration
     [string]$acceptMessagesFromDLMembers="dlMemSubmitPerms" #Attribute for the allow email members.
     [string]$rejectMessagesFromDLMembers="dlMemRejectPerms"
     [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
+    [string]$forwardingAddressForDL="altRecipient"
     [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -145,6 +146,8 @@ Function Start-DistributionListMigration
     [string]$allGroupsRejectXML = "allGroupsRejectXML"
     [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
     [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
+    [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
+
 
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
@@ -153,6 +156,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
     [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
+    [array]$allUsersForwardingAddress=$NULL
 
 
     #Cloud variables for the distribution list to be migrated.
@@ -271,6 +275,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
     Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
+    out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -772,6 +777,10 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No groups were found with reject rights for the migrated DL."
     }
+
+    #At this time we need to test users and determine if any of them have forwardingAddress set.
+
+    $allUsersForwardingAddress = Get-GroupDependency -globalCatalogServer $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedname -attributeType $forwardingAddressForDL $attributeUserorGroup "User"
     
 
     Out-LogFile -string "********************************************************************************"
