@@ -52,7 +52,7 @@
 
         #Log the parameters and variables for the function.
 
-        if ($externalDirectoryObjectID -ne "")
+        if ($externalDirectoryObjectID -ne "None")
         {
             out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
 
@@ -61,6 +61,14 @@
             $functionDirectoryObjectID=$externalDirectoryObjectID.Split("_")
 
             out-logfile -string ("Modified external directory object id to test ="+$functionDirectoryObjectID[1])
+        }
+        elseif($recipientSMTPAddress -ne "None")
+        {
+            out-logfile -string ("Recipient SMTP Address to test - "+$recipientSMTPAddress)
+        }
+        elseif($userPrincipalName -ne "None")
+        {
+            out-logfile -string ("User principal name to test - "+$UserprincipalName)
         }
         else 
         {
@@ -89,11 +97,14 @@
                 out-logfile -string $functionTest.externalDirectoryObjectID
                 out-logfile -string $functionTest.primarySMTPAddress
             }
-            elseif ($userPrincipalName -ne $NULL)
+            elseif ($userPrincipalName -ne "None")
             {
                 Out-LogFile -string "Testing for user by user principal name."
 
-                get-o365User -identity $userPrincipalName -errorAction STOP
+                $functionTest=get-o365User -identity $userPrincipalName -errorAction STOP
+
+                out-logfile -string $functionTest.externalDirectoryObjectID
+                out-logfile -string $functionTest.userPrincipalName
             }
         }
         catch 

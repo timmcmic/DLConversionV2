@@ -855,6 +855,12 @@ Function Start-DistributionListMigration
 
                 test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
             }
+            elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
+            {
+                out-LogFile -string "Testing based on user principal name."
+                out-logfile -string $member.PrimarySMTPAddressOrUPN
+                out-logfile -string $member.recipientOrUser
+            }
         }
     }
 
