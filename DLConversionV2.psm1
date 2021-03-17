@@ -832,31 +832,7 @@ Function Start-DistributionListMigration
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
-        Out-LogFile -string "Testing all group members in cloud."
-
-        foreach ($object in $exchangeDLMembershipSMTP)
-        {
-            out-logFile -string "Testing:"
-            out-logfile -string $object
-
-            if ($object.recipientoruser -eq "Recipient")
-            {
-                out-logfile -string "The object is a recipient."
-
-                if ($object.externalDirectoryObjectID -ne $NULL)
-                {
-                    out-logFile -string ("Object has external directory object id: "+$object.externaldirectoryobjectid)
-
-                    test-o365recipient -externalDirectoryObjectID $object.externalDirectoryObjectID
-                }
-                elseif ($object.primarySMTPAddressOrUPN -ne $NULL)
-                {
-                    out-logFile -string ("Object has primary SMTP Address: "+$object.PrimarySMTPAddress)
-
-                    test-o365Recipient -recipientSMTPAddress $object.PrimarySMTPAddressOrUPN
-                }
-            }
-        }
+        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
     }
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
