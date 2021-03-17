@@ -34,7 +34,7 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
-            [Paramter(Mandator = $true)
+            [Paramter(Mandatory = $true)]
             [ValidateSet("User","UserSMTP","Group")]
             [string]$userOrGroup="Group"
         )
@@ -68,7 +68,7 @@
                 $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
 
             }
-            
+
             if ($functionTest -eq $NULL)
             {
                 throw "The array member cannot be found by DN in Active Directory."
