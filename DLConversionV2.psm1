@@ -826,7 +826,65 @@ Function Start-DistributionListMigration
         out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
     }
     
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
     
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-LogFile -string "Testing all group members in cloud."
+
+        foreach ($object in $exchangeDLMembershipSMTP)
+        {
+            if ($object.recipientoruser -eq "Recipient")
+            {
+                out-logfile -string "The object is a recipient."
+
+                if ($object.externalDirectoryObjectID -ne $NULL)
+                {
+                    out-logFile -string ("Object has external directory object id: "+$object.externaldirectoryobjectid)
+
+                    test-o365recipient -externalDirectoryObjectID $object.externalDirectoryObjectID
+                }
+                elseif ($object.primaySMTPAddressOrUPN -ne $NULL)
+                {
+                    out-logFile -string ("Object has primary SMTP Address: "+$object.PrimarySMTPAddress)
+
+                    test-o365Recipient -recipientSMTPAddress $object.PrimarySMTPAddressOrUPN
+                }
+            }
+        }
+    }
+
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+    }
+
+    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+    }
+
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+    }
+
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
+    }
+
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+    }
+
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
