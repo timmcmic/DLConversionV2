@@ -58,8 +58,6 @@
 
                 $functionCommand = "get-o365DistributionGroup -resultsize unlimited -filter { IsDirSynced -eq `$FALSE}"
 
-			    $functionAllCloudOnlyGroups = 
-
                 $functionGroups = Invoke-Expression $functionCommand
 
                 out-logfile -string $functionGroups
