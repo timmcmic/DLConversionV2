@@ -59,6 +59,7 @@
                 $functionGroups = get-O365DistributionGroup -resultsize unlimited -filter { isDirSynced -eq $FALSE }
             }
             
+            out-logFile -string $functionGroups.count
             Out-LogFile -string "All cloud only groups were located."
         }
         catch 
