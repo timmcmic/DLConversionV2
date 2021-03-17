@@ -41,7 +41,7 @@
 
         #Declare local variables.
 
-        $functionDirectoryObjectID = $NULL
+        [array]$functionDirectoryObjectID = $NULL
         $functionTest=$NULL
 
         #Start function processing.
@@ -52,19 +52,15 @@
 
         #Log the parameters and variables for the function.
 
-        if ($recipientSMTPAddress -ne $NULL)
-        {
-            Out-LogFile -string ("SMTP Address to test = "+$recipientSMTPAddress)
-        }
-        elseif ($externalDirectoryObjectID -ne $NULL)
+        if ($externalDirectoryObjectID -ne $NULL)
         {
             out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
-            $functionDirectoryObjectID = $externalDirectoryObjectID.split("_")
-            out-logfile -string ("Modified directory object id to test ="+$functionDirectoryObjectID[1])
-        }
-        elseif ($userPrincipalName -ne $NULL)
-        {
-            out-logfile -string ("User principal name to test = "+$userPrincipalName)
+
+            #Modify the external directory object id.
+
+            $functionDirectoryObjectID=$externalDirectoryObjectID.Split("_")
+
+            out-logfile -string ("Modified external directory object id to test ="+$functionDirectoryObjectID[1])
         }
         else 
         {
