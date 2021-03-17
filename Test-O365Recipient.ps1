@@ -52,7 +52,7 @@
 
         #Log the parameters and variables for the function.
 
-        if ($externalDirectoryObjectID -ne $NULL)
+        if ($externalDirectoryObjectID -ne "")
         {
             out-logfile -string ("External directory object id to test = "+$externalDirectoryObjectID)
 
