@@ -41,7 +41,7 @@
             [Parameter(Mandatory = $TRUE)]
             [string]$attributeType,
             [Parameter(Mandatory = $false)]
-            [Validation("User","Group")]
+            [ValidateSet("User","Group")]
             [string]$attributeUserorGroup="GROUP"
         )
 
