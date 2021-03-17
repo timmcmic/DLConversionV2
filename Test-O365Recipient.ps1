@@ -31,12 +31,12 @@
 
         Param
         (
-            [Parameter(Mandatory = $false)]
-            [string]$recipientSMTPAddress=$NULL,
-            [Parameter(Mandatory = $false)]
-            [string]$externalDirectoryObjectID=$NULL,
-            [Parameter(Mandatory = $false)]
-            [string]$userPrincipalName=$NULL
+            [Parameter(Mandatory = $true)]
+            [string]$recipientSMTPAddress,
+            [Parameter(Mandatory = $true)]
+            [string]$externalDirectoryObjectID,
+            [Parameter(Mandatory = $true)]
+            [string]$userPrincipalName
         )
 
         #Declare local variables.
