@@ -86,9 +86,9 @@
 
                 $errorID = $recipientSMTPAddress
 
-                #$functionTest=get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
+                $functionTest=get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
 
-                $functionTest=get-o365recipient -identity $recipientSMTPAddress -errorAction STOP
+                #$functionTest=get-o365recipient -identity $recipientSMTPAddress -errorAction STOP
 
                 out-logfile -string $functionTest.externalDirectoryObjectID
                 out-logfile -string $functionTest.primarySMTPAddress
@@ -99,8 +99,8 @@
 
                 $errorID = $externalDirectoryObjectID
 
-                #$functionTest=get-exorecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
-                $functionTest=get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                $functionTest=get-exorecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                #$functionTest=get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
 
                 out-logfile -string $functionTest.externalDirectoryObjectID
                 out-logfile -string $functionTest.primarySMTPAddress
