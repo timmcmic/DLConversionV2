@@ -75,7 +75,10 @@
             {
                 Out-LogFile -string "Testing for recipient by SMTP Address"
 
-                #get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
+                $functionTest=get-exorecipient -identity $recipientSMTPAddress -errorAction STOP
+
+                out-logfile -string $functionTest.externalDirectoryObjectID
+                out-logfile -string $functionTest.primarySMTPAddress
             }
             elseif ($externalDirectoryObjectID -ne "None")
             {
