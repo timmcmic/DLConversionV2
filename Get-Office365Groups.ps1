@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [ValidationSet("Normal","Unified")]
+            [ValidateSet("Normal","Unified")]
             [string]$groupType
         )
 
