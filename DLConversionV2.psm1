@@ -86,7 +86,7 @@ Function Start-DistributionListMigration
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
-        [boolen]$retainOffice365Settings=$false
+        [boolean]$retainOffice365Settings=$false
     )
 
     #Define global variables.
