@@ -67,6 +67,10 @@
             {
                 $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
             }
+            if ($userOrGroup -eq "USER")
+            {
+                $functionTest = get-adUser -filter {distinguishedName -eq $dn} -properties canonicalName -errorAction Stop
+            }
 
             if ($functionTest -eq $NULL)
             {
