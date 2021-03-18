@@ -62,7 +62,7 @@
             {
                 Out-LogFile -string "Locating all unified groups groups."
 
-                out-logfile -string ("Count:"+$functiongroups.count)
+                $functionGroups = get-o365UnifiedGroups -resultsize unlimited
             }
             
             Out-LogFile -string "All cloud only groups were located."
