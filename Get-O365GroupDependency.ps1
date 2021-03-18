@@ -65,17 +65,17 @@
 
                 $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                out-logfile -string ("The query exectued is = "+$functionCommand.toString)
-
                 $functionTest = invoke-expression -command $functionCommand
+
+                $functionCommand = "Get-o365Recipient -Filter { ('$attributeType' -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+
+                out-logfile -string ("The function command executed = "$functionCommand)
             }
             else
             {
                 Out-LogFile -string "Entering query office 365 for other multi-valued attribute."
 
                 $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
-
-                out-logfile -string ("The query exectued is = "+$functionCommand.tostring)
 
                 $functionTest = invoke-expression -command $functionCommand            
             }
