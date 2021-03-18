@@ -113,6 +113,7 @@ Function Start-DistributionListMigration
     [string]$rejectMessagesFromDLMembers="dlMemRejectPerms"
     [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
     [string]$forwardingAddressForDL="altRecipient"
+    [string]$grantSendOnBehalfToDL="publicDelegates"
     [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -147,6 +148,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
     [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
     [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
+    [string]$allGroupsGrantSendOnBehalfTo = "allGroupsGrantSendOnBehalfToXML"
 
 
 
@@ -157,6 +159,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
     [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
+    [array]$allGroupsGrantSendOnBehalfTo=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -281,6 +284,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
+    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -800,6 +804,20 @@ Function Start-DistributionListMigration
         out-logfile -string "No groups were found with the forwarding to the migrated DL."
     }
 
+    $allGroupsGrantSendOnBehalfTo = get-groupdependency -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedname -attributeType $grantSendOnBehalfToDL
+
+    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
+    {
+        #Groups were found that the migrated group had accept permissions.
+
+        out-logfile -string "Groups were found where this group was granted permissions to send on behalf to."
+        out-logfile -string  $allGroupsGrantSendOnBehalfTo 
+        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsGrantSendOnBehalfTo .count)
+    }
+    else
+    {
+        out-logfile -string "No groups were found with the grant send on behalf to the migrated DL."
+    }
     
 
     Out-LogFile -string "********************************************************************************"
@@ -1089,7 +1107,7 @@ Function Start-DistributionListMigration
 
         Out-LogFile -string ("The number of cloud only groups = "+$allOffice365DistributionGroups.count)
 
-        out-logfile -string ("The number of cloud only unified groups = "+$allOffice365UnifiedGroups)
+        out-logfile -string ("The number of cloud only unified groups = "+$allOffice365UnifiedGroups.count)
     }
 
     Out-LogFile -string "********************************************************************************"
