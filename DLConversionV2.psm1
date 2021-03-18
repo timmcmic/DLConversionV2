@@ -181,6 +181,7 @@ Function Start-DistributionListMigration
     [string]$office365ManagedBy="ManagedBy"
     [string]$office365Members="Members"
     [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
+    [string]$office365ForwardingAddress="ForwardingAddress"
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -1181,8 +1182,12 @@ Function Start-DistributionListMigration
         $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365GrantSendOnBehalfTo.count)
-    }
 
+        $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
+    }
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"

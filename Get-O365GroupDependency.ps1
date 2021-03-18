@@ -68,6 +68,20 @@
                 $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $functionTest = invoke-expression -command $functionCommand
+
+                out-logfile -string ("The function command executed = "+$functionCommand)
+            }
+            elseif ($attributeType -eq "ForwardingAddress")
+            {
+                 #The attribute type is forwarding address - search only mailboxes.
+
+                 Out-LogFile -string "Entering query office 365 mailboxes."
+
+                 $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+ 
+                 $functionTest = invoke-expression -command $functionCommand 
+                 
+                 out-logfile -string ("The function command executed = "+$functionCommand)
             }
             else
             {
@@ -77,7 +91,9 @@
 
                 $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                $functionTest = invoke-expression -command $functionCommand     
+                $functionTest = invoke-expression -command $functionCommand
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
             }
 
             if ($functionTest -eq $NULL)
