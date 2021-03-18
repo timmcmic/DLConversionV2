@@ -58,11 +58,10 @@
 
                 $functionGroups = get-O365DistributionGroup -resultsize unlimited -filter { isDirSynced -eq $FALSE }
             }
-            elseif ($groupsType -eq "Unified")
+            elseif ($groupType -eq "Unified")
             {
                 Out-LogFile -string "Locating all unified groups groups."
 
-                $functionGroups = Get-o365UnifiedGroup -ResultSize unlimited
                 out-logfile -string ("Count:"+$functiongroups.count)
             }
             
