@@ -174,13 +174,13 @@ Function Start-DistributionListMigration
 
     #The following are the cloud parameters we query for to look for dependencies.
 
-    [string]$office365AcceptMessagesFrom="acceptMessagesFromDLMembers"
-    [string]$office365BypassModerationFrom="bypassmoderationfromdlmembers"
-    [string]$office365CoManagers="comanagedby"
-    [string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
-    [string]$office365ManagedBy="managedby"
+    [string]$office365AcceptMessagesFrom="AcceptMessagesOnlyFromDLMembers"
+    [string]$office365BypassModerationFrom="BypassModerationFromDLMembers"
+    [string]$office365CoManagers="CoManagedBy"
+    [string]$office365GrantSendOnBehalfTo="GrantSendOnBehalfTo"
+    [string]$office365ManagedBy="ManagedBy"
     [string]$office365Members="Members"
-    [string]$office365RejectMessagesFrom="rejectmessagesfromdlmembers"
+    [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
 
     #Cloud variables for the distribution list to be migrated.
 
