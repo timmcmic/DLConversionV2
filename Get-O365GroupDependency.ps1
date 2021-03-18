@@ -65,7 +65,7 @@
 
                 $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                out-logfile -string ("The query exectued is = "+$functionCommand)
+                out-logfile -string ("The query exectued is = "+'$functionCommand')
 
                 $functionTest = invoke-expression -command $functionCommand
             }
@@ -75,7 +75,7 @@
 
                 $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                out-logfile -string ("The query exectued is = "+$functionCommand)
+                out-logfile -string ("The query exectued is = "+'$functionCommand')
 
                 $functionTest = invoke-expression -command $functionCommand            
             }
