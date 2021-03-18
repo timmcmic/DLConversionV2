@@ -161,6 +161,7 @@ Function Start-DistributionListMigration
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
     [array]$allOffice365DistributionGroups=$NULL
+    [array]$allOffice365UnifiedGroups=$NULL
 
 
     #Cloud variables for the distribution list to be migrated.
@@ -1084,10 +1085,7 @@ Function Start-DistributionListMigration
 
         $allOffice365DistributionGroups = get-office365groups -groupType "Normal"
 
-        foreach ($group in $allOffice365DistributionGroups)
-        {
-            out-logfile -string $group
-        }
+        $allOffice365UnifiedGroups = get-office365groups -groupType "Unified"
     }
 
     Out-LogFile -string "********************************************************************************"
