@@ -1145,18 +1145,16 @@ Function Start-DistributionListMigration
     #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
     #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
-    #[string]$office365AcceptMessagesFrom="acceptMessagesFromDLMembers"
-    #[string]$office365BypassModerationFrom="bypassmoderationfromdlmembers"
-    #[string]$office365CoManagers="comanagedby"
-    #[string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
-    #[string]$office365ManagedBy="managedby"
-    #[string]$office365Members="Members"
-    #[string]$office365RejectMessagesFrom="rejectmessagesfromdlmembers"
 
-    #[array]$allOffice365MemberOf=$NULL
-    #[array]$allOffice365Accept=$NULL
-    #[array]$allOffice365Reject=$NULL
-    #[array]$allOffice365BypassModeration=$NULL
+
+
+    #[string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
+
+
+
+
+
+
     #[array]$allOffice365ForwardingAddress=$NULL
     #[array]$allOffice365GrantSendOnBehalfTo=$NULL
 
@@ -1171,6 +1169,18 @@ Function Start-DistributionListMigration
         $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has accept rights = "+$allOffice365Accept.count)
+
+        $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365Reject.count)
+
+        $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to rights = "+$allOffice365BypassModeration.count)
+
+        $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365GrantSendOnBehalfTo.count)
     }
 
     Out-LogFile -string "********************************************************************************"
