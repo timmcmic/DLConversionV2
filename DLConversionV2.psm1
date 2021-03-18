@@ -1165,7 +1165,7 @@ Function Start-DistributionListMigration
         out-logFile -string "Office 365 settings are to be retained."
 
         $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Members
-        
+
         out-logfile -string ("This is the count"+$allOffice365MemberOf.count)
     }
 
