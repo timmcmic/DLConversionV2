@@ -59,7 +59,7 @@
         {
             Out-LogFile -string "Attempting to search Office365 for any groups or users that have the requested dependency."
 
-            if ($attributeType -eq "Member")
+            if ($attributeType -eq "Members")
             {
                 Out-LogFile -string "Entering query office 365 for DL membership."
 
