@@ -73,6 +73,8 @@
             {
                 #The attribute type is based on a property of a group - querying groups.
 
+                $functionCommand = "Get-o365DistributionList -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+
                 Out-LogFile -string "Entering query office 365 for other multi-valued attribute."      
             }
 
