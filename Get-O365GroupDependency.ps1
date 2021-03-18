@@ -71,13 +71,13 @@
             }
             else
             {
-                #The attribute type is based on a property of a group - querying groups.
+                #The attribute type is member - so we need to query recipients.
 
-                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                Out-LogFile -string "Entering query office 365 for DL membership."
 
-                $functionTest = invoke-expression -command $functionCommand
+                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                Out-LogFile -string "Entering query office 365 for other multi-valued attribute."      
+                $functionTest = invoke-expression -command $functionCommand     
             }
 
             if ($functionTest -eq $NULL)
