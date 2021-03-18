@@ -161,13 +161,26 @@ Function Start-DistributionListMigration
     [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
     [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
-    [array]$allGroupsGrantSendOnBehalfTo=$NULL
+    [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
-    [array]$allOffice365DistributionGroups=$NULL
-    [array]$allOffice365UnifiedGroups=$NULL
+    [array]$allOffice365MemberOf=$NULL
+    [array]$allOffice365Accept=$NULL
+    [array]$allOffice365Reject=$NULL
+    [array]$allOffice365BypassModeration=$NULL
+    [array]$allOffice365ForwardingAddress=$NULL
+    [array]$allOffice365GrantSendOnBehalfTo=$NULL
 
+    #The following are the cloud parameters we query for to look for dependencies.
+
+    [string]$office365AcceptMessagesFrom="acceptMessagesFromDLMembers"
+    [string]$office365BypassModerationFrom="bypassmoderationfromdlmembers"
+    [string]$office365CoManagers="comanagedby"
+    [string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
+    [string]$office365ManagedBy="managedby"
+    [string]$office365Members="Members"
+    [string]$office365RejectMessagesFrom="rejectmessagesfromdlmembers"
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -288,6 +301,15 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
     out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
+
+    out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
+    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
+    out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
+    out-logfile -string ("Property in office 365 for coManagers members = "+$office365GrantSendOnBehalfTo)
+    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365GrantSendOnBehalfTo)
+    out-logfile -string ("Property in office 365 for managed by members = "+$office365ManagedBy)
+    out-logfile -string ("Property in office 365 for members = "+$office365Members)
+    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365RejectMessagesFrom)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1123,19 +1145,28 @@ Function Start-DistributionListMigration
     #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
     #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
+    #[string]$office365AcceptMessagesFrom="acceptMessagesFromDLMembers"
+    #[string]$office365BypassModerationFrom="bypassmoderationfromdlmembers"
+    #[string]$office365CoManagers="comanagedby"
+    #[string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
+    #[string]$office365ManagedBy="managedby"
+    #[string]$office365Members="Members"
+    #[string]$office365RejectMessagesFrom="rejectmessagesfromdlmembers"
+
+    #[array]$allOffice365MemberOf=$NULL
+    #[array]$allOffice365Accept=$NULL
+    #[array]$allOffice365Reject=$NULL
+    #[array]$allOffice365BypassModeration=$NULL
+    #[array]$allOffice365ForwardingAddress=$NULL
+    #[array]$allOffice365GrantSendOnBehalfTo=$NULL
+
     if ($retainOffice365Settings -eq $TRUE)
     {
         out-logFile -string "Office 365 settings are to be retained."
 
-        out-LogFile -string "Getting all office 365 distribution groups."
-
-        $allOffice365DistributionGroups = get-office365groups -groupType "Normal"
-
-        $allOffice365UnifiedGroups = get-office365groups -groupType "Unified"
-
-        Out-LogFile -string ("The number of cloud only groups = "+$allOffice365DistributionGroups.count)
-
-        out-logfile -string ("The number of cloud only unified groups = "+$allOffice365UnifiedGroups.count)
+        $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Members
+        
+        out-logfile -string ("This is the count"+$allOffice365MemberOf.count)
     }
 
     Out-LogFile -string "********************************************************************************"
