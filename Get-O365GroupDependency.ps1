@@ -66,10 +66,6 @@
                 $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $functionTest = invoke-expression -command $functionCommand
-
-                $functionCommand = "Get-o365Recipient -Filter { ('$attributeType' -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
-
-                out-logfile -string ("The function command executed = "+$functionCommand)
             }
             else
             {
