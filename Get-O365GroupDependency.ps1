@@ -75,7 +75,7 @@
 
                 Out-LogFile -string "Entering query office 365 for DL membership."
 
-                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $functionTest = invoke-expression -command $functionCommand     
             }
