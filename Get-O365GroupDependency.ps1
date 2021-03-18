@@ -73,7 +73,7 @@
             {
                 #The attribute type is based on a property of a group - querying groups.
 
-                $functionCommand = "Get-o365DistributionList -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $functionTest = invoke-expression -command $functionCommand
 
