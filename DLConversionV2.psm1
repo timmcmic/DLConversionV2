@@ -1086,6 +1086,10 @@ Function Start-DistributionListMigration
         $allOffice365DistributionGroups = get-office365groups -groupType "Normal"
 
         $allOffice365UnifiedGroups = get-office365groups -groupType "Unified"
+
+        Out-LogFile -string ("The number of cloud only groups = "+$allOffice365DistributionGroups.count)
+
+        out-logfile -string ("The number of cloud only unified groups = "+$allOffice365UnifiedGroups)
     }
 
     Out-LogFile -string "********************************************************************************"
