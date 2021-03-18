@@ -1166,7 +1166,12 @@ Function Start-DistributionListMigration
 
         $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Members
 
-        out-logfile -string ("This is the count"+$allOffice365MemberOf.count)
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL is a member of = "+$allOffice365MemberOf.count)
+
+        $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom
+
+        out-logfile -string (("The number of groups in Office 365 cloud only that the DL has accept rights = "+$allOffice365Accept.count)
+
     }
 
     Out-LogFile -string "********************************************************************************"
