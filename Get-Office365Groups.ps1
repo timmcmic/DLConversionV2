@@ -37,9 +37,9 @@
         $functionCommand=$NULL #Command to hold the invoke expression.
 
         #Start function processing.
-
+e
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-Office365Groups"
+        Out-LogFile -string "BEGIN GET-Offic365Groups"
         Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
@@ -58,6 +58,13 @@
 
                 $functionGroups = get-O365DistributionGroup -resultsize unlimited -filter { isDirSynced -eq $FALSE }
             }
+            elseif ($groupsType -eq "Unified")
+            {
+                Out-LogFile -string "Locating all unified groups groups."
+
+                $functionGroups = get-O365UnifiedGroup -resultsize unlimited
+            }
+            
             Out-LogFile -string "All cloud only groups were located."
         }
         catch 
