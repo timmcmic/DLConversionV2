@@ -75,6 +75,8 @@
 
                 $functionCommand = "Get-o365DistributionList -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
+                $functionTest = invoke-expression -command $functionCommand
+
                 Out-LogFile -string "Entering query office 365 for other multi-valued attribute."      
             }
 
