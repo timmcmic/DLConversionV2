@@ -37,7 +37,7 @@
         $functionCommand=$NULL #Command to hold the invoke expression.
 
         #Start function processing.
-e
+        
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-Offic365Groups"
         Out-LogFile -string "********************************************************************************"
