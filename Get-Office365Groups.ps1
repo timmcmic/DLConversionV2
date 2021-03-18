@@ -37,7 +37,7 @@
         $functionCommand=$NULL #Command to hold the invoke expression.
 
         #Start function processing.
-        
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-Offic365Groups"
         Out-LogFile -string "********************************************************************************"
@@ -62,7 +62,7 @@
             {
                 Out-LogFile -string "Locating all unified groups groups."
 
-                $functionGroups = get-O365UnifiedGroup -resultsize unlimited
+                $functionGroups = Get-o365UnifiedGroup -ResultSize unlimited
             }
             
             Out-LogFile -string "All cloud only groups were located."
