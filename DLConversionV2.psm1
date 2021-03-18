@@ -114,7 +114,7 @@ Function Start-DistributionListMigration
     [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
     [string]$forwardingAddressForDL="altRecipient"
     [string]$grantSendOnBehalfToDL="publicDelegates"
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses','reportToOriginator','reportToOwner','unAuthOrig'
+    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -131,6 +131,7 @@ Function Start-DistributionListMigration
     [array]$exchangeManagedBySMTP=$NULL #Array of members with manage by rights from AD.
     [array]$exchangeModeratedBySMTP=$NULL #Array of members  with moderation rights.
     [array]$exchangeBypassModerationSMTP=$NULL #Array of objects with bypass moderation rights from AD.
+    [array]$exchangeGrantSendOnBehalfToSMTP=$NULL
 
     #Define XML files to contain backups.
 
@@ -143,6 +144,7 @@ Function Start-DistributionListMigration
     [string]$exchangeManagedBySMTPXML = "exchangeManagedBySMTPXML"
     [string]$exchangeModeratedBySMTPXML = "exchangeModeratedBYSMTPXML"
     [string]$exchangeBypassModerationSMTPXML = "exchangeBypassModerationSMTPXML"
+    [string]$exchangeGrantSendOnBehalfToSMTPXML = "exchangeGrantSendOnBehalfToXML"
     [string]$allGroupsMemberOfXML = "allGroupsMemberOfXML"
     [string]$allGroupsRejectXML = "allGroupsRejectXML"
     [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
@@ -279,6 +281,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$exchangeManagedBySMTPXML)
     Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$exchangeModeratedBySMTPXML)
     Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$exchangeBypassModerationSMTPXML)
+    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$exchangeGrantSendOnBehalfToSMTPXML)
     Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
     Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
     Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
@@ -683,6 +686,25 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile "The group has no bypass moderation."    
+    }
+
+    if ($originalDLConfiguration.publicDelegates -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.publicDelegates)
+        {
+            $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+        }
+    }
+
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the grant send on behalf to:"
+        
+        out-logfile -string $exchangeGrantSendOnBehalfToSMTP
+    }
+    else 
+    {
+        out-logfile "The group has no grant send on behalf to."    
     }
 
 
