@@ -812,7 +812,7 @@ Function Start-DistributionListMigration
 
         out-logfile -string "Groups were found where this group was granted permissions to send on behalf to."
         out-logfile -string  $allGroupsGrantSendOnBehalfTo 
-        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsGrantSendOnBehalfTo .count)
+        out-logfile -string ("The number of other groups with accept rights = "+$allGroupsGrantSendOnBehalfTo.count)
     }
     else
     {
