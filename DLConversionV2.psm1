@@ -720,6 +720,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
+    out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
 
     #At this point we have obtained all the information relevant to the individual group.
     #It is possible that this group was a member of - or other groups have a dependency on this group.
@@ -876,6 +877,11 @@ Function Start-DistributionListMigration
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+    }
+
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $exchangeGrantSendOnBehalfToSMTPXML
     }
 
     if ($allGroupsMemberOf -ne $NULL)
