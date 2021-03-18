@@ -64,6 +64,9 @@
                 Out-LogFile -string "Entering query office 365 for DL membership."
 
                 $functionCommand = "Get-o365Recipient -Filter { (Members -eq '$dn') -and (isDirSynced -eq '$FALSE') }"
+
+                out-logfile -string ("The query exectued is = "+$functionCommand)
+
                 $functionTest = invoke-expression -command $functionCommand
             }
             else
