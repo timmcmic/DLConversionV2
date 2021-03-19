@@ -86,7 +86,11 @@ Function Start-DistributionListMigration
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
-        [boolean]$retainOffice365Settings=$false
+        [boolean]$retainOffice365Settings=$false,
+        [Parameter(Mandatory = $true)]
+        [string]$dnNoSyncOU = $NULL,
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainOriginalGroup = $FALSE
     )
 
     #Define global variables.
@@ -240,6 +244,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
 
     out-logfile -string ("Retain Office 365 Settings = "+$retainOffice365Settings)
+
+    out-logfile -string ("OU that does not sync to Office 365 = "+$dnNoSyncOU)
+
+    out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1146,18 +1154,6 @@ Function Start-DistributionListMigration
     #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
     #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
-
-
-
-    #[string]$office365GrantSendOnBehalfTo="grantsendonbehalfto"
-
-
-
-
-
-
-    #[array]$allOffice365ForwardingAddress=$NULL
-    #[array]$allOffice365GrantSendOnBehalfTo=$NULL
 
     if ($retainOffice365Settings -eq $TRUE)
     {
