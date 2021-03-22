@@ -82,6 +82,7 @@
                 out-logfile -string $error
                 out-logfile -string "Starting 30 second sleep."
                 start-sleep -Seconds 30
+                break
             }
         }while ($error.count -gt 0)
        
