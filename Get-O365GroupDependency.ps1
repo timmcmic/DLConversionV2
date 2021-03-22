@@ -55,6 +55,7 @@
 
         OUt-LogFile -string ("DN Set = "+$DN)
         out-logfile -string ("Attribute Type = "+$attributeType)
+        out-logfile -string ("Group Type = "+$groupType)
         
         #Get the specific user using ad providers.
         
