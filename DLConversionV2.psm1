@@ -1283,7 +1283,26 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START Disable on premises distribution group."
     Out-LogFile -string "********************************************************************************"
 
-    Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+    #It is now time to disable the on premsies distribution group.
+    #This is required to remove the group from office 365 in order to re-create it.
+
+    if ( $useOnPremsiesExchange -eq $TRUE)
+    {
+        #The customer has provided information to utilize on premsies exchange.
+        #Call disable through the commandlets.
+
+        out-logFile -string "Using on premises Exchange to mail disable the group."
+
+        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -useOnPremsiesExchange $useOnPremsiesExchange
+    }
+    else 
+    {
+        #Call disable through AD providers.
+
+        out-logFile -string "Using AD Provider to mail disable the group."
+
+        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+    }
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
