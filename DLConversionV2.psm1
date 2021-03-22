@@ -87,7 +87,7 @@ Function Start-DistributionListMigration
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOffice365Settings=$false,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$dnNoSyncOU = $NULL,
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $FALSE,
