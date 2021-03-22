@@ -162,8 +162,12 @@ Function Start-DistributionListMigration
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
     [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
-
-
+    [string]$allOffice365MemberOfXML="allOffice365MemberOfXML"
+    [string]$allOffice365AcceptXML="allOffice365AcceptXML"
+    [string]$allOffice365RejectXML="allOffice365RejectXML"
+    [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
+    [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
+    [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -1220,6 +1224,51 @@ Function Start-DistributionListMigration
         $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Unified"
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
+
+        if ($allOffice365MemberOf -ne $NULL)
+        {
+            out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $allOffice365MemberofXML
+        }
+
+        if ($allOffice365Accept -ne $NULL)
+        {
+            out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $allOffice365AcceptXML
+        }
+
+        if ($allOffice365Reject -ne $NULL)
+        {
+            out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $allOffice365RejectXML
+        }
+        
+        if ($allOffice365BypassModeration -ne $NULL)
+        {
+            out-xmlFile -itemToExport $allOffice365BypassModeration -itenNameToExport $allOffice365BypassModerationXML
+        }
+
+        if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
+        {
+            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itenNameToExport $allOffice365GrantSendOnBehalfToXML
+        }
+
+        if ($allOffice365ForwardingAddress -ne $NULL)
+        {
+            out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $allOffice365ForwardingAddressXML
+        }
+
+        if ($allOffice365UniversalAccept -ne $NULL)
+        {
+            out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $allOffice365UniversalAcceptXML
+        }
+
+        if ($allOffice365UniversalReject -ne $NULL)
+        {
+            out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $allOffice365UniversalRejectXML
+        }
+
+        if ($allOffice365UniversalGrantSendOnBehalfTo -ne $NULL)
+        {
+            out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $allOffice365UniversalGrantSendOnBehalfToXML
+        }
     }
     else 
     {
