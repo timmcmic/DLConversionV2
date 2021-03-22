@@ -68,8 +68,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        Invoke-Command -Session $workingPowershellSession -ScriptBlock
-        {
+        Invoke-Command -Session $workingPowershellSession -ScriptBlock {
             #Test
         }
 
