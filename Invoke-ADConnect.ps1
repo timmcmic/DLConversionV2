@@ -73,7 +73,7 @@
             $continueSyncAttempts = $false
             try 
             {
-                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
+                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'}
             }
             catch 
             {
