@@ -33,7 +33,8 @@
         #Declare function variables.
 
         $workingPowershellSession=$null
-        $sleepAtSync=$false
+        $invokeTest=$null
+        $invokeSleep=$false
 
         #Start function processing.
 
@@ -68,9 +69,33 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        $test = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} *>&1
+        do 
+        {
+            if ($invokeSleep -eq $TRUE)
+            {
+                out-logfile -string "Sleeping for 30 seconds."
 
-        Write-Host $test | fl
+                start-sleep -s 30
+            }
+            else 
+            {
+                out-logfile -string "This is first attempt - skipping sleep."
+
+                $invokeSleep = $true
+            }
+
+            $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} *>&1
+
+            if ($invokeTest.result -ne "Success")
+            {
+                out-logFile -stirng "An error has occured - this is not necessarily uncommon."
+                out-logFile -string $invokeTest
+            }
+            
+        } until ($invokeTest.result -eq "Success")
+
+        out-logfile -string "The results of the AD Sync."
+        out-logfile -string $invokeTest.result
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
