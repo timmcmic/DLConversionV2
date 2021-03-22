@@ -1242,12 +1242,12 @@ Function Start-DistributionListMigration
         
         if ($allOffice365BypassModeration -ne $NULL)
         {
-            out-xmlFile -itemToExport $allOffice365BypassModeration -itenNameToExport $allOffice365BypassModerationXML
+            out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $allOffice365BypassModerationXML
         }
 
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
         {
-            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itenNameToExport $allOffice365GrantSendOnBehalfToXML
+            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
         }
 
         if ($allOffice365ForwardingAddress -ne $NULL)
