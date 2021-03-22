@@ -72,10 +72,9 @@
 
             $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /A } *>&1
 
-            foreach ($item in $invokeTest)
-            {
-                out-LogFile -string $item
-            }
+            $invokeTest = $invokeTest -join "`r`n"
+
+            out-logfile -string $invokeTest
         }
         catch 
         {
@@ -88,11 +87,9 @@
 
             $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /APe } *>&1
 
-            foreach ($item in $invokeTest)
-            {
-                out-LogFile -string $item
-            }
-        }
+            $invokeTest = $invokeTest -join "`r`n"
+
+            out-logfile -string $invokeTest
         catch 
         {
             Out-LogFile -string $_ -isError:$TRUE
