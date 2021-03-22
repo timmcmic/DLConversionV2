@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$PowershellSessionName
+            $PowershellSessionName
         )
 
         #Declare function variables.
