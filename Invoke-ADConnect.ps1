@@ -59,23 +59,19 @@
 
         #Using the powershell session import the ad connect module.
     
-        try 
+        invoke-command -session $workingPowershellSession -ScriptBlock
         {
-            invoke-command -session $workingPowershellSession -ScriptBlock {Import-Module -Name 'AdSync'}
+            try 
+            {
+                start-ADSyncSyncCycle -policy 'Delta' -errorAction 'Stop'
+            }
+            catch 
+            {
+                out-logFile -string "An error was encounteredo AD sync attempt."
+                out-logfile -string $_
+                Write-Host $error.Count
+            }
         }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
-
-        do 
-        {
-            $error.Clear()
-
-            invoke-command -session $workingPowershellSession -script {start-AdSyncSyncCycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction Continue
-
-            write-host $error.Count
-        } until ($error.count -eq 0)
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
