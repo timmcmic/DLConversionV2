@@ -75,8 +75,7 @@
             }
             catch 
             {
-                out-logfile -string "Error encountered invoking AD Sync."
-                out-logfile -string $_    
+                $_
             }
         }
 
