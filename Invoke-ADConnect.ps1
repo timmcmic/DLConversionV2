@@ -68,23 +68,10 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        do 
+        Invoke-Command -Session $workingPowershellSession -ScriptBlock
         {
-            $error.clear()
-
-            try 
-            {
-                out-logfile -string "Invoking ad sync through remote powershell."
-
-                invoke-command -Session $workingPowershellSession -script { start-adsyncsynccycle -policyType Delta -errorAction STOP}
-            }
-            catch 
-            {
-                write-host $error.count()
-                out-logfile -string "An error has been encountered - this is not necessarily bad."
-                out-logfile -string $_
-            }    
-        } until ($error.count -eq 0)
+            #Test
+        }
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
