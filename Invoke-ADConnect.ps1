@@ -33,7 +33,7 @@
         #Declare function variables.
 
         $workingPowershellSession=$null
-        $continueSyncAttempts=$null
+        $sleepAtSync=$false
 
         #Start function processing.
 
@@ -70,22 +70,29 @@
 
         do
         {
-            try
+            if ($sleepAtSync -ne $FALSE)
             {
-                $error.clear()
+                out-logfile -string "Sleeping for 30 seconds."
 
-                out-logFile -string "Attempting to invoke AD Connect"
-
-                invoke-command -Session $session -ScriptBlock { start-adsyncSyncCycle -policyType 'Delta' } -ErrorAction STOP
+                start-sleep -s 30
             }
-            catch
+            else 
             {
-                Out-LogFile -string "An error has occured attempting a sync - this can be totally expected if sync is in progress."
-                out-logfile -string "For this script this is a none terminating error."
+                $sleepAtSync = $true    
+            }
+
+            out-logfile -string "Attempting to run AD Sync."
+
+            $error.Clear()
+
+            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction 'STOP'
+
+            if ($error.count -ne 0)
+            {
+                out-logfile -string "Error encoutered on delta sync.  This may be perfectly normal."
                 out-logfile -string $_
             }
-        }until ($error.Count -eq 0)
-       
+        }while ($error.count -gt 0)     
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
