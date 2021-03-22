@@ -68,12 +68,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        $error.clear()
-
-        Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'}
-
-        write-host $_
-        write-host $_.exception
+        Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} *>&1
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
