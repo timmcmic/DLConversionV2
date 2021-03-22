@@ -68,34 +68,14 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        do
+        do 
         {
-            if ($sleepAtSync -ne $FALSE)
-            {
-                out-logfile -string "Sleeping for 30 seconds."
-
-                start-sleep -s 30
-            }
-            else 
-            {
-                $sleepAtSync = $true    
-            }
-
-            out-logfile -string "Attempting to run AD Sync."
-
             $error.Clear()
 
-            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'Continue'} -errorAction Continue
+            invoke-command -session $workingPowershellSession -script {start-AdSyncSyncCycle -policyType 'Delta'}
 
-            out-logfile -string "Count of errors."
-            out-logfile -string $error.count()
-
-            if ($error.count -ne 0)
-            {
-                out-logfile -string "Error encoutered on delta sync.  This may be perfectly normal."
-                out-logfile -string $_
-            }
-        }while ($error.count -gt 0)     
+            write-host $error.Count
+        } until ($error.count -eq 0)
 
         Out-LogFile -string "ADConnect was successfully triggered."
 
