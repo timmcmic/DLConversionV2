@@ -103,7 +103,7 @@
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
-                elseif ($groupType -eq "Universal")
+                elseif ($groupType -eq "Unified")
                 {
                     out-logfile -string "The group type is unified - querying distribution groups."
                     
