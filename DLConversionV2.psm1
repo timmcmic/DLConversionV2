@@ -159,6 +159,9 @@ Function Start-DistributionListMigration
     [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
     [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
     [string]$allGroupsGrantSendOnBehalfTo = "allGroupsGrantSendOnBehalfToXML"
+    [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
+    [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
+    [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
 
 
 
@@ -179,6 +182,9 @@ Function Start-DistributionListMigration
     [array]$allOffice365BypassModeration=$NULL
     [array]$allOffice365ForwardingAddress=$NULL
     [array]$allOffice365GrantSendOnBehalfTo=$NULL
+    [array]$allOffice365UniversalAccept=$NULL
+    [array]$allOffice365UniversalReject=$NULL
+    [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
 
     #The following are the cloud parameters we query for to look for dependencies.
 
@@ -1202,6 +1208,8 @@ Function Start-DistributionListMigration
         $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
+
+        
     }
     else 
     {

@@ -33,7 +33,10 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
-            [string]$attributeType
+            [string]$attributeType,
+            [Parameter(Mandatory = $TRUE)]
+            [ValidateSet("Standard","Universal")]
+            [string]$groupType=$NULL
         )
 
         #Declare function variables.
@@ -85,15 +88,30 @@
             }
             else
             {
-                #The attribute type is member - so we need to query recipients.
+                #The attribute type is a property of the DL - attempt to obtain.
 
-                Out-LogFile -string "Entering query office 365 for DL membership."
+                Out-LogFile -string "Entering query office 365 for DL to be set on property."
 
-                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                if ($groupType -eq "Standard")
+                {
+                    out-logfile -string "The group type is standard - querying distribution groups."
+                    
+                    $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                $functionTest = invoke-expression -command $functionCommand
-                
-                out-logfile -string ("The function command executed = "+$functionCommand)
+                    $functionTest = invoke-expression -command $functionCommand
+                    
+                    out-logfile -string ("The function command executed = "+$functionCommand)
+                }
+                elseif ($groupTpe -eq "Universal")
+                {
+                    out-logfile -string "The group type is universal - querying distribution groups."
+                    
+                    $functionCommand = "Get-o365UniversalGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                    $functionTest = invoke-expression -command $functionCommand
+                    
+                    out-logfile -string ("The function command executed = "+$functionCommand)
+                } 
             }
 
             if ($functionTest -eq $NULL)
