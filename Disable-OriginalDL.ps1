@@ -39,10 +39,10 @@
         Param
         (
             [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParamterSetName = "Exchange")]
+            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
             [string]$DN,
             [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParamterSetName = "Exchange")]
+            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $false,ParameterSetName = "AD")]
             [array]$parameterSet="None",
