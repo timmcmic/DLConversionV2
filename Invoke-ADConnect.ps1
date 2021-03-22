@@ -72,6 +72,8 @@
 
         Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
 
+        write-host "These are the errors"
+        write-host $error
         write-host $error[0]
 
 
