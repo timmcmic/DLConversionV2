@@ -64,7 +64,7 @@
 
         Out-LogFile -string ("DN = "+$DN)
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        out-logfile -string ("Use Exchange On Premises" = $useOnPremsiesExchange)
+        out-logfile -string ("Use Exchange On Premises ="+$useOnPremsiesExchange)
 
         OUt-LogFile -string ("Parameter Set:")
         
