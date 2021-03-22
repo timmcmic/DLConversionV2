@@ -72,7 +72,7 @@
         {
             $error.Clear()
 
-            invoke-command -session $workingPowershellSession -script {start-AdSyncSyncCycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction Stop
+            invoke-command -session $workingPowershellSession -script {start-AdSyncSyncCycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction Continue
 
             write-host $error.Count
         } until ($error.count -eq 0)
