@@ -46,7 +46,7 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $false,ParameterSetName = "AD")]
             [array]$parameterSet="None",
-            [Paramter(Mandatory = $false,ParameterSetName="Exchange")]
+            [Parameter(Mandatory = $false,ParameterSetName="Exchange")]
             [boolean]$useOnPremsiesExchange=$FALSE
         )
 
