@@ -90,6 +90,7 @@
             $invokeTest = $invokeTest -join "`r`n"
 
             out-logfile -string $invokeTest
+        }
         catch 
         {
             Out-LogFile -string $_ -isError:$TRUE
