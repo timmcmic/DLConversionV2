@@ -99,6 +99,7 @@ Function Start-DistributionListMigration
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     $global:staticFolderName="\DLMigration"
+    [int]$global:unDoStatus=0
 
     #Define variables utilized in the core function that are not defined by parameters.
 
@@ -1304,9 +1305,14 @@ Function Start-DistributionListMigration
         Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
     }
 
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
-    Out-LogFile -string "********************************************************************************"
+    $global:unDoStatus=$global:unDoStatus+1
+
+    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
+    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+    invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+
+    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
