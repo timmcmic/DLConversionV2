@@ -33,6 +33,7 @@
         #Declare function variables.
 
         $workingPowershellSession=$null
+        $continueSyncAttempts
 
         #Start function processing.
 
@@ -67,16 +68,19 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        #Invoking a delta sync.
-
-        try 
+        do
         {
-            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
-        }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
+            $continueSyncAttempts = $false
+            try 
+            {
+                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
+            }
+            catch 
+            {
+                $continueSyncAttempts = $true
+            }
+        }while ($continueSyncAttempts -eq $false)
+       
 
         Out-LogFile -string "The powershell session was created successfully."
 
