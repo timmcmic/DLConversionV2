@@ -1216,7 +1216,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START Disable on premises distribution group."
     Out-LogFile -string "********************************************************************************"
 
-    Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+    #Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
