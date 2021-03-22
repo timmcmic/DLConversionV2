@@ -89,7 +89,7 @@
             if ($invokeTest.result -ne "Success")
             {
                 out-logFile -string "An error has occured - this is not necessarily uncommon."
-                out-logFile -string $invokeTest.exception
+                out-logFile -string $invokeTest.exception.toString()
             }
             
         } until ($invokeTest.result -eq "Success")
