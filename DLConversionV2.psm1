@@ -1161,12 +1161,19 @@ Function Start-DistributionListMigration
         }
     }
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
     #For example - the dirSync group could have been added as a member of a cloud only group - or another group that was migrated.
     #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
     #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "START RETAIN OFFICE 365 GROUP DEPENDENCIES"
+    Out-LogFile -string "********************************************************************************"
 
     if ($retainOffice365Settings -eq $TRUE)
     {
@@ -1196,7 +1203,21 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
     }
-    
+    else 
+    {
+        out-logfile -string "Administrator opted out of recording Office 365 dependencies."
+    }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "START Disable on premises distribution group."
+    Out-LogFile -string "********************************************************************************"
+
+    Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
