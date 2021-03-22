@@ -32,7 +32,7 @@
 
         #Declare function variables.
 
-        
+        $workingPowershellSession=$null
 
         #Start function processing.
 
@@ -44,11 +44,23 @@
 
         Out-LogFile -string ("PowershellSessionName = "+$PowershellSessionName)
 
+        #Obtain the powershell session to work with.
+
+        try 
+        {
+            $workingPowershellSession = Get-PSSession -Name $PowershellSessionName
+        }
+        catch 
+        {
+            Out-LogFile -string $_ -isError:$TRUE
+        }
+
+
         #Using the powershell session import the ad connect module.
     
         try 
         {
-            invoke-command -session $powershellsessionname -ScriptBlock {Import-Module -Name 'AdSync'}
+            invoke-command -session $workingPowershellSession -ScriptBlock {Import-Module -Name 'AdSync'}
         }
         catch 
         {

@@ -132,6 +132,6 @@
         
         if ($requiresImport -eq $TRUE)
         {
-            return ,$sessionToImport
+            return $sessionToImport
         }  
     }
