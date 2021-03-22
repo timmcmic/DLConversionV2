@@ -74,7 +74,7 @@
             {
                 $error.clear()
 
-                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} -errorAction Stop
+                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'}
             }
             catch 
             {
