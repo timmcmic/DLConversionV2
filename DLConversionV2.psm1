@@ -1294,7 +1294,7 @@ Function Start-DistributionListMigration
 
         out-logFile -string "Using on premises Exchange to mail disable the group."
 
-        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -useOnPremsiesExchange $useOnPremsiesExchange
+        #Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -useOnPremsiesExchange $useOnPremsiesExchange
     }
     else 
     {
@@ -1302,7 +1302,7 @@ Function Start-DistributionListMigration
 
         out-logFile -string "Using AD Provider to mail disable the group."
 
-        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+        #Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
     }
 
     $global:unDoStatus=$global:unDoStatus+1
