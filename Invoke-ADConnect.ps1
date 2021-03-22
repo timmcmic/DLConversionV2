@@ -69,7 +69,15 @@
         }
 
         Invoke-Command -Session $workingPowershellSession -ScriptBlock {
-            #Test
+            try 
+            {
+                start-adsyncsynccycle -policyType Delta -errorAction STOP 
+            }
+            catch 
+            {
+                out-logfile -string "Error encountered invoking AD Sync."
+                out-logfile -string $_    
+            }
         }
 
         Out-LogFile -string "ADConnect was successfully triggered."
