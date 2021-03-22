@@ -70,23 +70,24 @@
 
         do
         {
-            try 
+            try
             {
                 $error.clear()
 
-                invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} -errorAction STOP
+                out-logFile -string "Attempting to invoke AD Connect"
+
+                invoke-command -Session $session -ScriptBlock { start-adsyncSyncCycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction STOP
             }
-            catch 
+            catch
             {
-                out-logfile -string "Attempt to sync failed - this can be expected if another sync is in progress."
-                out-logfile -string $error
-                out-logfile -string "Starting 30 second sleep."
-                start-sleep -Seconds 30
+                Out-LogFile -string "An error has occured attempting a sync - this can be totally expected if sync is in progress."
+                out-logfile -string "For this script this is a none terminating error."
+                out-logfile -string $_
             }
-        }until ($error.count -eq 0)
+        }until ($error.Count -eq 0)
        
 
-        Out-LogFile -string "The powershell session was created successfully."
+        Out-LogFile -string "ADConnect was successfully triggered."
 
         Out-LogFile -string "END INVOKE-ADCONNECT"
         Out-LogFile -string "********************************************************************************"
