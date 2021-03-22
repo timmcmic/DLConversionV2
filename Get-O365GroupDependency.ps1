@@ -34,9 +34,9 @@
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
             [string]$attributeType,
-            [Parameter(Mandatory = $TRUE)]
+            [Parameter(Mandatory = $false)]
             [ValidateSet("Standard","Universal")]
-            [string]$groupType=$NULL
+            [string]$groupType="Standard"
         )
 
         #Declare function variables.
