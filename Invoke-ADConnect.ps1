@@ -67,6 +67,17 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
+        #Invoking a delta sync.
+
+        try 
+        {
+            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
+        }
+        catch 
+        {
+            Out-LogFile -string $_ -isError:$TRUE
+        }
+
         Out-LogFile -string "The powershell session was created successfully."
 
         Out-LogFile -string "END INVOKE-ADCONNECT"
