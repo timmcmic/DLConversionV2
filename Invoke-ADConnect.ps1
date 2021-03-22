@@ -76,7 +76,7 @@
 
                 out-logFile -string "Attempting to invoke AD Connect"
 
-                invoke-command -Session $session -ScriptBlock { start-adsyncSyncCycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction STOP
+                invoke-command -Session $session -ScriptBlock { start-adsyncSyncCycle -policyType 'Delta' } -ErrorAction STOP
             }
             catch
             {
