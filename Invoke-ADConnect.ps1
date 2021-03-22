@@ -76,7 +76,7 @@
             {
                 out-logfile -string "Invoking ad sync through remote powershell."
 
-                invoke-command -Session $workingPowershellSession -script { start-adsyncsynccycle -policyType 'Delta' -errorAction STOP}
+                invoke-command -Session $workingPowershellSession -script { start-adsyncsynccycle -policyType Delta -errorAction STOP}
             }
             catch 
             {
@@ -85,7 +85,7 @@
                 out-logfile -string $_
             }    
         } until ($error.count -eq 0)
-        
+
         Out-LogFile -string "ADConnect was successfully triggered."
 
         Out-LogFile -string "END INVOKE-ADCONNECT"
