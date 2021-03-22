@@ -35,7 +35,7 @@
             [Parameter(Mandatory = $TRUE)]
             [string]$attributeType,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("Standard","Universal")]
+            [ValidateSet("Standard","Unified")]
             [string]$groupType="Standard"
         )
 
@@ -105,9 +105,9 @@
                 }
                 elseif ($groupType -eq "Universal")
                 {
-                    out-logfile -string "The group type is universal - querying distribution groups."
+                    out-logfile -string "The group type is unified - querying distribution groups."
                     
-                    $functionCommand = "Get-o365UniversalGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                    $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
 
                     $functionTest = invoke-expression -command $functionCommand
                     
