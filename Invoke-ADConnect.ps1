@@ -33,7 +33,7 @@
         #Declare function variables.
 
         $workingPowershellSession=$null
-        $continueSyncAttempts
+        $continueSyncAttempts=$null
 
         #Start function processing.
 
@@ -83,7 +83,7 @@
                 out-logfile -string "Starting 30 second sleep."
                 start-sleep -Seconds 30
             }
-        }while ($error -eq $null)
+        }while ($error.count -gt 0)
        
 
         Out-LogFile -string "The powershell session was created successfully."
