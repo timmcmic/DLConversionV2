@@ -32,8 +32,6 @@
 
         #Define variables that will be utilzed in the function."
 
-        [string]$exchangeOnPremCommandPrefix="OnPrem"
-
         #Begin estabilshing the powershell session.
         
         Out-LogFile -string "********************************************************************************"
@@ -44,7 +42,7 @@
         {
             Out-LogFile -string "Importing powershell session."
 
-            Import-PSSession -Session $PowershellSession -ErrorAction Stop -prefix $exchangeOnPremCommandPrefix
+            Import-PSSession -Session $PowershellSession -ErrorAction Stop
         }
         catch 
         {
