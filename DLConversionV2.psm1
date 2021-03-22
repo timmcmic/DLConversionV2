@@ -1220,7 +1220,6 @@ Function Start-DistributionListMigration
         $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Unified"
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
-        
     }
     else 
     {
