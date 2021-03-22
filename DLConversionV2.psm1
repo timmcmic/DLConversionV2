@@ -90,7 +90,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $true)]
         [string]$dnNoSyncOU = $NULL,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainOriginalGroup = $FALSE
+        [boolean]$retainOriginalGroup = $FALSE,
+        [Paramter(Mandatory = $false)]
+        [boolean]$enableHybridMailflow = $FALSE
     )
 
     #Define global variables.
@@ -119,6 +121,7 @@ Function Start-DistributionListMigration
     [string]$forwardingAddressForDL="altRecipient"
     [string]$grantSendOnBehalfToDL="publicDelegates"
     [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
+    [array]$dlPropertySetToClear = 'authOrig','DisplayName','DisplayNamePrintable',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -249,6 +252,8 @@ Function Start-DistributionListMigration
 
     out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
 
+    out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
+
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
@@ -281,6 +286,13 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("DL Properties to collect = ")
 
     foreach ($dlProperty in $dlPropertySet)
+    {
+        Out-LogFile -string $dlProperty
+    }
+
+    Out-LogFile -string ("DL property set to be cleared = ")
+
+    foreach ($dlProperty in $dlPropertySetToClear)
     {
         Out-LogFile -string $dlProperty
     }
