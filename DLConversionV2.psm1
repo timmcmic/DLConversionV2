@@ -1307,6 +1307,10 @@ Function Start-DistributionListMigration
 
     $global:unDoStatus=$global:unDoStatus+1
 
+    #Replicate domain controllers so that the change is received as soon as possible.
+
+    invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName
+
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
