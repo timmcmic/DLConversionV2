@@ -85,7 +85,7 @@
 
             $error.Clear()
 
-            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} -ErrorAction 'STOP'
+            invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'}
 
             if ($error.count -ne 0)
             {
