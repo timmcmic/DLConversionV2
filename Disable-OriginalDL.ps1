@@ -90,7 +90,7 @@
             {
                 out-logfile -string "Using Exchange providers to clear the distribution list."
 
-                disable-distributionGroup -identity $DN -confirm:$false
+                disable-distributionGroup -identity $DN -confirm:$false -verbose
             }
         }
         catch 
