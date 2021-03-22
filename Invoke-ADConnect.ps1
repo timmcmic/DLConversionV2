@@ -70,16 +70,17 @@
 
         do
         {
-            $continueSyncAttempts = $false
             try 
             {
+                $error.clear()
+
                 invoke-command -session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} -errorAction Stop
             }
             catch 
             {
-                $continueSyncAttempts = $true
+                out-logfile -string $_
             }
-        }while ($continueSyncAttempts -eq $false)
+        }while ($error -eq $null)
        
 
         Out-LogFile -string "The powershell session was created successfully."
