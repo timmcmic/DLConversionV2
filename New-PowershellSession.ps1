@@ -57,6 +57,7 @@
         #Declare function variables.
 
         $sessionToImport=$NULL
+        $exchangeOnPremCommandPrefix="OnPrem"
 
         #Start function processing.
 
@@ -113,7 +114,7 @@
                 #No import is required - this is a local powershell session
 
                 Out-LogFile -string "Creating the powershell to server that requires import." 
-                $sessiontoimport=New-PSSession -ConfigurationName $configurationName -ConnectionUri $connectionURI -Credential $credentials -AllowRedirection:$allowRedirection -Authentication $authenticationType -name $PowershellSessionName
+                $sessiontoimport=New-PSSession -ConfigurationName $configurationName -ConnectionUri $connectionURI -Credential $credentials -AllowRedirection:$allowRedirection -Authentication $authenticationType -name $PowershellSessionName -prefix $exchangeOnPremCommandPrefix
             }
         }
         catch 
