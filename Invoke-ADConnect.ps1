@@ -84,7 +84,7 @@
                 start-sleep -Seconds 30
                 break
             }
-        }while ($error.count -gt 0)
+        }until ($error.count -eq 0)
        
 
         Out-LogFile -string "The powershell session was created successfully."
