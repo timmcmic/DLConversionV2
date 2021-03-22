@@ -45,9 +45,9 @@
             [Parameter(Mandatory = $true,ParamterSetName = "Exchange")]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $false,ParameterSetName = "AD")]
-            [array]$parameterSet,
+            [array]$parameterSet="None",
             [Paramter(Mandatory = $false,ParamterSetName="Exchange")]
-            [boolean]$useOnPremsiesExchange
+            [boolean]$useOnPremsiesExchange=$FALSE
         )
 
         #Declare function variables.
@@ -57,13 +57,15 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-ORIGINALDLCONFIGURATION"
+        Out-LogFile -string "BEGIN Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+        Out-LogFile -string ("DN = "+$DN)
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
+        out-logfile -string ("Use Exchange On Premises" = $useOnPremsiesExchange)
+
         OUt-LogFile -string ("Parameter Set:")
         
         foreach ($parameterIncluded in $parameterSet)
@@ -75,18 +77,14 @@
         
         try 
         {
-            Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
+            Out-LogFile -string "Determine if exchange should be utilized to clear the DL."
 
-            $functionDLConfiguration=Get-ADGroup -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -errorAction STOP
-
-            #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
-
-            if ($functionDLConfiguration -eq $NULL)
+            if ( $useOnPremsiesExchange -eq $FALSE )
             {
-                throw "The group cannot be found in Active Directory by email address."
-            }
+                Out-LogFile -string "Using AD providers to clear the given attributes"
 
-            Out-LogFile -string "Original DL configuration found and recorded."
+                set-adgroup -identity $DN -server $globalCatalogServer -clear $parameterSet
+            }
         }
         catch 
         {
