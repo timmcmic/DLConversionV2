@@ -91,7 +91,7 @@ Function Start-DistributionListMigration
         [string]$dnNoSyncOU = $NULL,
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $FALSE,
-        [Paramter(Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE
     )
 
