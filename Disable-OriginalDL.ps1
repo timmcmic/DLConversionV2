@@ -79,11 +79,18 @@
         {
             Out-LogFile -string "Determine if exchange should be utilized to clear the DL."
 
-            if ( $useOnPremsiesExchange -eq $FALSE )
+            if ($useOnPremsiesExchange -eq $FALSE)
             {
                 Out-LogFile -string "Using AD providers to clear the given attributes"
 
                 set-adgroup -identity $DN -server $globalCatalogServer -clear $parameterSet
+            }
+
+            elseif ($userOnPremsiesExchange -eq $TRUE)
+            {
+                out-logfile -string "Using Exchange providers to clear the distribution list."
+
+                disable-distributionGroup -identity $DN -confirm:$false
             }
         }
         catch 
