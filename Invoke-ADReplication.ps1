@@ -39,6 +39,7 @@
         #Declare function variables.
 
         $workingPowershellSession=$NULL
+        $invokeTest=$null
 
         #Start function processing.
 
@@ -67,7 +68,11 @@
     
         try 
         {
-            invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /A }
+            out-logfile -string "Replication domain controllers inbound."
+
+            $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /A } *>&1
+
+            out-logfile -string $invokeTest
         }
         catch 
         {
@@ -76,7 +81,11 @@
 
         try 
         {
-            invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /APe }
+            out-logfile -string "Replication domain controllers inbound."
+            
+            $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /APe } *>&1
+
+            out-logfile -string $invokeTest 
         }
         catch 
         {
