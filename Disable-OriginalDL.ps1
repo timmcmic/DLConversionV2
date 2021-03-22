@@ -86,7 +86,7 @@
                 set-adgroup -identity $DN -server $globalCatalogServer -clear $parameterSet
             }
 
-            elseif ($userOnPremsiesExchange -eq $TRUE)
+            elseif ($useOnPremsiesExchange -eq $TRUE)
             {
                 out-logfile -string "Using Exchange providers to clear the distribution list."
 
