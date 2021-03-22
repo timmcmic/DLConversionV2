@@ -78,7 +78,10 @@
             }
             catch 
             {
+                out-logfile -string "Attempt to sync failed - this can be expected if another sync is in progress."
                 out-logfile -string $_
+                out-logfile -string "Starting 30 second sleep."
+                start-sleep -Seconds 30
             }
         }while ($error -eq $null)
        
