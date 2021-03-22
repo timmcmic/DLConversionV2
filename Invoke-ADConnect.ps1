@@ -70,7 +70,7 @@
 
         $error.clear()
 
-        Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'}
+        Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'}
 
         write-host "These are the errors"
         write-host $error
