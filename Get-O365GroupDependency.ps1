@@ -111,6 +111,10 @@
                     $functionTest = invoke-expression -command $functionCommand
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
+                }
+                else 
+                {
+                    throw "Invalid group type specified in function call.  Acceptable Standard or Universal"    
                 } 
             }
 
