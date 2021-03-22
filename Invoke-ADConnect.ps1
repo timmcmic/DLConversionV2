@@ -84,7 +84,7 @@
                 $invokeSleep = $true
             }
 
-            $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction 'STOP'} *>&1
+            $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
 
             if ($invokeTest.result -ne "Success")
             {
