@@ -72,7 +72,10 @@
 
             $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /A } *>&1
 
-            out-logfile -string $invokeTest
+            foreach ($item in $invokeTest)
+            {
+                out-LogFile -string $item
+            }
         }
         catch 
         {
@@ -81,11 +84,14 @@
 
         try 
         {
-            out-logfile -string "Replication domain controllers inbound."
-            
+            out-logfile -string "Replication domain controllers outbound."
+
             $invokeTest=invoke-command -session $workingPowershellSession -ScriptBlock { repadmin /syncall /APe } *>&1
 
-            out-logfile -string $invokeTest 
+            foreach ($item in $invokeTest)
+            {
+                out-LogFile -string $item
+            }
         }
         catch 
         {
