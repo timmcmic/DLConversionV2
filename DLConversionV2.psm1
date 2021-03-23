@@ -1336,10 +1336,18 @@ Function Start-DistributionListMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.
 
+    out-logfile -string "Starting sleep before invoking AD replication - one minute."
+    start-sleep -seconds 60
+    out-logfile -string "Invoking AD replication."
+
     invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+    out-logfile -string "Starting sleep before invoking AD Connect - one minute."
+    start-sleep -seconds 60
+    out-logfile -string "Invoking AD Connect."
 
     invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
