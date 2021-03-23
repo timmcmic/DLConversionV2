@@ -92,7 +92,10 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
-        [boolean]$enableHybridMailflow = $FALSE
+        [boolean]$enableHybridMailflow = $FALSE,
+        [Parameter](Mandatory = $false)]
+        [ValidateSet("Security","Distribution")]
+        [string]$groupTypeOverride
     )
 
     #Define global variables.
@@ -1368,7 +1371,7 @@ Function Start-DistributionListMigration
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
-    
+    new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
