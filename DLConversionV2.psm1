@@ -1321,6 +1321,10 @@ Function Start-DistributionListMigration
 
     out-LogFile -string $originalDLConfigurationUpdated
 
+    $originalDLConfigurationUpdated = $originalDLConfigurationUpdated | select-object -property $dlPropertySet
+
+    out-LogFile -string $originalDLConfigurationUpdated
+
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
