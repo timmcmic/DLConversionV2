@@ -31,7 +31,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$originalDLConfiguration,
+            $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
             [string]$groupTypeOverride
         )
