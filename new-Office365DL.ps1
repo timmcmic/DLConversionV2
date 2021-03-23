@@ -55,6 +55,8 @@
         #Calculate the group type to be utilized.
         #Three values - either NULL,Security,or Distribution.
 
+        out-Logfile -string ("The group type for evaluation is = "+$originalDLConfiguration.groupType)
+
         if ($groupTypeOverride -Eq "Security")
         {
             out-logfile -string "The administrator overrode the group type to security."
@@ -71,13 +73,13 @@
         {
             out-logfile -string "A group type override was not specified.  Using group type from on premises."
 
-            if ($originalDLConfiguration.groupcategory -eq "-2147483640")
+            if ($originalDLConfiguration.grouptype -eq "-2147483640")
             {
                 out-logfile -string "The group type from on premises is security."
 
                 $functionGroupType = "Security"
             }
-            elseif ($originalDLConfiguration.groupcategory -eq "8")
+            elseif ($originalDLConfiguration.grouptype -eq "8")
             {
                 out-logfile -string "The group type from on premises is distribution."
 
