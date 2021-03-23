@@ -98,7 +98,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        Out-LogFile -string "END GET-ORIGINALDLCONFIGURATION"
+        Out-LogFile -string "END Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
         
         #This function is designed to open local and remote powershell sessions.
