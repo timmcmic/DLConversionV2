@@ -49,11 +49,7 @@
         #Log the parameters and variables for the function.
 
         Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
-
-        if ($groupTypeOverride -ne $NULL)
-        {
-            out-LogFile -string ("Group Type Override = "+$groupTypeOverride)
-        }
+        out-logfile -string ("Group Type Override = "+$groupTypeOverride)
 
         #Calculate the group type to be utilized.
         #Three values - either NULL,Security,or Distribution.
@@ -70,7 +66,7 @@
 
             $functionGroupType = "Distrbution"
         }
-        elseif ($groupTypeOverride -eq $NULL) 
+        elseif ($groupTypeOverride -eq "None") 
         {
             out-logfile -string "A group type override was not specified.  Using group type from on premises."
 
