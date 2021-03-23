@@ -69,8 +69,7 @@
         #Establish new names
 
         [string]$functionGroupName = $dlName+"!"
-        #[string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
-        [string]$functionGroupSAMAccountName ="TEST"
+        [string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
 
         out-logfile -string ("New group name = "+$functionGroupName)
         out-logfile -string ("New group sam account name = "+$functionGroupSAMAccountName)
