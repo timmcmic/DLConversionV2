@@ -48,7 +48,8 @@
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
+        Out-LogFile -string ("OriginalDLConfiguration = ")
+        out-logfile -string $originalDLConfiguration
         out-logfile -string ("Group Type Override = "+$groupTypeOverride)
 
         #Calculate the group type to be utilized.
