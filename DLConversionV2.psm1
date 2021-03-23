@@ -1355,6 +1355,16 @@ Function Start-DistributionListMigration
 
     invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
+    out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
+    start-sleep -seconds 60
+  
+    #At this time we have processed the deletion to azure.
+    #We need to wait for that deletion to occur in Exchange Online.
+
+    out-logfile -string "Monitoring Exchange Online for distribution list deletion."
+
+    test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
