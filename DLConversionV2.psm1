@@ -434,6 +434,8 @@ Function Start-DistributionListMigration
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
+    Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
+
     if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq $NULL))
     {
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
