@@ -1318,6 +1318,8 @@ Function Start-DistributionListMigration
 
     $global:unDoStatus=$global:unDoStatus+1
 
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
     #It is now time to disable the on premsies distribution group.
     #This is required to remove the group from office 365 in order to re-create it.
 
@@ -1333,6 +1335,8 @@ Function Start-DistributionListMigration
     }
 
     $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
     #Replicate domain controllers so that the change is received as soon as possible.
 
