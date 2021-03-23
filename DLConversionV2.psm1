@@ -270,6 +270,8 @@ Function Start-DistributionListMigration
 
     out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
 
+    out-logfile -string ("Group type override = "+$groupTypeOverride)
+
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
