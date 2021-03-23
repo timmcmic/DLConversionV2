@@ -86,11 +86,11 @@ Function Start-DistributionListMigration
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
-        [boolean]$retainOffice365Settings=$false,
+        [boolean]$retainOffice365Settings=$true,
         [Parameter(Mandatory = $false)]
         [string]$dnNoSyncOU = $NULL,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainOriginalGroup = $FALSE,
+        [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE
     )
@@ -134,6 +134,7 @@ Function Start-DistributionListMigration
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
     [array]$exchangeDLMembershipSMTP=$NULL #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=$NULL #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessageSMTP=$NULL #Array of members with accept permissions from AD.
@@ -1284,25 +1285,40 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START Disable on premises distribution group."
     Out-LogFile -string "********************************************************************************"
 
+    #At this point we rename the distribution group / security group
+    #The script no longer deletes the group by default.
+    #The group is renamed at this point for two purposes...
+    ###First the rename is done to ensure that if the group is ever mail enabled by accident - the default addresses assigned to not match the migrated group.
+    ###If the default addresses assigned matched the group - it would soft match and undo the migration.
+    ###Second the rename ensures that there will be no collision in objects if hybrid mail flow is enabled - when the dynamic DL is created.
+
+    if ($retainOriginalGroup -eq $TRUE)
+    {
+        Out-LogFile -string "Administrator has choosen to retain the original group."
+        out-logfile -string "Rename the group by adding the fixed character !"
+
+        set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName
+    }
+
+    #At this point we will assume that a rename occured - this changes the objects DN.
+    #We will reobtain the configuration and store it in a new variable.  This will be used moving forward for function calls.
+
+    $originalDLConfigurationUpdated = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
+
+    $global:unDoStatus=$global:unDoStatus+1
+
     #It is now time to disable the on premsies distribution group.
     #This is required to remove the group from office 365 in order to re-create it.
 
-    if ( $useOnPremsiesExchange -eq $TRUE)
+    if ($retainOriginalGroup -eq $TRUE)
     {
-        #The customer has provided information to utilize on premsies exchange.
-        #Call disable through the commandlets.
-
-        out-logFile -string "Using on premises Exchange to mail disable the group."
-
-        #Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -useOnPremsiesExchange $useOnPremsiesExchange
+        Out-LogFile -string "Administrator has choosen to regain the original group."
+        out-logfile -string "Disabling the mail attributes on the group."
+        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
     }
-    else 
+    else
     {
-        #Call disable through AD providers.
-
-        out-logFile -string "Using AD Provider to mail disable the group."
-
-        #Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer
     }
 
     $global:unDoStatus=$global:unDoStatus+1
@@ -1315,8 +1331,6 @@ Function Start-DistributionListMigration
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
     invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
-
-    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"

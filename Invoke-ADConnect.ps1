@@ -69,9 +69,6 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        out-logfile -string "Debug sleep"
-        start-sleep -s 5
-
         do 
         {
             if ($invokeSleep -eq $TRUE)
