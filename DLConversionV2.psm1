@@ -432,6 +432,13 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Only one method of Exchange Online authentication specified."
     }
 
+    #Validate that an OU was specified <if> retain group is not set to true.
+
+    if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq $NULL))
+    {
+        out-LogFile -string "A no SYNC OU is required if retain original group is false."
+    }
+
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
