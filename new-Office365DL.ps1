@@ -102,7 +102,7 @@
         {
             out-logfile -string "Creating the distribution group in Office 365."
 
-            new-distributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -type $functionGroupType
+            new-o365distributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -type $functionGroupType
         }
         catch 
         {

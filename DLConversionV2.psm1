@@ -1343,8 +1343,8 @@ Function Start-DistributionListMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.
 
-    out-logfile -string "Starting sleep before invoking AD replication - one minute."
-    start-sleep -seconds 60
+    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+    start-sleep -seconds 15
     out-logfile -string "Invoking AD replication."
 
     invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName
