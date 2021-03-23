@@ -73,7 +73,7 @@
         {
             out-logfile -string "A group type override was not specified.  Using group type from on premises."
 
-            if ($originalDLConfiguration.groupcategory -eq "Security)
+            if ($originalDLConfiguration.groupcategory -eq "Security")
             {
                 out-logfile -string "The group type from on premises is security."
 
