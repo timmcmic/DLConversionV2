@@ -1312,6 +1312,8 @@ Function Start-DistributionListMigration
 
     $originalDLConfigurationUpdated = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
 
+    out-LogFile -string $originalDLConfigurationUpdated
+
     $global:unDoStatus=$global:unDoStatus+1
 
     #It is now time to disable the on premsies distribution group.
@@ -1321,7 +1323,7 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
-        Disable-OriginalDL -dn $originalDLConfiguration.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+        Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
     }
     else
     {
