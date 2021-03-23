@@ -60,7 +60,7 @@
 		}
 		else 
 		{
-			$functionMemberDepartRestriction = 
+			#$functionMemberDepartRestriction = 
 		}
 
         #Create the distribution group in office 365.
