@@ -93,7 +93,7 @@ Function Start-DistributionListMigration
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
-        [Parameter](Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("Security","Distribution")]
         [string]$groupTypeOverride
     )
