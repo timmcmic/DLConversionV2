@@ -95,7 +95,7 @@ Function Start-DistributionListMigration
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
         [ValidateSet("Security","Distribution")]
-        [string]$groupTypeOverride
+        [string]$groupTypeOverride="None"
     )
 
     #Define global variables.
