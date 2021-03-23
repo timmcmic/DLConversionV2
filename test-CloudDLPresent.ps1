@@ -53,11 +53,11 @@
             }
             else 
             {
-                Out-LogFile -string "Group previously found - sleep 30 seconds and check again."
+                Out-LogFile -string "Group found in Office 365  Sleep for 30 seconds and check again."
                 start-sleep -seconds 30
             }
 
-        } while (get-o365DistributionGroup -identity $groupSMTPAddress)
+        } while (get-exoRecipient -identity $groupSMTPAddress)
 
         Out-LogFile -string "END TEST-CLOUDDLPRESENT"
         Out-LogFile -string "********************************************************************************"

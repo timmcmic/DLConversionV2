@@ -1365,6 +1365,11 @@ Function Start-DistributionListMigration
 
     test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress
 
+    #At this point we have validated that the group is gone from office 365.
+    #We can begin the process of recreating the distribution group in Exchange Online.
+
+    
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
