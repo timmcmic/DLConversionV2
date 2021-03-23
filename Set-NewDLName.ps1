@@ -80,7 +80,7 @@
         {
             Out-LogFile -string "Setting the new group SAM Account Name.."
 
-            set-adgroup -identity $dn -sameAccountName $functionSAMAccountName
+            set-adgroup -identity $dn -samAccountName $functionSAMAccountName
         }
         catch 
         {
