@@ -88,7 +88,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$retainOffice365Settings=$true,
         [Parameter(Mandatory = $false)]
-        [string]$dnNoSyncOU = $NULL,
+        [string]$dnNoSyncOU = "NotSet",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
@@ -436,7 +436,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-    if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq $NULL))
+    if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
     {
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
