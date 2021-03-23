@@ -436,7 +436,7 @@ Function Start-DistributionListMigration
 
     if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq $NULL))
     {
-        out-LogFile -string "A no SYNC OU is required if retain original group is false."
+        out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
