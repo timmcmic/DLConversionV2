@@ -70,7 +70,6 @@
 
         [string]$functionGroupName = $dlName+"!"
         [string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
-        $functionWorkingGroup=$NULL
 
         out-logfile -string ("New group name = "+$functionGroupName)
         out-logfile -string ("New group sam account name = "+$functionGroupSAMAccountName)
@@ -81,26 +80,12 @@
         {
             Out-LogFile -string "Get the group as an instance."
 
-            $functionWorkingGroup = get-adgroup -identity $dn -server $globalCatalogServer
+            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer
         }
         catch 
         {
             Out-LogFile -string $_ -isError:$TRUE
         }
-
-        $functionWorkingGroup.samAccountName=$functionGroupSAMAccountName
-
-        try
-        {
-            Out-LogFile -string "Update the group instance to include the new SAM Account Name.."
-
-            set-adgroup -instance $functionWorkingGroup -passThrough -server $globalCatalogServer
-        }
-        catch
-        {
-            Out-LogFile -string $_ -isError:$true  
-        }
-    
 
         try
         {
