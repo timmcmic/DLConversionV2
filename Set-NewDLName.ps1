@@ -69,7 +69,8 @@
         #Establish new names
 
         [string]$functionGroupName = $dlName+"!"
-        [string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
+        #[string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
+        [string]$functionGroupSAMAccountName ="TEST"
 
         out-logfile -string ("New group name = "+$functionGroupName)
         out-logfile -string ("New group sam account name = "+$functionGroupSAMAccountName)
@@ -80,7 +81,7 @@
         {
             Out-LogFile -string "Setting the new group SAM Account Name.."
 
-            set-adgroup -identity $dn -samAccountName `$functionSAMAccountName -server $globalCatalogServer
+            set-adgroup -identity $dn -samAccountName $functionSAMAccountName -server $globalCatalogServer
         }
         catch 
         {
