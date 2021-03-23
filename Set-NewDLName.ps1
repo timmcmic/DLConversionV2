@@ -81,7 +81,7 @@
         {
             Out-LogFile -string "Setting the new group SAM Account Name.."
 
-            set-adgroup -identity $dn -samAccountName $functionSAMAccountName -server $globalCatalogServer
+            set-adgroup -identity $dn -replace @('samAccountName'=$functionGroupSAMAccountName) -server $globalCatalogServer
         }
         catch 
         {
