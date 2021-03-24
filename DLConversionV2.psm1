@@ -967,8 +967,6 @@ Function Start-DistributionListMigration
         }
     }
 
-    EXIT
-
     if ($allGroupsMemberOf -ne $NULL)
     {
         out-logFile -string "The group to be migrated is a member of the following groups."
@@ -979,6 +977,8 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "The group is not a member of any other groups on premises."
     }
+
+    EXIT
 
     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
 
