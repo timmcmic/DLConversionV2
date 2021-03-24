@@ -1015,6 +1015,186 @@ Function Start-DistributionListMigration
         out-logfile -string "The group is not a member of any other groups on premises."
     }
 
+    #Handle all groups this object has reject permissions on.
+
+    if ($originalDLConfiguration.dlMemRejectPermsBL -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.dlMemRejectPermsBL)
+        {
+            try 
+            {
+                $allGroupsReject += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($allGroupsReject -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $allGroupsReject
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsReject.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
+    #Handle all groups this object has accept permissions on.
+
+    if ($originalDLConfiguration.dlMemSubmitPermsBL -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.dlMemSubmitPermsBL)
+        {
+            try 
+            {
+                $allGroupsAccept += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($allGroupsAccept -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $allGroupsAccept
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsAccept.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
+    #Handle all groups this object has bypass moderation permissions on.
+
+    if ($originalDLConfiguration.msExchBypassModerationfromDLMembersBL -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.msExchBypassModerationfromDLMembersBL)
+        {
+            try 
+            {
+                $allGroupsBypassModeration += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($allGroupsBypassModeration -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $allGrouallGroupsBypassModerationpsAccept
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsBypassModeration.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
+    #Handle all groups this object has accept permissions on.
+
+    if ($originalDLConfiguration.dlMemSubmitPermsBL -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.dlMemSubmitPermsBL)
+        {
+            try 
+            {
+                $allGroupsAccept += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($allGroupsAccept -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $allGroupsAccept
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsAccept.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
+    #Handle all groups this object has bypass grant send on behalf permissions on.
+
+    if ($originalDLConfiguration.publicDelegateBL -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.publicDelegateBL)
+        {
+            try 
+            {
+                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($publicDelegateBL -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $publicDelegateBL
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$publicDelegateBL.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
+    #Handle all groups this object has manager permissions on.
+
+    if ($originalDLConfiguration.managedObject -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.managedObject)
+        {
+            try 
+            {
+                $allGroupsManagedBy += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($allGroupsManagedBy -ne $NULL)
+    {
+        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logfile -string $allGroupsManagedBy
+        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsManagedBy.count)
+    }
+    else 
+    {
+        out-logfile -string "The group is not a member of any other groups on premises."
+    }
+
     EXIT
 
     #At this time we need to test groups to determine if there are any restrictions that the migrated DL has on them.
