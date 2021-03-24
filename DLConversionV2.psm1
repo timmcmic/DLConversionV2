@@ -1012,16 +1012,16 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "The group does not have forwarding set on any other users."
     }
 
     #Handle all groups this object has reject permissions on.
 
-    if ($originalDLConfiguration.dlMemRejectPermsBL -ne $NULL)
+    if ($originalDLConfiguration.dLMemRejectPermsBL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.dlMemRejectPermsBL)
+        foreach ($DN in $originalDLConfiguration.dLMemRejectPermsBL)
         {
             try 
             {
@@ -1036,22 +1036,22 @@ Function Start-DistributionListMigration
 
     if ($allGroupsReject -ne $NULL)
     {
-        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logFile -string "The group has reject permissions on the following groups:"
         out-logfile -string $allGroupsReject
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsReject.count)
+        out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "The group does not have any reject permissions on other groups."
     }
 
     #Handle all groups this object has accept permissions on.
 
-    if ($originalDLConfiguration.dlMemSubmitPermsBL -ne $NULL)
+    if ($originalDLConfiguration.dLMemSubmitPermsBL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.dlMemSubmitPermsBL)
+        foreach ($DN in $originalDLConfiguration.dLMemSubmitPermsBL)
         {
             try 
             {
@@ -1066,22 +1066,22 @@ Function Start-DistributionListMigration
 
     if ($allGroupsAccept -ne $NULL)
     {
-        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logFile -string "The group has accept messages from on the following groups:"
         out-logfile -string $allGroupsAccept
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsAccept.count)
+        out-logfile -string ("This group has accept permissions on this many groups = "+$allGroupsAccept.count)
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "The group does not have accept permissions on any groups."
     }
 
     #Handle all groups this object has bypass moderation permissions on.
 
-    if ($originalDLConfiguration.msExchBypassModerationfromDLMembersBL -ne $NULL)
+    if ($originalDLConfiguration.msExchBypassModerationFromDLMembersBL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.msExchBypassModerationfromDLMembersBL)
+        foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersBL)
         {
             try 
             {
@@ -1096,52 +1096,22 @@ Function Start-DistributionListMigration
 
     if ($allGroupsBypassModeration -ne $NULL)
     {
-        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logFile -string "This group has bypass moderation on the following groups:"
         out-logfile -string $allGroupsBypassModeration
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsBypassModeration.count)
+        out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "This group does not have any bypass moderation on any groups."
     }
 
     #Handle all groups this object has accept permissions on.
 
-    if ($originalDLConfiguration.dlMemSubmitPermsBL -ne $NULL)
+    if ($originalDLConfiguration.publicDelegatesBL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.dlMemSubmitPermsBL)
-        {
-            try 
-            {
-                $allGroupsAccept += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsAccept -ne $NULL)
-    {
-        out-logFile -string "The group has forwarding address set on the following users.."
-        out-logfile -string $allGroupsAccept
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsAccept.count)
-    }
-    else 
-    {
-        out-logfile -string "The group is not a member of any other groups on premises."
-    }
-
-    #Handle all groups this object has bypass grant send on behalf permissions on.
-
-    if ($originalDLConfiguration.publicDelegateBL -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.publicDelegateBL)
+        foreach ($DN in $originalDLConfiguration.publicDelegatesBL)
         {
             try 
             {
@@ -1154,15 +1124,15 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($publicDelegateBL -ne $NULL)
+    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
     {
-        out-logFile -string "The group has forwarding address set on the following users.."
-        out-logfile -string $publicDelegateBL
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$publicDelegateBL.count)
+        out-logFile -string "This group has grant send on behalf to to the following groups:"
+        out-logfile -string $allGroupsGrantSendOnBehalfTo
+        out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "The group does ont have any send on behalf of rights to other groups."
     }
 
     #Handle all groups this object has manager permissions on.
@@ -1186,13 +1156,13 @@ Function Start-DistributionListMigration
 
     if ($allGroupsManagedBy -ne $NULL)
     {
-        out-logFile -string "The group has forwarding address set on the following users.."
+        out-logFile -string "This group has managedBY rights on the following groups."
         out-logfile -string $allGroupsManagedBy
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsManagedBy.count)
+        out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
     }
     else 
     {
-        out-logfile -string "The group is not a member of any other groups on premises."
+        out-logfile -string "The group is not a manager on any other groups."
     }
 
     EXIT
