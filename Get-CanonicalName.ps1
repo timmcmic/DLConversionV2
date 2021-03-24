@@ -57,33 +57,7 @@
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Get the specific user using ad providers.
-        <# 
-        try 
-        {
-            Out-LogFile -string "Attempting to get the canonical name of the object."
-            
-            if ($userOrGroup -eq "GROUP")
-            {
-                $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
-            }
-            if ($userOrGroup -eq "USER")
-            {
-                $functionTest = get-adUser -filter {distinguishedName -eq $dn} -properties canonicalName -errorAction Stop
-            }
-
-            if ($functionTest -eq $NULL)
-            {
-                throw "The array member cannot be found by DN in Active Directory."
-            }
-
-            Out-LogFile -string "The array member was found by DN."
-        }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
-        #>
-
+        
         try 
         {
             Out-LogFile -string "Gathering the AD object based on distinguished name."
@@ -92,7 +66,7 @@
         }
         catch 
         {
-            
+            out-logfile -string $_ -isError:$TRUE
         }
 
         try
