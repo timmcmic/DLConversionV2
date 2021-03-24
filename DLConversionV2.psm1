@@ -610,18 +610,16 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
 
-    EXIT
-
     #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
 
-    $originalDLConfiguration = $originalDLConfiguration | select-object -property $dlPropertySet
+    #$originalDLConfiguration = $originalDLConfiguration | select-object -property $dlPropertySet
 
-    Out-LogFile -string "Log original DL configuration."
-    out-logFile -string $originalDLConfiguration
+    #Out-LogFile -string "Log original DL configuration."
+    #out-logFile -string $originalDLConfiguration
 
-    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
+    #Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationObjectXML
+    #Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationObjectXML
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
@@ -846,8 +844,7 @@ Function Start-DistributionListMigration
         out-logfile "The group has no grant send on behalf to."    
     }
 
-
-
+    EXIT
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
