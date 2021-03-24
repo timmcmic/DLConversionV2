@@ -174,61 +174,58 @@
             #If the group is a member - it must be migrated before the DL can be migrated.
             #If the group is non-mail enabled we need to bail - it has to be removed as it's not in Office 365 like a user.
 
+            elseif ($functionTest.objectClass -eq "Group")
+            {
+                #It is possible that the group has permissions to itself.
+
+                if (($functionTest.distinguishedname -eq $originalGroupDN) -and ($isMember -eq $FALSE))
+                {
+                    out-logFile -string "The group has permissions to itself - this is permissable - adding to array."
+                    #The group has permissions to itself and this is permissiable.
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $false
+                    }
+                }
+                elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
+                {
+                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
+
+                    out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
+                    out-logfile -string $DN
+                    out-logFile -string ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN) -isError:$TRUE
+                }
+                elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
+                {
+                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
+                        
+                    out-logfile -string "The group has permissions on the DL and this is permissiable."
+                    out-logfile -string $dn
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $false
+                    }
+                }
+
+            }
             else 
             {
-                if ($functionTest.objectClass -eq "Group")
-                {
-                    #It is possible that the group has permissions to itself.
-
-                    if (($functionTest.distinguishedname -eq $originalGroupDN) -and ($isMember -eq $FALSE))
-                    {
-                        out-logFile -string "The group has permissions to itself - this is permissable - adding to array."
-                        #The group has permissions to itself and this is permissiable.
-
-                        $functionObject = New-Object PSObject -Property @{
-                            Alias = $functionTest.mailNickName
-                            Name = $functionTest.Name
-                            PrimarySMTPAddressOrUPN = $functionTest.mail
-                            GUID = $NULL
-                            RecipientType = $functionTest.objectClass
-                            RecipientOrUser = "Recipient"
-                            ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-                            isAlreadyMigrated = $false
-                        }
-                    }
-                    elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
-                    {
-                        #The group is mail enabled and a member.  All nested groups have to be migrated first.
-
-                        out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
-                        out-logfile -string $DN
-                        out-logFile -string ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN) -isError:$TRUE
-                    }
-                    elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
-                    {
-                        #The group is mail enabled and a member.  All nested groups have to be migrated first.
-                        
-                        out-logfile -string "The group has permissions on the DL and this is permissiable."
-                        out-logfile -string $dn
-
-                        $functionObject = New-Object PSObject -Property @{
-                            Alias = $functionTest.mailNickName
-                            Name = $functionTest.Name
-                            PrimarySMTPAddressOrUPN = $functionTest.mail
-                            GUID = $NULL
-                            RecipientType = $functionTest.objectClass
-                            RecipientOrUser = "Recipient"
-                            ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-                            isAlreadyMigrated = $false
-                        }
-                    }
-
-                }
-                else 
-                {
-                    out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
-                }    
-            }
+                out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
+            }    
         }
         catch
         {
