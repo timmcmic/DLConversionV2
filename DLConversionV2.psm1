@@ -1097,7 +1097,7 @@ Function Start-DistributionListMigration
     if ($allGroupsBypassModeration -ne $NULL)
     {
         out-logFile -string "The group has forwarding address set on the following users.."
-        out-logfile -string $allGrouallGroupsBypassModerationpsAccept
+        out-logfile -string $allGroupsBypassModeration
         out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allGroupsBypassModeration.count)
     }
     else 
