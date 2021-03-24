@@ -1240,8 +1240,6 @@ Function Start-DistributionListMigration
     {
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
-
-    EXIT
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -1262,7 +1260,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1270,13 +1273,25 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
@@ -1296,7 +1311,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1304,13 +1324,25 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
@@ -1330,7 +1362,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1338,13 +1375,25 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
@@ -1364,7 +1413,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1372,13 +1426,25 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
@@ -1398,7 +1464,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1406,13 +1477,25 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
@@ -1432,7 +1515,12 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.ExternalDirectoryObjectID
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
+                }
+                catch {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
             {
@@ -1440,16 +1528,30 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
 
-                test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
             elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
             {
                 out-LogFile -string "Testing based on user principal name."
                 out-logfile -string $member.PrimarySMTPAddressOrUPN
                 out-logfile -string $member.recipientOrUser
+
+                try {
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
+
+    EXIT
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
