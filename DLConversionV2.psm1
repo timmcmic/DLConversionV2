@@ -1236,6 +1236,11 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $allGroupsManagedBy -itemToExport $allGroupsManagedByXML
     }
 
+    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemToExport $allGroupsGrantSendOnBehalfToXML
+    }
+
     EXIT
     
     Out-LogFile -string "********************************************************************************"
