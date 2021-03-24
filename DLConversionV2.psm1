@@ -1233,7 +1233,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsManagedBy -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsManagedBy -itemToExport $allGroupsManagedByXML
+        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $allGroupsManagedByXML
     }
 
     if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
