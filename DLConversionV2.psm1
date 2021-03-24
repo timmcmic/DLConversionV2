@@ -1676,17 +1676,13 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Administrator has choosen to retain the original group."
         out-logfile -string "Rename the group by adding the fixed character !"
 
-        set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName
+        set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential
     }
 
     #At this point we will assume that a rename occured - this changes the objects DN.
     #We will reobtain the configuration and store it in a new variable.  This will be used moving forward for function calls.
 
-    $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
-
-    out-LogFile -string $originalDLConfigurationUpdated
-
-    $originalDLConfigurationUpdated = $originalDLConfigurationUpdated | select-object -property $dlPropertySet
+    $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
 
     out-LogFile -string $originalDLConfigurationUpdated
 
@@ -1701,11 +1697,11 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
-        Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear
+        Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential
     }
     else
     {
-        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer
+        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
     }
 
     $global:unDoStatus=$global:unDoStatus+1

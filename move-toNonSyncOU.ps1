@@ -39,7 +39,9 @@
             [Parameter(Mandatory = $true)]
             $OU,
             [Parameter(Mandatory = $true)]
-            $DN
+            $DN,
+            [Parameter(Mandatory = $true)]
+            $adCredential
         )
 
         #Declare function variables.
@@ -60,7 +62,7 @@
         {
             Out-LogFile -string "Move the group to the non-SYNC OU..."
 
-            move-adObject -identity $DN -targetPath $OU
+            move-adObject -identity $DN -targetPath $OU -credential $adCredential
         }
         catch 
         {

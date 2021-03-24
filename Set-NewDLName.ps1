@@ -45,7 +45,9 @@
             [Parameter(Mandatory = $true)]
             $dlSAMAccountName,
             [Parameter(Mandatory = $true)]
-            $DN
+            $DN,
+            [Parameter(Mandatory = $true)]
+            $adCredential
         )
 
         #Declare function variables.
@@ -80,7 +82,7 @@
         {
             Out-LogFile -string "Get the group as an instance."
 
-            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer
+            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential
         }
         catch 
         {
@@ -91,7 +93,7 @@
         {
             out-logfile -string "Setting the new group name.."
 
-            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer
+            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer -credential $adCredential
         }
         catch
         {

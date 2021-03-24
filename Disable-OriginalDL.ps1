@@ -47,7 +47,9 @@
             [Parameter(Mandatory = $false,ParameterSetName = "AD")]
             [array]$parameterSet="None",
             [Parameter(Mandatory = $false,ParameterSetName="Exchange")]
-            [boolean]$useOnPremsiesExchange=$FALSE
+            [boolean]$useOnPremsiesExchange=$FALSE,
+            [Parameter(Mandatory = $true)]
+            $adCredential
         )
 
         #Declare function variables.
@@ -83,7 +85,7 @@
             {
                 Out-LogFile -string "Using AD providers to clear the given attributes"
 
-                set-adgroup -identity $DN -server $globalCatalogServer -clear $parameterSet
+                set-adgroup -identity $DN -server $globalCatalogServer -clear $parameterSet -credential $adCredential
             }
 
             elseif ($useOnPremsiesExchange -eq $TRUE)
@@ -100,10 +102,4 @@
 
         Out-LogFile -string "END Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
-        
-        #This function is designed to open local and remote powershell sessions.
-        #If the session requires import - for example exchange - return the session for later work.
-        #If not no return is required.
-        
-        return $functionDLConfiguration
     }
