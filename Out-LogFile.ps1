@@ -72,7 +72,7 @@
         }
         else 
         {
-            Write-Output $logstring  
+            Write-Output $logstring.tostring()  
         }
         
         #If the output to the log is terminating exception - throw the same string.
