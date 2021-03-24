@@ -167,6 +167,7 @@
             }
             elseif ($functionTest.objectClass -eq "Group")
             {
+                out-logfile -string "The recipient is a group."
                 #It is possible that the group has permissions to itself.
 
                 if (($functionTest.distinguishedname -eq $originalGroupDN) -and ($isMember -eq $FALSE))
@@ -210,6 +211,10 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                     }
+                }
+                else 
+                {
+                    out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
                 }
             }
             else 
