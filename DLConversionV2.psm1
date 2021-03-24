@@ -654,7 +654,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.member)
         {
-            $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -677,7 +677,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
         {
-            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -687,7 +687,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
         {
-            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -709,7 +709,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.AuthOrig)
         {
-            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -719,7 +719,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
-            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -742,7 +742,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.managedBy)
         {
-            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -752,7 +752,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
         {
-            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -775,7 +775,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
         {
-            $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -798,7 +798,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
         {
-            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -810,7 +810,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
         {
-            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 
@@ -829,7 +829,7 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.publicDelegates)
         {
-            $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
+            $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
         }
     }
 

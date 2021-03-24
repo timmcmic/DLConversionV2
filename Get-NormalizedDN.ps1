@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            [string]$DN
+            [string]$DN,
+            [Parameter(Mandatory = $TRUE)]
+            [SecureString]$adCredential
         )
 
         #Declare function variables.
@@ -59,7 +61,7 @@
         {
             Out-LogFile -string "Attempting to find the AD object associated with the member."
 
-            $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -errorAction STOP
+            $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
 
             if ($functionTest -eq $NULL)
             {
