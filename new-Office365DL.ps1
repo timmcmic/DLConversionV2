@@ -55,7 +55,7 @@
         #Calculate the group type to be utilized.
         #Three values - either NULL,Security,or Distribution.
 
-        out-Logfile -string ("The group type for evaluation is = "+$originalDLConfiguration.groupcategory)
+        out-Logfile -string ("The group type for evaluation is = "+$originalDLConfiguration.groupType)
 
         if ($groupTypeOverride -Eq "Security")
         {
