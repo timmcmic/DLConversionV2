@@ -1385,7 +1385,7 @@ Function Start-DistributionListMigration
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
-
+    set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
