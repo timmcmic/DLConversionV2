@@ -94,8 +94,12 @@
 
             #Check to see if the recipient has a recipient display type and is a user, or is a contact.
 
+            Out-LogFile -string "Enterpting DN evaluation..."
+
             if (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
             {
+                Out-LogFile -string "The object has a recipient display type and is a user or contact."
+
                 #If the object has already been mirgated - then custom attribute 1 is migrated by script. 
                 #Update the object to include the custom attribute not the object itself.
 
@@ -133,10 +137,6 @@
                     }
                 }
             }
-
-            #The contact can be created with only an email address and be in sync scope.  It could be added to a group and will appear as a mail contact in the service.
-            #If we find the user with a non-null email, no exchange type, and type contact - we'll normalize it and include it.
-
             elseif (($functiontest.mail -ne $NULL) -and ($functiontest.msExchRecipientDisplayType -eq $NULL) -and ($functionTest.objectClass -eq "Contact"))
             {
                 Out-LogFile -string "The object is a contact with a mail attribute - but is not fully exchange enabled."
@@ -152,9 +152,6 @@
                         isAlreadyMigrated = $false
                     }
             }
-
-            #At this point we have users that could be added to managedBy or members that are not mail enabled.  This is permissable through ADUC tools and supported with Exchange commands.
-
             elseif ($functionTest.objectClass -eq "User")
             {
                 Out-LogFile -string "The object is a user only object hopefully in managedBY or USERS."
@@ -168,12 +165,6 @@
                         RecipientOrUser = "User"
                 }
             }
-
-            #Now we come to the point where we deal with groups.
-            #Groups are permissible on some permissions - and do not need to be migrated before migrating the DL.
-            #If the group is a member - it must be migrated before the DL can be migrated.
-            #If the group is non-mail enabled we need to bail - it has to be removed as it's not in Office 365 like a user.
-
             elseif ($functionTest.objectClass -eq "Group")
             {
                 #It is possible that the group has permissions to itself.
@@ -220,7 +211,6 @@
                         isAlreadyMigrated = $false
                     }
                 }
-
             }
             else 
             {
