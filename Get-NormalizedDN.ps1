@@ -57,6 +57,7 @@
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
+        out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
         #Get the specific user using ad providers.
         
@@ -170,7 +171,7 @@
             {
                 if ($functionTest.objectClass -eq "Group")
                 {
-                    if ($functionTest.distinguishedname -eq $dn)
+                    if ($functionTest.distinguishedname -eq $originalGroupDN)
                     {
                         out-logFile -string "The group has permissions to itself - this is permissable - adding to array."
                         #The group has permissions to itself and this is permissiable.

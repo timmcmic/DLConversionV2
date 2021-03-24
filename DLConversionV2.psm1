@@ -668,7 +668,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -698,7 +698,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -715,7 +715,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -744,7 +744,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -761,7 +761,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -791,7 +791,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -808,7 +808,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -838,7 +838,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -868,7 +868,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -887,7 +887,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -913,7 +913,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential
+                $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName
             }
             catch 
             {
@@ -1261,7 +1261,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1274,7 +1274,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1287,7 +1287,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1312,7 +1312,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1325,7 +1325,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1338,7 +1338,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1363,7 +1363,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1376,7 +1376,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1389,7 +1389,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1414,7 +1414,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1427,7 +1427,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1440,7 +1440,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1465,7 +1465,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1478,7 +1478,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1491,7 +1491,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1516,7 +1516,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID $member.externalDirectoryObjectID -recipientSMTPAddress "None" -userPrincipalName "None"
                 }
                 catch {
                     out-logFile -string $_ -isError:$TRUE
@@ -1529,7 +1529,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None" -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress $member.PrimarySMTPAddressOrUPN -userPrincipalName "None"
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1542,7 +1542,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $member.recipientOrUser
 
                 try {
-                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN -originalGroupDN $originalDLConfiguration.distinguishedName
+                    test-o365Recipient -externalDirectoryObjectID "None" -recipientSMTPAddress "None" -userPrincipalName $member.PrimarySMTPAddressOrUPN
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
@@ -1550,8 +1550,7 @@ Function Start-DistributionListMigration
             }
         }
     }
-
-    EXIT
+    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
