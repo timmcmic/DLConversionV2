@@ -36,8 +36,11 @@
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
             $adCredential,
-            [Parameter(Mandatory = $false)]
-            [string]$originalGroupDN
+            [Parameter(Mandatory = $TRUE)]
+            [string]$originalGroupDN,
+            [Parameter(Mandatory = $TRUE)]
+            [boolean]$isMember=$FALSE
+
         )
 
         #Declare function variables.
@@ -89,11 +92,12 @@
             #If the object has MAIL and is a CONTACT record information we can.  It can be migrated.
             #Otherwise we've found non-mail present object (user with mail attribute / bad user / bad group - end.)
 
-            #Check to see if the recipient has a recipient display type.
+            #Check to see if the recipient has a recipient display type and is a user, or is a contact.
 
             if (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
             {
-                #Check to see if the object has been migrated.
+                #If the object has already been mirgated - then custom attribute 1 is migrated by script. 
+                #Update the object to include the custom attribute not the object itself.
 
                 if ($functionTest.extensionAttribute1 -eq "MigratedByScript")
                 {
@@ -111,7 +115,7 @@
                     }
                 }
 
-                #If the object is not a migrated object - take the attributes as is.
+                #If the object has not been migrated - then proceed with recording the original attributes.
 
                 else 
                 {
@@ -165,13 +169,18 @@
                 }
             }
 
-            #Object is not a user, contact with mail, or other mail enabled contact so bail.
+            #Now we come to the point where we deal with groups.
+            #Groups are permissible on some permissions - and do not need to be migrated before migrating the DL.
+            #If the group is a member - it must be migrated before the DL can be migrated.
+            #If the group is non-mail enabled we need to bail - it has to be removed as it's not in Office 365 like a user.
 
             else 
             {
                 if ($functionTest.objectClass -eq "Group")
                 {
-                    if ($functionTest.distinguishedname -eq $originalGroupDN)
+                    #It is possible that the group has permissions to itself.
+
+                    if (($functionTest.distinguishedname -eq $originalGroupDN) -and ($isMember -eq $FALSE))
                     {
                         out-logFile -string "The group has permissions to itself - this is permissable - adding to array."
                         #The group has permissions to itself and this is permissiable.
@@ -187,16 +196,37 @@
                             isAlreadyMigrated = $false
                         }
                     }
-                    elseif ($functionTest.msExchRecipientDisplayType -ne $NULL) 
+                    elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
                     {
+                        #The group is mail enabled and a member.  All nested groups have to be migrated first.
+
                         out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
                         out-logfile -string $DN
-                        throw ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN)
+                        out-logFile -string ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN) -isError:$TRUE
                     }
+                    elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
+                    {
+                        #The group is mail enabled and a member.  All nested groups have to be migrated first.
+                        
+                        out-logfile -string "The group has permissions on the DL and this is permissiable."
+                        out-logfile -string $dn
+
+                        $functionObject = New-Object PSObject -Property @{
+                            Alias = $functionTest.mailNickName
+                            Name = $functionTest.Name
+                            PrimarySMTPAddressOrUPN = $functionTest.mail
+                            GUID = $NULL
+                            RecipientType = $functionTest.objectClass
+                            RecipientOrUser = "Recipient"
+                            ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                            isAlreadyMigrated = $false
+                        }
+                    }
+
                 }
                 else 
                 {
-                    throw "The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue."
+                    out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
                 }    
             }
         }
