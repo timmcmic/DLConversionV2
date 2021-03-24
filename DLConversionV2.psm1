@@ -1676,7 +1676,12 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Administrator has choosen to retain the original group."
         out-logfile -string "Rename the group by adding the fixed character !"
 
-        set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential
+        try {
+            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     #At this point we will assume that a rename occured - this changes the objects DN.
@@ -1697,11 +1702,22 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
-        Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential
+
+        try{
+            Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential
+        }
+        catch{
+            out-LogFile -string $_ -isError:$TRUE
+        }
     }
     else
     {
-        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+        try {
+            move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     $global:unDoStatus=$global:unDoStatus+1
@@ -1714,7 +1730,12 @@ Function Start-DistributionListMigration
     start-sleep -seconds 15
     out-logfile -string "Invoking AD replication."
 
-    invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName
+    try {
+        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
@@ -1723,7 +1744,12 @@ Function Start-DistributionListMigration
     start-sleep -seconds 60
     out-logfile -string "Invoking AD Connect."
 
-    invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+    try {
+        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
 
     out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
     start-sleep -seconds 60
@@ -1733,12 +1759,22 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Monitoring Exchange Online for distribution list deletion."
 
-    test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress
+    try {
+        test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
 
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
-    new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride
+    try {
+        new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride
+    }
+    catch {
+        out-logFile -string $_ -isError:$TRUE
+    }
 
     $global:unDoStatus=$global:unDoStatus+1
 
@@ -1746,7 +1782,12 @@ Function Start-DistributionListMigration
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
-    set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+    try {
+        set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
 
     $global:unDoStatus=$global:unDoStatus+1
 
