@@ -606,6 +606,8 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
 
+    EXIT
+
     #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
 
     $originalDLConfiguration = $originalDLConfiguration | select-object -property $dlPropertySet
