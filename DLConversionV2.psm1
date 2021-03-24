@@ -579,6 +579,8 @@ Function Start-DistributionListMigration
         New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
     }
 
+    #Establish powershell session to the global catalog server.
+
     Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
     new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
@@ -595,7 +597,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Getting the original DL Configuration"
 
-    $originalDLConfiguration = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
+    $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
 
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
@@ -1378,7 +1380,7 @@ Function Start-DistributionListMigration
     #At this point we will assume that a rename occured - this changes the objects DN.
     #We will reobtain the configuration and store it in a new variable.  This will be used moving forward for function calls.
 
-    $originalDLConfigurationUpdated = Get-OriginalDLConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
+    $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP
 
     out-LogFile -string $originalDLConfigurationUpdated
 

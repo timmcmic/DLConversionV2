@@ -29,7 +29,7 @@
 
     .EXAMPLE
 
-    get-originalDLConfiguration -powershellsessionname NAME -groupSMTPAddress Address
+    Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
 
     #>
     Function Disable-OriginalDL
