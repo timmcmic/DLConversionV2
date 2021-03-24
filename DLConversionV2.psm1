@@ -250,7 +250,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
     [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
     [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
-    [string]$allGroupsGrantSendOnBehalfTo = "allGroupsGrantSendOnBehalfToXML"
+    [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
