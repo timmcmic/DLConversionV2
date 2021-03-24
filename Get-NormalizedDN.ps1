@@ -35,7 +35,7 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
-            [SecureString]$adCredential
+            $adCredential
         )
 
         #Declare function variables.

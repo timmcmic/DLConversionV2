@@ -41,7 +41,7 @@
             [Parameter(Mandatory = $true)]
             [array]$parameterSet,
             [Parameter(Mandatory = $TRUE)]
-            [SecureString]$adCredential
+            $adCredential
         )
 
         #Declare function variables.
