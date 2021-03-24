@@ -601,8 +601,16 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Getting the original DL Configuration"
 
-    $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
-
+    try
+    {
+        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+    }
+    catch
+    {
+        out-logfile -string $_ -isError:$TRUE
+    }
+    
+    
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
 
