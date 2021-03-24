@@ -79,7 +79,7 @@
 
                 $functionGroupType = "Security"
             }
-            elseif ($originalDLConfiguration.category -eq "Distribution")
+            elseif ($originalDLConfiguration.groupcategory -eq "Distribution")
             {
                 out-logfile -string "The group type from on premises is distribution."
 
