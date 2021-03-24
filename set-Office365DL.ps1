@@ -60,16 +60,14 @@
 		}
 		else 
 		{
-			#$functionMemberDepartRestriction = 
+			$functionMemberDepartRestriction = $originalDLConfiguration.msExchGroupDepartRestriction
 		}
 
         #Create the distribution group in office 365.
         
         try 
         {
-            out-logfile -string "Creating the distribution group in Office 365."
-
-            new-o365distributionGroup -name $originalDLConfiguration.cn -alias $originalDLConfiguration.mailNickName -type $functionGroupType
+            out-logfile -string "Setting the single value settings for the distribution group."
         }
         catch 
         {
