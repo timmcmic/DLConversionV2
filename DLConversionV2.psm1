@@ -1238,7 +1238,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemToExport $allGroupsGrantSendOnBehalfToXML
+        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
 
     EXIT
