@@ -154,10 +154,10 @@
                     
                     $functionObject = New-Object PSObject -Property @{
                         Alias = $NULL
-                        Name = $functionRecipient.Name
-                        PrimarySMTPAddressOrUPN = $functionUser.UserprincipalName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.userPrincipalName
                         GUID = $NULL
-                        RecipientType = "User"
+                        RecipientType = $functionTest.objectClass
                         RecipientOrUser = "User"
                 }
             }
