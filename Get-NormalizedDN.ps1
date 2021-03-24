@@ -187,7 +187,7 @@
                             isAlreadyMigrated = $false
                         }
                     }
-                    else 
+                    elseif ($functionTest.msExchRecipientDisplayType -ne $NULL) 
                     {
                         out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
                         out-logfile -string $DN
