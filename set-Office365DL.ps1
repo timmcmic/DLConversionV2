@@ -41,6 +41,10 @@
         $functionMemberDepartRestrictionType=$NULL #Holds the return information for the group query.
         $functionModerationFlags=$NULL
         $functionSendModerationNotifications=$NULL
+        $functionReportToManagerEnabled=$NULL
+        $functionModerationEnabled=$NULL
+        $functionoofReplyToOriginator=$NULL
+        $functionreportToOwner=$NULL
 
         #Start function processing.
 
@@ -53,6 +57,10 @@
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
         out-logfile -string ("Group Type Override = "+$groupTypeOverride)
+
+        #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
+        #The exchange commandlets abstract this by performing a conversion or filling the values in.
+        #Since we use ldap to get these values now - we must reverse engineer these and / or set them.
 
         #If the group type was overridden from the default - the member join restriction has to be adjusted.
 
@@ -111,12 +119,45 @@
 
             out-logfile -string ("The function send moderations notifications is ="+$functionSendModerationNotifications)
         }
+
+        #Evaluate moderation enabled.
+
+        if ($originalDLConfiguration.msExchEnableModeration -eq $NULL)
+        {
+            out-logfile -string "The moderation enabled setting is null."
+
+            $functionModerationEnabled=$FALSE
+
+            out-logfile -string ("The updated moderation enabled flag is = "+$functionModerationEnabled)
+        }
+
+        #Evaluate oofReplyToOriginator
+
+        if ($originalDLConfiguration.oofReplyToOriginator -eq $NULL)
+        {
+            out-logfile -string "The oofReplyToOriginator is null."
+
+            $functionoofReplyToOriginator = $FALSE
+
+            out-logfile -string ("The oofReplyToOriginator is now = "+$functionoofReplyToOriginator)
+        }
+
+        #Evaluate reportToOwner
+
+        if ($originalDLConfiguration.reportToOwner -eq $NULL)
+        {
+            out-logfile -string "The reportToOwner is null."
+
+            $functionreportToOwner = $FALSE
+
+            out-logfile -string ("The reportToOwner is now = "+$functionreportToOwner)
+        }
         
         try 
         {
             out-logfile -string "Setting the single value settings for the distribution group."
 
-            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -MemberJoinRestriction $originalDLConfiguration.msExchGroupJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -ReportToManagerEnabled $originalDLConfiguration.reportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $originalDLConfiguration.oofReplyToOriginator -Alias $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $originalDLConfiguration.msExchHideFromAddressLists -ModerationEnabled $originalDLConfiguration.msExchEnableModeration -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -SendModerationNotifications $functionSendModerationNotification -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -MemberJoinRestriction $originalDLConfiguration.msExchGroupJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -Alias $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $originalDLConfiguration.msExchHideFromAddressLists -ModerationEnabled $functionModerationEnabled -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -SendModerationNotifications $functionSendModerationNotification -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn
         }
         catch 
         {
