@@ -967,6 +967,8 @@ Function Start-DistributionListMigration
         }
     }
 
+    EXIT
+
     if ($allGroupsMemberOf -ne $NULL)
     {
         out-logFile -string "The group to be migrated is a member of the following groups."
