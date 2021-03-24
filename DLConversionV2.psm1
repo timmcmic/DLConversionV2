@@ -650,9 +650,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
 
-    if ($originalDLConfiguration.members -ne $NULL)
+    if ($originalDLConfiguration.member -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.members)
+        foreach ($DN in $originalDLConfiguration.member)
         {
             $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN
         }
