@@ -251,6 +251,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
     [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
     [string]$allGroupsGrantSendOnBehalfTo = "allGroupsGrantSendOnBehalfToXML"
+    [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
     [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
@@ -269,6 +270,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
     [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
     [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
+    [array]$allGroupsManagedBy=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -277,10 +279,12 @@ Function Start-DistributionListMigration
     [array]$allOffice365Reject=$NULL
     [array]$allOffice365BypassModeration=$NULL
     [array]$allOffice365ForwardingAddress=$NULL
+    [array]$allOffice365ManagedBy=$NULL
     [array]$allOffice365GrantSendOnBehalfTo=$NULL
     [array]$allOffice365UniversalAccept=$NULL
     [array]$allOffice365UniversalReject=$NULL
     [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
+    [array]$allOffice365ManagedBy=$NULL
 
     #The following are the cloud parameters we query for to look for dependencies.
 

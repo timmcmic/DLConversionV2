@@ -50,7 +50,7 @@
         }
         else 
         {
-            $logString = $String | fl    
+            $logString = $String
         }
         
         # Write everything to our log file and the screen
