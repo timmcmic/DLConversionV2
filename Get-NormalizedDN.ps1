@@ -35,7 +35,9 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [string]$originalGroupDN
         )
 
         #Declare function variables.
