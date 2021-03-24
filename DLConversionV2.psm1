@@ -844,8 +844,6 @@ Function Start-DistributionListMigration
         out-logfile "The group has no grant send on behalf to."    
     }
 
-    EXIT
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
@@ -857,6 +855,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
+
+    EXIT
 
     #At this point we have obtained all the information relevant to the individual group.
     #It is possible that this group was a member of - or other groups have a dependency on this group.
