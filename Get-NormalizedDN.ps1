@@ -38,7 +38,7 @@
             $adCredential,
             [Parameter(Mandatory = $TRUE)]
             [string]$originalGroupDN,
-            [Parameter(Mandatory = $TRUE)]
+            [Parameter(Mandatory = $false)]
             [boolean]$isMember=$FALSE
 
         )
