@@ -963,7 +963,7 @@ Function Start-DistributionListMigration
 
         foreach ($DN in $originalDLConfiguration.memberof)
         {
-            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN
+            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
         }
     }
 
