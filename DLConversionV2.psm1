@@ -1230,6 +1230,13 @@ Function Start-DistributionListMigration
     {
         out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $allUsersForwardingAddressXML
     }
+
+    if ($allGroupsManagedBy -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allGroupsManagedBy -itemToExport $allGroupsManagedByXML
+    }
+
+    EXIT
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
