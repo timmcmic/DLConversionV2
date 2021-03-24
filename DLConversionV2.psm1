@@ -618,20 +618,17 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
 
-    #At thispoint the dl configuration has only those attributes populated.  We need the entire list including NULLS for work.
-
-    #$originalDLConfiguration = $originalDLConfiguration | select-object -property $dlPropertySet
-
-    #Out-LogFile -string "Log original DL configuration."
-    #out-logFile -string $originalDLConfiguration
-
-    #Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
-
-    #Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationObjectXML
-
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
-    $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress
+    try 
+    {
+        $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress
+    }
+    catch 
+    {
+        out-logFile -string $_ -isError:$TRUE
+    }
+    
 
     Out-LogFile -string $office365DLConfiguration
 
@@ -645,8 +642,16 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
-    Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
-
+    
+    try 
+    {
+        Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration
+    }
+    catch 
+    {
+        out-logFile -string $_ -isError:$TRUE
+    }
+    
     #At this time we have the DL configuration on both sides and have checked to ensure it is dir synced.
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
 
