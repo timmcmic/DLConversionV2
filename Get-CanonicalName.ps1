@@ -34,9 +34,8 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
-            [Parameter(Mandatory = $false)]
-            [ValidateSet("User","Group")]
-            [string]$userOrGroup="Group"
+            [Parameter(Mandatory = $true)]
+            $adCredential
         )
 
         #Declare function variables.
@@ -55,14 +54,14 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
-        out-logfile -string ("User or Group Attribute = "+$userOrGroup)
+        out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Get the specific user using ad providers.
-        
+        <# 
         try 
         {
             Out-LogFile -string "Attempting to get the canonical name of the object."
-
+            
             if ($userOrGroup -eq "GROUP")
             {
                 $functionTest = get-adgroup -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
@@ -82,6 +81,18 @@
         catch 
         {
             Out-LogFile -string $_ -isError:$TRUE
+        }
+        #>
+
+        try 
+        {
+            Out-LogFile -string "Gathering the AD object based on distinguished name."
+
+            $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
+        }
+        catch 
+        {
+            
         }
 
         try

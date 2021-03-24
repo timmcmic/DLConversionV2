@@ -54,6 +54,7 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
+        out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Get the specific user using ad providers.
         

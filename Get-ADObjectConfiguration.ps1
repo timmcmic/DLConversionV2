@@ -65,6 +65,8 @@
             Out-Logfile -string $parameterIncluded
         }
 
+        out-logfile -string ("Credential user name = "+$adCredential.UserName)
+
         #Get the group using LDAP / AD providers.
         
         try 
