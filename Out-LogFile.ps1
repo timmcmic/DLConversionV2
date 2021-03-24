@@ -72,7 +72,7 @@
         }
         else 
         {
-            $logstring | FL   
+            Write-Output $logstring  
         }
         
         #If the output to the log is terminating exception - throw the same string.

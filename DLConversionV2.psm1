@@ -27,24 +27,108 @@
 
     .PARAMETER groupSMTPAddress
 
+    *REQUIRED*
     The SMTP address of the distribution list to be migrated.
-
-    .PARAMETER userName
-
-    At minimum this must be a domain administrator in the domain where the group resides assuming the object has no dependencies on other forests or trees within active directory.
-    In a multi forest environment where the group may contain objects from multiple forests recommend an enterprise administrator be utilized.
-
-    .PARAMETER password
-
-    The password for the administrator account specified in userName.
 
     .PARAMETER globalCatalogServer
 
-    A global catalog server in the domain where the group resides. 
-    
+    *REQUIRED*
+    A global catalog server in the domain where the group to be migrated resides.
+
+
+    .PARAMETER activeDirectoryCredential
+
+    *REQUIRED*
+    This is the credential that will be utilized to perform operations against the global catalog server.
+    If the group and all it's dependencies reside in a single domain - a domain administrator is acceptable.
+    If the group and it's dependencies span multiple domains in a forest - enterprise administrator is required.
+      
     .PARAMETER logFolder
 
+    *REQUIRED*
     The location where logging for the migration should occur including all XML outputs for backups.
+
+    .PARAMETER aadConnectServer
+
+    *OPTIONAL*
+    This is the AADConnect server that automated sycn attempts will be attempted.
+    If specified with an AADConnect credential - delta syncs will be triggered automatically in attempts to service the move.
+    This requires WINRM be enabled on the ADConnect server and may have additional WINRM dependencies / configuration.
+    Name should be specified in fully qualified domain format.
+
+    .PARAMETER aadConnectCredential
+
+    *OPTIONAL*
+    The credential specified to perform remote powershell / winrm sessions to the AADConnect server.
+
+    .PARAMETER exchangeServer
+
+    *REQUIRED IF HYBRID MAIL FLOW ENALBED*
+    This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
+    If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
+    If using a single server (direct connection) then kerberos authentication may be utilized.
+    
+    .PARAMETER exchangeCredential
+
+    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
+    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
+    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
+
+    .PARAMETER exchangeOnlineCredential
+
+    *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
+    This is the credential utilized for Exchange Online connections.  
+    The credential must be specified if certificate based authentication is not configured.
+    The account requires global administration rights / exchange organization management rights.
+    An exchange online credential cannot be combined with an exchangeOnlineCertificateThumbprint.
+
+    .PARAMETER exchangeOnlineCertificateThumbprint
+
+    *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
+    This is the certificate thumbprint that will be utilzied for certificate authentication to Exchange Online.
+    This requires all the pre-requists be established and configured prior to access.
+    A certificate thumbprint cannot be specified with exchange online credentials.
+
+    .PARAMETER exchangeAuthenticationMethod
+
+    *OPTIONAL*
+    This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
+    Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
+
+    .PARAMETER retainOffice365Settings
+
+    *OPTIONAL*
+    It is possible over the course of migrations that cloud only resources could have dependencies on objects that still remain on premises.
+    The administrator can choose to scan office 365 to capture any cloud only dependencies that may exist.
+    The default is true.
+
+    .PARAMETER doNoSyncOU
+
+    *REQUIRED IF RETAIN GROUP FALSE*
+    This is the administrator specified organizational unit that is NOT configured to sync in AD Connect.
+    When the administrator specifies to NOT retain the group the group is moved to this OU to allow for deletion from Office 365.
+    A doNOSyncOU must be specified if the administrator specifies to NOT retain the group.
+
+    .PARAMETER retainOriginalGroup
+
+    *OPTIONAL*
+    Allows the administrator to retain the group - for example if the group also has on premises security dependencies.
+    This triggers a mail disable of the group resulting in group deletion from Office 365.
+    The name of the group is randomized with a character ! to ensure no conflict with hybird mail flow - if hybrid mail flow enabled.
+
+    .PARAMETER enableHybridMailFlow
+
+    *OPTIONAL*
+    Allows the administrator to decide that they want mail flow from on premises to cloud to work for the migrated DL.
+    This involves provisioning a mail contact and a dynamic distribution group.
+    The dynamic distribution group is intentionally choosen to prevent soft matching of a group and an undo of the migration.
+    This option requires on premises Exchange be specified and configured.
+
+    .PARAMETER groupTypeOverride
+    *OPTIONAL*
+    This allows the administrator to override the group type created in the cloud from on premises.
+    For example - if the group was provisioned on premises as security but does not require security rights in Office 365 - the administrator can override to DISTRIBUTION.
+    Mandatory types -> SECURITY or DISTRIBUTION
 
 	.OUTPUTS
 
