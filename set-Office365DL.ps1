@@ -81,6 +81,10 @@
 
             out-logfile ("The function moderation flags are = "+$functionModerationFlags)
         }
+        else 
+        {
+            $functionModerationFlags=$FALSE
+        }
 
         if (($originalDLConfiguration.msExchModerationFlags -eq "0") -or ($originalDLConfiguration.msExchModerationFlags -eq "1")  )
         {
