@@ -78,8 +78,7 @@
 		}
 
         #The moderation settings a are a hash valued flag.
-
-        #Create the distribution group in office 365.
+        #This test looks to see if bypass nested moderation is enabled from the hash.
 
         if (($originalDLConfiguration.msExchModerationFlags -eq "1") -or ($originalDLConfiguration.msExchModerationFlags -eq "3") -or ($originalDLConfiguration.msExchModerationFlags -eq "7") )
         {
@@ -93,8 +92,10 @@
         {
             $functionModerationFlags=$FALSE
 
-            out-logfile ("The function moderation flags is = "+$functionModerationEnabled)
+            out-logfile ("The function moderation flags is = "+$functionModerationFlags)
         }
+
+        #Test now to see if the moderation settings are always, internal, or none.  This uses the same hash.
 
         if (($originalDLConfiguration.msExchModerationFlags -eq "0") -or ($originalDLConfiguration.msExchModerationFlags -eq "1")  )
         {
