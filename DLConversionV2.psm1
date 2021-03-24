@@ -1137,11 +1137,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has manager permissions on.
 
-    if ($originalDLConfiguration.managedObject -ne $NULL)
+    if ($originalDLConfiguration.managedObjects -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.managedObject)
+        foreach ($DN in $originalDLConfiguration.managedObjects)
         {
             try 
             {
