@@ -125,6 +125,7 @@
     This option requires on premises Exchange be specified and configured.
 
     .PARAMETER groupTypeOverride
+
     *OPTIONAL*
     This allows the administrator to override the group type created in the cloud from on premises.
     For example - if the group was provisioned on premises as security but does not require security rights in Office 365 - the administrator can override to DISTRIBUTION.
@@ -133,6 +134,7 @@
 	.OUTPUTS
 
     Logs all activities and backs up all original data to the log folder directory.
+    Moves the distribution group from on premieses source of authority to office 365 source of authority.
 
     .EXAMPLE
 
@@ -208,8 +210,8 @@ Function Start-DistributionListMigration
     [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
     [string]$forwardingAddressForDL="altRecipient"
     [string]$grantSendOnBehalfToDL="publicDelegates"
-    [array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
-    #[array]$dlPropertySet = '*'
+    *[array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
+    [array]$dlPropertySet = '*'
     [array]$dlPropertySetToClear = 'authOrig','DisplayName','DisplayNamePrintable',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -235,6 +237,7 @@ Function Start-DistributionListMigration
     [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
     [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
     [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
+    [string]$office365DLConfigurationPostMigrationXML = "office365DLConfigurationPostMigrationXML"
     [string]$exchangeDLMembershipSMTPXML = "exchangeDLMemberShipSMTPXML"
     [string]$exchangeRejectMessagesSMTPXML = "exchangeRejectMessagesSMTPXML"
     [string]$exchangeAcceptMessagesSMTPXML = "exchangeAcceptMessagesSMTPXML"
@@ -293,7 +296,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
-
+    $office365DLConfigurationPostMigration = $NULL
 
     #Log start of DL migration to the log file.
 
@@ -345,46 +348,28 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
-
     out-logfile -string ("Retain Office 365 Settings = "+$retainOffice365Settings)
-
     out-logfile -string ("OU that does not sync to Office 365 = "+$dnNoSyncOU)
-
     out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
-
     out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
-
     out-logfile -string ("Group type override = "+$groupTypeOverride)
-
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "VARIABLES"
+    Out-LogFile -string " RECORD VARIABLES"
     Out-LogFile -string "********************************************************************************"
 
     out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
-
     out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
-
     out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremsiesExchange)
-
     Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
-
     Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
-
     Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
-
     Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
-
     Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
-
     Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
-
     out-logFile -string ("Static property for accept messages from members = "+$acceptMessagesFromDLMembers)
-
     out-logFile -string ("Static property for accept messages from members = "+$rejectMessagesFromDLMembers)
-
-   
     Out-LogFile -string ("DL Properties to collect = ")
 
     foreach ($dlProperty in $dlPropertySet)
@@ -400,17 +385,11 @@ Function Start-DistributionListMigration
     }
 
     Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
-
     Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$exchangeServerAllowRedirection)
-
     Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
-
     Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
-
     Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
-
     Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
-
     Out-LogFile -string ("Exchange DL members XML Name - "+$exchangeDLMembershipSMTPXML)
     Out-LogFile -string ("Exchange Reject members XML Name - "+$exchangeRejectMessagesSMTPXML)
     Out-LogFile -string ("Exchange Accept members XML Name - "+$exchangeAcceptMessagesSMTPXML)
@@ -424,7 +403,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
     out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
-
     out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
     out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
     out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
@@ -433,7 +411,6 @@ Function Start-DistributionListMigration
     out-logfile -string ("Property in office 365 for managed by members = "+$office365ManagedBy)
     out-logfile -string ("Property in office 365 for members = "+$office365Members)
     out-logfile -string ("Property in office 365 for reject messages from members = "+$office365RejectMessagesFrom)
-
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
