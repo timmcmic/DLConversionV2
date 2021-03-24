@@ -963,7 +963,14 @@ Function Start-DistributionListMigration
 
         foreach ($DN in $originalDLConfiguration.memberof)
         {
-            $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            try 
+            {
+                $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
     }
 
@@ -986,7 +993,14 @@ Function Start-DistributionListMigration
 
         foreach ($DN in $originalDLConfiguration.altRecipientBL)
         {
-            $allUsersForwardingAddress += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            try 
+            {
+                $allUsersForwardingAddress += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
     }
 
