@@ -162,6 +162,7 @@
                         PrimarySMTPAddressOrUPN = $functionTest.userPrincipalName
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         RecipientOrUser = "User"
                 }
             }
