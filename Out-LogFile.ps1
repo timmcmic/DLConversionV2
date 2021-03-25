@@ -72,8 +72,8 @@
         }
         else 
         {
-            out-logfile -string "I made it here."
-            Write-host $logstring | select-object * | Ft
+            [string]$functionString = $logString
+            Write-host $functionString
         }
 
         #If the output to the log is terminating exception - throw the same string.
