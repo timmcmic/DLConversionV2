@@ -68,19 +68,26 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeDLMembershipSMTP=$NULL,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeRejectMessagesSMTP=$NULL,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeAcceptMessageSMTP=$NULL,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeManagedBySMTP=$NULL,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeModeratedBySMTP=$NULL,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$exchangeBypassModerationSMTP=$NULL,
             [Parameter(Mandatory = $true)]
-            [array]$exchangeGrantSendOnBehalfToSMTP
+            [AllowEmptyCollection()]
+            [array]$exchangeGrantSendOnBehalfToSMTP=$NULL
         )
 
         #Declare function variables.
