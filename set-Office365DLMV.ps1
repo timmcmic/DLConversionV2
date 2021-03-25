@@ -92,6 +92,7 @@
 
         #Declare function variables.
 
+        [array]$functionDirectoryObjectID = $NULL
 
         #Start function processing.
 
@@ -116,8 +117,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $member.externalDirectoryObjectID
+                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $functionDirectoryObjectID[1]
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -157,8 +162,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -198,8 +207,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -239,8 +252,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -280,8 +297,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -321,8 +342,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -362,8 +387,12 @@
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$member.ExternalDirectoryObjectID}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$functionDirectoryObjectID[1]}
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
