@@ -261,6 +261,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
     [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
+    [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -1584,11 +1585,15 @@ Function Start-DistributionListMigration
 
         $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom
 
-        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to rights = "+$allOffice365BypassModeration.count)
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365BypassModeration.count)
 
         $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo
 
-        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365GrantSendOnBehalfTo.count)
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grantSendOnBehalFto = "+$allOffice365GrantSendOnBehalfTo.count)
+
+        $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has managedBY = "+$allOffice365ManagedBy.count)
 
         $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress
 
@@ -1600,11 +1605,11 @@ Function Start-DistributionListMigration
 
         $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Unified"
 
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalReject.count)
+        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has reject rights on = "+$allOffice365UniversalReject.count)
 
         $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Unified"
 
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
+        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
 
         if ($allOffice365MemberOf -ne $NULL)
         {
@@ -1629,6 +1634,11 @@ Function Start-DistributionListMigration
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
         {
             out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
+        }
+
+        if ($allOffice365ManagedBy -ne $NULL)
+        {
+            out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
         }
 
         if ($allOffice365ForwardingAddress -ne $NULL)
