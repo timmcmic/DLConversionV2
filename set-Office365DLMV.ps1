@@ -430,7 +430,7 @@
             out-Logfile -string $address
 
             try {
-                Set-O365DistributionGroup -emailAddresses @{add=$address} -errorAction STOP
+                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
