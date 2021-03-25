@@ -66,14 +66,16 @@
 
         #Write to the screen the information passed to the log.
 
-        if ($string.gettype().name -eq "String")
-        {
-            Write-Host $logString
-        }
-        else 
-        {
-            Write-host $logstring | select-object * | FL
-        }
+        #if ($string.gettype().name -eq "String")
+        #{
+        #    Write-Host $logString
+        #}
+        #else 
+        #{
+        #    Write-host $logstring | select-object * | FL
+        #}
+
+        Write-host $logstring 
 
         #If the output to the log is terminating exception - throw the same string.
 
