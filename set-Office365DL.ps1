@@ -38,7 +38,6 @@
 
         #Declare function variables.
 
-        $functionMemberDepartRestrictionType=$NULL #Holds the return information for the group query.
         $functionModerationFlags=$NULL
         $functionSendModerationNotifications=$NULL
         $functionReportToManagerEnabled=$NULL
@@ -47,6 +46,7 @@
         $functionreportToOwner=$NULL
         $functionHiddenFromAddressList=$NULL
         $functionMemberJoinRestriction=$NULL
+        $functionMemberDepartRestriction=$NULL
 
         #Start function processing.
 
@@ -65,13 +65,25 @@
         #Since we use ldap to get these values now - we must reverse engineer these and / or set them.
 
         #If the group type was overridden from the default - the member join restriction has to be adjusted.
+        #If the group tyoe was not overriden - check to see if depart is NULL and set to closed which is default.
+        #Otherwise take the value from the string.
 
         if ( $groupTypeOverride -eq "Security" )
 		{
+            out-logfile -string "Group type overriden to Security by administrator.  This requires depart restriction closed."
+
 			$functionMemberDepartRestriction = "Closed"
 
             out-logfile -string ("Function member depart restrictions = "+$functionMemberDepartRestriction)
 		}
+        elseif ($originalDLConfiguration.msExchGroupDepartRestriction -eq $NULL)
+        {
+            out-logFile -string ("Member depart restriction is NULL.")
+
+            $functionMemberDepartRestriction="Closed"
+
+            out-LogFile -string ("The member depart restriction is now = "+$functionMemberDepartRestriction)
+        }
 		else 
 		{
 			$functionMemberDepartRestriction = $originalDLConfiguration.msExchGroupDepartRestriction
