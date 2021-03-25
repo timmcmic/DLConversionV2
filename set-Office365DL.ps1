@@ -83,7 +83,7 @@
 
         if (($originalDLConfiguration.msExchModerationFlags -eq "1") -or ($originalDLConfiguration.msExchModerationFlags -eq "3") -or ($originalDLConfiguration.msExchModerationFlags -eq "7") )
         {
-            out-logfile -string ("The moderation flags are 1 / 3 / 7 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are 1 / 3 / 7 - setting bypass nested moderation to TRUE - "+$originalDLConfiguration.msExchModerationFlags)
 
             $functionModerationFlags=$TRUE
 
@@ -91,7 +91,7 @@
         }
         else 
         {
-            out-logfile -string ("The moderation flags are NOT 1 / 3 / 7 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are NOT 1 / 3 / 7 - setting bypass nested moderation to TRUE - "+$originalDLConfiguration.msExchModerationFlags)
 
             $functionModerationFlags=$FALSE
 
@@ -168,6 +168,12 @@
             $functionHiddenFromAddressList=$FALSE
 
             out-logfile -string ("The hidden from address list is now = "+$functionHiddenFromAddressList)
+        }
+        else 
+        {
+            out-logFile string ("Hidden from address list is not null.")
+            
+            $functionHiddenFromAddressList=$originalDLConfiguration.msExchHideFromAddressLists
         }
 
         try 
