@@ -91,6 +91,8 @@
         }
         else 
         {
+            out-logfile -string ("The moderation flags are NOT 1 / 3 / 7 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+
             $functionModerationFlags=$FALSE
 
             out-logfile ("The function moderation flags is = "+$functionModerationFlags)
@@ -100,7 +102,7 @@
 
         if (($originalDLConfiguration.msExchModerationFlags -eq "0") -or ($originalDLConfiguration.msExchModerationFlags -eq "1")  )
         {
-            out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are 0 / 2 / 6 - send notifications to never."+$originalDLConfiguration.msExchModerationFlags)
 
             $functionSendModerationNotifications="Never"
 
@@ -108,7 +110,7 @@
         }
         elseif (($originalDLConfiguration.msExchModerationFlags -eq "2") -or ($originalDLConfiguration.msExchModerationFlags -eq "3")  )
         {
-            out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting send notifications to internal."+$originalDLConfiguration.msExchModerationFlags)
 
             $functionSendModerationNotifications="Internal"
 
@@ -117,7 +119,7 @@
         }
         elseif (($originalDLConfiguration.msExchModerationFlags -eq "6") -or ($originalDLConfiguration.msExchModerationFlags -eq "7")  )
         {
-            out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting bypass nested moderation to TRUE"+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting send notifications to always."+$originalDLConfiguration.msExchModerationFlags)
 
             $functionSendModerationNotifications="Always"
 
@@ -167,7 +169,7 @@
 
             out-logfile -string ("The hidden from address list is now = "+$functionHiddenFromAddressList)
         }
-        
+
         try 
         {
             out-logfile -string "Setting the single value settings for the distribution group."
