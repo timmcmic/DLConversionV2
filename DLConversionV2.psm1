@@ -1173,7 +1173,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
     out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
     out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
-    out-logfile -string ("This group has accept permissions on this many groups = "+$allGroupsAccept.count)
+    out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
@@ -1255,7 +1255,7 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -1571,6 +1571,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
+
+    EXIT #Debug Exit
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
