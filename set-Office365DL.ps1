@@ -138,6 +138,14 @@
 
             out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
         }
+        else 
+        {
+            out-logFile -string ("The moderation flags are not set.  Setting to default of always.")
+            
+            $functionSendModerationNotifications="Always"
+
+            out-logFile -string ("The function send moderation notification is = "+$functionSendModerationNotifications)
+        }
 
         #Evaluate moderation enabled.
 
