@@ -75,7 +75,7 @@
         #    Write-host $logstring | select-object * | FL
         #}
 
-        Write-host $logstring 
+        Write-host $logstring | fl 
 
         #If the output to the log is terminating exception - throw the same string.
 

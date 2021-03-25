@@ -607,8 +607,6 @@ Function Start-DistributionListMigration
     try
     {
         $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
-
-        Write-host $originalDLConfiguration
     }
     catch
     {
