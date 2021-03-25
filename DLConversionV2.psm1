@@ -1793,6 +1793,36 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    #Now it is time to set the multi valued attributes.
+
+    [Parameter(Mandatory = $true)]
+    $originalDLConfiguration,
+    [Parameter(Mandatory = $true)]
+    [array$exchangeDLMembershipSMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeRejectMessagesSMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeAcceptMessageSMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeManagedBySMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeModeratedBySMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeBypassModerationSMTP=$NULL,
+    [Parameter(Mandatory = $true)]
+    [array]$exchangeGrantSendOnBehalfToSMTP
+
+    out-logFile -string "Setting the multivalued attributes of the migrated group."
+
+    try {
+        start-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP
+    }
+    catch {
+        out-logFile -string $_ -isError:$TRUE
+    }
+
+    
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"

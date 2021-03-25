@@ -67,7 +67,7 @@
         {
             out-logfile -string "The administrator overrode the group type to distribution."
 
-            $functionGroupType = "Distrbution"
+            $functionGroupType = "Distribution"
         }
         elseif ($groupTypeOverride -eq "None") 
         {
