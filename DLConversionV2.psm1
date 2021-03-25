@@ -1744,8 +1744,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365BypassModeration.count)
     out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
     out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept)
-    out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "$allOffice365UniversalGrantSendOnBehalfTo)
-    out-logfile -string ("The number of office 365 unified groups with reject permissions = "$allOffice365Reject)
+    out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo)
+    out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365Reject)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     EXIT #Debug Exit
