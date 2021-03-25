@@ -1755,7 +1755,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "START Disable on premises distribution group."
+    Out-LogFile -string "START Remove on premises distribution group from office 365.."
     Out-LogFile -string "********************************************************************************"
 
     #At this stage we will move the group to the non-Sync OU and then re-record the attributes.
@@ -1763,7 +1763,7 @@ Function Start-DistributionListMigration
     #We will use the move to the non-SYNC OU to trigger deletion.
 
     try {
-        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
+        move-toNonSyncOU -dn $originalDLConfiguration.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
