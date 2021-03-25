@@ -72,8 +72,10 @@
         }
         else 
         {
+            out-logfile -string "I made it here."
             Write-Output $logstring | FL
         }
+
         #If the output to the log is terminating exception - throw the same string.
 
         if ($isError -eq $TRUE)
