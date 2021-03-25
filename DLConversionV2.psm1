@@ -1882,7 +1882,7 @@ Function Start-DistributionListMigration
     out-logFile -string ("Capture the DL status post migration.")
 
     try {
-        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $orignalDLConfiguration.mail -errorAction STOP
+        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
