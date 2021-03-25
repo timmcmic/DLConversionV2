@@ -104,7 +104,7 @@
         }
         else 
         {
-            out-logfile -string ("The moderation flags are NOT 1 / 3 / 7 - setting bypass nested moderation to TRUE - "+$originalDLConfiguration.msExchModerationFlags)
+            out-logfile -string ("The moderation flags are NOT 1 / 3 / 7 - setting bypass nested moderation to FALSE - "+$originalDLConfiguration.msExchModerationFlags)
 
             $functionModerationFlags=$FALSE
 
