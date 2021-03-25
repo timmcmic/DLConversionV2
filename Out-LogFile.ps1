@@ -72,7 +72,7 @@
         }
         else 
         {
-            Write-host $string | FL
+            Write-host $string | FL -property *
         }
 
         #If the output to the log is terminating exception - throw the same string.
