@@ -173,7 +173,7 @@ Function Start-DistributionListMigration
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOffice365Settings=$true,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
         [string]$dnNoSyncOU = "NotSet",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
@@ -235,6 +235,7 @@ Function Start-DistributionListMigration
     #Define XML files to contain backups.
 
     [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
+    [string]$originalDLConfigurationUpdatedXML = "originalDLConfigurationUpdatedXML"
     [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
     [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
     [string]$office365DLConfigurationPostMigrationXML = "office365DLConfigurationPostMigrationXML"
@@ -1572,7 +1573,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
@@ -1733,6 +1734,22 @@ Function Start-DistributionListMigration
         out-logfile -string "Administrator opted out of recording Office 365 dependencies."
     }
 
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logfile -string ("Summary of dependencies found:")
+    out-logfile -string ("The number of office 365 groups that the migrated DL is a member of = "+$allOffice365MemberOf.count)
+    out-logfile -string ("The number of office 365 groups that this group is a manager of: = "+$allOffice365ManagedBy.count)
+    out-logfile -string ("The number of office 365 groups that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
+    out-logfile -string ("The number of office 365 groups that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 groups with accept permissions = "+$allOffice365Accept.count)
+    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
+    out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept)
+    out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "$allOffice365UniversalGrantSendOnBehalfTo)
+    out-logfile -string ("The number of office 365 unified groups with reject permissions = "$allOffice365Reject)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+
+    EXIT #Debug Exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
@@ -1741,28 +1758,18 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START Disable on premises distribution group."
     Out-LogFile -string "********************************************************************************"
 
-    #At this point we rename the distribution group / security group
-    #The script no longer deletes the group by default.
-    #The group is renamed at this point for two purposes...
-    ###First the rename is done to ensure that if the group is ever mail enabled by accident - the default addresses assigned to not match the migrated group.
-    ###If the default addresses assigned matched the group - it would soft match and undo the migration.
-    ###Second the rename ensures that there will be no collision in objects if hybrid mail flow is enabled - when the dynamic DL is created.
+    #At this stage we will move the group to the non-Sync OU and then re-record the attributes.
+    #The move here will allow us to preserve the original groups with attributes until we know that the migration was successful.
+    #We will use the move to the non-SYNC OU to trigger deletion.
 
-    if ($retainOriginalGroup -eq $TRUE)
-    {
-        Out-LogFile -string "Administrator has choosen to retain the original group."
-        out-logfile -string "Rename the group by adding the fixed character !"
-
-        try {
-            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
+    try {
+        move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
     }
 
-    #At this point we will assume that a rename occured - this changes the objects DN.
-    #We will reobtain the configuration and store it in a new variable.  This will be used moving forward for function calls.
+    #$Capture the moved DL configuration (since attibutes change upon move.)
 
     try {
         $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
@@ -1770,44 +1777,15 @@ Function Start-DistributionListMigration
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
-    
 
     out-LogFile -string $originalDLConfigurationUpdated
+    out-xmlFile -itemToExport $originalDLConfiurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
 
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    #It is now time to disable the on premsies distribution group.
-    #This is required to remove the group from office 365 in order to re-create it.
-
-    if ($retainOriginalGroup -eq $TRUE)
-    {
-        Out-LogFile -string "Administrator has choosen to regain the original group."
-        out-logfile -string "Disabling the mail attributes on the group."
-
-        try{
-            Disable-OriginalDL -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -errorAction STOP
-        }
-        catch{
-            out-LogFile -string $_ -isError:$TRUE
-        }
-    }
-    else
-    {
-        try {
-            move-toNonSyncOU -dn $originalDLConfigurationUpdated.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
-    }
-
-    $global:unDoStatus=$global:unDoStatus+1
-
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-    #Replicate domain controllers so that the change is received as soon as possible.
+    #Replicate domain controllers so that the change is received as soon as possible.   
 
     out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
     start-sleep -seconds 15
