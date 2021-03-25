@@ -72,7 +72,7 @@
         }
         else 
         {
-            Write-host ($logstring | select-object *).tostring()
+            Write-host $string
         }
 
         #If the output to the log is terminating exception - throw the same string.
