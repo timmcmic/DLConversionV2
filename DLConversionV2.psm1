@@ -983,7 +983,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "The group to be migrated is a member of the following groups."
         out-logfile -string $allGroupsMemberOf
-        out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
     }
     else 
     {
@@ -1013,7 +1012,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "The group has forwarding address set on the following users.."
         out-logfile -string $allUsersForwardingAddress
-        out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
     }
     else 
     {
@@ -1043,7 +1041,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "The group has reject permissions on the following groups:"
         out-logfile -string $allGroupsReject
-        out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     }
     else 
     {
@@ -1073,7 +1070,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "The group has accept messages from on the following groups:"
         out-logfile -string $allGroupsAccept
-        out-logfile -string ("This group has accept permissions on this many groups = "+$allGroupsAccept.count)
     }
     else 
     {
@@ -1103,7 +1099,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "This group has bypass moderation on the following groups:"
         out-logfile -string $allGroupsBypassModeration
-        out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
     }
     else 
     {
@@ -1133,7 +1128,6 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "This group has grant send on behalf to to the following groups:"
         out-logfile -string $allGroupsGrantSendOnBehalfTo
-        out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
     }
     else 
     {
@@ -1163,12 +1157,20 @@ Function Start-DistributionListMigration
     {
         out-logFile -string "This group has managedBY rights on the following groups."
         out-logfile -string $allGroupsManagedBy
-        out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
     }
     else 
     {
         out-logfile -string "The group is not a manager on any other groups."
     }
+
+    out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
+    out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
+    out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
+    out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
+    out-logfile -string ("This group has accept permissions on this many groups = "+$allGroupsAccept.count)
+    out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
+    out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
