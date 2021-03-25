@@ -87,7 +87,9 @@
             [array]$exchangeBypassModerationSMTP=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$exchangeGrantSendOnBehalfToSMTP=$NULL
+            [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
+            [Parameter(Mandatory=$true)]
+            [string]$groupTypeOverride
         )
 
         #Declare function variables.
@@ -248,7 +250,13 @@
         {
             foreach ($member in $exchangeManagedBySMTP)
             {
-                if ($member.externalDirectoryObjectID -ne $NULL)
+                if (($member.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution"))
+                {
+                    out-logFile "The migrated DL has managed by permissions of iteself.  The administrator overrode the type to distribution."
+                    out-logilfe "Security is required in order to manage a distribution group"
+                    out-logfile "Skipping = "+$member.primarySMTPAddressOrUPN
+                }
+                elseif ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
