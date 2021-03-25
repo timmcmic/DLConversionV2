@@ -224,13 +224,13 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
-    [array]$exchangeDLMembershipSMTP=$NULL #Array of DL membership from AD.
-    [array]$exchangeRejectMessagesSMTP=$NULL #Array of members with reject permissions from AD.
-    [array]$exchangeAcceptMessageSMTP=$NULL #Array of members with accept permissions from AD.
-    [array]$exchangeManagedBySMTP=$NULL #Array of members with manage by rights from AD.
-    [array]$exchangeModeratedBySMTP=$NULL #Array of members  with moderation rights.
-    [array]$exchangeBypassModerationSMTP=$NULL #Array of objects with bypass moderation rights from AD.
-    [array]$exchangeGrantSendOnBehalfToSMTP=$NULL
+    [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
+    [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
+    [array]$exchangeAcceptMessageSMTP=@() #Array of members with accept permissions from AD.
+    [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
+    [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
+    [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
+    [array]$exchangeGrantSendOnBehalfToSMTP=@()
 
     #Define XML files to contain backups.
 
@@ -264,27 +264,27 @@ Function Start-DistributionListMigration
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
-    [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
-    [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
-    [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
-    [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
-    [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
-    [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
-    [array]$allGroupsManagedBy=$NULL
+    [array]$allGroupsMemberOf=@() #Complete AD information for all groups the migrated group is a member of.
+    [array]$allGroupsReject=@() #Complete AD inforomation for all groups that the migrated group has reject mesages from.
+    [array]$allGroupsAccept=@() #Complete AD information for all groups that the migrated group has accept messages from.
+    [array]$allGroupsBypassModeration=@() #Complete AD information for all groups that the migrated group has bypass moderations.
+    [array]$allUsersForwardingAddress=@() #All users on premsies that have this group as a forwarding DN.
+    [array]$allGroupsGrantSendOnBehalfTo=@() #All dependencies on premsies that have grant send on behalf to.
+    [array]$allGroupsManagedBy=@()
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
-    [array]$allOffice365MemberOf=$NULL
-    [array]$allOffice365Accept=$NULL
-    [array]$allOffice365Reject=$NULL
-    [array]$allOffice365BypassModeration=$NULL
-    [array]$allOffice365ForwardingAddress=$NULL
-    [array]$allOffice365ManagedBy=$NULL
-    [array]$allOffice365GrantSendOnBehalfTo=$NULL
-    [array]$allOffice365UniversalAccept=$NULL
-    [array]$allOffice365UniversalReject=$NULL
-    [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
-    [array]$allOffice365ManagedBy=$NULL
+    [array]$allOffice365MemberOf=@()
+    [array]$allOffice365Accept=@()
+    [array]$allOffice365Reject=@()
+    [array]$allOffice365BypassModeration=@()
+    [array]$allOffice365ForwardingAddress=@()
+    [array]$allOffice365ManagedBy=@()
+    [array]$allOffice365GrantSendOnBehalfTo=@()
+    [array]$allOffice365UniversalAccept=@()
+    [array]$allOffice365UniversalReject=@()
+    [array]$allOffice365UniversalGrantSendOnBehalfTo=@()
+    [array]$allOffice365ManagedBy=@()
 
     #The following are the cloud parameters we query for to look for dependencies.
 
