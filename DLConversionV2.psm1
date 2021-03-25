@@ -940,6 +940,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logFile -string "Summary of group information:"
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
     out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
@@ -947,6 +949,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+
 
     #Exit #Debug Exit.
 
@@ -1163,6 +1167,8 @@ Function Start-DistributionListMigration
         out-logfile -string "The group is not a manager on any other groups."
     }
 
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logfile -string ("Summary of dependencies found:")
     out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
     out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
     out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
@@ -1170,6 +1176,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("This group has accept permissions on this many groups = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
     Out-LogFile -string "********************************************************************************"
