@@ -122,7 +122,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $functionDirectoryObjectID[1]
+                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $functionDirectoryObjectID[1] -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -134,7 +134,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -member $member.primarySMTPAddressOrUPN
+                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -member $member.primarySMTPAddressOrUPN -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -167,7 +167,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -179,7 +179,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -212,7 +212,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -224,7 +224,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -257,7 +257,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -269,7 +269,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -302,7 +302,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -314,7 +314,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -347,7 +347,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -359,7 +359,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -392,7 +392,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$functionDirectoryObjectID[1]}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$functionDirectoryObjectID[1]} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -404,7 +404,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$member.primarySMTPAddressOrUPN}
+                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -430,10 +430,10 @@
             out-Logfile -string $address
 
             try {
-                Set-O365DistributionGroup -emailAddresses @{add=$address}
+                Set-O365DistributionGroup -emailAddresses @{add=$address} -errorAction STOP
             }
             catch {
-                
+                out-logfile -string $_ -isError:$TRUE
             }
         }
 

@@ -1779,6 +1779,9 @@ Function Start-DistributionListMigration
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
+    out-logfile "Sleeping 30 seconds before creating the DL."
+    start-sleep -seconds 30
+
     try {
         new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride
     }
