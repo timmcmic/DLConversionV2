@@ -1885,10 +1885,13 @@ Function Start-DistributionListMigration
         $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $orignalDLConfiguration.mail -errorAction STOP
     }
     catch {
-        out-logfile -string $_. -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-LogFile -string "Write new DL configuration to XML."
+
+    out-Logfile -string $office365DLConfigurationPostMigration
+    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
 
     out-logfile -string "Obtain the migrated DL membership and record it for validation."
 
@@ -1899,8 +1902,13 @@ Function Start-DistributionListMigration
         out-LogFile -string $_ -isError:$TRUE
     }
 
+    out-logFile -string "Write the new DL membership to XML."
+    out-logfile -string office365DLMembershipPostMigration
 
-    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+    out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $office365DLMembershipPostMigrationXML
+
+
+    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
