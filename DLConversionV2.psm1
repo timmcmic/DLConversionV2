@@ -224,13 +224,13 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
-    [array]$exchangeDLMembershipSMTP=$NULL #Array of DL membership from AD.
-    [array]$exchangeRejectMessagesSMTP=$NULL #Array of members with reject permissions from AD.
-    [array]$exchangeAcceptMessageSMTP=$NULL #Array of members with accept permissions from AD.
-    [array]$exchangeManagedBySMTP=$NULL #Array of members with manage by rights from AD.
-    [array]$exchangeModeratedBySMTP=$NULL #Array of members  with moderation rights.
-    [array]$exchangeBypassModerationSMTP=$NULL #Array of objects with bypass moderation rights from AD.
-    [array]$exchangeGrantSendOnBehalfToSMTP=$NULL
+    [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
+    [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
+    [array]$exchangeAcceptMessageSMTP=@() #Array of members with accept permissions from AD.
+    [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
+    [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
+    [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
+    [array]$exchangeGrantSendOnBehalfToSMTP=@()
 
     #Define XML files to contain backups.
 
