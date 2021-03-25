@@ -948,8 +948,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
 
-    Exit #Debug Exit.
-    
+    #Exit #Debug Exit.
+
     #At this point we have obtained all the information relevant to the individual group.
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
@@ -1245,6 +1245,8 @@ Function Start-DistributionListMigration
     {
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
+
+    EXIT #Debug Exit
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
