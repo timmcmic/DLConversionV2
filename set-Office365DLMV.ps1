@@ -68,7 +68,7 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
-            [array$exchangeDLMembershipSMTP=$NULL,
+            [array]$exchangeDLMembershipSMTP=$NULL,
             [Parameter(Mandatory = $true)]
             [array]$exchangeRejectMessagesSMTP=$NULL,
             [Parameter(Mandatory = $true)]
