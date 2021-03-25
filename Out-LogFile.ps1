@@ -73,7 +73,7 @@
         else 
         {
             out-logfile -string "I made it here."
-            Write-Verbose $logstring
+            Write-host $logstring | select-object * | FL
         }
 
         #If the output to the log is terminating exception - throw the same string.
