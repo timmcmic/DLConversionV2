@@ -73,7 +73,7 @@
         else 
         {
             out-logfile -string "I made it here."
-            Write-Output $logstring | FL
+            Write-Output $logstring 6>&1
         }
 
         #If the output to the log is terminating exception - throw the same string.
