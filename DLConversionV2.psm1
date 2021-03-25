@@ -1828,7 +1828,7 @@ Function Start-DistributionListMigration
     out-logfile -string "Monitoring Exchange Online for distribution list deletion."
 
     try {
-        test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
