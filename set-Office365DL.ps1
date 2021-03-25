@@ -46,6 +46,7 @@
         $functionoofReplyToOriginator=$NULL
         $functionreportToOwner=$NULL
         $functionHiddenFromAddressList=$NULL
+        $functionMemberJoinRestriction=$NULL
 
         #Start function processing.
 
@@ -176,11 +177,26 @@
             $functionHiddenFromAddressList=$originalDLConfiguration.msExchHideFromAddressLists
         }
 
+        #Evaluate member join restrictions.
+
+        if ($originalDLConfiguration.msExchGroupJoinRestriction -eq $NULL)
+        {
+            out-Logfile -string ("Member join restriction is NULL.")
+
+            $functionMemberJoinRestriction="Closed"
+
+            out-logfile -string ("The member join restriction is now = "+$functionMemberJoinRestriction)
+        }
+        else 
+        {
+            $functionMemberJoinRestriction = $originalDLConfiguration.msExchGroupJoinRestriction
+        }
+
         try 
         {
             out-logfile -string "Setting the single value settings for the distribution group."
 
-            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -MemberJoinRestriction $originalDLConfiguration.msExchGroupJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -Alias $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -ModerationEnabled $functionModerationEnabled -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -SendModerationNotifications $functionSendModerationNotifications -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -primarySMTPAddress $originalDLConfiguration.mail
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -Alias $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -ModerationEnabled $functionModerationEnabled -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -SendModerationNotifications $functionSendModerationNotifications -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
         }
         catch 
         {
