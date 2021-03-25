@@ -1779,7 +1779,7 @@ Function Start-DistributionListMigration
     }
 
     out-LogFile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $originalDLConfiurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
+    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
 
     $global:unDoStatus=$global:unDoStatus+1
 
