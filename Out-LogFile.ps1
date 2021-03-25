@@ -72,8 +72,7 @@
         }
         else 
         {
-            [string]$functionString = $logString
-            Write-host $functionString
+            Write-host $logstring | select-object * | FL
         }
 
         #If the output to the log is terminating exception - throw the same string.
