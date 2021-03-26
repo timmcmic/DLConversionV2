@@ -95,6 +95,7 @@
         #Declare function variables.
 
         [array]$functionDirectoryObjectID = $NULL
+        $functionEmailAddress = $NULL
 
         #Start function processing.
 
@@ -113,6 +114,17 @@
 
         foreach ($address in $originalDLConfiguration.proxyAddresses)
         {
+            out-logfile -string "Reset just the primary SMTP Address first since the array contains SMTP and smtp"
+
+            out-logfile -string $originalDLConfiguration.mail
+
+            try {
+                set-o365DistributionGroup -identity $originalDLConfiguration.mailnickname -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
+            }
+            catch {
+                out-logfile $_ -isError:$TRUE
+            }
+
             out-Logfile -string "Processing address:"
             out-Logfile -string $address
 
@@ -122,6 +134,21 @@
             catch {
                 out-logfile -string $_ -isError:$TRUE
             }
+
+            out-logfile -string "Processing on premises legacy ExchangeDN to X500"
+            out-logfile -string $originalDLConfiguration.legacyExchangeDN
+
+            $functionEmailAddress = "X500:"+$originalDLConfiguration.legacyExchangeDN
+
+            out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
+
+            try {
+                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+
         }
 
         out-logFile -string "Evaluating exchangeDLMembershipSMTP"
