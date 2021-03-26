@@ -1913,8 +1913,58 @@ Function Start-DistributionListMigration
 
     out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $office365DLMembershipPostMigrationXML
 
+    #The distribution group has been created and both single and multi valued attributes have been updated.
+    #The group is fully availablle in exchange online.
+    #The group as this point sits in the non-sync OU.  This was to service the deletion.
+    #The administrator may have reasons for keeping the group.
+    #If they do the plan is to do two things.
+    ###Rename the group by adding a ! to the name - this ensures that if the group is every accidentally mail enabled it will not soft match the migrated group.
+    ###We'll stamp custom attribute flags on it to ensure that we know the group has been mirgated - in case it's a member of another group to be migrated.
+
+    if ($retainOriginalGroup -eq $TRUE)
+    {
+        Out-LogFile -string "Administrator has choosen to retain the original group."
+        out-logfile -string "Rename the group by adding the fixed character !"
+
+        try {
+            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        $global:unDoStatus=$global:unDoStatus+1
+
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        try {
+            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        Out-LogFile -string "Administrator has choosen to regain the original group."
+        out-logfile -string "Disabling the mail attributes on the group."
+
+        try{
+            Disable-OriginalDL -dn $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -errorAction STOP
+        }
+        catch{
+            out-LogFile -string $_ -isError:$TRUE
+        }
+
+        $global:unDoStatus=$global:unDoStatus+1
+
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    }
+
+
+
 
     
+
+
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
