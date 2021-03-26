@@ -1850,7 +1850,7 @@ Function Start-DistributionListMigration
         set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
     }
     catch {
-        #out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     $global:unDoStatus=$global:unDoStatus+1
