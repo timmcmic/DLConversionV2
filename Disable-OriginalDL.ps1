@@ -59,6 +59,7 @@
         $functionCustomAttribute2=$originalDLConfiguration.mail
 
 
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -70,6 +71,7 @@
         Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         out-logfile -string ("Use Exchange On Premises ="+$useOnPremsiesExchange)
+        out-logfile -string ("DN of object to modify / disable "+$originalDLConfiguration.distinguishedName)
 
         OUt-LogFile -string ("Parameter Set:")
         
@@ -111,7 +113,7 @@
         out-logfile -string "The group has been migrated and is retained - set custom attributes with original information for other migration dependencies."
         
         try {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -replace @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2}
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2}
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
