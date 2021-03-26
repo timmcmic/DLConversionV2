@@ -55,8 +55,8 @@
         #Declare function variables.
 
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
-        $functionCustomAttribute1="MigratedByScript"
-        $functionCustomAttribute2=$originalDLConfiguration.mail
+        [string]$functionCustomAttribute1="MigratedByScript"
+        [string]$functionCustomAttribute2=$originalDLConfiguration.mail
 
 
 
@@ -113,7 +113,7 @@
         out-logfile -string "The group has been migrated and is retained - set custom attributes with original information for other migration dependencies."
         
         try {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2}
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
