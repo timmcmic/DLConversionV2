@@ -191,7 +191,7 @@
         }
         else 
         {
-            out-logFile string ("Hidden from address list is not null.")
+            out-logFile -string ("Hidden from address list is not null.")
             
             $functionHiddenFromAddressList=$originalDLConfiguration.msExchHideFromAddressLists
         }

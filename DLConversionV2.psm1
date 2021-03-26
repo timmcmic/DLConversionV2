@@ -1850,12 +1850,12 @@ Function Start-DistributionListMigration
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
-    #try {
+    try {
         set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
-    #}
-    #catch {
-    #    out-logfile -string $_ -isError:$TRUE
-    #}
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
 
     $global:unDoStatus=$global:unDoStatus+1
 
