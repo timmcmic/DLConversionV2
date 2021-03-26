@@ -1863,7 +1863,7 @@ Function Start-DistributionListMigration
 
     start-sleep -seconds 5
 
-    EXIT #Debug Exit.
+    #EXIT #Debug Exit.
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
 
