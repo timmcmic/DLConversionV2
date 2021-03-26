@@ -1846,7 +1846,7 @@ Function Start-DistributionListMigration
 
     start-sleep -seconds 5
 
-    EXIT #Debug Exit.
+    #EXIT #Debug Exit.
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
@@ -1862,6 +1862,8 @@ Function Start-DistributionListMigration
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
     start-sleep -seconds 5
+
+    EXIT #Debug Exit.
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
 
