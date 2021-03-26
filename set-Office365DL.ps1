@@ -156,6 +156,14 @@
 
             out-logfile -string ("The updated moderation enabled flag is = "+$functionModerationEnabled)
         }
+        else 
+        {
+            out-logfile -string "The moderation setting was set on premises."
+            
+            $functionModerationEnabled=$originalDLConfiguration.msExchEnableModeration
+
+            out-Logfile -string ("The function moderation setting is "+$functionModerationEnabled)
+        }
 
         #Evaluate oofReplyToOriginator
 
@@ -167,6 +175,14 @@
 
             out-logfile -string ("The oofReplyToOriginator is now = "+$functionoofReplyToOriginator)
         }
+        else 
+        {
+            out-logFile -string "The oofReplyToOriginator was set on premises."
+            
+            $functionoofReplyToOriginator=$originalDLConfiguration.oofReplyToOriginator
+
+            out-logfile -string ("The function oofReplyToOriginator = "+$functionoofReplyToOriginator)
+        }
 
         #Evaluate reportToOwner
 
@@ -177,6 +193,14 @@
             $functionreportToOwner = $FALSE
 
             out-logfile -string ("The reportToOwner is now = "+$functionreportToOwner)
+        }
+        else 
+        {
+            out-logfile -string "The reportToOwner was set on premises." 
+            
+            $functionReportToOwner = $originalDLConfiguration.reportToOwner
+
+            out-logfile -string ("The function reportToOwner = "+$functionreportToOwner)
         }
 
         #Evaluate hidden from address list.
