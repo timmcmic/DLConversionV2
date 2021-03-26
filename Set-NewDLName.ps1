@@ -80,7 +80,7 @@
         
         try 
         {
-            Out-LogFile -string "Get the group as an instance."
+            Out-LogFile -string "Set the AD group name."
 
             set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential
         }

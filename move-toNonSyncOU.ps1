@@ -62,7 +62,7 @@
         {
             Out-LogFile -string "Move the group to the non-SYNC OU..."
 
-            move-adObject -identity $DN -targetPath $OU -credential $adCredential
+            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer
         }
         catch 
         {
