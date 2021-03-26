@@ -1848,6 +1848,22 @@ Function Start-DistributionListMigration
 
     #EXIT #Debug Exit.
 
+    #Now it is time to set the multi valued attributes on the DL in Office 365.
+    #Setting these first must occur since moderators have to be established before moderation can be enabled.
+
+    out-logFile -string "Setting the multivalued attributes of the migrated group."
+
+    try {
+        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride
+    }
+    catch {
+        out-logFile -string $_ -isError:$TRUE
+    }
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    start-sleep -seconds 5
+
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
     try {
@@ -1859,22 +1875,9 @@ Function Start-DistributionListMigration
 
     $global:unDoStatus=$global:unDoStatus+1
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-    start-sleep -seconds 5
-
     #EXIT #Debug Exit.
 
-    #Now it is time to set the multi valued attributes on the DL in Office 365.
-
-    out-logFile -string "Setting the multivalued attributes of the migrated group."
-
-    try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride
-    }
-    catch {
-        out-logFile -string $_ -isError:$TRUE
-    }
+    
 
     $global:unDoStatus=$global:unDoStatus+1
 

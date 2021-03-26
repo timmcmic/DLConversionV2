@@ -109,11 +109,26 @@
 
         #At this time begin the iteraction through the arrays that have passed.
 
+        Out-LogFile -string "Reset the DL proxy addresses to match original object."
+
+        foreach ($address in $originalDLConfiguration.proxyAddresses)
+        {
+            out-Logfile -string "Processing address:"
+            out-Logfile -string $address
+
+            try {
+                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
         out-logFile -string "Evaluating exchangeDLMembershipSMTP"
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
         {
-            foreach ($member in $exchageDLMembershipSMTP)
+            foreach ($member in $exchangeDLMembershipSMTP)
             {
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
@@ -428,21 +443,6 @@
         else 
         {
             Out-LogFile -string "There were no members to process."    
-        }
-
-        Out-LogFile -string "Reset the DL proxy addresses to match original object."
-
-        foreach ($address in $originalDLConfiguration.proxyAddresses)
-        {
-            out-Logfile -string "Processing address:"
-            out-Logfile -string $address
-
-            try {
-                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
-            }
-            catch {
-                out-logfile -string $_ -isError:$TRUE
-            }
         }
 
         Out-LogFile -string "END SET-Office365DLMV"
