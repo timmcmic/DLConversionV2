@@ -1873,11 +1873,7 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
-
     #EXIT #Debug Exit.
-
-    
 
     $global:unDoStatus=$global:unDoStatus+1
 
@@ -1927,7 +1923,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Rename the group by adding the fixed character !"
 
         try {
-            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
+            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfigurationUpdated.Name -dlSAMAccountName $originalDLConfigurationUpdated.SAMAccountName -dn $originalDLConfigurationUpdated.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
