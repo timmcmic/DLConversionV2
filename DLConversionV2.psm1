@@ -1860,6 +1860,8 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
+    $global:unDoStatus=$global:unDoStatus+1
+
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
     start-sleep -seconds 5
