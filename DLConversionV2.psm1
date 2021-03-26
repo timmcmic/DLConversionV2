@@ -1844,6 +1844,8 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    EXIT #Debug Exit.
+
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
     try {
