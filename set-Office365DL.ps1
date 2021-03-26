@@ -223,6 +223,16 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
+        try{
+            out-logfile -string "Setting the primary SMTP address as a separate operation to ensure it is set."
+            out-logfile -string $originalDLConfiguration.mail
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
         Out-LogFile -string "END SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
     }

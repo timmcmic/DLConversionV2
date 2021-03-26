@@ -1844,6 +1844,8 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    start-sleep -seconds 5
+
     EXIT #Debug Exit.
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
@@ -1859,6 +1861,8 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    start-sleep -seconds 5
+
     #Now it is time to set the multi valued attributes on the DL in Office 365.
 
     out-logFile -string "Setting the multivalued attributes of the migrated group."
@@ -1871,6 +1875,8 @@ Function Start-DistributionListMigration
     }
 
     $global:unDoStatus=$global:unDoStatus+1
+
+    start-sleep -seconds 5
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
