@@ -1944,7 +1944,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Disabling the mail attributes on the group."
 
         try{
-            Disable-OriginalDL -dn $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -errorAction STOP
+            Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -errorAction STOP
         }
         catch{
             out-LogFile -string $_ -isError:$TRUE
