@@ -168,7 +168,7 @@
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
-            $workingAddress=$newOffice365DLPrimarySMTPAddress.primarySMTPAddress.address.substring($newOffice365DLPrimarySMTPAddress.primarySMTPAddress.address.indexOf("@"))
+            $workingAddress=$newDLPrimarySMTPAddress.substring($newDLPrimarySMTPAddress.indexof("@"))
             $workingAddressArray=$workingaddress.split(".")
             $hybridRemoteRoutingAddress=$originalDLConfiguration.mailnickname+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
 
