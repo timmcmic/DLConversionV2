@@ -1868,7 +1868,7 @@ Function Start-DistributionListMigration
     out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
 
     try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride
+        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride
     }
     catch {
         out-logFile -string $_ -isError:$TRUE

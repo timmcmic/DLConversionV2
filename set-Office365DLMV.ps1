@@ -89,7 +89,9 @@
             [AllowEmptyCollection()]
             [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
             [Parameter(Mandatory=$true)]
-            [string]$groupTypeOverride
+            [string]$groupTypeOverride,
+            [Parameter(Mandatory=$true)]
+            $newDLPrimarySMTPAddress
         )
 
         #Declare function variables.
@@ -100,7 +102,6 @@
         [string]$hybridRemoteRoutingAddress=$NULL
         [string]$workingAddress=$NULL
         [array]$workingAddressArray=@()
-        $newOffice365DLPrimarySMTPAddress=$NULL
 
         #Start function processing.
 
