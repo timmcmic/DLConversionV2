@@ -195,7 +195,7 @@
                 if ($member.RecipientType -eq "group")
                 {
                     out-logfile -string "Member is a group - setting error action to continue."
-                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
                 }
                 else 
                 {
