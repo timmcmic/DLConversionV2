@@ -188,6 +188,22 @@
         {
             foreach ($member in $exchangeDLMembershipSMTP)
             {
+                #If the recipient type is a group - set error action to silientlyContinue.
+                #This is required - if the group is retained we set the same custom attributes as the cross premises contact created.
+                #Therefore there could be an exception that th member already exists.
+
+                if ($member.recipientType -eq "Group")
+                {
+                    out-logfile -string "Member is a group - setting error action to continue."
+                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
+                }
+                else 
+                {
+                    out-logfile -string "Member is a contact - settig error action to STOP"
+                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+                }
+
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -197,7 +213,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $functionDirectoryObjectID[1] -errorAction STOP -BypassSecurityGroupManagerCheck
+                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $functionDirectoryObjectID[1] -BypassSecurityGroupManagerCheck
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -209,7 +225,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -member $member.primarySMTPAddressOrUPN -errorAction STOP -BypassSecurityGroupManagerCheck
+                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -member $member.primarySMTPAddressOrUPN -BypassSecurityGroupManagerCheck
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
