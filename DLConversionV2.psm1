@@ -1840,6 +1840,18 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
+    try {
+        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-LogFile -string "Write new DL configuration to XML."
+
+    out-Logfile -string $office365DLConfigurationPostMigration
+    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
@@ -1854,11 +1866,23 @@ Function Start-DistributionListMigration
     out-logFile -string "Setting the multivalued attributes of the migrated group."
 
     try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride
+        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride $newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress
     }
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
+
+    try {
+        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-LogFile -string "Write new DL configuration to XML."
+
+    out-Logfile -string $office365DLConfigurationPostMigration
+    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
 
     $global:unDoStatus=$global:unDoStatus+1
 

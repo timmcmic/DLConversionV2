@@ -89,13 +89,19 @@
             [AllowEmptyCollection()]
             [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
             [Parameter(Mandatory=$true)]
-            [string]$groupTypeOverride
+            [string]$groupTypeOverride,
+            [Parameter(Mandatory=$true)]
+            [string]$newDLPrimarySMTPAddress
         )
 
         #Declare function variables.
 
         [array]$functionDirectoryObjectID = $NULL
         $functionEmailAddress = $NULL
+        [boolean]$routingAddressIsPresent=$FALSE
+        [string]$hybridRemoteRoutingAddress=$NULL
+        [string]$workingAddress=$NULL
+        [array]$workingAddressArray=@()
 
         #Start function processing.
 
@@ -107,6 +113,8 @@
 
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
+        out-logfile -string ("Primary SMTP address of the DL")
+        out-logfile -string $newDLPrimarySMTPAddress
 
         #At this time begin the iteraction through the arrays that have passed.
 
@@ -142,8 +150,32 @@
             out-Logfile -string "Processing address:"
             out-Logfile -string $address
 
+            if ($address.contains("mail.onmicrosoft.com"))
+            {
+                out-logfile -string ("Hybrid remote routing address found.")
+                out-logfile -string $address
+                $routingAddressIsPresent=$TRUE
+            }
+
             try {
                 Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
+        if ($routingAddressIsPresent -eq $FALSE)
+        {
+            out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
+            $workingAddress=$newDLPrimarySMTPAddress.substring($newDLPrimarySMTPAddress.indexOf("@"))
+            $workingAddressArray=$workingaddress.split(".")
+            $hybridRemoteRoutingAddress=$originalDLConfiguration.mailnickname+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
+
+            out-logfile -string ("Hybrid remote routing address = "+$hybridRemoteRoutingAddress)
+
+            try {
+                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
