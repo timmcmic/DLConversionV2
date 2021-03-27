@@ -89,7 +89,7 @@
             [AllowEmptyCollection()]
             [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
             [Parameter(Mandatory=$true)]
-            [string]$groupTypeOverride,
+            [string]$groupTypeOverride
         )
 
         #Declare function variables.
