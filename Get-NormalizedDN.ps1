@@ -187,6 +187,25 @@
                         isAlreadyMigrated = $false
                     }
                 }
+
+                #A group can be present that was previously migrated and then disabled - if so allow the migration to proceed.
+                #Otherwise the group was not previously migrated and would need to be cleaned up.
+
+                elseif ($functionTest.extensionattribute1 -eq "MigratedByScript")
+                {
+                    out-logfile -string "A group was found as a member and that group was previously migrated."
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.extensionAttribute2
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $true
+                    }
+                }
                 
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
                 {
