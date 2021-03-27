@@ -1841,7 +1841,7 @@ Function Start-DistributionListMigration
     }
 
     try {
-        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction STOP
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
