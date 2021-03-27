@@ -199,7 +199,7 @@
                 }
                 else 
                 {
-                    out-logfile -string "Member is a contact - settig error action to STOP"
+                    out-logfile -string "Member is not a group - setting error action to stop."
                     $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
                 }
 
