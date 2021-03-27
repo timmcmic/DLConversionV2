@@ -187,6 +187,21 @@
                         isAlreadyMigrated = $false
                     }
                 }
+                elseif (($functionTest.extensionattribute1 -eq "MigratedByScript") -and (isMember -eq $TRUE))
+                {
+                    out-logfile -string "A group was found as a member and that group was previously migrated."
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.extensionAttribute2
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $false
+                    }
+                }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
@@ -197,7 +212,7 @@
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
                 {
-                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
+                    #The group is a recipient and has permissions to an attribute.
                         
                     out-logfile -string "The group has permissions on the DL and this is permissiable."
                     out-logfile -string $dn
