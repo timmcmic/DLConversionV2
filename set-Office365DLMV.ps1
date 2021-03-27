@@ -90,8 +90,6 @@
             [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
             [Parameter(Mandatory=$true)]
             [string]$groupTypeOverride,
-            [Parameter(Mandatory=$true)]
-            [string]$newDLPrimarySMTPAddress
         )
 
         #Declare function variables.
@@ -102,6 +100,7 @@
         [string]$hybridRemoteRoutingAddress=$NULL
         [string]$workingAddress=$NULL
         [array]$workingAddressArray=@()
+        $newOffice365DLPrimarySMTPAddress=$NULL
 
         #Start function processing.
 
@@ -113,8 +112,8 @@
 
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
-        out-logfile -string ("Primary SMTP address of the DL")
-        out-logfile -string $newDLPrimarySMTPAddress
+
+        $newOffice365DLPrimarySMTPAddress = get-O365DistributionGroup -identity $originalDLConfiguration.mailNickname
 
         #At this time begin the iteraction through the arrays that have passed.
 
@@ -168,7 +167,7 @@
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
-            $workingAddress=$newDLPrimarySMTPAddress.substring($newDLPrimarySMTPAddress.indexOf("@"))
+            $workingAddress=$newOffice365DLPrimarySMTPAddress.primarySMTPAddress.address.substring($newOffice365DLPrimarySMTPAddress.primarySMTPAddress.address.indexOf("@"))
             $workingAddressArray=$workingaddress.split(".")
             $hybridRemoteRoutingAddress=$originalDLConfiguration.mailnickname+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
 
