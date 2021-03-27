@@ -199,7 +199,7 @@
                         RecipientType = $functionTest.objectClass
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-                        isAlreadyMigrated = $false
+                        isAlreadyMigrated = $true
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
