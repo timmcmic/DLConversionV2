@@ -192,10 +192,10 @@
                 #This is required - if the group is retained we set the same custom attributes as the cross premises contact created.
                 #Therefore there could be an exception that th member already exists.
 
-                if ($member.recipientType -eq "Group")
+                if ($member.RecipientType -eq "group")
                 {
                     out-logfile -string "Member is a group - setting error action to continue."
-                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Continue
+                    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
                 }
                 else 
                 {

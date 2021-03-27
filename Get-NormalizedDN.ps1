@@ -94,7 +94,7 @@
 
             #Check to see if the recipient has a recipient display type and is a user, or is a contact.
 
-            Out-LogFile -string "Enterpting DN evaluation..."
+            Out-LogFile -string "Interpreting DN evaluation..."
 
             if (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
             {
