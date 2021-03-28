@@ -61,6 +61,7 @@
                 get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
             }
             catch {
+                out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
                 out-logFile -string $_ -isError:$TRUE
             }
         }
@@ -74,6 +75,7 @@
                 get-exoRecipient -identity $member.PrimarySMTPAddressOrUPN -errorAction Stop
             }
             catch {
+                out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
                 out-logfile -string $_ -isError:$TRUE
             }
         }
@@ -87,6 +89,7 @@
                 get-o365User -identity $member.primarySMTPAddressOrUPN -errorAction STOP
             }
             catch {
+                out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
                 out-logfile -string $_ -isError:$TRUE
             }
         }
