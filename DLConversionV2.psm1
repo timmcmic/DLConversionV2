@@ -1257,10 +1257,31 @@ Function Start-DistributionListMigration
     }
 
     #EXIT #Debug Exit
-    
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
+
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeDLMembershipSMTP)
+        {
+            out-LogFile -string "Testing"
+            out-logfile -string $member
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    <#
+    
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
@@ -1568,7 +1589,7 @@ Function Start-DistributionListMigration
         }
     }
     
-
+#>
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
