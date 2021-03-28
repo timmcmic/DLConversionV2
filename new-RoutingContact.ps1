@@ -87,8 +87,10 @@
         out-logfile -string ("Function target address = "+$functionTargetAddress)
 
         [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
+        $functionDisplayName=$functionDisplayName.replace(' ','')
         [string]$functionName=$functionDisplayName
         [string]$functionFirstName = $originalDLConfiguration.DisplayName
+        $functionFirstName=$functionFirstName.replace(' ','')
         [string]$functionLastName = "MigratedByScript"
         [boolean]$functionHideFromAddressList=$true
         [string]$functionRecipientDisplayType="6"
