@@ -53,7 +53,7 @@
 
             #Modify the external directory object id.
 
-            $functionDirectoryObjectID=$externalDirectoryObjectID.Split("_")
+            $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
 
             out-logfile -string ("Modified external directory object id to test ="+$functionDirectoryObjectID[1])
 
