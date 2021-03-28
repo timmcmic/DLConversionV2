@@ -1744,7 +1744,7 @@ Function Start-DistributionListMigration
         new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
     }
     catch {
-        
+        out-logfile -string $_ -isError:$TRUE
     }
  
     Out-LogFile -string "================================================================================"
