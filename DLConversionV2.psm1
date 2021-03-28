@@ -1752,7 +1752,7 @@ Function Start-DistributionListMigration
     try {
         $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
         $tempName=$originalDLConfiguration.name.replace(' ','')
-        $tempName=$tempName="-MigratedByScript"
+        $tempName=$tempName+"-MigratedByScript"
         $tempDN=$tempName+","+$tempOU
         $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
     }
