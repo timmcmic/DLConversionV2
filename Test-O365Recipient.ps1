@@ -55,7 +55,7 @@
 
             $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
 
-            out-logfile -string ("Modified external directory object id to test ="+$functionDirectoryObjectID[1])
+            out-logfile -string $functionDirectoryObjectID[1]
 
             try {
                 get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
