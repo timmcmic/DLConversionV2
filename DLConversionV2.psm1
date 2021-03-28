@@ -306,6 +306,12 @@ Function Start-DistributionListMigration
     $office365DLConfigurationPostMigration = $NULL
     $office365DLMembershipPostMigration=$NULL
 
+    #Declare some variables for string processing as items move around.
+
+    [string]$tempOU=$NULL
+    [array]$tempName=@()
+    [string]$tempDN=$NULL
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
@@ -1678,6 +1684,9 @@ Function Start-DistributionListMigration
             out-logFile -string $_ -isError:$TRUE
         }
 
+        out-logfile -string $originalDLConfigurationUpdated
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
+
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
 
@@ -1693,15 +1702,36 @@ Function Start-DistributionListMigration
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         try {
-            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
         }
 
+        out-logfile -string $originalDLConfigurationUpdated
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
+
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
-        move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof("OU")) -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+        try {
+            move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof("OU")) -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        try {
+            $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+            $tempName=$originalDLConfigurationUpdated.distinguishedName.split(",")
+            $tempDN=$tempName[0]+","+$tempOU
+            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string $originalDLConfigurationUpdated
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
 
         $global:unDoStatus=$global:unDoStatus+1
 

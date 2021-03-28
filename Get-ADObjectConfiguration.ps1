@@ -34,13 +34,18 @@
 
         Param
         (
-            [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress,
-            [Parameter(Mandatory = $true)]
+            [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
+            [string]$groupSMTPAddress=$NULL,
+            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
+            [string]$dn=$NULL,
+            [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
             [string]$globalCatalogServer,
-            [Parameter(Mandatory = $true)]
+            [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
             [array]$parameterSet,
-            [Parameter(Mandatory = $TRUE)]
+            [Parameter(Mandatory = $TRUE,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
             $adCredential
         )
 
@@ -73,7 +78,19 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            if ($groupSMTPAddress -ne $NULL)
+            {
+                $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            }
+            elseif ($DN -ne $NULL)
+            {
+                $functionDLConfiguration=get-adObject $dn -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+            }
+            else 
+            {
+                out-logfile -string "No value query found for local object." -isError:$TRUE    
+            }
+            
 
             #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
