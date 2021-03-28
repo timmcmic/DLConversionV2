@@ -88,7 +88,7 @@
             {
                 out-logfile -string ("Searching by distinguished name "+$dn)
 
-                $functionDLConfiguration=get-adObject -filter (distinguishedName -eq $dn) -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
             }
             else 
             {
