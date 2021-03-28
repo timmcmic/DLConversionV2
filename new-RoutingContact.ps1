@@ -54,12 +54,23 @@
         Out-LogFile -string "BEGIN new-RoutingContact"
         Out-LogFile -string "********************************************************************************"
 
-        #Declare function variables.
+        #write out parameters utilized to log file.
+        
+        out-logfile -string ("Original DL Configuration = "+$originalDLConfiguration)
+        out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
+        out-logfile -string ("Global catalog server = "+$globalCatalogServer)
+        out-logfile -string ("AD User Name = "+$adCredential.UserName)
+
+        #Declare function variables and output to screen.
 
         [string]$functionCustomAttribute1="MigratedByScript"
+        out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
+        out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         [string]$functionMail=$originalConfiguration.mail
-        [string]$functionOU=$originalConfiguration.distinguishedname.substring($originalconfiguration.distinguishedname.indexof("OU"))
+        out-logfile -string ("Function mail address = "+$functionMail)
+        [string]$functionOU=$originalConfiguration.distinguishedname.substring($originaldlconfiguration.distinguishedname.indexof("OU"))
+        out-logfile -string ("Function OU = "+$functionOU)
 
         foreach ($address in $office365dlconfiguration.emailaddresses)
         {
@@ -73,6 +84,8 @@
             }
         }
 
+        out-logfile -string ("Function target address = "+$functionTargetAddress)
+
         [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
         [string]$functionName=$functionDisplayName
         [string]$functionFirstName = $originalDLConfiguration.DisplayName
@@ -85,16 +98,6 @@
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
         [string]$functionSelfAccountSid = "S-1-5-10"
 
-
-        #Log the parameters and variables for the function.
-
-        out-logfile -string ("Original DL Configuration = "+$originalDLConfiguration)
-        out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
-        out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
-        out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-        out-logfile -string ("Function mail address = "+$functionMail)
-        out-logfile -string ("Function OU = "+$functionOU)
-        out-logfile -string ("Function target address = "+$functionTargetAddress)
         out-logfile -string ("Function display name = "+$functionDisplayName)
         out-logfile -string ("Function Name = "+$functionName)
         out-logfile -string ("Function First Name = "+$functionFirstName)
