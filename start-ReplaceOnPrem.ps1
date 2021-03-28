@@ -82,7 +82,6 @@
             }
 
             out-Logfile -string "Adding member to group..."
-            out-logfile -string $functionUser
             out-logfile -string $functionGroup
 
             try{
