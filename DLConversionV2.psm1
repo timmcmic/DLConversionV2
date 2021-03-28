@@ -311,7 +311,8 @@ Function Start-DistributionListMigration
     #Declare some variables for string processing as items move around.
 
     [string]$tempOU=$NULL
-    [array]$tempName=@()
+    [array]$tempNameArrayArray=@()
+    [string]$tempName=$NULL
     [string]$tempDN=$NULL
 
     #Log start of DL migration to the log file.
@@ -1724,8 +1725,8 @@ Function Start-DistributionListMigration
 
         try {
             $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
-            $tempName=$originalDLConfigurationUpdated.distinguishedName.split(",")
-            $tempDN=$tempName[0]+","+$tempOU
+            $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
+            $tempDN=$tempNameArray[0]+","+$tempOU
             $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch {
@@ -1751,8 +1752,8 @@ Function Start-DistributionListMigration
 
     try {
         $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
-        $tempName=$originalDLConfiguration.name.replace(' ','')
-        $tempName=$tempName+"-MigratedByScript"
+        $tempName=$originalDLConfiguration.cn.replace(' ','')
+        $tempName=$tempNameArray+"-MigratedByScript"
         $tempDN=$tempName+","+$tempOU
         $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
     }
