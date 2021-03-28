@@ -1780,7 +1780,7 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
-    out-logfile -string $routingContactConfiguratio
+    out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
 
     $global:unDoStatus=$global:unDoStatus+1
@@ -1795,9 +1795,10 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsMemberOf)
         {  
-            out-logfile -string ("Processing member = "+$member.cononicalName)
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+
             try{
-                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential
+                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential  
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1808,6 +1809,10 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premises group memberships to process."    
     }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
  
     Out-LogFile -string "================================================================================"
