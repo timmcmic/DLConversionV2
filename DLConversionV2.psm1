@@ -301,6 +301,17 @@ Function Start-DistributionListMigration
     [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
     [string]$office365ForwardingAddress="ForwardingAddress"
 
+    #The following are the on premises parameters utilized for restoring depdencies.
+
+    [string]$onPremUnAuthOrig="unauthorig"
+    [string]$onPremAuthOrig="authOrig"
+    [string]$onPremManagedBy="managedBy"
+    [string]$onPremMSExchCoManagedByLink="msExchCoManagedByLink"
+    [string]$onPremPublicDelegate="publicDelegate"
+    [string]$onPremMsExchModeratedByLink="msExchModeratedByLink"
+    [string]$onPremmsExchBypassModerationLink="msExchBypassModerationLink"
+    [string]$onPremMemberOf="memberOf"
+
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
@@ -1775,6 +1786,24 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #At this time we are ready to begin resetting the on premises dependencies.
+
+    out-logfile -string ("Starting on premies DL members.")
+
+    if ($allGroupsMemberOf.count -gt 0)
+    {
+        foreach ($member in $allGroupsMemberOf)
+        {  
+            out-logfile -string ("Processing member = "+$member.cononicalName)
+            start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attibuteOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premises group memberships to process."    
+    }
+    
  
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
