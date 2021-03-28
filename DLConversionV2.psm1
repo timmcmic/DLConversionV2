@@ -310,7 +310,7 @@ Function Start-DistributionListMigration
     [string]$onPremPublicDelegate="publicDelegate"
     [string]$onPremMsExchModeratedByLink="msExchModeratedByLink"
     [string]$onPremmsExchBypassModerationLink="msExchBypassModerationLink"
-    [string]$onPremMemberOf="memberOf"
+    [string]$onPremMemberOf="member"
 
     #Cloud variables for the distribution list to be migrated.
 

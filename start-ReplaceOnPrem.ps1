@@ -33,7 +33,7 @@
 
     #>
     Function start-ReplaceOnPrem
-     {
+    {
         [cmdletbinding()]
 
         Param
@@ -41,13 +41,13 @@
             [Parameter(Mandatory = $true)]
             $routingContactDN,
             [Parameter(Mandatory = $true)]
-            $attributeOperation,
+            [string]$attributeOperation,
             [Parameter(Mandatory = $true)]
             $canonicalObject,
             [Parameter(Mandatory = $true)]
             $adCredential,
             [Parameter(Mandatory = $true)]
-            $globalCatalogServer
+            [string]$globalCatalogServer
         )
 
         #Start function processing.
@@ -70,29 +70,16 @@
 
         #If the operation is of type member - a different command must be utilized.
 
-        if ($attributeOperation -eq "MemberOf")
-        {
-            Out-LogFile -string "Obtaining group..."
+        out-Logfile -string "Processing operation..."
 
-            try{
-                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $canonicalObject.canonicalDomainName -credential $adCredential
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
+        try{
+            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
 
-            out-Logfile -string "Adding member to group..."
-            out-logfile -string $functionGroup
-
-            try{
-                set-adobject -identity $functionGroup -add @{member=$canonicalObject.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            out-logfile -string "Group member added successful."
-        }        
+        out-logfile -string "Operation processed successfully"      
 
         Out-LogFile -string "END start-replaceOnPrem"
         Out-LogFile -string "********************************************************************************"
