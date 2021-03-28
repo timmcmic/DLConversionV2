@@ -1594,7 +1594,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
