@@ -77,6 +77,7 @@
         [string]$functionProxyAddress="SMTP:"+$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
+        [string]$functionSelfAccountSid = "S-1-5-10"
 
 
         #Start function processing.
@@ -105,9 +106,10 @@
         out-logfile -string ("Function description = "+$functionDescription)
 
         #Provision the routing contact.
+        #When the contact is provisioned we add the master account sid of self.  This tricks exchange commands into allowing us to assign permissions that are reserved for security principals.
 
         try {
-            new-adobject -type "Contact" -name $functionName -displayName $functionDisplayName -description $functionDescription -path $functionOU -otherAttributes @{givenanme=$functionFirstName;sn=$functionLastName;mail=$functionMail;extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2;targetAddress=$functionTargetAddress;msExchHideFromAddressLists=$functionHideFromAddressList;msExchRecipientDisplayType=$functionRecipientDisplayType;proxyAddresses=$functionProxyAddress;mailNickName=$functionMailNickname} -errorAction STOP
+            new-adobject -server $globalCatalogServer -type "Contact" -name $functionName -displayName $functionDisplayName -description $functionDescription -path $functionOU -otherAttributes @{givenanme=$functionFirstName;sn=$functionLastName;mail=$functionMail;extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2;targetAddress=$functionTargetAddress;msExchHideFromAddressLists=$functionHideFromAddressList;msExchRecipientDisplayType=$functionRecipientDisplayType;proxyAddresses=$functionProxyAddress;mailNickName=$functionMailNickname;msExchMasterAccountSid=$functionSelfAccountSid} -errorAction STOP
         }
         catch {
             out-Logfile -string $_ -isError:$TRUE

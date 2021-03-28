@@ -1707,6 +1707,15 @@ Function Start-DistributionListMigration
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     }
+
+    #Now it is time to create the routing contact.
+
+    try {
+        new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+    }
+    catch {
+        
+    }
  
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
