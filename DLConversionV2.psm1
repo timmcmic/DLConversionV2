@@ -1268,8 +1268,7 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeDLMembershipSMTP)
         {
-            out-LogFile -string "Testing"
-            out-logfile -string $member
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
                 test-O365Recipient -member $member

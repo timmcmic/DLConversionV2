@@ -45,10 +45,6 @@
         Out-LogFile -string "BEGIN TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        out-logfile -string $member
-
         if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
         {
             out-LogFile -string "Testing based on External Directory Object ID"
@@ -62,7 +58,7 @@
             out-logfile -string ("Modified external directory object id to test ="+$functionDirectoryObjectID[1])
 
             try {
-                get-exoRecipient -identity $functionDirectoryObjectID -errorAction STOP
+                get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
             }
             catch {
                 out-logFile -string $_ -isError:$TRUE
@@ -99,7 +95,12 @@
             out-logfile -string "An invalid object was passed to test-o365recipient - failing." -isError:$TRUE
 
         }
+
+        Out-LogFile -string "END TEST-O365RECIPIENT"
+        Out-LogFile -string "********************************************************************************"    
     }
+
+    
 
 <#
         Param
