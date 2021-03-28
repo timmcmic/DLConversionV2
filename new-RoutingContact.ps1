@@ -80,7 +80,7 @@
             {
                 out-logfile -string ("The remote routing address was found = "+$address)
 
-                $functionTargetAddress=$address
+                $functionTargetAddress=$address.substring($address.indexof(":"))
             }
         }
 
