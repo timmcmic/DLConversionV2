@@ -81,29 +81,19 @@
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            out-logfile -string "Obtaining routing contact..."
-
-            try{
-                $functionUser=get-adObject -identity $routingContactDN -server $globalCatalogServer -credential $adCredential
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-
             out-Logfile -string "Adding member to group..."
+            out-logfile -string $functionUser
+            out-logfile -string $functionGroup
 
             try{
-                add-adgroupMember -identity $functionGroup -members $functionUser -server $canonicalObject.canonicalDomainName -credential $adCredential
+                set-adobject -identity $functionGroup -add @{member=$canonicalObject.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
             }
 
             out-logfile -string "Group member added successful."
-        }
-
-
-        
+        }        
 
         Out-LogFile -string "END start-replaceOnPrem"
         Out-LogFile -string "********************************************************************************"
