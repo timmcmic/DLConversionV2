@@ -67,9 +67,9 @@
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
         out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-        [string]$functionMail=$originalConfiguration.mail
+        [string]$functionMail=$originalDLConfiguration.mail
         out-logfile -string ("Function mail address = "+$functionMail)
-        [string]$functionOU=$originalConfiguration.distinguishedname.substring($originaldlconfiguration.distinguishedname.indexof("OU"))
+        [string]$functionOU=$originalDLConfiguration.distinguishedname.substring($originaldlconfiguration.distinguishedname.indexof("OU"))
         out-logfile -string ("Function OU = "+$functionOU)
 
         foreach ($address in $office365dlconfiguration.emailaddresses)
