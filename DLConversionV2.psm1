@@ -264,6 +264,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
+    [string]$routingContactXML="routingContactXML"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -305,6 +306,7 @@ Function Start-DistributionListMigration
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $office365DLConfigurationPostMigration = $NULL
     $office365DLMembershipPostMigration=$NULL
+    $routingContactConfiguraiton=$NULL
 
     #Declare some variables for string processing as items move around.
 
@@ -1746,6 +1748,24 @@ Function Start-DistributionListMigration
     catch {
         out-logfile -string $_ -isError:$TRUE
     }
+
+    try {
+        $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+        $tempName=$originalDLConfiguration.name.replace(' ','')
+        $tempName=$tempName="-MigratedByScript"
+        $tempDN=$tempName+","+$tempOU
+        $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+    }
+    catch {
+        out-logFile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string $originalDLConfigurationUpdated
+    out-xmlFile -itemToExport $routingContactConfiguraiton -itemNameTOExport $routingContactXML
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
  
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
