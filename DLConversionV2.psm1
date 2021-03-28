@@ -1741,7 +1741,7 @@ Function Start-DistributionListMigration
     #Now it is time to create the routing contact.
 
     try {
-        new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+        new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
