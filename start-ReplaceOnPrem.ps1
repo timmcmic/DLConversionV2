@@ -45,7 +45,9 @@
             [Parameter(Mandatory = $true)]
             $canonicalObject,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $true)]
+            $globalCatalogServer
         )
 
         #Start function processing.
@@ -73,7 +75,7 @@
             Out-LogFile -string "Obtaining group..."
 
             try{
-                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $canonicalObject.canonicalDomainName -credentials $adCredential
+                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $canonicalObject.canonicalDomainName -credential $adCredential
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -82,7 +84,7 @@
             out-logfile -string "Obtaining routing contact..."
 
             try{
-                $functionUser=get-adObject -identity $routingContactDN
+                $functionUser=get-adObject -identity $routingContactDN -server $globalCatalogServer -credential $adCredential
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE

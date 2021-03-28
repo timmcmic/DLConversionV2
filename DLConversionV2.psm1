@@ -1800,7 +1800,7 @@ Function Start-DistributionListMigration
             out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
 
             try{
-                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential  
+                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogWithPort
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
