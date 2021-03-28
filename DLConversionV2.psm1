@@ -1787,6 +1787,19 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
+    #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
+
+    try {
+        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Sleeping for one minute..."
+    start-sleep -seconds 60
+
     #At this time we are ready to begin resetting the on premises dependencies.
 
     out-logfile -string ("Starting on premies DL members.")
@@ -1800,7 +1813,7 @@ Function Start-DistributionListMigration
             out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
 
             try{
-                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogWithPort
+                start-replaceOnPrem -routingContactDN $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE

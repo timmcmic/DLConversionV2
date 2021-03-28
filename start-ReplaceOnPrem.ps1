@@ -39,7 +39,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $routingContactDN,
+            $routingContact,
             [Parameter(Mandatory = $true)]
             [string]$attributeOperation,
             [Parameter(Mandatory = $true)]
@@ -65,18 +65,36 @@
 
         #Declare function variables.
 
-        $functionGroup=$NULL
-        $functionUser=$NULL
 
-        #If the operation is of type member - a different command must be utilized.
+        $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential
+
 
         out-Logfile -string "Processing operation..."
 
-        try{
-            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+        #If the contact and the object to operate on are in the same domain - the utilize the same GC that we have for other operations.
+        #If not - we'll need to utilize the domain name as the server - and allow the AD commandlts to make a best attempt against a DC in that domain based on "best selection."
+
+        if ($functionContactObject.canonicalDomainName -eq $canonicalObject.canonicalDomainName)
+        {
+            out-logfile -string "Source and Target objects are in the same domain - utilize GC."
+
+            try{
+                set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
+        else 
+        {
+           out-logfile -string "Source and target are in different domains - adding additional sleep and trying operation." 
+
+            try{
+            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
 
         out-logfile -string "Operation processed successfully"      
