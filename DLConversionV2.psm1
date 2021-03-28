@@ -1691,6 +1691,14 @@ Function Start-DistributionListMigration
         $global:unDoStatus=$global:unDoStatus+1
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
+
+        move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof("OU")) -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+
+        $global:unDoStatus=$global:unDoStatus+1
+
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     }
  
     Out-LogFile -string "================================================================================"
