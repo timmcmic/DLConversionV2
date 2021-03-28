@@ -48,6 +48,12 @@
             $adCredential
         )
 
+        #Start function processing.
+
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN new-RoutingContact"
+        Out-LogFile -string "********************************************************************************"
+
         #Declare function variables.
 
         [string]$functionCustomAttribute1="MigratedByScript"
@@ -79,12 +85,6 @@
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
         [string]$functionSelfAccountSid = "S-1-5-10"
 
-
-        #Start function processing.
-
-        Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN new-RoutingContact"
-        Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
 
