@@ -79,7 +79,7 @@
             out-logfile -string "Source and Target objects are in the same domain - utilize GC."
 
             try{
-                set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -90,7 +90,7 @@
            out-logfile -string "Source and target are in different domains - adding additional sleep and trying operation." 
 
             try{
-            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContactDN} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
