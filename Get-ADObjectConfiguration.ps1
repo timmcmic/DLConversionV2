@@ -35,9 +35,9 @@
         Param
         (
             [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
-            [string]$groupSMTPAddress=$NULL,
+            [string]$groupSMTPAddress="None",
             [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
-            [string]$dn=$NULL,
+            [string]$dn="None",
             [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
             [string]$globalCatalogServer,
@@ -78,13 +78,13 @@
         {
             Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            if ($groupSMTPAddress -ne $NULL)
+            if ($groupSMTPAddress -ne "None")
             {
                 out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
 
                 $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
-            elseif ($DN -ne $NULL)
+            elseif ($DN -ne "None")
             {
                 out-logfile -string ("Searching by distinguished name "+$dn)
 
