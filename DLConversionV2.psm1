@@ -1685,7 +1685,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
@@ -1709,7 +1709,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
@@ -1731,7 +1731,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus.tostring
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         $global:unDoStatus=$global:unDoStatus+1
 
