@@ -80,10 +80,14 @@
 
             if ($groupSMTPAddress -ne $NULL)
             {
+                out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
+
                 $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             elseif ($DN -ne $NULL)
             {
+                out-logfile -string ("Searching by distinguished name "+$dn)
+
                 $functionDLConfiguration=get-adObject -filter (distinguishedname -eq $dn) -properties $parameterSet -server $globalCatalogServer -credential $adCredential
             }
             else 
