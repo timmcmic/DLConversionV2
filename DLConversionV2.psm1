@@ -1797,7 +1797,7 @@ Function Start-DistributionListMigration
         {  
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-lotfile -string ("Attribute Operation = "+$onPremMemberOf)
+            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
 
             try{
                 start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential  

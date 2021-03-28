@@ -56,7 +56,7 @@
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("OriginalDLConfiguration = "+$routingContactDN)
+        Out-LogFile -string ("Routing Contact DN = "+$routingContactDN)
         out-logfile -string ("Attribute Operation = "+$attributeOperation)
         out-logfile -string ("Canonical Object = "+$canonicalObject)
         out-logfile -string ("AD Credential = "+$adCredential.userName)
@@ -73,7 +73,7 @@
             Out-LogFile -string "Obtaining group..."
 
             try{
-                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $cononicalObject.canonicalDomainName -credentials $adCredential
+                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $canonicalObject.canonicalDomainName -credentials $adCredential
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
