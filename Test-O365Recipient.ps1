@@ -94,12 +94,10 @@
                 out-logfile -string $_ -isError:$TRUE
             }
         }
-        else {
+        else 
+        {
             out-logfile -string "An invalid object was passed to test-o365recipient - failing." -isError:$TRUE
-                It "ItName" {
-                    Assertion
-                }
-            }
+
         }
     }
 
