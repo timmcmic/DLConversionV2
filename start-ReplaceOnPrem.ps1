@@ -93,7 +93,7 @@
             out-Logfile -string "Adding member to group..."
 
             try{
-                add-adgroupMember -identity $functionGroup -members $functionUser -server $cononicalObject.canonicalDomainName -credential $adCredn
+                add-adgroupMember -identity $functionGroup -members $functionUser -server $canonicalObject.canonicalDomainName -credential $adCredential
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
