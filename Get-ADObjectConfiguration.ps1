@@ -84,7 +84,7 @@
             }
             elseif ($DN -ne $NULL)
             {
-                $functionDLConfiguration=get-adObject $dn -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+                $functionDLConfiguration=get-adObject -filter (distinguishedname -eq $dn) -properties $parameterSet -server $globalCatalogServer -credential $adCredential
             }
             else 
             {
