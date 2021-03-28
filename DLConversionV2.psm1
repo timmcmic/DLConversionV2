@@ -1769,8 +1769,8 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
-    out-logfile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $routingContactConfiguraiton -itemNameTOExport $routingContactXML
+    out-logfile -string $routingContactConfiguratio
+    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
 
     $global:unDoStatus=$global:unDoStatus+1
 
