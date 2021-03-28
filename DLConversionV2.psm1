@@ -1796,7 +1796,12 @@ Function Start-DistributionListMigration
         foreach ($member in $allGroupsMemberOf)
         {  
             out-logfile -string ("Processing member = "+$member.cononicalName)
-            start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attibuteOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential
+            try{
+                start-replaceOnPrem -routingContactDN $routingContactConfiguration.distinguishedName -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
     }
     else 

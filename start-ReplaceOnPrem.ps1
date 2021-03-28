@@ -70,10 +70,34 @@
 
         if ($attributeOperation -eq "MemberOf")
         {
-            $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $cononicalObject.canonicalDomainName -credentials $adCredential
-            $functionUser=get-adObject -identity $routingContactDN
+            Out-LogFile -string "Obtaining group..."
 
-            add-adgroupMember -identity $functionGroup -members $functionUser -server $cononicalObject.canonicalDomainName -credential $adCredn
+            try{
+                $functionGroup=get-adobject -identity $canonicalObject.distinguishedName -server $cononicalObject.canonicalDomainName -credentials $adCredential
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            out-logfile -string "Obtaining routing contact..."
+
+            try{
+                $functionUser=get-adObject -identity $routingContactDN
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            out-Logfile -string "Adding member to group..."
+
+            try{
+                add-adgroupMember -identity $functionGroup -members $functionUser -server $cononicalObject.canonicalDomainName -credential $adCredn
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            out-logfile -string "Group member added successful."
         }
 
 
