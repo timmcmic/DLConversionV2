@@ -11,17 +11,17 @@
 
     This is the original DL configuration from on premises.
 
-    .PARAMETER DN
+    .PARAMETER office365DLConfiguration
 
-    The DN of the group to remove.
+    The configuration of the DL from Office 365.
 
     .PARAMETER GlobalCatalog
 
     The global catalog server the operation should be performed on.
 
-    .PARAMETER UseExchange
+    .PARAMETER adCredential
 
-    If set to true disablement will occur using the exchange on premises powershell commands.
+    The active directory credential.
 
     .OUTPUTS
 
@@ -32,93 +32,87 @@
     Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
 
     #>
-    Function Disable-OriginalDL
+    Function new-routingContact
      {
         [cmdletbinding()]
 
         Param
         (
-            [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
+            [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
-            [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
-            [string]$globalCatalogServer,
-            [Parameter(Mandatory = $false,ParameterSetName = "AD")]
-            [array]$parameterSet="None",
-            [Parameter(Mandatory = $false,ParameterSetName="Exchange")]
-            [boolean]$useOnPremsiesExchange=$FALSE,
+            [Parameter(Mandatory = $true)]
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $true)]
+            $globalCatalogServer,
             [Parameter(Mandatory = $true)]
             $adCredential
         )
 
         #Declare function variables.
 
-        $functionDLConfiguration=$NULL #Holds the return information for the group query.
         [string]$functionCustomAttribute1="MigratedByScript"
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
+        [string]$functionMail=$originalConfiguration.mail
+        [string]$functionOU=$originalConfiguration.distinguishedname.substring($originalconfiguration.distinguishedname.indexof("OU"))
 
+        foreach ($address in $office365dlconfiguration.emailaddresses)
+        {
+            out-logfile -string ("Testing address for remote routing address = "+$address)
+
+            if ($address.contains("mail.onmicrosoft.com"))
+            {
+                out-logfile -string ("The remote routing address was found = "+$address)
+
+                $functionTargetAddress=$address
+            }
+        }
+
+        [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
+        [string]$functionName=$functionDisplayName
+        [string]$functionFirstName = $originalDLConfiguration.DisplayName
+        [string]$functionLastName = "MigratedByScript"
+        [boolean]$functionHideFromAddressList=$true
+        [string]$functionRecipientDisplayType="6"
+        [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+        [string]$functionProxyAddress="SMTP:"+$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
+        [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
+        [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
 
 
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN Disable-OriginalDLConfiguration"
+        Out-LogFile -string "BEGIN new-RoutingContact"
         Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        out-logfile -string ("Use Exchange On Premises ="+$useOnPremsiesExchange)
-        out-logfile -string ("DN of object to modify / disable "+$originalDLConfiguration.distinguishedName)
+        out-logfile -string ("Original DL Configuration = "+$originalDLConfiguration)
+        out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
+        out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
+        out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+        out-logfile -string ("Function mail address = "+$functionMail)
+        out-logfile -string ("Function OU = "+$functionOU)
+        out-logfile -string ("Function target address = "+$functionTargetAddress)
+        out-logfile -string ("Function display name = "+$functionDisplayName)
+        out-logfile -string ("Function Name = "+$functionName)
+        out-logfile -string ("Function First Name = "+$functionFirstName)
+        out-logfile -string ("Function Last Name = "+$functionLastName)
+        out-logfile -string ("Function hide from address list = "+$functionHideFromAddressList)
+        out-logfile -string ("Function recipient display type = "+$functionRecipientDisplayType)
+        out-logfile -string ("Function proxy address = "+$functionProxyAddress)
+        out-logfile -string ("Function mail nickname = "+$functionMailNickname)
+        out-logfile -string ("Function description = "+$functionDescription)
 
-        OUt-LogFile -string ("Parameter Set:")
-        
-        foreach ($parameterIncluded in $parameterSet)
-        {
-            Out-Logfile -string $parameterIncluded
-        }
+        #Provision the routing contact.
 
-        out-logfile -string ("Disalbed DL Custom Attribute 1 = "+$functionCustomAttribute1)
-        out-logfile -string ("Disabled DL Custom Attribute 2 = "+$functionCustomAttribute2)
-
-        #Get the group using LDAP / AD providers.
-        
-        try 
-        {
-            Out-LogFile -string "Determine if exchange should be utilized to clear the DL."
-
-            if ($useOnPremsiesExchange -eq $FALSE)
-            {
-                Out-LogFile -string "Using AD providers to clear the given attributes"
-
-                set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential
-            }
-
-            elseif ($useOnPremsiesExchange -eq $TRUE)
-            {
-                out-logfile -string "Using Exchange providers to clear the distribution list."
-
-                disable-distributionGroup -identity $originalDLConfiguration.distinguishedName -domainController $globalCatalogServer -confirm:$false -verbose
-            }
-        }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
-
-        #Now that the DL is disabled - use this oppurtunity to write the custom attributes to show it's been migrated.
-
-        out-logfile -string "The group has been migrated and is retained - set custom attributes with original information for other migration dependencies."
-        
         try {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer
+            new-adobject -type "Contact" -name $functionName -displayName $functionDisplayName -description $functionDescription -path $functionOU -otherAttributes @{givenanme=$functionFirstName;sn=$functionLastName;mail=$functionMail;extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2;targetAddress=$functionTargetAddress;msExchHideFromAddressLists=$functionHideFromAddressList;msExchRecipientDisplayType=$functionRecipientDisplayType;proxyAddresses=$functionProxyAddress;mailNickName=$functionMailNickname} -errorAction STOP
         }
         catch {
-            out-logfile -string $_ -isError:$TRUE
+            out-Logfile -string $_ -isError:$TRUE
         }
 
-        Out-LogFile -string "END Disable-OriginalDLConfiguration"
+        Out-LogFile -string "END new-RoutingContact"
         Out-LogFile -string "********************************************************************************"
     }
