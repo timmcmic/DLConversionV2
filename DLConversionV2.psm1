@@ -1828,7 +1828,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string ("Starting on premises reject messages from.")
 
-    if ($allGroupsReject -gt 0)
+    if ($allGroupsReject.Count -gt 0)
     {
         foreach ($member in $allGroupsReject)
         {  
@@ -1846,7 +1846,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "No on premises group memberships to process."    
+        out-logfile -string "No on premises reject permission to evaluate."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1
@@ -1855,7 +1855,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string ("Starting on premises accept messages from.")
 
-    if ($allGroupsAccept -gt 0)
+    if ($allGroupsAccept.Count -gt 0)
     {
         foreach ($member in $allGroupsAccept)
         {  
@@ -1873,7 +1873,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "No on premises group memberships to process."    
+        out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1
