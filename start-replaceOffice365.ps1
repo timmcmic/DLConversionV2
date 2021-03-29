@@ -61,7 +61,14 @@
 
         $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
-        invoke-expression -Command $functionCommand -errorAction Stop
+
+        try{
+            invoke-expression -Command $functionCommand -errorAction Stop
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
 
 
         Out-LogFile -string "END start-replaceOffice365"
