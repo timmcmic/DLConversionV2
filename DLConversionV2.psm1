@@ -1825,6 +1825,62 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string ("Starting on premises reject messages from.")
+
+    if ($allGroupsReject -gt 0)
+    {
+        foreach ($member in $allGroupsReject)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
+
+            try{
+                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premises group memberships to process."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string ("Starting on premises accept messages from.")
+
+    if ($allGroupsAccept -gt 0)
+    {
+        foreach ($member in $allGroupsAccept)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
+
+            try{
+                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premises group memberships to process."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
+    
     
  
     Out-LogFile -string "================================================================================"
