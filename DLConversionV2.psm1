@@ -1834,7 +1834,7 @@ Function Start-DistributionListMigration
         {  
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
+            out-logfile -string ("Attribute Operation = "+$onPremUnAuthOrig)
 
             try{
                 start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
@@ -1861,7 +1861,7 @@ Function Start-DistributionListMigration
         {  
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
+            out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
 
             try{
                 start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
@@ -1879,7 +1879,60 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string ("Starting on premises bypass moderation.")
+
+    if ($allGroupsBypassModeration.Count -gt 0)
+    {
+        foreach ($member in $allGroupsBypassModeration)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
+
+            try{
+                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premises bypass moderation settings present."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
+    out-logfile -string ("Starting on premises grant send on behalf to.")
+
+    if ($allGroupsGrantSendOnBehalfTo.Count -gt 0)
+    {
+        foreach ($member in $allGroupsGrantSendOnBehalfTo)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
+
+            try{
+                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premsies grant send on behalf to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
     
  
