@@ -53,7 +53,13 @@
 
         out-Logfile -string "Processing operation..."
 
-        add-o365DistributionGroupMember -identity $office365Group -member $groupSMTPAddress -errorAction STOP
+        try{
+            add-o365DistributionGroupMember -identity $office365Group -member $groupSMTPAddress -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
 
         Out-LogFile -string "END start-replaceOffice365Members"
         Out-LogFile -string "********************************************************************************"
