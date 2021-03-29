@@ -83,6 +83,12 @@
 
             out-LogFile -string ("The member depart restriction is now = "+$functionMemberDepartRestriction)
         }
+        elseif ($originalDLConfiguration.groupType -eq "-2147483640")
+        {
+            Out-logfile -string ("Group type is security - ensuring member depart restriction CLOSED")
+
+            $functionMemberDepartRestriction="Closed"
+        }
 		else 
 		{
 			$functionMemberDepartRestriction = $originalDLConfiguration.msExchGroupDepartRestriction
