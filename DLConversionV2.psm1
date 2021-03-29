@@ -2046,14 +2046,143 @@ Function Start-DistributionListMigration
 
     #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
 
-    
+    out-logfile -string "Processing Office 365 Accept Messages From"
+
     if ($allOffice365Accept.count -gt 0)
     {
         foreach ($member in $allOffice365Accept)
         {
-            start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
         }
     }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with accept permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Reject Messages From"
+
+    if ($allOffice365Reject.count -gt 0)
+    {
+        foreach ($member in $allOffice365Reject)
+        {
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with reject permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Bypass Moderation From Users"
+
+    if ($allOffice365BypassModeration.count -gt 0)
+    {
+        foreach ($member in $allOffice365BypassModeration)
+        {
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Grant Send On Behalf To Users"
+
+    if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
+    {
+        foreach ($member in $allOffice365GrantSendOnBehalfTo)
+        {
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with grant send on behalf to permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Bypass Moderation From Users"
+
+    if ($allOffice365BypassModeration.count -gt 0)
+    {
+        foreach ($member in $allOffice365BypassModeration)
+        {
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Managed By"
+
+    if ($allOffice365ManagedBy.count -gt 0)
+    {
+        foreach ($member in $allOffice365ManagedBy)
+        {
+            try{
+                start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 managed by permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
     
     Out-LogFile -string "================================================================================"
