@@ -305,6 +305,9 @@ Function Start-DistributionListMigration
     [string]$office365RejectMessagesUsers="RejectMessagesFrom"
     [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
 
+    [string]$office365UnifiedAccept="AcceptMessagesOnlyFromSendersOrMembers"
+    [string]$office365UnifiedReject="RejectMessagesFromSendersOrMembers"
+
 
     #The following are the on premises parameters utilized for restoring depdencies.
 
@@ -2193,7 +2196,7 @@ Function Start-DistributionListMigration
         foreach ($member in $allOffice365UniversalAccept)
         {
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
+                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress
             }
             catch{
                 out-logfile -string $_ -isError:TRUE
@@ -2216,7 +2219,7 @@ Function Start-DistributionListMigration
         foreach ($member in $allOffice365UniversalReject)
         {
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365RejectMessagesUsers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress
             }
             catch{
                 out-logfile -string $_ -isError:TRUE
@@ -2248,7 +2251,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-LogFile -string "There were no Office 365 reject from permissions."    
+        out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1

@@ -1,17 +1,13 @@
 <#
     .SYNOPSIS
 
-    This function begins the process of replacing the Office 365 unified group settings for groups that have been migrated that had cloud only dependencies.
+    This function updates the membership of any cloud only distribution lists for the migrated distribution group.
 
     .DESCRIPTION
 
-    This function begins the process of replacing the Office 365 unified group settings for groups that have been migrated that had cloud only dependencies.
+    This function updates the membership of any cloud only distribution lists for the migrated distribution group.
 
-    .PARAMETER office365Attribute
-
-    The office 365 attribute.
-
-    .PARAMETER office365Member
+    .PARAMETER office365Group
 
     The member that is being added.
 
@@ -35,9 +31,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $office365Attribute,
-            [Parameter(Mandatory = $true)]
-            [string]$office365Member,
+            $office365Group,
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress
         )
@@ -45,7 +39,7 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN start-ReplaceOffice365Unified"
+        Out-LogFile -string "BEGIN start-ReplaceOffice365Members"
         Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
@@ -64,6 +58,6 @@
         invoke-expression -Command $functionCommand
 
 
-        Out-LogFile -string "END start-replaceOffice365Unified"
+        Out-LogFile -string "END start-replaceOffice365Members"
         Out-LogFile -string "********************************************************************************"
     }
