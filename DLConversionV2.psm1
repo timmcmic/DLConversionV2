@@ -311,6 +311,7 @@ Function Start-DistributionListMigration
     [string]$onPremMsExchModeratedByLink="msExchModeratedByLink"
     [string]$onPremmsExchBypassModerationLink="msExchBypassModerationLink"
     [string]$onPremMemberOf="member"
+    [string]$onPremAltRecipient="altRecipient"
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -1809,11 +1810,18 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
 
-            try{
-                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedName)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else 
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
             }
         }
     }
@@ -1836,11 +1844,18 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremUnAuthOrig)
 
-            try{
-                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
             }
         }
     }
@@ -1863,11 +1878,18 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
 
-            try{
-                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else 
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
             }
         }
     }
@@ -1890,17 +1912,24 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
 
-            try{
-                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+            if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedName)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else 
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
             }
         }
     }
     else 
     {
-        out-logfile -string "No on premises bypass moderation settings present."    
+        out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1
@@ -1917,8 +1946,84 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
 
+            if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premsies grant send on behalf to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #Managed by is a unique animal.
+    #Managed by is represented by the single valued AD attribute and the multi-evalued exchange attribute.
+    #From an exchange standpoint - as long as the member is in one of them it works.
+    #We will use the multi-valued attriute so we can recycle the same code.
+
+    out-logfile -string ("Starting on premises managed by.")
+
+    if ($allGroupsManagedBy.Count -gt 0)
+    {
+        foreach ($member in $allGroupsManagedBy)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
+
+            if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "The original group had permissions to itself - skipping as it no longer exists."
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premsies grant send on behalf to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #Forwarding address is a single value replacemet.
+    #Created separate function for single values and have called that function here.
+
+    out-logfile -string ("Starting on premises forwarding.")
+
+    if ($allUsersForwardingAddress.Count -gt 0)
+    {b
+        foreach ($member in $allUsersForwardingAddress)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
+
             try{
-                start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
+                start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1934,8 +2039,6 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
-    
- 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
