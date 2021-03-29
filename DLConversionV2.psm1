@@ -2266,7 +2266,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Adding cloud only group member."
 
-        foreach ($member in allOffice365MemberOf )
+        foreach ($member in $allOffice365MemberOf )
         {
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
