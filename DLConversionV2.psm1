@@ -2268,7 +2268,7 @@ Function Start-DistributionListMigration
 
         foreach ($member in allOffice365MemberOf )
         {
-            out-logfile -string ("Processing group = "$member.primarySMTPAddress)
+            out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
         }
     }
@@ -2277,7 +2277,10 @@ Function Start-DistributionListMigration
         out-logfile -string "No cloud only groups had the migrated group as a member."
     }
     
-    
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
