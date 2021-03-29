@@ -301,6 +301,11 @@ Function Start-DistributionListMigration
     [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
     [string]$office365ForwardingAddress="ForwardingAddress"
 
+    [string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
+    [string]$office365RejectMessagesUsers="RejectMessagesFrom"
+    [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
+
+
     #The following are the on premises parameters utilized for restoring depdencies.
 
     [string]$onPremUnAuthOrig="unauthorig"
@@ -2038,6 +2043,18 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
+
+    
+    if ($allOffice365Accept.count -gt 0)
+    {
+        foreach ($member in $allOffice365Accept)
+        {
+            start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesUsers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+        }
+    }
+    
     
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
