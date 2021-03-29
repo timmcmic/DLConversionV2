@@ -2051,7 +2051,7 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Accept)
         {
-            start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesUsers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
         }
     }
     
