@@ -24,7 +24,7 @@
     enable-mailRoutingContact -globalCatalogServer GC -routingContactConfig contactConfiguration.
 
     #>
-    Function enable-mailRoutingContact
+    Function Enable-MailRoutingContact
      {
         [cmdletbinding()]
 
