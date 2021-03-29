@@ -59,7 +59,7 @@
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute $groupSMTPAddress"
+        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add=$groupSMTPAddress"
         out-logfile -string ("The command to execute:  "+$functionCommand)
         invoke-expression -Command $functionCommand
 
