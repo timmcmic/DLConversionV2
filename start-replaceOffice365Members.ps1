@@ -54,7 +54,7 @@
         out-Logfile -string "Processing operation..."
 
         try{
-            add-o365DistributionGroupMember -identity $office365Group -member $groupSMTPAddress -errorAction STOP
+            add-o365DistributionGroupMember -identity $office365Group.exchangeObjectID -member $groupSMTPAddress -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
