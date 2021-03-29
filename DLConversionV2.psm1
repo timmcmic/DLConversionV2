@@ -307,7 +307,7 @@ Function Start-DistributionListMigration
     [string]$onPremAuthOrig="authOrig"
     [string]$onPremManagedBy="managedBy"
     [string]$onPremMSExchCoManagedByLink="msExchCoManagedByLink"
-    [string]$onPremPublicDelegate="publicDelegate"
+    [string]$onPremPublicDelegate="publicDelegates"
     [string]$onPremMsExchModeratedByLink="msExchModeratedByLink"
     [string]$onPremmsExchBypassModerationLink="msExchBypassModerationLink"
     [string]$onPremMemberOf="member"
