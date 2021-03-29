@@ -91,6 +91,9 @@
 
             set-mailContact -identity $routingContactConfig.primarySMTPAddress -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer
         }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
 
         Out-LogFile -string "END enable-mailRoutingContact"
         Out-LogFile -string "********************************************************************************"
