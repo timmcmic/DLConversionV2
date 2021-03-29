@@ -67,6 +67,9 @@
 
 
         $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential
+        $loopCounter=0
+        $functionSleepTest=$FALSE
+        $loopError=$FALSE
 
 
         out-Logfile -string "Processing operation..."
@@ -74,7 +77,7 @@
         #If the contact and the object to operate on are in the same domain - the utilize the same GC that we have for other operations.
         #If not - we'll need to utilize the domain name as the server - and allow the AD commandlts to make a best attempt against a DC in that domain based on "best selection."
 
-        if ($functionContactObject.canonicalDomainName -eq $canonicalObject.canonicalDomainName)
+        if ($functionContactObject.canonicalDomainName -eq 1)
         {
             out-logfile -string "Source and Target objects are in the same domain - utilize GC."
 
@@ -89,15 +92,43 @@
         {
            out-logfile -string "Source and target are in different domains - adding additional sleep and trying operation." 
 
-            try{
-            set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
+            do {
+                $loopError = $FALSE
+
+                if ($functionSleepTest -ne $FALSE)
+                {
+                    out-logFile -string "Failed adding member to group - sleep 30 seconds."
+
+                    start-sleep -seconds 30
+                }
+
+                try
+                {
+                    set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+
+                    $functionSleepTest=$TRUE
+
+                    $loopCounter++
+                }
+                catch
+                {
+                    out-logfile -string "Error adding member to group."
+
+                    $loopError = $TRUE
+                }   
+            } while (($loopError -eq $TRUE) -and ($loopCounter -eq 10))
         }
 
-        out-logfile -string "Operation processed successfully"      
+        if ($loopCounter -eq 10)
+        {
+            out-logfile -string "ERROR adding member to group."
+            out-logfile -string $canonicalObject.canonicalName
+        }
+        else 
+        {
+            out-logfile -string "Operation processed successfully"      
+        }
+
 
         Out-LogFile -string "END start-replaceOnPrem"
         Out-LogFile -string "********************************************************************************"

@@ -1797,9 +1797,6 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
-    out-logfile -string "Sleeping for one minute..."
-    start-sleep -seconds 60
-
     #At this time we are ready to begin resetting the on premises dependencies.
 
     out-logfile -string ("Starting on premies DL members.")
