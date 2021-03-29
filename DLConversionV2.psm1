@@ -2269,7 +2269,12 @@ Function Start-DistributionListMigration
         foreach ($member in $allOffice365MemberOf )
         {
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
-            start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            try {
+                start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch {
+                out-logfile -string $_ -isError:TRUE
+            }
         }
     }
     else 

@@ -24,7 +24,7 @@
     sstart-replaceOffice365 -office365Attribute Attribute -office365Member groupMember -groupSMTPAddress smtpAddess
 
     #>
-    Function start-replaceOffice365Unified
+    Function start-replaceOffice365Members
     {
         [cmdletbinding()]
 
