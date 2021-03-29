@@ -2183,6 +2183,77 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #Start the process of updating the unified group dependencies.
+
+    out-logfile -string "Processing Office 365 Unified Accept From"
+
+    if ($allOffice365UniversalAccept.count -gt 0)
+    {
+        foreach ($member in $allOffice365UniversalAccept)
+        {
+            try{
+                start-ReplaceOffice365Unified -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 accept from permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Unified Reject From"
+
+    if ($allOffice365UniversalReject.count -gt 0)
+    {
+        foreach ($member in $allOffice365UniversalReject)
+        {
+            try{
+                start-ReplaceOffice365Unified -office365Attribute $office365RejectMessagesUsers -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 reject from permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Grant Send On Behalf To"
+
+    if ($allOffice365UniversalGrantSendOnBehalfTo.count -gt 0)
+    {
+        foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
+        {
+            try{
+                start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 reject from permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     
     
     Out-LogFile -string "================================================================================"
