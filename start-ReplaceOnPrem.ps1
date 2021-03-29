@@ -58,7 +58,7 @@
 
         #Log the parameters and variables for the function.
 
-        Out-LogFile -string ("Routing Contact DN = "+$routingContactDN)
+        Out-LogFile -string ("Routing Contact DN = "+$routingContact)
         out-logfile -string ("Attribute Operation = "+$attributeOperation)
         out-logfile -string ("Canonical Object = "+$canonicalObject)
         out-logfile -string ("AD Credential = "+$adCredential.userName)
