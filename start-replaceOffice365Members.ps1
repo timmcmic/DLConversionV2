@@ -46,17 +46,14 @@
 
         $functionCommand=$NULL
 
-        Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
-        out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
+        Out-LogFile -string ("Office 365 Attribute = "+$office365Group)
+        out-logfile -string ("Office 365 Member = "+$groupSMTPAddress)
 
         #Declare function variables.
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365UnifiedGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
-        out-logfile -string ("The command to execute:  "+$functionCommand)
-        invoke-expression -Command $functionCommand
-
+        add-o365DistributionGroupMember -identity $office365Group -member $groupSMTPAddress -errorAction STOP
 
         Out-LogFile -string "END start-replaceOffice365Members"
         Out-LogFile -string "********************************************************************************"
