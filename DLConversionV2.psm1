@@ -2059,7 +2059,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2082,7 +2082,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2105,7 +2105,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2128,7 +2128,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2151,7 +2151,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2174,7 +2174,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2199,7 +2199,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2222,7 +2222,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2245,7 +2245,7 @@ Function Start-DistributionListMigration
                 start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2273,7 +2273,7 @@ Function Start-DistributionListMigration
                 start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch {
-                out-logfile -string $_ -isError:TRUE
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
