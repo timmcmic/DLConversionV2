@@ -2286,6 +2286,18 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    if ($enableHybridMailflow -eq $TRUE)
+    {
+        out-logfile -string "The administrator has enabled hybrid mail flow."
+
+        try{
+            enable-mailroutingontact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -isError:$TRUE
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
