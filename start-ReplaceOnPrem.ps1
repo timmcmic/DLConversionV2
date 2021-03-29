@@ -77,7 +77,7 @@
         #If the contact and the object to operate on are in the same domain - the utilize the same GC that we have for other operations.
         #If not - we'll need to utilize the domain name as the server - and allow the AD commandlts to make a best attempt against a DC in that domain based on "best selection."
 
-        if ($functionContactObject.canonicalDomainName -eq 1)
+        if ($functionContactObject.canonicalDomainName -eq $canonicalObject.canonicalDomainName)
         {
             out-logfile -string "Source and Target objects are in the same domain - utilize GC."
 
