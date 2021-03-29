@@ -2020,7 +2020,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("Starting on premises forwarding.")
 
     if ($allUsersForwardingAddress.Count -gt 0)
-    {b
+    {
         foreach ($member in $allUsersForwardingAddress)
         {  
             out-logfile -string ("Processing member = "+$member.canonicalName)
