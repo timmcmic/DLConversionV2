@@ -79,8 +79,7 @@
 
         if ($isError -eq $TRUE)
         {
-            Write-Error $String -ErrorAction continue
             Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
-            write-error "END" -errorAction STOP
+            exit
         }
     }
