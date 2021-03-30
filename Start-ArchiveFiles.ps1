@@ -28,9 +28,15 @@
         out-logFile -string "Disconnecting Exchange Online Session"
 
         $functionDate = Get-Date -Format FileDateTime
+        [string]$functionWorkingPath = $global:logFolderPath+$global:staticFailureFolderName
+        [string]$functionSuccessPath = $global:logFolderPath+$global:staticSuccessFolderName+$functionDate
+        [string]$functionFailurePath = $global:logFilePath+$global:staticFailureFolderName+$functionDate
 
-        
-
+        out-logfile -string ("Function Date = "+$functionDate)
+        out-logfile -string ("Function Working Path = "+ $functionWorkingPath)
+        out-logfile -string ("Function Succes Path = "+$functionSuccessPath)
+        out-logfile -string ("Function Failure Path = "+$functionFailurePath)
+     
         Out-LogFile -string "END Start-ArchiveFiles"
         Out-LogFile -string "********************************************************************************"
     }
