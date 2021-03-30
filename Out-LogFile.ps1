@@ -72,6 +72,7 @@
 
         if ($isError -eq $TRUE)
         {
+            write-error $logString
             disable-allPowerShellSessions
             Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
             exit
