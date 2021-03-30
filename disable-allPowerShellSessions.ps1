@@ -38,7 +38,7 @@
             Get-PSSession | remove-psssession
         }
         catch{
-            out-logfile -string $_ -isError:TRUE
+            out-logfile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END disable-allPowerShellSessions"
