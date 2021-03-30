@@ -73,11 +73,20 @@
         {
             out-logfile -string ("Adding proxy address = "+$address)
 
-            try{
-                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
+            if (!$address.contains("mail.onmicrosoft.com"))
+            {
+                out-logfile -string "Address is not a mail.onmicrosoft.com address."
+
+                try{
+                    set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else 
+            {
+                out-logfile -string "Address is a mail.onmicrosoft.com address."    
             }
         }
 
