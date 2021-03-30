@@ -20,9 +20,15 @@
     #>
     Function Start-ArchiveFiles
      {
-       out-logFile -string "Archiving files associated with run."
+        [cmdletbinding()]
 
-        $functionWorkingPath=
+        Param
+        (
+            [Parameter(Mandatory = $true)]
+            [boolean]$isSuccess=$FALSE
+        )
+
+        out-logFile -string "Archiving files associated with run."
 
         $functionDate = Get-Date -Format FileDateTime
        
