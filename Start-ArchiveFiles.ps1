@@ -26,7 +26,7 @@
 
         $functionDate = Get-Date -Format FileDateTime
        
-        if ($isSucecss -eq $TRUE)
+        if ($isSuccess -eq $TRUE)
         {
             out-logfile -string "Success - renaming directory."
 
