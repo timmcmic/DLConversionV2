@@ -2330,9 +2330,7 @@ Function Start-DistributionListMigration
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
     #At this time the group has been migrated.
     #All on premises settings have been reconciled.
@@ -2341,7 +2339,21 @@ Function Start-DistributionListMigration
 
     #If the administrator has choosen to migrate and request upgrade to Office 365 group - trigger the ugprade.
 
-    
+    if ($triggerUpgradeToOffice365Group -eq $TRUE)
+    {
+        out-logfile -string "Administrator has choosen to trigger modern group upgrade."
+
+        try{
+            start-upgradeToOffice365Group -groupSMTPAddress $groupSMTPAddress
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
