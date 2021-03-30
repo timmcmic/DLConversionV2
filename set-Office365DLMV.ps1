@@ -117,6 +117,12 @@
 
         $newOffice365DLPrimarySMTPAddress = get-O365DistributionGroup -identity $originalDLConfiguration.mailNickname
 
+        
+        #This function implements an overall function loop counter.
+        #For every 1000 set operations against Office 365 we will sleep for 5 seconds.
+        #The counter does not reset for each configuration evaluation - but is rather global to this function.
+        #This ensures appropriate time for powershell recharge rates should a distribution list have bulk operations.
+        
         #At this time begin the iteraction through the arrays that have passed.
 
         Out-LogFile -string "Reset the DL proxy addresses to match original object."
@@ -160,7 +166,7 @@
                 out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
                 $functionLoopCounter++
             }
-                  
+
             out-Logfile -string "Processing address:"
             out-Logfile -string $address
 
