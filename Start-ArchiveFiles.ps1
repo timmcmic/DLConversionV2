@@ -33,7 +33,11 @@
        
         if ($isSucecss -eq $TRUE)
         {
+            out-logfile -string "Success - renaming directory."
+
             $functionFolderName = $functionDate+"-Success"
+
+            out-logfile -string $functionFolderName
 
             rename-item $global:staticFolderName -newName $functionFolderName
         }

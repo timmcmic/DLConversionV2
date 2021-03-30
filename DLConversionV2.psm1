@@ -189,7 +189,7 @@ Function Start-DistributionListMigration
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration\Working"
+    [string]$global:staticFolderName="\DLMigration\"
     [int]$global:unDoStatus=0
 
     #Define variables utilized in the core function that are not defined by parameters.
