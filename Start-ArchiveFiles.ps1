@@ -25,10 +25,10 @@
         Out-LogFile -string "BEGIN Start-ArchiveFiles"
         Out-LogFile -string "********************************************************************************"
 
-        out-logFile -string "Disconnecting Exchange Online Session"
+        out-logFile -string "Archiving files associated with run."
 
         $functionDate = Get-Date -Format FileDateTime
-        [string]$functionWorkingPath = $global:functionlogFolderPath+$global:staticFailureFolderName
+        [string]$functionWorkingPath = $global:functionlogFolderPath+$global:staticFolderName
         [string]$functionSuccessPath = $global:functionlogFolderPath+$global:staticSuccessFolderName+$functionDate
         [string]$functionFailurePath = $global:functionlogFilePath+$global:staticFailureFolderName+$functionDate
 
@@ -36,6 +36,8 @@
         out-logfile -string ("Function Working Path = "+ $functionWorkingPath)
         out-logfile -string ("Function Succes Path = "+$functionSuccessPath)
         out-logfile -string ("Function Failure Path = "+$functionFailurePath)
+
+        move-item -path $
      
         Out-LogFile -string "END Start-ArchiveFiles"
         Out-LogFile -string "********************************************************************************"
