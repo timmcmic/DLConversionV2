@@ -74,7 +74,7 @@
             out-logfile -string ("Adding proxy address = "+$address)
 
             try{
-                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address}
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -89,7 +89,7 @@
         out-logfile -string ("Calculated x500 Address = "+$functionEmailAddress)
 
         try{
-            set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress}
+            set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -104,7 +104,7 @@
             out-logfile -string "The sender authentication setting was change by administrator."
 
             try {
-                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -domainController $globalCatalogServer
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
