@@ -46,4 +46,16 @@
 
             rename-item -path $functionOriginalPath -newName $functionFolderName
         }
+        else 
+        {
+            out-logfile -string "FAILED - renaming directory."
+
+            $functionFolderName = $functionDate+"-FAILED"
+            $functionOriginalPath= $logFolderPath+$global:staticFolderName
+
+            out-logfile -string $functionFolderName
+            out-logfile -string $functionOriginalPath
+
+            rename-item -path $functionOriginalPath -newName $functionFolderName
+        }
     }
