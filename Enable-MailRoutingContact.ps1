@@ -80,7 +80,7 @@
         {
             if ($address.contains("mail.onmicrosoft.com"))
             {
-                (out-logfile -string "Remote routing address found = "+$address)
+                out-logfile -string ("Remote routing address found = "+$address)
 
                 $functionRemoteRoutingAddress=$address
             }
