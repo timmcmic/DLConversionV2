@@ -1544,13 +1544,8 @@ Function Start-DistributionListMigration
     start-sleep -seconds 60
     out-logfile -string "Invoking AD Connect."
 
-    try {
-        start-sleep -s 5
-        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    start-sleep -s 5
+    invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
     out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
     start-sleep -seconds 60
