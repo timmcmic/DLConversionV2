@@ -78,7 +78,7 @@
 
         foreach ($address in $functiongroup.emailaddresses)
         {
-            if ($address.contains("mail.onmicrosoft.com"))
+            if ($address.contains($routingContactConfig.targetAddress))
             {
                 out-logfile -string ("Remote routing address found = "+$address)
 
@@ -89,7 +89,7 @@
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer
+            set-mailContact -identity $routingContactConfig.mai-lNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
