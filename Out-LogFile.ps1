@@ -55,15 +55,8 @@
         
         # Write everything to our log file and the screen
 
-        try 
-        {
-            $logstring | Out-File -FilePath $global:LogFile -Append
-        }
-        catch 
-        {
-            throw $_
-        }
-
+        $logstring | Out-File -FilePath $global:LogFile -Append
+    
         #Write to the screen the information passed to the log.
 
         if ($string.gettype().name -eq "String")
