@@ -1,59 +1,46 @@
 <#
     .SYNOPSIS
 
-    This function tests to see if a powershell module necessary for script execution is present.
+    This function disables all open powershell sessions.
 
     .DESCRIPTION
 
-    This function tests to see if a powershell module necessary for script execution is present.
+    This function disables all open powershell sessions.
+
+    .OUTPUTS
+
+    No return.
 
     .EXAMPLE
 
-    Test-PowershellModule
+    disable-allPowerShellSessions
 
     #>
-    Function Test-PowershellModule
+    Function disable-allPowerShellSessions
      {
-        [cmdletbinding()]
 
-        Param
-        (
-            [Parameter(Mandatory = $true)]
-            [string]$powershellModuleName
-        )
-
-        #Define variables that will be utilzed in the function.
-
-        [array]$commandsArray=$NULL
-
-        #Initiate the test.
-        
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN TEST-POWERSHELLMODULE"
+        Out-LogFile -string "BEGIN disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
 
-        #Write function parameter information and variables to a log file.
+        out-logFile -string "Disconnecting Exchange Online Session"
 
-        Out-LogFile -string ("PowerShellModuleName = "+$powershellModuleName)
-
-        try 
-        {
-            $commandsArray = get-command -module $powershellModuleName -errorAction STOP
+        try{
+            Disconnect-ExchangeOnline -confirm:$FALSE
         }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
+        catch{
+            out-logFile -string $_ -isError:$TRUE
         }
 
-        if ($commandsArray.count -eq 0)
-        {
-            Out-LogFile -string "The powershell module was not found and is required for script functionality." -iserror:$TRUE
-        }
-        else
-        {
-            Out-LogFile -string "The powershell module was found."
-        }    
+        out-logfile -string "Remove all other PSSessions"
 
-        Out-LogFile -string "END TEST-POWERSHELLMODULE"
+        try{
+            Get-PSSession | remove-psssession
+        }
+        catch{
+            out-logfile -string $_ -isError:TRUE
+        }
+
+        Out-LogFile -string "END disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
     }
