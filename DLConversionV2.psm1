@@ -2321,11 +2321,15 @@ Function Start-DistributionListMigration
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
         try{
-            enable-mailDynamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguraiton
+            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguraiton
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
     }
 
     $global:unDoStatus=$global:unDoStatus+1

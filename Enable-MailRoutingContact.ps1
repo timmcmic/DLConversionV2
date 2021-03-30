@@ -89,7 +89,7 @@
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE
+            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -forceUpgade:$TRUE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
