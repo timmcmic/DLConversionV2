@@ -2357,6 +2357,15 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    #If the administrator has selected to not retain the group - remove it.
+
+    if ($retainOriginalGroup -eq $FALSE)
+    {
+        out-logfile -string "Deleting the original group."
+
+        remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -adCredential $activeDirectoryCredential
+    }
+
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
     disable-allPowerShellSessions
