@@ -74,7 +74,7 @@
             out-logfile -string ("Adding proxy address = "+$address)
 
             try{
-                set-dynamicGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address}
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address}
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
