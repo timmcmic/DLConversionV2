@@ -343,10 +343,10 @@ Function Start-DistributionListMigration
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
-    
+
     $tempPath=$logfolderpath+$global:staticSuccessFolderName
 
-    if (!tempPath)
+    if (!$tempPath)
     {
         New-item -path $tempPath -type Directory
     }
@@ -355,7 +355,7 @@ Function Start-DistributionListMigration
     
     $tempPath=$logfolderpath+$global:staticFailureFolderName
 
-    if (!tempPath)
+    if (!$tempPath)
     {
         New-item -path $tempPath -type Directory
     }
