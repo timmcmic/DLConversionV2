@@ -189,10 +189,7 @@ Function Start-DistributionListMigration
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:functionLogFolderPath=$logFolderPath
     [string]$global:staticFolderName="\DLMigration\Working"
-    [string]$global:staticSuccessFolderName="\DLMigration\Success\"
-    [string]$global:staticFailureFolderName="\DLMigration\Failed\"
     [int]$global:unDoStatus=0
 
     #Define variables utilized in the core function that are not defined by parameters.
@@ -343,24 +340,6 @@ Function Start-DistributionListMigration
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
-
-    $tempPath=$logfolderpath+$global:staticSuccessFolderName
-
-    if (!$tempPath)
-    {
-        New-item -path $tempPath -type Directory
-    }
-    
-    $global:staticSuccessFolderName=$tempPath
-    
-    $tempPath=$logfolderpath+$global:staticFailureFolderName
-
-    if (!$tempPath)
-    {
-        New-item -path $tempPath -type Directory
-    }
-
-    $global:staticFailureFolderName=$tempPath
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
