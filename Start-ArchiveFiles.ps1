@@ -44,6 +44,6 @@
             out-logfile -string $functionFolderName
             out-logfile -string $functionOriginalPath
 
-            rename-item $functionOriginalPath $functionFolderName
+            rename-item -path $functionOriginalPath -newName $functionFolderName
         }
     }
