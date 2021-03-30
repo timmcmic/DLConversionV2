@@ -24,7 +24,7 @@
     enable-mailRoutingContact -globalCatalogServer GC -routingContactConfig contactConfiguration.
 
     #>
-    Function Enable-MailRoutingContact
+    Function Enable-MailDyamicGroup
      {
         [cmdletbinding()]
 
@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            $routingContactConfig
+            $routingContactConfig,
+            [Parameter(Mandatory = $true)]
+            $originalDLConfiguration
         )
 
         #Declare function variables.
@@ -89,7 +91,7 @@
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE
+            set-mailContact -identity $routingContactConfig.mai-lNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
