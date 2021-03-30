@@ -25,7 +25,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [boolean]$isSuccess=$FALSE
+            [boolean]$isSuccess=$FALSE,
+            [Parameter(Mandatory = $true)]
+            [string]$logFolderPath=$NULL
         )
 
         out-logFile -string "Archiving files associated with run."
@@ -36,7 +38,7 @@
         {
             out-logfile -string "Success - renaming directory."
 
-            $functionFolderName = $functionDate+"-Success"
+            $functionFolderName = $logFolderPath+"\"+$functionDate+"-Success"
 
             out-logfile -string $functionFolderName
 

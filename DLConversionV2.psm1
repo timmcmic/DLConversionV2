@@ -345,7 +345,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    Start-ArchiveFiles -isSuccess:$TRUE
+    Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 
     exit
 
