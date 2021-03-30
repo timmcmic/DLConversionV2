@@ -71,6 +71,15 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
+        #The mail contact may need upgrade to the "latest version."
+
+        try{
+            set-mailcontact $functionGroup.alias -ForceUpgrade
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
         #When a mail contact has a target address - it is added as a proxy address.
         #This has to be removed or you'll have a proxy address conflict with the migrated group.
 
