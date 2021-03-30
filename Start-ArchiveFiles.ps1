@@ -20,12 +20,7 @@
     #>
     Function Start-ArchiveFiles
      {
-
-        Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN Start-ArchiveFiles"
-        Out-LogFile -string "********************************************************************************"
-
-        out-logFile -string "Archiving files associated with run."
+       out-logFile -string "Archiving files associated with run."
 
         $functionWorkingPath=
 
@@ -41,8 +36,4 @@
 
             rename-item $global:staticFolderName -newName $functionFolderName
         }
-        
-     
-        Out-LogFile -string "END Start-ArchiveFiles"
-        Out-LogFile -string "********************************************************************************"
     }
