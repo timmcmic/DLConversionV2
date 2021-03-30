@@ -38,7 +38,7 @@
         {
             out-logfile -string "Success - renaming directory."
 
-            $functionFolderName = $logFolderPath+"\"+$global:staticFolderName+"\Success"+$functionDate
+            $functionFolderName = $logFolderPath+$global:staticFolderName+"\Success"+$functionDate
             $functionOriginalPath= $logFolderPath+"\"+$global:staticFolderName
 
             out-logfile -string $functionFolderName
