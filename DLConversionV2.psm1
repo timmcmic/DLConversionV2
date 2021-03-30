@@ -2288,10 +2288,40 @@ Function Start-DistributionListMigration
 
     if ($enableHybridMailflow -eq $TRUE)
     {
+        #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
+
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
         try{
             Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        $global:unDoStatus=$global:unDoStatus+1
+
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
+
+        try{
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string $routingContactConfiguration
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML+$global:unDoStatus
+
+        #The routing contact configuration has been updated and retained.
+        #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
+
+        out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
+
+        try{
+            enable-mailDynamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguraiton
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
