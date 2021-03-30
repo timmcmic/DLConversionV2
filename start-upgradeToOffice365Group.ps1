@@ -54,6 +54,8 @@
         }
 
         out-logfile -string $attempt
+        out-logfile -string $attempt.SuccessfullySubmittedForUpgrade
+        out-logfile -string $attempt.errorReason
 
         Out-LogFile -string "END start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
