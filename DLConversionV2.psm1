@@ -2363,7 +2363,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Deleting the original group."
 
-        remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -adCredential $activeDirectoryCredential
+        remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
 
     out-logfile -string "Calling function to disconnect all powershell sessions."
