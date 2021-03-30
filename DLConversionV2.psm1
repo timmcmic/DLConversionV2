@@ -2355,6 +2355,10 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    out-logfile -string "Calling function to disconnect all powershell sessions."
+
+    disable-allPowerShellSessions
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
