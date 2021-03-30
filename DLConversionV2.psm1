@@ -1545,6 +1545,7 @@ Function Start-DistributionListMigration
     out-logfile -string "Invoking AD Connect."
 
     try {
+        start-sleep -s 5
         invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName -errorAction STOP
     }
     catch {
