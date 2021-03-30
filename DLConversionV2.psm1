@@ -345,9 +345,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
-
-    exit
+    
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -2366,4 +2364,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    #Archive the files into a date time success folder.
+
+    Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
