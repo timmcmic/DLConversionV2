@@ -54,7 +54,7 @@
         try{
             out-logfile -string "Updating the mail contact..."
 
-            update-recipient -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer
+            update-recipient -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -65,7 +65,7 @@
         try{
             out-logfile -string "Gathering the mail contact configuration..."
 
-            $functionGroup=get-mailContact -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer
+            $functionGroup=get-mailContact -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -89,7 +89,7 @@
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -ForceUpgrade
+            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -ForceUpgrade -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
