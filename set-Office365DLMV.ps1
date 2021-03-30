@@ -102,6 +102,7 @@
         [string]$hybridRemoteRoutingAddress=$NULL
         [string]$workingAddress=$NULL
         [array]$workingAddressArray=@()
+        [int]$functionLoopCounter=0
 
         #Start function processing.
 
@@ -146,7 +147,20 @@
         }
 
         foreach ($address in $originalDLConfiguration.proxyAddresses)
-        {         
+        {   
+            #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+            if ($functionLoopCounter -eq 1000)
+            {
+                out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                $functionLoopCounter = 0
+            }
+            else 
+            {
+                out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                $functionLoopCounter++
+            }
+                  
             out-Logfile -string "Processing address:"
             out-Logfile -string $address
 
@@ -188,6 +202,19 @@
         {
             foreach ($member in $exchangeDLMembershipSMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 #If the recipient type is a group - set error action to silientlyContinue.
                 #This is required - if the group is retained we set the same custom attributes as the cross premises contact created.
                 #Therefore there could be an exception that th member already exists.
@@ -249,6 +276,19 @@
         {
             foreach ($member in $exchangeRejectMessagesSMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -294,6 +334,19 @@
         {
             foreach ($member in $exchangeAcceptMessageSMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -339,6 +392,19 @@
         {
             foreach ($member in $exchangeManagedBySMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if (($member.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution"))
                 {
                     out-logFile "The migrated DL has managed by permissions of iteself.  The administrator overrode the type to distribution."
@@ -390,6 +456,19 @@
         {
             foreach ($member in $exchangeModeratedBySMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -435,6 +514,19 @@
         {
             foreach ($member in $exchangeBypassModerationSMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -480,6 +572,19 @@
         {
             foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
             {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
