@@ -353,6 +353,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    start-archive -isSuccess:$TRUE
+
+    exit
+
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
 
