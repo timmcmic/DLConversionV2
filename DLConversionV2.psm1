@@ -456,8 +456,6 @@ Function Start-DistributionListMigration
 
     #Perform paramter validation manually.
 
-    out-logfile "ERROROERERERE" -isError:$TRUE
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "ENTERING PARAMTER VALIDATION"
     Out-LogFile -string "********************************************************************************"
