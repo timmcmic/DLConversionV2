@@ -28,7 +28,7 @@
         out-logFile -string "Archiving files associated with run."
 
         $functionDate = Get-Date -Format FileDateTime
-        [string]$functionWorkingPath = $global:functionlogFolderPath+$global:staticFolderName
+        [string]$functionWorkingPath = $global:functionlogFolderPath+$global:staticFolderName+"\*"
         [string]$functionSuccessPath = $global:functionlogFolderPath+$global:staticSuccessFolderName+$functionDate
         [string]$functionFailurePath = $global:functionlogFilePath+$global:staticFailureFolderName+$functionDate
 
@@ -37,7 +37,12 @@
         out-logfile -string ("Function Succes Path = "+$functionSuccessPath)
         out-logfile -string ("Function Failure Path = "+$functionFailurePath)
 
-        move-item -path $
+       
+        if ($isSucecss -eq $TRUE)
+        {
+            move-item -path $functionWorkingPath -destination $functionSuccessPath
+        }
+        
      
         Out-LogFile -string "END Start-ArchiveFiles"
         Out-LogFile -string "********************************************************************************"
