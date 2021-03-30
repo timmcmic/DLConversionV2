@@ -2366,6 +2366,10 @@ Function Start-DistributionListMigration
         remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
 
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
     disable-allPowerShellSessions
