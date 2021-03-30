@@ -35,7 +35,7 @@
         out-logfile -string "Remove all other PSSessions"
 
         try{
-            Get-PSSession | remove-psssession
+            Get-PSSession | remove-pssession
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
