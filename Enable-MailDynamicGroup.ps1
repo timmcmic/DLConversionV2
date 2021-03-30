@@ -73,6 +73,9 @@
         {
             out-logfile -string ("Adding proxy address = "+$address)
 
+            #If the address is not a mail.onmicrosoft.com address - stamp it.
+            #Otherwise skip it - this is because the address is stamped on the mail contact already.
+
             if (!$address.contains("mail.onmicrosoft.com"))
             {
                 out-logfile -string "Address is not a mail.onmicrosoft.com address."
@@ -86,7 +89,7 @@
             }
             else 
             {
-                out-logfile -string "Address is a mail.onmicrosoft.com address."    
+                out-logfile -string "Address is a mail.onmicrosoft.com address - skipping."    
             }
         }
 

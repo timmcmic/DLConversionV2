@@ -181,7 +181,9 @@ Function Start-DistributionListMigration
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
         [ValidateSet("Security","Distribution")]
-        [string]$groupTypeOverride="None"
+        [string]$groupTypeOverride="None",
+        [Parameter(Mandatory = $false)]
+        [boolean]$triggerUpgradeToOffice365Group=$FALSE
     )
 
     #Define global variables.
@@ -2331,6 +2333,15 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #At this time the group has been migrated.
+    #All on premises settings have been reconciled.
+    #All cloud settings have been reconciled.
+    #If exchange hybrid mail flow was enabled - the routing components were completed.
+
+    #If the administrator has choosen to migrate and request upgrade to Office 365 group - trigger the ugprade.
+
+    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
