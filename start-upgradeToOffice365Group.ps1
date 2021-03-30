@@ -47,11 +47,13 @@
         out-logfile -string "Administrators MUST validate the upgrade as successful manually."
 
         try{
-            upgrade-o365DistributionGroup -DlIdentities $groupSMTPAddress
+            $attempt=upgrade-o365DistributionGroup -DlIdentities $groupSMTPAddress
         }
         catch{
             out-logFile -string $_ -isError:$TRUE
         }
+
+        out-logfile -string $attempt
 
         Out-LogFile -string "END start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
