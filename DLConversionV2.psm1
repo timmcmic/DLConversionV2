@@ -155,7 +155,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
         [Parameter(Mandatory = $true)]
-        [string]$global:logFolderPath,
+        [string]$logFolderPath,
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
@@ -189,6 +189,7 @@ Function Start-DistributionListMigration
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
+    [string]$global:functionLogFolderPath=$logFolderPath
     [string]$global:staticFolderName="\DLMigration\Working"
     [string]$global:staticSuccessFolderName="\DLMigration\Success\"
     [string]$global:staticFailureFolderName="\DLMigration\Failed\"
