@@ -58,7 +58,7 @@
             new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedname.indexof("OU")) -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName
         }
         catch{
-            
+            out-logfile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END Enable-MailDyamicGroup"
