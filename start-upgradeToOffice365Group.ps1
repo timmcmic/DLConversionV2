@@ -61,7 +61,6 @@
             out-logfile -string ("Error Reason = "+$attempt.errorReason)
         }
         
-
         Out-LogFile -string "END start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
     }
