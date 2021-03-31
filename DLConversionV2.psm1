@@ -340,6 +340,10 @@ Function Start-DistributionListMigration
     [string]$tempName=$NULL
     [string]$tempDN=$NULL
 
+    #For loop counter.
+
+    [int]$forLoopCounter=0
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
@@ -2359,7 +2363,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $routingDynamicGroupConfig
-        out-xmlfile -itemToExport $routingDynamicGroupConfig -itenNameToExport $routingDynamicGroupXML
+        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $routingDynamicGroupXML
     }
 
 
