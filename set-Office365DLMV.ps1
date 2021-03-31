@@ -160,6 +160,7 @@
             if ($functionLoopCounter -eq 1000)
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                start-sleep -seconds 5
                 $functionLoopCounter = 0
             }
             else 
@@ -214,6 +215,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -288,6 +290,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -346,6 +349,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -406,6 +410,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -496,6 +501,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -554,6 +560,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
@@ -612,6 +619,7 @@
                 if ($functionLoopCounter -eq 1000)
                 {
                     out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
                     $functionLoopCounter = 0
                 }
                 else 
