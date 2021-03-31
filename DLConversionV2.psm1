@@ -226,6 +226,8 @@ Function Start-DistributionListMigration
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
+    $routingContactConfig=$NULL
+    $routingDynamicGroupConfig=$NULL
     [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessageSMTP=@() #Array of members with accept permissions from AD.
@@ -267,6 +269,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
     [string]$routingContactXML="routingContactXML"
+    [string]$routingDynamicGroupXML="routingDynamicGroupXML"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -2347,6 +2350,16 @@ Function Start-DistributionListMigration
         $global:unDoStatus=$global:unDoStatus+1
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        try{
+            $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+        }
+        catch{
+            out-logFile -string "Error obtaining dynamic group information post creation."
+        }
+
+        out-logfile -string $routingDynamicGroupConfig
+        out-xmlfile -itemToExport $routingDynamicGroupConfig -itenNameToExport $routingDynamicGroupXML
     }
 
 
