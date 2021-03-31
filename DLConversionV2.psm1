@@ -719,6 +719,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.member)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
@@ -749,6 +760,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -766,6 +788,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -795,6 +828,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.AuthOrig)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -812,6 +856,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -842,6 +897,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.managedBy)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -859,6 +925,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -889,6 +966,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -919,6 +1007,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -938,6 +1037,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
@@ -964,6 +1074,17 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.publicDelegates)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try 
             {
                 $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
@@ -1307,6 +1428,8 @@ Function Start-DistributionListMigration
 
     #EXIT #Debug Exit
 
+    $forLoopCounter=0 #Resetting counter at next set of queries.
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -1317,6 +1440,17 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeDLMembershipSMTP)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
@@ -1829,6 +1963,8 @@ Function Start-DistributionListMigration
     catch {
         out-logfile -string $_ -isError:$TRUE
     }
+
+    $forLoopCounter=0 #Restting loop counter for next series of operations.
 
     #At this time we are ready to begin resetting the on premises dependencies.
 
@@ -2480,7 +2616,7 @@ Function Start-DistributionListMigration
             {
                 $forLoopCounter++    
             }
-            
+
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             try {
                 start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
