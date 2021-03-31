@@ -528,7 +528,7 @@ Function Start-DistributionListMigration
 
     #Validate that only one method of engaging exchange online was specified.
 
-    Out-LogFile -string "Validating that Exchange Credentials are not specified with Exchange Certificate Thumbprint"
+    Out-LogFile -string "Validating Exchange Online Credentials."
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
     {
