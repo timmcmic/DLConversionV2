@@ -23,22 +23,41 @@
         Out-LogFile -string "BEGIN disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
 
-        out-logFile -string "Disconnecting Exchange Online Session"
+        out-logfile "Gathering all PS Sessions"
 
         try{
-            Disconnect-ExchangeOnline -confirm:$FALSE
+            $functionSessions = Get-PSSession
         }
-        catch{
-            out-logFile -string $_ -isError:$TRUE
+        catch
+        {
+            out-logfile -string "Error getting PSSessions - hard abort since this is called in exit code."
+            EXIT
         }
 
+        out-logFile -string "Disconnecting Exchange Online Session"
+
+        foreach ($session in $functionSessions)
+        {
+            if ($session.computerName -eq "outlook.office365.com")
+            {
+                try{
+                    Disconnect-ExchangeOnline -confirm:$FALSE
+                }
+                catch{
+                    out-logfile -string "Error removing Exchange Online Session - Hard Exit since this function is called in error code."
+                    EXIT
+                }
+            }
+        }
+        
         out-logfile -string "Remove all other PSSessions"
 
         try{
             Get-PSSession | remove-pssession
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string "Error removing other PS Sessions.  Hard exit as this function is called in error code."
+            exit
         }
 
         Out-LogFile -string "END disable-allPowerShellSessions"

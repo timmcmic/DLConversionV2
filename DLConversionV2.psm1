@@ -480,7 +480,7 @@ Function Start-DistributionListMigration
     {
         #The server name and credential were specified for AADConnect.
 
-        Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified."
+        Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
     
         #Set useAADConnect to TRUE since the parameters necessary for use were passed.
         
