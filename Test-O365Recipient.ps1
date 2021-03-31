@@ -79,6 +79,26 @@
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+        elseif (($member.ExternalDirectoryObjectID -ne $NULL) -and ($member.recipientoruser -eq "User"))
+        {
+            out-LogFile -string "Testing based on external directory object ID."
+            out-logfile -string $member.externalDirectoryObjectID
+            out-logfile -string $member.recipientOrUser
+
+            #Modify the external directory object id.
+
+            $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+            out-logfile -string $functionDirectoryObjectID[1]
+
+            try {
+                get-o365User -identity $functionDirectoryObjectID[1] -errorAction STOP
+            }
+            catch {
+                out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
         elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
         {
             out-LogFile -string "Testing based on user principal name."
