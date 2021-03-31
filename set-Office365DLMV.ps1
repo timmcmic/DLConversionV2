@@ -103,6 +103,7 @@
         [string]$workingAddress=$NULL
         [array]$workingAddressArray=@()
         [int]$functionLoopCounter=0
+        [boolean]$functionFirstRun=$TRUE
 
         #Start function processing.
 
@@ -396,6 +397,8 @@
 
         if ($exchangeManagedBySMTP -ne $NULL)
         {
+            out-logfile -string ("Is this the first run for managed by = "+$functionFirstRun)
+
             foreach ($member in $exchangeManagedBySMTP)
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
@@ -426,7 +429,20 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
+                        if ($functionFirstRun -eq $FALSE)
+                        {
+                            out-logfile -string "Not first manager of group - adding."
+
+                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
+                        }
+                        else 
+                        {
+                            out-logfile -string "First manager - resetting managed by list."
+
+                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy $functionDirectoryObjectID[1] -errorAction STOP -BypassSecurityGroupManagerCheck  
+
+                            $functionFirstRun = $FALSE
+                        }
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -438,7 +454,20 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
+                        if ($functionFirstRun -ne $TRUE)
+                        {
+                            out-logfile -string "Not first manager of group - adding."
+
+                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
+                        }
+                        else 
+                        {
+                            out-logfile -string "First manager - resetting managed by list."
+
+                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy $member.primarySMTPAddressOrUPN -errorAction STOP -BypassSecurityGroupManagerCheck
+
+                            $functionFirstRun = $FALSE
+                        }
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
