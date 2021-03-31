@@ -548,6 +548,11 @@ Function Start-DistributionListMigration
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
 
+    if (($useOnPremsiesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
+    {
+        out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
+    }
+
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
