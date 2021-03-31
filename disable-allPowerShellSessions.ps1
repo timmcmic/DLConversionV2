@@ -26,7 +26,7 @@
         out-logfile "Gathering all PS Sessions"
 
         try{
-            $functionSessions = Get-PSSession
+            $functionSessions = Get-PSSession -errorAction STOP
         }
         catch
         {
@@ -41,7 +41,7 @@
             if ($session.computerName -eq "outlook.office365.com")
             {
                 try{
-                    Disconnect-ExchangeOnline -confirm:$FALSE
+                    Disconnect-ExchangeOnline -confirm:$FALSE -errorAction STOP
                 }
                 catch{
                     out-logfile -string "Error removing Exchange Online Session - Hard Exit since this function is called in error code."

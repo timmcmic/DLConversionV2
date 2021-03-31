@@ -534,6 +534,10 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
     }
+    elseif (($exchangeOnlineCredential -eq $NULL) -or ($exchangeOnlineCertificateThumbPrint -eq $NULL))
+    {
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+    }
     else
     {
         Out-LogFile -string "Only one method of Exchange Online authentication specified."
