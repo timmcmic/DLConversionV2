@@ -1838,6 +1838,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsMemberOf)
         {  
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
@@ -1872,6 +1883,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsReject)
         {  
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremUnAuthOrig)
@@ -1910,6 +1932,17 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
 
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
@@ -1944,6 +1977,17 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
 
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
@@ -1977,6 +2021,17 @@ Function Start-DistributionListMigration
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
+
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
 
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
@@ -2017,6 +2072,17 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
@@ -2054,6 +2120,17 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
 
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
             }
@@ -2073,12 +2150,25 @@ Function Start-DistributionListMigration
 
     #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
 
+    $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
+
     out-logfile -string "Processing Office 365 Accept Messages From"
 
     if ($allOffice365Accept.count -gt 0)
     {
         foreach ($member in $allOffice365Accept)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2102,6 +2192,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Reject)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2125,6 +2226,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365BypassModeration)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2148,6 +2260,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365GrantSendOnBehalfTo)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2171,6 +2294,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365BypassModeration)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2194,6 +2328,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365ManagedBy)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2219,6 +2364,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalAccept)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2242,6 +2398,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalReject)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2265,6 +2432,17 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
             try{
                 start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
@@ -2292,6 +2470,17 @@ Function Start-DistributionListMigration
 
         foreach ($member in $allOffice365MemberOf )
         {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+            
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             try {
                 start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
