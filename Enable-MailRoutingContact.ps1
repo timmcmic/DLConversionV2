@@ -76,7 +76,7 @@
         try{
             out-logfile -string "Forcing upgrade to contact - necessary in order to provision."
 
-            set-mailcontact -identity $functionGroup.alias -ForceUpgrade
+            set-mailcontact -identity $functionGroup.alias -domainController $globalCatalogServer -ForceUpgrade
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -87,7 +87,7 @@
         try{
             out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
 
-            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -forceUpgrade -confirm:$FALSE
+            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -110,6 +110,31 @@
             }
         }
         #>
+
+        #Ensure that the mail contact email address policy is set to false - prevents modifications of email addresses.
+
+        try{
+            out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
+
+            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        #Set the primary SMTP address of the mail contact to not be the target address.
+        #This is required before removing the target address.
+
+        try{
+            out-logfile -string "Removing the remote routing address..."
+
+            set-mailContact -identity $routingContactConfig.mailNickName -primarySMTPAddress $routingContactConfig.mail -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        #Removee the target address from the list of proxy addresses so it does not collide with the migrated group.
 
         try{
             out-logfile -string "Removing the remote routing address..."
