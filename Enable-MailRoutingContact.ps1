@@ -87,7 +87,7 @@
         try{
             out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
 
-            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE
+            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -forceUpgrade -confirm:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -96,7 +96,7 @@
         #When a mail contact has a target address - it is added as a proxy address.
         #This has to be removed or you'll have a proxy address conflict with the migrated group.
 
-        out-logfile -string "Searching for the remote routing address as a proxy address."
+        <#out-logfile -string "Searching for the remote routing address as a proxy address."
 
         foreach ($address in $functiongroup.emailaddresses)
         {
@@ -109,11 +109,12 @@
                 out-logfile -string ("Function routing address = "+$functionRemoteRoutingAddress)
             }
         }
+        #>
 
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -errorAction STOP
+            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$routingContactConfig.targetAddress} -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
