@@ -2729,6 +2729,39 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    #Trigger ad replication and triggering AD connect for all final updates.
+
+    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+    start-sleep -seconds 15
+    out-logfile -string "Invoking AD replication."
+
+    try {
+        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
+    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+    if ($useAADConnect -eq $TRUE)
+    {
+        out-logfile -string "Starting sleep before invoking AD Connect - one minute."
+        start-sleep -seconds 60
+        out-logfile -string "Invoking AD Connect."
+
+        start-sleep -s 5
+        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+
+        out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
+        start-sleep -seconds 60
+    }
+    else 
+    {
+        out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
+    }
+
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
     disable-allPowerShellSessions
