@@ -1957,6 +1957,10 @@ Function Start-DistributionListMigration
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
 
+    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+    start-sleep -seconds 15
+    out-logfile -string "Invoking AD replication."
+
     try {
         invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
     }
@@ -2748,14 +2752,11 @@ Function Start-DistributionListMigration
     if ($useAADConnect -eq $TRUE)
     {
         out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-        start-sleep -seconds 60
+        start-sleep -seconds 30
         out-logfile -string "Invoking AD Connect."
 
         start-sleep -s 5
         invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
-
-        out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
-        start-sleep -seconds 60
     }
     else 
     {
