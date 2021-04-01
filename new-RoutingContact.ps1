@@ -67,8 +67,6 @@
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
         out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-        [string]$functionMail=$originalDLConfiguration.mail
-        out-logfile -string ("Function mail address = "+$functionMail)
         [string]$functionOU=$originalDLConfiguration.distinguishedname.substring($originaldlconfiguration.distinguishedname.indexof("OU"))
         out-logfile -string ("Function OU = "+$functionOU)
 
@@ -96,7 +94,8 @@
         [boolean]$functionHideFromAddressList=$true
         [string]$functionRecipientDisplayType="6"
         [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
-        [string]$functionProxyAddress="SMTP:"+$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
+        [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript"+$functionProxyAddressArray[1]
+        [string]$functionProxyAddress="SMTP:"+$functionMail
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
         [string]$functionSelfAccountSid = "S-1-5-10"
@@ -110,6 +109,7 @@
         out-logfile -string ("Function proxy address = "+$functionProxyAddress)
         out-logfile -string ("Function mail nickname = "+$functionMailNickname)
         out-logfile -string ("Function description = "+$functionDescription)
+        out-logfile -string ("Function mail address = "+$functionMail)
 
         #Provision the routing contact.
         #When the contact is provisioned we add the master account sid of self.  This tricks exchange commands into allowing us to assign permissions that are reserved for security principals.
