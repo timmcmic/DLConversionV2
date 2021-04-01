@@ -76,7 +76,7 @@
         try{
             out-logfile -string "Forcing upgrade to contact - necessary in order to provision."
 
-            set-mailcontact $functionGroup.alias -ForceUpgrade
+            set-mailcontact -identity $functionGroup.alias -ForceUpgrade
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -86,8 +86,8 @@
 
         try{
             out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
-            
-            set-mailcontact $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE
+
+            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -113,7 +113,7 @@
         try{
             out-logfile -string "Removing the remote routing address..."
 
-            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -ForceUpgrade -errorAction STOP
+            set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$functionRemoteRoutingAddress} -domainController $globalCatalogServer -confirm:$FALSE -errorAction STOP
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
