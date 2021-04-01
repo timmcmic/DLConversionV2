@@ -94,7 +94,7 @@
         [boolean]$functionHideFromAddressList=$true
         [string]$functionRecipientDisplayType="6"
         [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
-        [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript"+$functionProxyAddressArray[1]
+        [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
         [string]$functionProxyAddress="SMTP:"+$functionMail
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
