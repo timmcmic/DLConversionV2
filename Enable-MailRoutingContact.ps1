@@ -74,7 +74,20 @@
         #The mail contact may need upgrade to the "latest version."
 
         try{
+            out-logfile -string "Forcing upgrade to contact - necessary in order to provision."
+
             set-mailcontact $functionGroup.alias -ForceUpgrade
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        #The mail contact may need upgrade to the "latest version."
+
+        try{
+            out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
+            
+            set-mailcontact $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -92,6 +105,8 @@
                 out-logfile -string ("Remote routing address found = "+$address)
 
                 $functionRemoteRoutingAddress=$address
+
+                out-logfile -string ("Function routing address = "+$functionRemoteRoutingAddress)
             }
         }
 
