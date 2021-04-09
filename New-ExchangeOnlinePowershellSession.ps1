@@ -48,7 +48,7 @@
 
         [string]$exchangeOnlineCommandPrefix="O365"
         [boolean]$isCertAuth=$false
-        [string]$exchangeOnlineCommands="get-ExoRecipient,new-distributionGroup,get-recipient,set-distributionGroup"
+        [string]$exchangeOnlineCommands="get-ExoRecipient,new-distributionGroup,get-recipient,set-distributionGroup,get-distributionGroupMember,get-mailbox,get-unifiedGroup,set-UnifiedGroup"
 
         #Initiate the session.
         
