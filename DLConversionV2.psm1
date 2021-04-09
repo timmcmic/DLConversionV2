@@ -558,13 +558,13 @@ Function Start-DistributionListMigration
 
     if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
     {
-        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authenitication to Exchange Online." -isError:$TRUE
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
     }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -ne $NULL) -and ($exchangeOnlineAppID -eq $NULL))
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
     {
         out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
     }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -eq $NULL) -and ($exchangeOnlineAppID -ne $NULL))
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
     {
         out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
     }
