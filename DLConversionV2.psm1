@@ -171,6 +171,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineOrganizationName="",
         [Parameter(Mandatory = $false)]
+        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
+        [string]$exchangeOnlineEnvironmentName="O365Default",
+        [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
@@ -617,13 +620,13 @@ Function Start-DistributionListMigration
    {
        #User specified non-certifate authentication credentials.
 
-       New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
+       New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
    }
    elseif ($exchangeOnlineCertificateThumbPrint -ne "")
    {
        #User specified thumbprint authentication.
 
-       new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName
+       new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
    }
 
    exit #debug exit
