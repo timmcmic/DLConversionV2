@@ -169,6 +169,10 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineCertificateThumbPrint=$NULL,
         [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineOrganizationName=$NULL,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineAppID=$NULL,
+        [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
@@ -549,6 +553,27 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Only one method of Exchange Online authentication specified."
     }
+
+    #Validate that all information for the certificate connection has been provieed.
+
+    if (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -eq $NULL) -and ($exchangeOnlineAppID -eq $NULL))
+    {
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authenitication to Exchange Online." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -ne $NULL) -and ($exchangeOnlineAppID -eq $NULL))
+    {
+        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -eq $NULL) -and ($exchangeOnlineAppID -ne $NULL))
+    {
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+    }
+
+    exit #Debug exit.
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
