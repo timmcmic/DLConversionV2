@@ -167,11 +167,11 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineCertificateThumbPrint=$NULL,
+        [string]$exchangeOnlineCertificateThumbPrint="",
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineOrganizationName=$NULL,
+        [string]$exchangeOnlineOrganizationName="",
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineAppID=$NULL,
+        [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
