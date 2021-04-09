@@ -556,7 +556,7 @@ Function Start-DistributionListMigration
 
     #Validate that all information for the certificate connection has been provieed.
 
-    if (($exchangeOnlineCertificateThumbPrint -ne $NULL) -and ($exchangeOnlineOrganizationName -eq $NULL) -and ($exchangeOnlineAppID -eq $NULL))
+    if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
     {
         out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authenitication to Exchange Online." -isError:$TRUE
     }
