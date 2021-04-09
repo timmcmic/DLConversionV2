@@ -34,12 +34,17 @@
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [pscredential]$exchangeOnlineCredentials,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
-            [string]$exchangeOnlineCertificate
+            [string]$exchangeOnlineCertificateThumbPrint,
+            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [string]$exchangeOnlineAppID,
+            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [string]$exchangeOnlineOrganizationName
         )
 
         #Define variables that will be utilzed in the function.
 
         [string]$exchangeOnlineCommandPrefix="O365"
+        [boolean]$isCertAuth=$false
 
         #Initiate the session.
         
@@ -56,20 +61,39 @@
         elseif ($exchangeOnlineCertificate -ne "")
         {
             Out-LogFile -string ("ExchangeOnlineCertificate = "+$exchangeOnlineCertificate)
+            $isCertAuth=$true
         }
 
         Out-LogFile -string ("ExchangeOnlineCommandPrefix = "+$exchangeOnlineCommandPrefix)
-               
-        try 
-        {
-            Out-LogFile -string "Creating the exchange online powershell session."
 
-            Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix
-        }
-        catch 
+        if ($isCertAuth -eq $False)
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            try 
+            {
+                Out-LogFile -string "Creating the exchange online powershell session."
+
+                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix
+            }
+            catch 
+            {
+                Out-LogFile -string $_ -isError:$TRUE
+            }
         }
+        elseif ($isCertAuth -eq $TRUE) 
+        {
+            try 
+            {
+                out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
+
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+               
+        
 
         Out-LogFile -string "The exchange online powershell session was created successfully."
 

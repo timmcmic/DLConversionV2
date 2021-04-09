@@ -573,7 +573,7 @@ Function Start-DistributionListMigration
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
 
-    exit #Debug exit.
+    #exit #Debug exit.
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
@@ -619,6 +619,14 @@ Function Start-DistributionListMigration
 
        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential
    }
+   elseif ($exchangeOnlineCertificateThumbPrint -ne "")
+   {
+       #User specified thumbprint authentication.
+
+       new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName
+   }
+
+   exit #debug exit
 
    #Now we can determine if exchange on premises is utilized and if so establish the connection.
    
