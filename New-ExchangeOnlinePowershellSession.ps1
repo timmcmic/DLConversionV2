@@ -92,8 +92,8 @@
             {
                 out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
 
-                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -commandName $exchangeOnlineCommands
-            }
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -commandName $exchangeOnlineCommands -prefix $exchangeOnlineCommandPrefix
+            } 
             catch 
             {
                 out-logfile -string $_ -isError:$TRUE
