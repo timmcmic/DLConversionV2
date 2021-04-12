@@ -176,7 +176,7 @@
         }
         else 
         {
-            out-logfile -string     
+            out-logfile -string  "There are no send as rights DNs to process."   
         }
 
         #At this time we have an array of all the DNs.

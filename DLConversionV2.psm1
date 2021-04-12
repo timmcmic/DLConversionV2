@@ -190,7 +190,11 @@ Function Start-DistributionListMigration
         [ValidateSet("Security","Distribution")]
         [string]$groupTypeOverride="None",
         [Parameter(Mandatory = $false)]
-        [boolean]$triggerUpgradeToOffice365Group=$FALSE
+        [boolean]$triggerUpgradeToOffice365Group=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$auditFullMailboxAccess=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$auditSendAs=$FALSE
     )
 
     #Define global variables.
@@ -289,6 +293,8 @@ Function Start-DistributionListMigration
     [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
     [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
     [array]$allGroupsManagedBy=$NULL
+    [array]$allObjectsFullMailboxAccess=$NULL
+    [array]$allObjectSendAsAccess=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -303,6 +309,8 @@ Function Start-DistributionListMigration
     [array]$allOffice365UniversalReject=$NULL
     [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
     [array]$allOffice365ManagedBy=$NULL
+    [array]$allOffice365FullMailboxAccess=$NULL
+    [array]$allOffice365SendAsAccess=$NULL
 
     #The following are the cloud parameters we query for to look for dependencies.
 
