@@ -602,6 +602,16 @@ Function Start-DistributionListMigration
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
     }
 
+    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremsiesExchange -eq $FALSE))
+    {
+        out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
+    }
+
+    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremsiesExchange -eq $FALSE))
+    {
+        out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
+    }
+
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
@@ -745,6 +755,13 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
+
+    Out-LogFile -string "Determine if administrator desires to audit send as."
+
+    if ($auditSendAsOnPrem -eq $TRUE)
+    {
+        $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+    }
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
