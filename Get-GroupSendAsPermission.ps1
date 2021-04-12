@@ -210,6 +210,7 @@
         {
             foreach ($object in $functionSendAsObjects)
             {
+                out-logfile -string "This is an object to be returned."
                 out-logfile -string $object
             }
         }
