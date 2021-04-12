@@ -1517,7 +1517,7 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     $forLoopCounter=0 #Resetting counter at next set of queries.
 
