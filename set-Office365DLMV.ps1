@@ -699,7 +699,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs"
+                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -711,7 +711,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs"
+                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
