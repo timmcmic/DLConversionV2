@@ -666,7 +666,17 @@ Function Start-DistributionListMigration
         catch 
         {
             Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        } 
+        }
+        try 
+        {
+            out-logfile -string "Calling set entire forest."
+
+            enable-ExchangeOnPremEntireForest
+        }
+        catch 
+        {
+            Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
+        }
     }
     else
     {
