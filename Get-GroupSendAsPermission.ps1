@@ -163,8 +163,6 @@
             {
                 out-logfile -string ("Processing identity = "+$sendAsName)
 
-                Write-Host $sendAsName -ForegroundColor Blue
-
                 try 
                 {
                     $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
@@ -216,14 +214,13 @@
             }
         }
 
-        return $functionSendAsObjects
-
         Out-LogFile -string "END GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
+
+        return $functionSendAsObjects
         
         #This function is designed to open local and remote powershell sessions.
         #If the session requires import - for example exchange - return the session for later work.
         #If not no return is required.
-        
-        return $functionObject
+    
     }
