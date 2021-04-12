@@ -242,6 +242,7 @@ Function Start-DistributionListMigration
     [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
     [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
     [array]$exchangeGrantSendOnBehalfToSMTP=@()
+    [array]$exchangeSendAsSMTP=@()
 
     #Define XML files to contain backups.
 
@@ -258,6 +259,7 @@ Function Start-DistributionListMigration
     [string]$exchangeModeratedBySMTPXML = "exchangeModeratedBYSMTPXML"
     [string]$exchangeBypassModerationSMTPXML = "exchangeBypassModerationSMTPXML"
     [string]$exchangeGrantSendOnBehalfToSMTPXML = "exchangeGrantSendOnBehalfToXML"
+    [string]$exchangeSendAsSMTPXML = "exchangeSendASSMTPXML"
     [string]$allGroupsMemberOfXML = "allGroupsMemberOfXML"
     [string]$allGroupsRejectXML = "allGroupsRejectXML"
     [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
@@ -629,7 +631,7 @@ Function Start-DistributionListMigration
        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
    }
 
-   exit #debug exit
+   #exit #debug exit
 
    #Now we can determine if exchange on premises is utilized and if so establish the connection.
    
@@ -669,14 +671,33 @@ Function Start-DistributionListMigration
 
     if ($useAADConnect -eq $TRUE)
     {
-        New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
+        try 
+        {
+            out-logfile -string "Creating powershell session to the AD Connect server."
+
+            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
+        }
+        catch 
+        {
+            out-logfile -string "Unable to create remote powershell session to the AD Connect server."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     #Establish powershell session to the global catalog server.
 
-    Out-LogFile -string "Establish powershell session to the global catalog server specified."
+    try 
+    {
+        Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
-    new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
+        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
+    }
+    catch 
+    {
+        out-logfile -string "Unable to create remote powershell session to the AD Global Catalog server."
+        out-logfile -string $_ -isError:$TRUE
+    }
+    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
@@ -1143,6 +1164,33 @@ Function Start-DistributionListMigration
         out-logfile "The group has no grant send on behalf to."    
     }
 
+    #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
+
+    out-logfile -string "Obtaining send as permissions."
+
+    try 
+    {
+        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $adCredential -$adGlobalCatalogPowershellSessionName $adGlobalCatalogPowershellSessionName
+    }
+    catch 
+    {
+        out-logfile -string "Unable to normalize the send as DNs."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    if ($exchangeSendAsSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects have send as rights on the DL."
+        
+        out-logfile -string $exchangeSendAsSMTP
+    }
+    else 
+    {
+        out-logfile "The group has no grant send on behalf to."    
+    }
+
+    #exit #Debug Exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
@@ -1156,6 +1204,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
+    out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
@@ -1427,6 +1476,11 @@ Function Start-DistributionListMigration
         out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $exchangeGrantSendOnBehalfToSMTPXML
     }
 
+    if ($exchangeSendAsSMTP -ne $NULL)
+    {
+        out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $exchangeSendAsSMTPXML
+    }
+
     if ($allGroupsMemberOf -ne $NULL)
     {
         out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
@@ -1462,7 +1516,7 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
     }
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit
 
     $forLoopCounter=0 #Resetting counter at next set of queries.
 
