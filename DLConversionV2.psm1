@@ -760,8 +760,13 @@ Function Start-DistributionListMigration
 
     if ($auditSendAsOnPrem -eq $TRUE)
     {
+        out-logfile -string "Administrator has choosen to audit on premsies send as."
+        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+
         $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
     }
+
+    exit #Debug Exit
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 

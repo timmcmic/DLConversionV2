@@ -35,6 +35,10 @@
         $functionSendAsRights=$NULL
         $functionQueryName="*"+$originalDLConfiguration.samAccountName+"*"
 
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN Get-onPremSendAs"
+        Out-LogFile -string "********************************************************************************"
+
         #Start function processing.
 
         $functionSendAsRights = invoke-command {get-recipient -resultsize unlimited | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and $_.user -like $functionQueryName}}
@@ -42,6 +46,6 @@
         out-logfile -string $functionSendAsRights
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN Get-onPremSendAs"
-        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "END Get-onPremSendAs"
+        Out-LogFile -string "********************************************************************************" 
     }
