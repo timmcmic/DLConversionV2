@@ -1171,7 +1171,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $adCredential -$adGlobalCatalogPowershellSessionName $adGlobalCatalogPowershellSessionName
+        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -$adGlobalCatalogPowershellSessionName $adGlobalCatalogPowershellSessionName
     }
     catch 
     {
