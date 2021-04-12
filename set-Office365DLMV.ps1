@@ -88,6 +88,9 @@
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
             [array]$exchangeGrantSendOnBehalfToSMTP=$NULL,
+            [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
+            [array]$exchangeSendAsSMTP=$NULL,
             [Parameter(Mandatory=$true)]
             [string]$groupTypeOverride,
             [Parameter(Mandatory=$true)]
@@ -650,6 +653,65 @@
 
                     try {
                         set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
+                    }
+                    catch {
+                        out-logfile -string "Unable to add member. "
+                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
+                    }
+                }
+                else 
+                {
+                    out-logfile -string "Invalid function object for recipient." -isError:$TRUE
+                } 
+            }
+        }
+        else 
+        {
+            Out-LogFile -string "There were no members to process."    
+        }
+
+        out-logFile -string "Evaluating exchangeSendAsSMTP"
+
+        if ($exchangeSendAsSMTP -ne $NULL)
+        {
+            foreach ($member in $exchangeSendAsSMTP)
+            {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
+
+                if ($functionLoopCounter -eq 1000)
+                {
+                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
+                    start-sleep -seconds 5
+                    $functionLoopCounter = 0
+                }
+                else 
+                {
+                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
+                    $functionLoopCounter++
+                }
+
+                if ($member.externalDirectoryObjectID -ne $NULL)
+                {
+                    out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
+
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
+                    try {
+                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs"
+                    }
+                    catch {
+                        out-logfile -string "Unable to add member. "
+                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
+                    }
+                }
+                elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
+                {
+                    out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
+
+                    try {
+                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs"
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
