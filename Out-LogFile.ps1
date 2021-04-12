@@ -65,7 +65,7 @@
         }
         else 
         {
-            write-host $logString | select-object -expandProperties *
+            write-host $logString | select-object -expandProperty *
         }
 
         #If the output to the log is terminating exception - throw the same string.
