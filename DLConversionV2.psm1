@@ -192,9 +192,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$auditFullMailboxAccess=$FALSE,
+        [boolean]$auditFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$auditSendAs=$FALSE
+        [boolean]$auditSendAsOnPrem=$FALSE
     )
 
     #Define global variables.
