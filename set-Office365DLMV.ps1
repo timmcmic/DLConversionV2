@@ -142,6 +142,10 @@
             out-logfile $_ -isError:$TRUE
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logfile -string "Processing on premises legacy ExchangeDN to X500"
         out-logfile -string $originalDLConfiguration.legacyExchangeDN
 
@@ -155,6 +159,10 @@
         catch {
             out-logfile -string $_ -isError:$TRUE
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         foreach ($address in $originalDLConfiguration.proxyAddresses)
         {   
@@ -190,6 +198,10 @@
             }
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
@@ -206,6 +218,10 @@
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         out-logFile -string "Evaluating exchangeDLMembershipSMTP"
 
@@ -282,6 +298,10 @@
             Out-LogFile -string "There were no members to process."    
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logFile -string "Evaluating exchangeRejectMessagesSMTP"
 
         if ($exchangeRejectMessagesSMTP -ne $NULL)
@@ -341,6 +361,10 @@
             Out-LogFile -string "There were no members to process."    
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logFile -string "Evaluating exchangeAcceptMessagesSMTP"
 
         if ($exchangeAcceptMessageSMTP -ne $NULL)
@@ -399,6 +423,10 @@
         {
             Out-LogFile -string "There were no members to process."    
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         out-logFile -string "Evaluating exchangeManagedBySMTP"
 
@@ -493,6 +521,10 @@
             Out-LogFile -string "There were no members to process."    
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logFile -string "Evaluating exchangeModeratedBy"
 
         if ($exchangeModeratedBySMTP -ne $NULL)
@@ -551,6 +583,10 @@
         {
             Out-LogFile -string "There were no members to process."    
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         out-logFile -string "Evaluating exchangeBypassModerationSMTP"
 
@@ -611,6 +647,10 @@
             Out-LogFile -string "There were no members to process."    
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logFile -string "Evaluating exchangeGrantSendOnBehalfToSMTP"
 
         if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
@@ -670,6 +710,10 @@
             Out-LogFile -string "There were no members to process."    
         }
 
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
         out-logFile -string "Evaluating exchangeSendAsSMTP"
 
         if ($exchangeSendAsSMTP -ne $NULL)
@@ -728,6 +772,10 @@
         {
             Out-LogFile -string "There were no members to process."    
         }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
