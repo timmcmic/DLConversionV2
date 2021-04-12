@@ -1107,6 +1107,7 @@ Function Start-DistributionListMigration
 
             try 
             {
+                out-logfile -string $activeDirectoryCredential.userName
                 $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
             }
             catch 
