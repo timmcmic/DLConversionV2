@@ -55,7 +55,7 @@
         [array]$functionSendAsRight=@()
         [array]$functionSendAsRightName=@()
         [array]$functionSendAsRightDN=@()
-        [array]$functionSendAsObjects=$NULL
+        [array]$functionSendAsObjects=@()
 
         #Start function processing.
 
