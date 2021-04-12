@@ -1195,6 +1195,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
+        $exchangeSendAsSMTP=@()
         out-logfile "The group has no grant send on behalf to."    
     }
 
