@@ -48,7 +48,7 @@
 
         [string]$exchangeOnlineCommandPrefix="O365"
         [boolean]$isCertAuth=$false
-        $exchangeOnlineCommands=@('get-ExoRecipient','new-distributionGroup','get-recipient','set-distributionGroup','get-distributionGroupMember','get-mailbox','get-unifiedGroup','set-UnifiedGroup')
+        #$exchangeOnlineCommands=@('get-ExoRecipient','new-distributionGroup','get-recipient','set-distributionGroup','get-distributionGroupMember','get-mailbox','get-unifiedGroup','set-UnifiedGroup')
         #Initiate the session.
         
         Out-LogFile -string "********************************************************************************"
@@ -79,7 +79,7 @@
             {
                 Out-LogFile -string "Creating the exchange online powershell session."
 
-                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -commandName $exchangeOnlineCommands
+                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName 
             }
             catch 
             {
@@ -92,7 +92,7 @@
             {
                 out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
 
-                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -commandName $exchangeOnlineCommands -prefix $exchangeOnlineCommandPrefix
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix
             } 
             catch 
             {
