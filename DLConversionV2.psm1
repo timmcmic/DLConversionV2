@@ -2990,6 +2990,18 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    out-logFile -string "Start replacing Office 365 permissions."
+
+    try 
+    {
+        set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess
+    }
+    catch 
+    {
+        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
     if ($enableHybridMailflow -eq $TRUE)
     {
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
