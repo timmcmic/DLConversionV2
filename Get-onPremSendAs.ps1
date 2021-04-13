@@ -40,7 +40,7 @@
         Out-LogFile -string "BEGIN Get-onPremSendAs"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string "DL query name = "+$functionDLQueryName
+        out-logfile -string ("DL query name = "+$functionDLQueryName)
 
         #Start function processing.
 
