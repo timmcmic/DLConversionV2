@@ -72,7 +72,11 @@
 
         foreach ($sendAsRight in $functionSendAsRights)
         {
+            #Since each permission is in domain\samAccountName format split the string.
+
             $stringTest = $sendAsRight.user.split("\")
+
+            #Test the second half of the string for a direct eq to samAccountName.
 
             if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
             {
