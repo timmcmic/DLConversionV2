@@ -46,7 +46,7 @@
 
         out-logfile -string "Gathering all on premises recipients."
 
-        $functionRecipients = invoke-command {get-recipient -resultsize unlimited}
+        $functionRecipients = invoke-command {get-distributionGroup -resultsize unlimited}
 
         out-logfile -string "Test for send as rights."
 
