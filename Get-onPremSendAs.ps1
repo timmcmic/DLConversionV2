@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$originalDLConfiguration
+            $originalDLConfiguration
         )
 
         #Declare function variables.
@@ -35,8 +35,6 @@
         $functionSendAsRights=$NULL
         $functionRecipients=$NULL
         $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
-
-        out-logfile -string $originalDLConfiguration.sAMAccountName
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
