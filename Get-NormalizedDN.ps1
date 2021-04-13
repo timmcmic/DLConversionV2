@@ -96,7 +96,24 @@
 
             Out-LogFile -string "Interpreting DN evaluation..."
 
-            if (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
+            if ($functiontest.msExchRecipientDisplayType -eq "msExchDynamicDistributionGroup")
+            {
+                out-logfile -string "A dynamic distribution group was found."
+                out-logfile -string "This could be either member or permission."
+                out-logfile -string "It will be included as an object but failure will occur if not already provisioned in Office 365."
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $functionTest.mailNickName
+                    Name = $functionTest.Name
+                    PrimarySMTPAddressOrUPN = $functionTest.mail
+                    GUID = $NULL
+                    RecipientType = $functionTest.objectClass
+                    RecipientOrUser = "Recipient"
+                    ExternalDirectoryObjectID = $null
+                    isAlreadyMigrated = $false
+                }
+            }
+            elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
             {
                 Out-LogFile -string "The object has a recipient display type and is a user or contact."
 
