@@ -49,7 +49,7 @@
         try {
             out-logfile -string "Gathering all on premises recipients."
 
-            $functionRecipients = invoke-command {get-distributionGroup -resultsize unlimited}
+            $functionRecipients = invoke-command {get-distributionGroup SendAsOnPre* -resultsize unlimited}
         }
         catch {
             out-logfile -string "Error attempting to invoke command to gather all recipients."
