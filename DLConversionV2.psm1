@@ -1357,10 +1357,178 @@ Function Start-DistributionListMigration
         }
     }
 
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL reject messages is in Office 365."
+
+        foreach ($member in $exchangeRejectMessagesSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeAcceptMessagesSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeManagedBySMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeModeratedBySMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeBypassModerationSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
-    
+
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
 
