@@ -283,6 +283,8 @@ Function Start-DistributionListMigration
     [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
+    [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
+    [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
 
@@ -831,7 +833,6 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
     
-
     Out-LogFile -string $office365DLConfiguration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
@@ -1754,56 +1755,92 @@ Function Start-DistributionListMigration
             out-logFile -string $_ -isError:$TRUE
         }
 
+        try{
+            $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        try {
+            $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
+
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
 
         if ($allOffice365MemberOf -ne $NULL)
         {
+            out-logfile -string $allOffice365MemberOf
             out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $allOffice365MemberofXML
         }
 
         if ($allOffice365Accept -ne $NULL)
         {
+            out-logfile -string $allOffice365Accept
             out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $allOffice365AcceptXML
         }
 
         if ($allOffice365Reject -ne $NULL)
         {
+            out-logfile -string $allOffice365Reject
             out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $allOffice365RejectXML
         }
         
         if ($allOffice365BypassModeration -ne $NULL)
         {
+            out-logfile -string $allOffice365BypassModeration
             out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $allOffice365BypassModerationXML
         }
 
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
         {
+            out-logfile -string $allOffice365GrantSendOnBehalfTo
             out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
         }
 
         if ($allOffice365ManagedBy -ne $NULL)
         {
+            out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
         }
 
         if ($allOffice365ForwardingAddress -ne $NULL)
         {
+            out-logfile -string $allOffice365ForwardingAddress
             out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $allOffice365ForwardingAddressXML
         }
 
         if ($allOffice365UniversalAccept -ne $NULL)
         {
+            out-logfile -string $allOffice365UniversalAccept
             out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $allOffice365UniversalAcceptXML
         }
 
         if ($allOffice365UniversalReject -ne $NULL)
         {
+            out-logfile -string $allOffice365UniversalReject
             out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $allOffice365UniversalRejectXML
         }
 
         if ($allOffice365UniversalGrantSendOnBehalfTo -ne $NULL)
         {
+            out-logfile -string $allOffice365UniversalGrantSendOnBehalfTo
             out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $allOffice365UniversalGrantSendOnBehalfToXML
+        }
+
+        if ($allOffice365SendAsAccess -ne $NULL)
+        {
+            out-logfile -string $allOffice365SendAsAccess
+            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffice365SendAsAccessXML
+        }
+
+        if ($allOffice365FullMailboxAccess -ne $NULL)
+        {
+            out-logfile -string $allOffice365FullMailboxAccess
+            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOfice365FullMailboxAccessXML
         }
     }
     else 
