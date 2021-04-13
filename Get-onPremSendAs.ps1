@@ -35,6 +35,7 @@
         [array]$functionSendAsRights=@()
         $functionRecipients=$NULL
         $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
+        [array]$functionSendAsIdentities=@()
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
@@ -44,8 +45,6 @@
 
         #Start function processing.
 
-        
-        
         try {
             out-logfile -string "Gathering all on premises recipients."
 
@@ -60,9 +59,7 @@
             out-logfile -string "Test for send as rights."
             foreach ($recipient in $functionRecipients)
             {
-                write-host ("Processing recipient = "+$recipient.identity)
                 $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
-                write-host $functionSendAsRights.count  
             } 
         }
         catch {
@@ -70,11 +67,21 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
-        
+        #At this point we have a filter list of ACLs.
+        #The query above uses a like for the user name - which means we need to validate for sure that we're talking about thes ame user.
 
-        
+        foreach ($sendAsRight in $functionSendAsRights)
+        {
+            $stringTest = $sendAsRight.user.split("\")
 
-        out-logfile -string $functionSendAsRights
+            if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
+            {
+                write-host "We have a winner."
+                $functionSendAsIdentities+=$sendAsRight.identity
+            }
+        }
+
+        out-logfile -string $functionSendAsIdentities
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END Get-onPremSendAs"
