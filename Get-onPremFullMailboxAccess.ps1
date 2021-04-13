@@ -44,7 +44,7 @@
         try {
             out-logfile -string "Gathering all on premises mailboxes."
 
-            $functionRecipients = invoke-command {get-mailbox FullMailbox* -resultsize unlimited}
+            $functionRecipients = invoke-command {get-mailbox -resultsize unlimited}
         }
         catch {
             out-logfile -string "Error attempting to invoke command to gather all recipients."
