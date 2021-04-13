@@ -33,15 +33,28 @@
         #Declare function variables.
 
         $functionSendAsRights=$NULL
+        $functionRecipients=$NULL
         $functionQueryName="*"+$originalDLConfiguration.samAccountName+"*"
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
         Out-LogFile -string "********************************************************************************"
 
+        out-logfile -string "DL query name = "+$functionDLQueryName
+
         #Start function processing.
 
-        $functionSendAsRights = invoke-command {get-recipient -resultsize unlimited | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and $_.user -like $functionQueryName}}
+        out-logfile -string "Gathering all on premises recipients."
+
+        $functionRecipients = invoke-command {get-recipient -resultsize unlimited}
+
+        out-logfile -string "Test for send as rights."
+
+        foreach ($recipient in $functionRecipients)
+        {
+            write-host ("Processing recipient = "+$recipient.identity)
+            $functionSendAsRights+= invoke-command {Get-ADPermission | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and $_.user -like $args}} -arguments $functionQueryName}
+        }
 
         out-logfile -string $functionSendAsRights
 
