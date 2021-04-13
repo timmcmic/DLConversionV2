@@ -55,9 +55,9 @@
 
             foreach ($permission in $allSendAs)
             {
-                out-logfile -string "Processing permission identity = "+$permission.identity
-                out-logfile -string "Processing permission trustee = "+$permission.trustee
-                out-logfile -string "Processing permission access rights = "+$permission.AccessRights
+                out-logfile -string ("Processing permission identity = "+$permission.identity)
+                out-logfile -string ("Processing permission trustee = "+$permission.trustee)
+                out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 try {
                     add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights
@@ -84,9 +84,9 @@
             try {
                 foreach ($permission in $allFullMailboxAccess)
                 {
-                    out-logfile -string "Processing permission identity = "+$permission.identity
-                    out-logfile -string "Processing permission trustee = "+$permission.user
-                    out-logfile -string "Processing permission access rights = "+$permission.AccessRights
+                    out-logfile -string ("Processing permission identity = "+$permission.identity)
+                    out-logfile -string ("Processing permission trustee = "+$permission.user)
+                    out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                     add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights
                 }
