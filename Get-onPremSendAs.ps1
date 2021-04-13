@@ -54,6 +54,7 @@
         {
             write-host ("Processing recipient = "+$recipient.identity)
             $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
+            write-host $functionSendAsRights.count  
         } 
 
         out-logfile -string $functionSendAsRights
