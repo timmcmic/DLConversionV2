@@ -44,18 +44,35 @@
 
         #Start function processing.
 
-        out-logfile -string "Gathering all on premises recipients."
+        
+        
+        try {
+            out-logfile -string "Gathering all on premises recipients."
 
-        $functionRecipients = invoke-command {get-distributionGroup -resultsize unlimited}
+            $functionRecipients = invoke-command {get-distributionGroup -resultsize unlimited}
+        }
+        catch {
+            out-logfile -string "Error attempting to invoke command to gather all recipients."
+            out-logfile -string $_ -isError:$TRUE
+        }
 
-        out-logfile -string "Test for send as rights."
+        try {
+            out-logfile -string "Test for send as rights."
+            foreach ($recipient in $functionRecipients)
+            {
+                write-host ("Processing recipient = "+$recipient.identity)
+                $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
+                write-host $functionSendAsRights.count  
+            } 
+        }
+        catch {
+            out-logfile -string "Error attempting to invoke command to gather all send as permissions."
+            out-logfile -string $_ -isError:$TRUE
+        }
 
-        foreach ($recipient in $functionRecipients)
-        {
-            write-host ("Processing recipient = "+$recipient.identity)
-            $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
-            write-host $functionSendAsRights.count  
-        } 
+        
+
+        
 
         out-logfile -string $functionSendAsRights
 
