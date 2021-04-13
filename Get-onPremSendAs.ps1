@@ -59,13 +59,15 @@
         try {
             out-logfile -string "Test for send as rights."
 
-            $functionProgress = 100/($functionRecipients.count); $functionPercentComplete = 0; $functionRecipientNumber = 0
+            $ProgressDelta = 100/($functionRecipients.count); $PercentComplete = 0; $MbxNumber = 0
 
             foreach ($recipient in $functionRecipients)
             {
-                $functionRecipientNumber++
+                $MbxNumber++
 
-                write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -percentComplete $functionPercentComplete
+                write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -PercentComplete $PercentComplete
+
+                $PercentComplete += $ProgressDelta
 
                 if ($functionCounter -gt 1000)
                 {
