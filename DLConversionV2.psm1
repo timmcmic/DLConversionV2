@@ -1554,75 +1554,135 @@ Function Start-DistributionListMigration
     {
         Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
     }
+    else 
+    {
+        $exchangeDLMembershipSMTP=@()
+    }
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+    }
+    else 
+    {
+        $exchangeRejectMessagesSMTP=@()
     }
 
     if ($exchangeAcceptMessageSMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     }
+    else 
+    {
+        $exchangeAcceptMessageSMTP=@()
+    }
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+    }
+    else 
+    {
+        $exchangeManagedBySMTP=@()
     }
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
     }
+    else 
+    {
+        $exchangeModeratedBySMTP=@()
+    }
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
         out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+    }
+    else 
+    {
+        $exchangeBypassModerationSMTP=@()
     }
 
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
         out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $exchangeGrantSendOnBehalfToSMTPXML
     }
+    else 
+    {
+        $exchangeGrantSendOnBehalfToSMTP=@()
+    }
 
     if ($exchangeSendAsSMTP -ne $NULL)
     {
         out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $exchangeSendAsSMTPXML
+    }
+    else 
+    {
+        $exchangeSendAsSMTP=@()
     }
 
     if ($allGroupsMemberOf -ne $NULL)
     {
         out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
     }
+    else 
+    {
+        $allGroupsMemberOf=@()
+    }
     
     if ($allGroupsReject -ne $NULL)
     {
         out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
+    }
+    else 
+    {
+        $allGroupsReject=@()
     }
     
     if ($allGroupsAccept -ne $NULL)
     {
         out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
     }
+    else 
+    {
+        $allGroupsAccept=@()
+    }
 
     if ($allGroupsBypassModeration -ne $NULL)
     {
         out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
+    }
+    else 
+    {
+        $allGroupsBypassModeration=@()
     }
 
     if ($allUsersForwardingAddress -ne $NULL)
     {
         out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $allUsersForwardingAddressXML
     }
+    else 
+    {
+        $allUsersForwardingAddress=@()
+    }
 
     if ($allGroupsManagedBy -ne $NULL)
     {
         out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $allGroupsManagedByXML
     }
+    else 
+    {
+        $allGroupsManagedBy=@()
+    }
 
     if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
     {
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
+    }
+    else 
+    {
+        $allGroupsGrantSendOnBehalfTo =@()
     }
 
     #EXIT #Debug Exit
@@ -1787,7 +1847,7 @@ Function Start-DistributionListMigration
             catch {
                 out-logfile -string $_ -isError:$TRUE
             }
-        }        
+        }  
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
 
@@ -1796,11 +1856,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365MemberOf
             out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $allOffice365MemberofXML
         }
+        else 
+        {
+            $allOffice365MemberOf=@()
+        }
 
         if ($allOffice365Accept -ne $NULL)
         {
             out-logfile -string $allOffice365Accept
             out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $allOffice365AcceptXML
+        }
+        else 
+        {
+            $allOffice365Accept=@()    
         }
 
         if ($allOffice365Reject -ne $NULL)
@@ -1808,11 +1876,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365Reject
             out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $allOffice365RejectXML
         }
+        else 
+        {
+            $allOffice365Reject=@()    
+        }
         
         if ($allOffice365BypassModeration -ne $NULL)
         {
             out-logfile -string $allOffice365BypassModeration
             out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $allOffice365BypassModerationXML
+        }
+        else 
+        {
+            $allOffice365BypassModeration=@()    
         }
 
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
@@ -1820,11 +1896,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365GrantSendOnBehalfTo
             out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
         }
+        else 
+        {
+            $allOffice365GrantSendOnBehalfTo=@()    
+        }
 
         if ($allOffice365ManagedBy -ne $NULL)
         {
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
+        }
+        else 
+        {
+            $allOffice365ManagedBy=@()    
         }
 
         if ($allOffice365ForwardingAddress -ne $NULL)
@@ -1832,11 +1916,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365ForwardingAddress
             out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $allOffice365ForwardingAddressXML
         }
+        else 
+        {
+            $allOffice365ForwardingAddress=@()    
+        }
 
         if ($allOffice365UniversalAccept -ne $NULL)
         {
             out-logfile -string $allOffice365UniversalAccept
             out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $allOffice365UniversalAcceptXML
+        }
+        else 
+        {
+            $allOffice365UniversalAccept=@()    
         }
 
         if ($allOffice365UniversalReject -ne $NULL)
@@ -1844,11 +1936,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365UniversalReject
             out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $allOffice365UniversalRejectXML
         }
+        else 
+        {
+            $allOffice365UniversalReject=@()    
+        }
 
         if ($allOffice365UniversalGrantSendOnBehalfTo -ne $NULL)
         {
             out-logfile -string $allOffice365UniversalGrantSendOnBehalfTo
             out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $allOffice365UniversalGrantSendOnBehalfToXML
+        }
+        else 
+        {
+            $allOffice365UniversalGrantSendOnBehalfTo=@()    
         }
 
         if ($allOffice365SendAsAccess -ne $NULL)
@@ -1856,11 +1956,19 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffic365SendAsAccessXML
         }
+        else 
+        {
+            $allOffice365SendAsAccess=@()    
+        }
 
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOffice365FullMailboxAccessXML
+        }
+        else 
+        {
+            $allOffice365FullMailboxAccess=@()    
         }
     }
     else 
