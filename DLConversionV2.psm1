@@ -776,7 +776,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectSendAsAccess
 
-        out-xmlFile -itemToExport $allObjectsSendAsAccess -itemNameToExport $allGroupsSendAsXML
+        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $allGroupsSendAsXML
     }
 
     exit #Debug Exit
