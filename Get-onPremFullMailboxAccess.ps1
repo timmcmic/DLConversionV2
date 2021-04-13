@@ -72,7 +72,7 @@
                     $functionCounter++    
                 }
 
-                $functionPermissions+= invoke-command {Get-MailboxPermissions -identity $args[0] -user $args[1]}-ArgumentList $recipient.identity,$originalDLConfiguration.samAccountName
+                $functionPermissions+= invoke-command {Get-MailboxPermission -identity $args[0] -user $args[1]}-ArgumentList $recipient.identity,$originalDLConfiguration.samAccountName
             } 
         }
         catch {
