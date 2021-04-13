@@ -80,14 +80,14 @@
 
             if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
             {
-                write-host "We have a winner."
+                out-logfile -string ("Send as permission matching group found - recording."+$sendAsRight.identity)
                 $functionSendAsIdentities+=$sendAsRight.identity
             }
         }
 
-        out-logfile -string $functionSendAsIdentities
-
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END Get-onPremSendAs"
         Out-LogFile -string "********************************************************************************" 
+
+        return $functionSendAsIdentities
     }

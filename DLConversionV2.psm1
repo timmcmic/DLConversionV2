@@ -271,6 +271,7 @@ Function Start-DistributionListMigration
     [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
+    [string]$allGroupsSendAsXML = "allGroupSendAsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
     [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
@@ -748,7 +749,6 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
     
-    
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
 
@@ -764,6 +764,19 @@ Function Start-DistributionListMigration
         out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
 
         $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+    }
+    else
+    {
+        out-logfile -string "Administrator has choosen to not audit on premises send as."
+    }
+
+    #Record what was returned.
+
+    if ($allObjectSendAsAccess.count -ne 0)
+    {
+        out-logfile -string $allObjectSendAsAccess
+
+        out-xmlFile -itemToExport $allObjectsSendAsAccess -itemNameToExport $allGroupsSendAsXML
     }
 
     exit #Debug Exit
