@@ -34,7 +34,7 @@
 
         $functionSendAsRights=$NULL
         $functionRecipients=$NULL
-        $functionQueryName=("*"+($originalDLConfiguration.samAccountName)+"*")
+        $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
