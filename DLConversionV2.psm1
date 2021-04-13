@@ -1862,7 +1862,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
