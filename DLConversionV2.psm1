@@ -1317,9 +1317,50 @@ Function Start-DistributionListMigration
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
+
     #Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
+    #Validate that the discovered dependencies are valid in Office 365.
+
+    $forLoopCounter=0 #Resetting counter at next set of queries.
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
+
+        foreach ($member in $exchangeDLMembershipSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
+    
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
 
@@ -1686,44 +1727,6 @@ Function Start-DistributionListMigration
     }
 
     #EXIT #Debug Exit
-
-    $forLoopCounter=0 #Resetting counter at next set of queries.
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
-    Out-LogFile -string "********************************************************************************"
-
-    if ($exchangeDLMembershipSMTP -ne $NULL)
-    {
-        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeDLMembershipSMTP)
-        {
-            if ($forLoopCounter -eq 1000)
-            {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                test-O365Recipient -member $member
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
-    Out-LogFile -string "********************************************************************************"
 
     #EXIT #Debug Exit
 
