@@ -803,7 +803,22 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $allGroupsFullMailboxAccessXML
     }
 
-    exit #Debug Exit
+    #If there are any sendAs or mailbox access permissiosn for the group.
+    #The group should be retained for saftey and only manually deleted if the administrator understands ramiifactions.
+    #In testing disabling the group will allow the permissions to continue functioning - deleting the group would loose it.
+    #Overrideing the administrators decision to delete the group.
+
+    if (($allObjectSendAsAccess -ne 0) -or ($allObjectsFullMailboxAccess -ne 0))
+    {
+        out-logfile -string "Overriding any administrator action to delete the group as dependencies exist."
+        $retainOriginalGroup = $TRUE
+    }
+    else 
+    {
+        out-logfile -string "Audit shows no dependencies for sendAs or full mailbox access - keeping administrator settings on group retention."    
+    }
+
+    #exit #Debug Exit
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
