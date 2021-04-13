@@ -88,7 +88,7 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
-        write-progress -completed
+        write-progress -activity "Processing Recipient" -completed
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END Get-onPremFullMailboxAccess"

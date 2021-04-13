@@ -90,7 +90,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        write-progress -completed
+        write-progress -activity "Processing Recipient" -completed
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
         Out-LogFile -string "********************************************************************************"
