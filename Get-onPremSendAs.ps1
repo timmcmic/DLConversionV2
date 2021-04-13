@@ -65,7 +65,7 @@
             {
                 $functionRecipientNumber++
 
-                write-progress -activity "Processing Recipient" -percentComplete $functionPercentComplete
+                write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -percentComplete $functionPercentComplete
 
                 if ($functionCounter -gt 1000)
                 {
