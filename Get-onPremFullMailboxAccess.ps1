@@ -76,7 +76,7 @@
             } 
         }
         catch {
-            out-logfile -string "Error attempting to invoke command to gather all send as permissions."
+            out-logfile -string "Error attempting to invoke command to gather all mailbox permissions."
             out-logfile -string $_ -isError:$TRUE
         }
 
