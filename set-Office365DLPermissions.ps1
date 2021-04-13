@@ -60,7 +60,7 @@
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 try {
-                    add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights
+                    add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights -confirm:$FALSE
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."
@@ -88,7 +88,7 @@
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights
+                    add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE
                 }
             }
             catch {
