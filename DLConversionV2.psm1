@@ -1854,13 +1854,13 @@ Function Start-DistributionListMigration
         if ($allOffice365SendAsAccess -ne $NULL)
         {
             out-logfile -string $allOffice365SendAsAccess
-            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffice365SendAsAccessXML
+            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffic365SendAsAccessXML
         }
 
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
-            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOfice365FullMailboxAccessXML
+            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOffice365FullMailboxAccessXML
         }
     }
     else 
@@ -1880,6 +1880,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
     out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
     out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
+    out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
+    out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     EXIT #Debug Exit
