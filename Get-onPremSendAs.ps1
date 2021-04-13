@@ -53,7 +53,7 @@
         foreach ($recipient in $functionRecipients)
         {
             write-host ("Processing recipient = "+$recipient.identity)
-            $functionSendAsRights+= invoke-command {Get-ADPermission | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and $_.user -like $args}-arguments $functionQueryName}
+            $functionSendAsRights+= invoke-command {Get-ADPermission | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and $_.user -like $args} -ArgumentList $functionQueryName}
         }
 
         out-logfile -string $functionSendAsRights
