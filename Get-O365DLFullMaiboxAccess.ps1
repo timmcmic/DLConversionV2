@@ -74,7 +74,6 @@
 
             foreach ($mailbox in $functionMailboxes)
             {
-                out-logFile -string $mailbox.identity
                 $functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
             }
         }
