@@ -32,7 +32,7 @@
 
         #Declare function variables.
 
-        $functionSendAsRights=$NULL
+        [array]$functionSendAsRights=@()
         $functionRecipients=$NULL
         $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
 
