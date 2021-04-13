@@ -56,8 +56,16 @@
         try {
             out-logfile -string "Test for mailbox permissions."
 
+            $ProgressDelta = 100/($functionRecipients.count); $PercentComplete = 0; $MbxNumber = 0
+
             foreach ($recipient in $functionRecipients)
             {
+                $MbxNumber++
+
+                write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -PercentComplete $PercentComplete
+
+                $PercentComplete += $ProgressDelta
+
                 if ($functionCounter -gt 1000)
                 {
                     #Implement function counter for long running operations - pause for 5 seconds every 1000 queries.

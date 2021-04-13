@@ -72,8 +72,16 @@
         {
             Out-LogFile -string "Using Exchange Online to locate all of the full mailbox access rights in Office 365."
 
+            $ProgressDelta = 100/($functionMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+
             foreach ($mailbox in $functionMailboxes)
             {
+                $MbxNumber++
+
+                write-progress -activity "Processing Recipient" -status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
+
+                $PercentComplete += $ProgressDelta
+
                 $functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
             }
         }
