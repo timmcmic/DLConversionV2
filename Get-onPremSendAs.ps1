@@ -36,6 +36,7 @@
         $functionRecipients=$NULL
         $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
         [array]$functionSendAsIdentities=@()
+        [int]$functionCounter=0
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
@@ -57,8 +58,23 @@
 
         try {
             out-logfile -string "Test for send as rights."
+
             foreach ($recipient in $functionRecipients)
             {
+                if ($functionCounter -gt 1000)
+                {
+                    #Implement function counter for long running operations - pause for 5 seconds every 1000 queries.
+
+                    out-logfile -string "Invoking 5 second sleep for powershell recovery."
+                    start-sleep -seconds 5
+
+                    $functionCounter=0
+                }
+                else 
+                {
+                    $functionCounter++    
+                }
+
                 $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
             } 
         }
