@@ -88,6 +88,8 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
+        write-progress -completed
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END Get-onPremFullMailboxAccess"
         Out-LogFile -string "********************************************************************************" 
