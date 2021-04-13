@@ -36,6 +36,8 @@
         $functionRecipients=$NULL
         $functionQueryName=("*"+$originalDLConfiguration.sAMAccountName+"*")
 
+        out-logfile -string $originalDLConfiguration.sAMAccountName
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-onPremSendAs"
         Out-LogFile -string "********************************************************************************"
