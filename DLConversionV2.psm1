@@ -272,6 +272,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
+    [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
     [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
@@ -777,6 +778,29 @@ Function Start-DistributionListMigration
         out-logfile -string $allObjectSendAsAccess
 
         out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $allGroupsSendAsXML
+    }
+
+    Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
+
+    if ($auditFullMailboxAccessOnPrem -eq $TRUE)
+    {
+        out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
+        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+
+        $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
+    }
+    else
+    {
+        out-logfile -string "Administrator has choosen to not audit on premises full mailbox access."
+    }
+
+    #Record what was returned.
+
+    if ($allObjectsFullMailboxAccess.count -ne 0)
+    {
+        out-logfile -string $allObjectsFullMailboxAccess
+
+        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $allGroupsFullMailboxAccessXML
     }
 
     exit #Debug Exit
