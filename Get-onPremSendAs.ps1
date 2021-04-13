@@ -65,7 +65,7 @@
             {
                 $functionRecipientNumber++
 
-                write-progress -percentComplete $functionPercentComplete
+                write-progress -activity "Processing Recipient" -percentComplete $functionPercentComplete
 
                 if ($functionCounter -gt 1000)
                 {
