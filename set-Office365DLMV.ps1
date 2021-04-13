@@ -91,9 +91,6 @@
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
             [array]$exchangeSendAsSMTP=$NULL,
-            [Parameter(Mandatory = $true)]
-            [AllowEmptyCollection()]
-            [array]$exchangeSendAsSMTP=$NULL,
             [Parameter(Mandatory=$true)]
             [string]$groupTypeOverride,
             [Parameter(Mandatory=$true)]
