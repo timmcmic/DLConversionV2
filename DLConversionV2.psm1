@@ -194,7 +194,11 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$auditFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$auditSendAsOnPrem=$FALSE
+        [boolean]$auditSendAsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainFullMailboxAccessOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainSendAsOffice365=$FALSE
     )
 
     #Define global variables.
@@ -614,6 +618,16 @@ Function Start-DistributionListMigration
     if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremsiesExchange -eq $FALSE))
     {
         out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
+    }
+
+    if (($retainSendAsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
+    {
+        out-logfile -string "When retaining Office 365 Send As you must retain Office 365 settings." -isError:$TRUE
+    }
+
+    if (($retainFullMailboxAccessOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
+    {
+        out-logfile -string "When retaining Office 365 Full Mailbox Access you must retain Office 365 settings." -isError:$TRUE
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
@@ -1755,19 +1769,25 @@ Function Start-DistributionListMigration
             out-logFile -string $_ -isError:$TRUE
         }
 
-        try{
-            $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress
-        }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
+        if ($retainSendAsOffice365 -eq $TRUE)
+        {
+            try{
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
 
-        try {
-            $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
+        if ($retainFullMailboxAccessOffice365 -eq $TRUE)
+        {
+            try {
+                $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }        
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
 
