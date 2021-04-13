@@ -96,7 +96,7 @@
 
             Out-LogFile -string "Interpreting DN evaluation..."
 
-            if ($functiontest.msExchRecipientDisplayType -eq "msExchDynamicDistributionGroup")
+            if ($functiontest.msExchRecipientDisplayType -eq "3")
             {
                 out-logfile -string "A dynamic distribution group was found."
                 out-logfile -string "This could be either member or permission."
