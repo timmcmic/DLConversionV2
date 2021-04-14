@@ -3510,7 +3510,7 @@ function start-collectOnPremMailboxFolders
             $forUser = $Permission.User
             out-logfile -string ("Found User = "+$forUser)
 
-            If (($forUser -ne "Default") -and ($forUser -ne "Anonymous"))
+            if (($forUser -ne "Default") -and ($foruser -ne "Anonymous"))
             {
                 out-logfile -string $permission.user
                 $auditFolderPermissions+=$permission
