@@ -3482,6 +3482,8 @@ function start-collectOnPremMailboxFolders
             out-logfile -string $_ -isError:$TRUE
         }
     }
+    
+    write-progress -activity "Processing mailbox" -completed
 
     #At this point we need to build the folder names - but utilize the folder IDs.
     #If you do not use folder IDs - any folders with special characters will fail.
@@ -3507,6 +3509,8 @@ function start-collectOnPremMailboxFolders
 
         $auditFolderNames+=$tempFolderName
     }
+
+    write-progress -activity "Processing folder" -completed
 
     out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
 
