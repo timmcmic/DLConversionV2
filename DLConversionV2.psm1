@@ -3503,7 +3503,14 @@ function start-collectOnPremMailboxFolders
     {
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
-        $forPermissions = Get-mailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue
+        try {
+            $forPermissions = Get-mailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue
+        }
+        catch {
+            out-logfile -string "Unable to obtain folder permissions."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
 
         foreach ($permission in $forPermissions)
         {
@@ -3513,7 +3520,7 @@ function start-collectOnPremMailboxFolders
             if (($forUser -ne "Default") -and ($foruser -ne "Anonymous"))
             {
                 out-logfile -string ("Not default or anonymous permission = "+$permission.user)
-                
+
                 $forPermissionObject = New-Object PSObject -Property @{
                     identity = $folderName
                     folderName = $permission.folderName
@@ -3529,4 +3536,6 @@ function start-collectOnPremMailboxFolders
 
         $PercentComplete += $ProgressDelta
     }
+
+
 }
