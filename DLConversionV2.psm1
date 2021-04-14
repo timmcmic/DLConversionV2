@@ -3388,7 +3388,7 @@ function start-collectOnPremMailboxFolders
     $auditMailboxes=$NULL
     $auditFolders=$NULL
     [array]$auditFolderNames=@()
-    [array]$auditFolderPermissions=$NULL
+    [array]$auditFolderPermissions=@()
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
