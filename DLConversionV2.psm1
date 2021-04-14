@@ -3459,7 +3459,7 @@ function start-collectOnPremMailboxFolders
         {
             out-logfile -string "Sleeping for 5 seconds - powershell refresh."
             start-sleep -seconds 5
-            $forCounter=0
+            $forCounter
         }
         else 
         {
