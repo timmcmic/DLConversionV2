@@ -3387,6 +3387,7 @@ function start-collectOnPremMailboxFolders
 
     $auditMailboxes=$NULL
     $auditFolders=$NULL
+    $auditFolderNames=$NULL
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -3435,7 +3436,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxes = get-mailbox -resultsize unlimited
+        $auditMailboxes = get-mailbox DummyMailbox0 -resultsize unlimited
     }
     catch 
     {
@@ -3445,6 +3446,8 @@ function start-collectOnPremMailboxFolders
  
     #At this time we have all the mailboxes.
     #Now we need to audit folders.
+
+    out-logfile -string "Obtianing all mailbox folders."
 
     $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
 
@@ -3466,4 +3469,24 @@ function start-collectOnPremMailboxFolders
     }
 
     write-progress -Activity "Processing Mailbox" -Completed
+
+    #At this time all of the main folders for all mailboxes have been gathered.  
+    #For the folders identified - now we need to go through and normalize the names to something we can use.
+
+    out-logfile -string "Normlaizing folder names for identity queries."
+
+    $ProgressDelta = 100/($auditFolders.count); $PercentComplete = 0; $FolderNumber = 0
+
+    foreach ($folder in $auditFolders)
+    {
+        $folderNumber++
+
+        Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
+        $auditFolderNames+=$folder.identity.tostring().replace("\",":\")
+    }
+
+    write-progress -Activity "Processing folder" -Completed
 }
