@@ -3512,7 +3512,7 @@ function start-collectOnPremMailboxFolders
 
             if (($forUser.toString -notlike "Default") -and ($foruser.toString -notlike "Anonymous"))
             {
-                out-logfile -string $permission.user
+                out-logfile -string ("Not default or anonymouse permission = "+$permission.user)
                 $auditFolderPermissions+=$permission
             }
         }
