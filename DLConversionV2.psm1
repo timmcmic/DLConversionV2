@@ -3494,6 +3494,7 @@ function start-collectOnPremMailboxFolders
 
     foreach ($folder in $auditFolders)
     {
+        out-logString -string ("Processing folder name ="+$folder.-Identity)
         out-logfile -string ("Processing folder = "+$folder.FolderId)
         out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
 
