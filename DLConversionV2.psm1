@@ -3676,6 +3676,8 @@ function start-collectOffice365MailboxFolders
     [array]$auditFolderPermissions=@()
     [int]$forCounter=0
 
+    new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
+
     #Validate that only one method of engaging exchange online was specified.
 
     Out-LogFile -string "Validating Exchange Online Credentials."
