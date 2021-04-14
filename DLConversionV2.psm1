@@ -3503,7 +3503,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
-        $forPermissions = (Get-ExoMailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue)
+        $forPermissions = Get-ailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue
 
         foreach ($permission in $forPermissions)
         {
