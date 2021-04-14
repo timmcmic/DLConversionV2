@@ -3435,7 +3435,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxs = get-mailbox -resultsize unlimited
+        $auditMailboxes = get-mailbox -resultsize unlimited
     }
     catch 
     {
