@@ -3533,6 +3533,7 @@ function start-collectOnPremMailboxFolders
 
         try {
             $forPermissions = Get-mailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+            $forPermissions | Fl
         }
         catch {
             out-logfile -string "Unable to obtain folder permissions."
