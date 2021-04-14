@@ -3532,6 +3532,12 @@ function start-collectOnPremMailboxFolders
 
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
+        $folderNumber++
+
+        Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
         try {
             $forPermissions += Get-mailboxFolderPermission -Identity $FolderName -ErrorAction Stop
         }
@@ -3541,14 +3547,22 @@ function start-collectOnPremMailboxFolders
         }
     }
 
+    write-progress -activity "Processing folder" -completed
+
     out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
 
-
+    $ProgressDelta = 100/($forPermissions.count); $PercentComplete = 0; $forNumber = 0
 
     foreach ($permission in $forPermissions)
     {
         $forUser = $Permission.User.tostring()
         out-logfile -string ("Found User = "+$forUser)
+
+        $forNumberr++
+
+        Write-Progress -Activity "Processing permission" -Status $folder.identity -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
 
         if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
         {
@@ -3567,7 +3581,7 @@ function start-collectOnPremMailboxFolders
         }
     }
 
-    $PercentComplete += $ProgressDelta
+    write-progress -activity "Processing permission" -completed
 
     #At thsi time we need to export the results to a XML file that will be used by the main function.
 
