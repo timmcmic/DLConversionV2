@@ -3389,6 +3389,7 @@ function start-collectOnPremMailboxFolders
     $auditFolders=$NULL
     [array]$auditFolderNames=@()
     [array]$auditFolderPermissions=@()
+    [int]$forCounter=0
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -3454,6 +3455,17 @@ function start-collectOnPremMailboxFolders
 
     foreach ($mailbox in $auditMailboxes)
     {
+        if ($forCounter -gt 1000)
+        {
+            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            start-sleep -seconds 5
+            $forCounter=0
+        }
+        else 
+        {
+            $forCounter++    
+        }
+
         out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
 
         $MbxNumber++
@@ -3501,6 +3513,17 @@ function start-collectOnPremMailboxFolders
 
     foreach ($folderName in $auditFolderNames)
     {
+        if ($forCounter -gt 1000)
+        {
+            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            start-sleep -seconds 5
+            $forCounter=0
+        }
+        else 
+        {
+            $forCounter++    
+        }
+        
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
         try {
