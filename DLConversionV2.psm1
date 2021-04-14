@@ -3381,6 +3381,7 @@ function start-collectOnPremMailboxFolders
      [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
      [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
      [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
 
     try 
     {
