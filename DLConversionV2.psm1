@@ -656,15 +656,27 @@ Function Start-DistributionListMigration
 
    if ($exchangeOnlineCredential -ne $NULL)
    {
-       #User specified non-certifate authentication credentials.
+      #User specified non-certifate authentication credentials.
 
-       New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        try {
+            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using credentials."
+            out-logfile -string $_ -isError:$TRUE
+        }
    }
    elseif ($exchangeOnlineCertificateThumbPrint -ne "")
    {
-       #User specified thumbprint authentication.
+      #User specified thumbprint authentication.
 
-       new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        try {
+            new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
    }
 
    #exit #debug exit
@@ -3398,7 +3410,7 @@ function start-collectOnPremMailboxFolders
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
 
-    new-LogFile -groupSMTPAddress MailboxFolderPermissions -logFolderPath $logFolderPath
+    new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
 
     try 
     {
@@ -3534,7 +3546,7 @@ function start-collectOnPremMailboxFolders
 
         $folderNumber++
 
-        Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentComplete
+        Write-Progress -Activity "Processing folder" -Status $folderName -PercentComplete $PercentComplete
 
         $PercentComplete += $ProgressDelta
 
@@ -3560,7 +3572,7 @@ function start-collectOnPremMailboxFolders
 
         $forNumberr++
 
-        Write-Progress -Activity "Processing permission" -Status $folder.identity -PercentComplete $PercentComplete
+        Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentComplete
 
         $PercentComplete += $ProgressDelta
 
@@ -3587,6 +3599,305 @@ function start-collectOnPremMailboxFolders
 
     $logFolderPath = $logFolderPath+$global:staticFolderName
     $fileName = "onPremMailboxFolderPermissions.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+    
+    $auditFolderPermissions | export-clixml -path $exportFile
+}
+
+#============================================================================================
+#============================================================================================
+
+function start-collectOffice365MailboxFolders
+{
+    <#
+    .SYNOPSIS
+
+    This function collects all of the mailbox permissions for folders in office 365 mailboxes.
+
+    .DESCRIPTION
+
+    Trigger function.
+
+    .PARAMETER logFolder
+
+    *REQUIRED*
+    The location where logging for the migration should occur including all XML outputs for backups.
+   
+    .PARAMETER exchangeCredential
+
+    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
+    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
+    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
+
+    .OUTPUTS
+
+    Logs all activities and backs up all original data to the log folder directory.
+    Moves the distribution group from on premieses source of authority to office 365 source of authority.
+
+    .EXAMPLE
+
+    Start-collectOnPremFolderPermissions -exchangeServer Server -exchangeCredential $credential
+
+    #>
+
+    #Portions of the audit code adapted from Tony Redmon's project.
+    #https://github.com/12Knocksinna/Office365itpros/blob/master/ReportPermissionsFolderLevel.PS1
+    #Don't tell him - he can get grumpy at times.
+
+    [cmdletbinding()]
+
+    Param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath,
+        [Parameter(Mandatory = $false)]
+        [pscredential]$exchangeOnlineCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineCertificateThumbPrint="",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineOrganizationName="",
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
+        [string]$exchangeOnlineEnvironmentName="O365Default",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineAppID="",
+    )
+
+    #Delare global variables.
+
+    $global:logFile=$NULL #This is the global variable for the calculated log file name
+    [string]$global:staticFolderName="\AuditData\"
+
+    #Declare function variables.
+
+    $auditMailboxes=$NULL
+    $auditFolders=$NULL
+    [array]$auditFolderNames=@()
+    [array]$auditFolderPermissions=@()
+    [int]$forCounter=0
+
+    #Validate that only one method of engaging exchange online was specified.
+
+    Out-LogFile -string "Validating Exchange Online Credentials."
+
+    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
+    {
+        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
+    {
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -string "Only one method of Exchange Online authentication specified."
+    }
+
+    #Validate that all information for the certificate connection has been provieed.
+
+    if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
+    {
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
+    {
+        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
+    {
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+    }
+    
+
+    new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath
+
+    #Start the connection to Exchange Online.
+
+    if ($exchangeOnlineCredential -ne $NULL)
+    {
+       #User specified non-certifate authentication credentials.
+
+       try {
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+       }
+       catch {
+           out-logfile -string "Unable to create the exchange online connection using credentials."
+           out-logfile -string $_ -isError:$TRUE
+       }
+       
+
+    }
+    elseif ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+       #User specified thumbprint authentication.
+
+       try {
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+       }
+       catch {
+        out-logfile -string "Unable to create the exchange online connection using certificate."
+        out-logfile -string $_ -isError:$TRUE
+       }
+
+    }
+
+    try 
+    {
+        out-logFile -string "Obtaining all on premises mailboxes."
+
+        $auditMailboxes = get-exomailbox -resultsize unlimited
+    }
+    catch 
+    {
+        out-logFile -string "Unable to get mailboxes."
+        out-logfile -string $_ -isError:$TRUE
+    }
+ 
+    #At this time we have all the mailboxes.
+    #Now we need to audit folders.
+
+    out-logfile -string "Obtianing all mailbox folders."
+
+    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+
+    foreach ($mailbox in $auditMailboxes)
+    {
+        if ($forCounter -gt 1000)
+        {
+            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            start-sleep -seconds 5
+            $forCounter
+        }
+        else 
+        {
+            $forCounter++    
+        }
+
+        out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
+
+        $MbxNumber++
+
+        Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
+        try {
+            $auditFolders+=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
+        }
+        catch {
+            out-logfile -string "Error obtaining folder statistics."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+    
+    write-progress -activity "Processing mailbox" -completed
+
+    #At this point we need to build the folder names - but utilize the folder IDs.
+    #If you do not use folder IDs - any folders with special characters will fail.
+
+    out-logfile -string "Normlaizing folder names for identity queries."
+
+    $ProgressDelta = 100/($auditFolders.count); $PercentComplete = 0; $FolderNumber = 0
+
+    foreach ($folder in $auditFolders)
+    {
+        out-logFile -string ("Processing folder name ="+$folder.Identity)
+        out-logfile -string ("Processing folder = "+$folder.FolderId)
+        out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
+
+        $folderNumber++
+
+        Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
+        $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
+
+        out-logfile -string ("Temp folder name = "+$tempFolderName)
+
+        $auditFolderNames+=$tempFolderName
+    }
+
+    write-progress -activity "Processing folder" -completed
+
+    out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+    $ProgressDelta = 100/($auditFolderNames.count); $PercentComplete = 0; $FolderNumber = 0
+
+    foreach ($folderName in $auditFolderNames)
+    {
+        if ($forCounter -gt 1000)
+        {
+            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            start-sleep -seconds 5
+            $forCounter=0
+        }
+        else 
+        {
+            $forCounter++    
+        }
+
+        out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
+
+        $folderNumber++
+
+        Write-Progress -Activity "Processing folder" -Status $folderName -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
+        try {
+            $forPermissions += Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+        }
+        catch {
+            out-logfile -string "Unable to obtain folder permissions."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
+    write-progress -activity "Processing folder" -completed
+
+    out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+    $ProgressDelta = 100/($forPermissions.count); $PercentComplete = 0; $forNumber = 0
+
+    foreach ($permission in $forPermissions)
+    {
+        $forUser = $Permission.User.tostring()
+        out-logfile -string ("Found User = "+$forUser)
+
+        $forNumberr++
+
+        Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentComplete
+
+        $PercentComplete += $ProgressDelta
+
+        if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
+        {
+            out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+
+            $forPermissionObject = New-Object PSObject -Property @{
+                identity = $permission.identity
+                folderName = $permission.folderName
+                user = $permission.user
+                accessRights = $permission.accessRights
+            }
+
+            out-logfile -string $forPermissionObject
+
+            $auditFolderPermissions+=$forPermissionObject
+        }
+    }
+
+    write-progress -activity "Processing permission" -completed
+
+    #At thsi time we need to export the results to a XML file that will be used by the main function.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "office365MailboxFolderPermissions.xml"
     $exportFile=Join-path $logFolderPath $fileName
     
     $auditFolderPermissions | export-clixml -path $exportFile
