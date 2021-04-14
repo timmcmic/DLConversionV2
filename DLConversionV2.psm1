@@ -3359,6 +3359,10 @@ function start-collectOnPremMailboxFolders
 
     #>
 
+    #Portions of the audit code adapted from Tony Redmon's project.
+    #https://github.com/12Knocksinna/Office365itpros/blob/master/ReportPermissionsFolderLevel.PS1
+    #Don't tell him - he can get grumpy at times.
+
     [cmdletbinding()]
 
     Param
@@ -3381,46 +3385,83 @@ function start-collectOnPremMailboxFolders
 
     #Declare function variables.
 
-     #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-     [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
-     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+    $auditMailboxes=$NULL
+    $auditFolders=$NULL
 
-     new-LogFile -groupSMTPAddress MailboxFolderPermissions -logFolderPath $logFolderPath
+    #Static variables utilized for the Exchange On-Premsies Powershell.
+   
+    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
+    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
+    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+
+    new-LogFile -groupSMTPAddress MailboxFolderPermissions -logFolderPath $logFolderPath
 
     try 
     {
-        write-host "Creating session to import."
+        out-logFile -string "Creating session to import."
 
         $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
     }
     catch 
     {
-        write-host "Unable to create session to import."
-        write-error $_
+        out-logFile -string "Unable to create session to import."
+        out-logfile -string $_ -isError:$TRUE
     }
     try 
     {
-        Write-host "Attempting to import powershell session."
+        out-logFile -string "Attempting to import powershell session."
 
         import-powershellsession -powershellsession $sessionToImport
     }
     catch 
     {
-        write-host "Unable to import powershell session."
-        write-error $_
+        out-logFile -string "Unable to import powershell session."
+        out-logfile -string $_ -isError:$TRUE
     }
     try 
     {
-        Write-Host "Attempting to set view entire forest to TRUE."
+        out-logFile -string "Attempting to set view entire forest to TRUE."
 
         enable-ExchangeOnPremEntireForest
     }
     catch 
     {
-        Write-Host "Unable to set view entire forest to TRUE."
-        write-error $_
+        out-logFile -string "Unable to set view entire forest to TRUE."
+        out-logfile -string $_ -isError:$TRUE
     }
+
+    try 
+    {
+        out-logFile -string "Obtaining all on premises mailboxes."
+
+        $auditMailboxs = get-mailbox -resultsize unlimited
+    }
+    catch 
+    {
+        out-logFile -string "Unable to get mailboxes."
+        out-logfile -string $_ -isError:$TRUE
+    }
+ 
+    #At this time we have all the mailboxes.
+    #Now we need to audit folders.
+
+    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+
+    foreach ($mailbox in $auditMailboxes)
+    {
+        $MbxNumber++
+
+        Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
+
+        try {
+            $auditFolders+=get-mailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
+        }
+        catch {
+            out-logfile -string "Error obtaining folder statistics."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
+    write-progress -Activity "Processing Mailbox" -Completed
 }
