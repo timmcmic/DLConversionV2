@@ -3388,7 +3388,7 @@ function start-collectOnPremMailboxFolders
     $auditMailboxes=$NULL
     $auditFolders=$NULL
     [array]$auditFolderNames=@()
-    $auditFolderPermissions=$NULL
+    [array]$auditFolderPermissions=$NULL
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -3511,7 +3511,7 @@ function start-collectOnPremMailboxFolders
 
             If (($forUser -ne "Default") -and ($forUser -ne "Anonymous"))
             {
-                out-logfile -string $permission
+                out-logfile -string $permission.user
                 $auditFolderPermissions+=$permission
             }
         }
