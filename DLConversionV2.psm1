@@ -3374,6 +3374,11 @@ function start-collectOnPremMailboxFolders
         [string]$exchangeAuthenticationMethod="Basic"
     )
 
+    #Delare global variables.
+
+    $global:logFile=$NULL #This is the global variable for the calculated log file name
+    [string]$global:staticFolderName="\AuditData\"
+
     #Declare function variables.
 
      #Static variables utilized for the Exchange On-Premsies Powershell.
