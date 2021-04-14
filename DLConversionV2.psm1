@@ -3436,7 +3436,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxes = get-mailbox DummyMailbox0* -resultsize unlimited
+        $auditMailboxes = get-mailbox -resultsize unlimited | where {$_.name -like "DummyMailbox0" -or $_.name -like "DummyMailbox1"}
     }
     catch 
     {
