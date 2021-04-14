@@ -15,7 +15,10 @@
 # EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES						#
 #############################################################################################
 
-<#
+
+Function Start-DistributionListMigration 
+{
+    <#
     .SYNOPSIS
 
     This is the trigger function that begins the process of allowing an administrator to migrate a distribution list from
@@ -141,9 +144,6 @@
     Start-DistributionListMigration
 
     #>
-
-Function Start-DistributionListMigration 
-{
     [cmdletbinding()]
 
     Param
@@ -3308,4 +3308,111 @@ Function Start-DistributionListMigration
     #Archive the files into a date time success folder.
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+}
+
+#============================================================================================
+#============================================================================================
+
+function start-collectOnPremMailboxFolders
+{
+    <#
+    .SYNOPSIS
+
+    This function exports all of the mailbox folders from the on premises environment with custome permissions.
+
+    .DESCRIPTION
+
+    Trigger function.
+
+    .PARAMETER logFolder
+
+    *REQUIRED*
+    The location where logging for the migration should occur including all XML outputs for backups.
+
+    .PARAMETER exchangeServer
+
+    *REQUIRED IF HYBRID MAIL FLOW ENALBED*
+    This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
+    If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
+    If using a single server (direct connection) then kerberos authentication may be utilized.
+    
+    .PARAMETER exchangeCredential
+
+    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
+    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
+    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
+
+    .PARAMETER exchangeAuthenticationMethod
+
+    *OPTIONAL*
+    This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
+    Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
+
+    .OUTPUTS
+
+    Logs all activities and backs up all original data to the log folder directory.
+    Moves the distribution group from on premieses source of authority to office 365 source of authority.
+
+    .EXAMPLE
+
+    Start-collectOnPremFolderPermissions -exchangeServer Server -exchangeCredential $credential
+
+    #>
+
+    [cmdletbinding()]
+
+    Param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeServer=$NULL,
+        [Parameter(Mandatory = $false)]
+        [pscredential]$exchangeCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        [string]$exchangeAuthenticationMethod="Basic"
+    )
+
+    #Declare function variables.
+
+     #Static variables utilized for the Exchange On-Premsies Powershell.
+   
+     [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
+     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
+     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+
+    try 
+    {
+        write-host "Creating session to import."
+
+        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+    }
+    catch 
+    {
+        write-host "Unable to create session to import."
+        write-error $_
+    }
+    try 
+    {
+        Write-host "Attempting to import powershell session."
+
+        import-powershellsession -powershellsession $sessionToImport
+    }
+    catch 
+    {
+        write-host "Unable to import powershell session."
+        write-error $_
+    }
+    try 
+    {
+        Write-Host "Attempting to set view entire forest to TRUE."
+
+        enable-ExchangeOnPremEntireForest
+    }
+    catch 
+    {
+        Write-Host "Unable to set view entire forest to TRUE."
+        write-error $_
+    }
 }
