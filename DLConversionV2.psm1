@@ -3388,6 +3388,8 @@ function start-collectOnPremMailboxFolders
      [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
      [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
 
+     new-LogFile -groupSMTPAddress MailboxFolderPermissions -logFolderPath $logFolderPath
+
     try 
     {
         write-host "Creating session to import."
