@@ -3388,6 +3388,7 @@ function start-collectOnPremMailboxFolders
     $auditMailboxes=$NULL
     $auditFolders=$NULL
     $auditFolderNames=$NULL
+    $auditFolderPermissions=$NULL
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
@@ -3453,6 +3454,8 @@ function start-collectOnPremMailboxFolders
 
     foreach ($mailbox in $auditMailboxes)
     {
+        out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
+
         $MbxNumber++
 
         Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
@@ -3479,6 +3482,8 @@ function start-collectOnPremMailboxFolders
 
     foreach ($folder in $auditFolders)
     {
+        out-logfile -string ("Processing folder = "+$folder.identity)
+
         $folderNumber++
 
         Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentComplete
@@ -3489,4 +3494,28 @@ function start-collectOnPremMailboxFolders
     }
 
     write-progress -Activity "Processing folder" -Completed
+
+    out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+    $ProgressDelta = 100/($auditFoldersNames.count); $PercentComplete = 0; $FolderNumber = 0
+
+    foreach ($folderName in $auditFolderNames)
+    {
+        out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
+
+        $forPermissions = (Get-ExoMailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue)
+
+        foreach ($permission in $forPermissions)
+        {
+            $forUser = $Permission.User
+
+            If (($forUser -ne "Default") -and ($forUser -ne "Anonymous"))
+            {
+                out-logfile -string $permission
+                $auditFolderPermissions+=$permission
+            }
+        }
+
+        $PercentComplete += $ProgressDelta
+    }
 }
