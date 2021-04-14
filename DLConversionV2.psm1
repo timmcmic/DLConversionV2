@@ -3660,7 +3660,7 @@ function start-collectOffice365MailboxFolders
         [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineAppID="",
+        [string]$exchangeOnlineAppID=""
     )
 
     #Delare global variables.
