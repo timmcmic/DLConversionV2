@@ -3513,7 +3513,17 @@ function start-collectOnPremMailboxFolders
             if (($forUser -ne "Default") -and ($foruser -ne "Anonymous"))
             {
                 out-logfile -string ("Not default or anonymous permission = "+$permission.user)
-                $auditFolderPermissions+=$permission
+                
+                $forPermissionObject = New-Object PSObject -Property @{
+                    identity = $folderName
+                    folderName = $permission.folderName
+                    user = $permission.user
+                    accessRights = $permission.accessRights
+                }
+
+                out-logfile -string $forPermissionObject
+
+                $auditFolderPermissions+=$forPermissionObject
             }
         }
 
