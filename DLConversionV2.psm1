@@ -3438,7 +3438,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxes = get-mailbox -resultsize unlimited 
+        $auditMailboxes = get-mailbox -resultsize unlimited | where {$_.name -like "*Amy*" -or $_.name -like "*Tim*"}
     }
     catch 
     {
@@ -3483,10 +3483,8 @@ function start-collectOnPremMailboxFolders
         }
     }
 
-    write-progress -Activity "Processing Mailbox" -Completed
-
-    #At this time all of the main folders for all mailboxes have been gathered.  
-    #For the folders identified - now we need to go through and normalize the names to something we can use.
+    #At this point we need to build the folder names - but utilize the folder IDs.
+    #If you do not use folder IDs - any folders with special characters will fail.
 
     out-logfile -string "Normlaizing folder names for identity queries."
 
@@ -3494,7 +3492,8 @@ function start-collectOnPremMailboxFolders
 
     foreach ($folder in $auditFolders)
     {
-        out-logfile -string ("Processing folder = "+$folder.identity)
+        out-logfile -string ("Processing folder = "+$folder.FolderId)
+        out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
 
         $folderNumber++
 
@@ -3502,10 +3501,12 @@ function start-collectOnPremMailboxFolders
 
         $PercentComplete += $ProgressDelta
 
-        $auditFolderNames+=$folder.identity.tostring().replace("\",":\")
-    }
+        $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId
 
-    write-progress -Activity "Processing folder" -Completed
+        out-logfile -string ("Temp folder name = "+$tempFolderName)
+
+        $auditFolderNames+=$tempFolderName
+    }
 
     out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
 
@@ -3533,32 +3534,35 @@ function start-collectOnPremMailboxFolders
             out-logfile -string "Unable to obtain folder permissions."
             out-logfile -string $_ -isError:$TRUE
         }
-
-
-        foreach ($permission in $forPermissions)
-        {
-            $forUser = $Permission.User.tostring()
-            out-logfile -string ("Found User = "+$forUser)
-
-            if (($forUser -ne "Default") -and ($foruser -ne "Anonymous"))
-            {
-                out-logfile -string ("Not default or anonymous permission = "+$permission.user)
-
-                $forPermissionObject = New-Object PSObject -Property @{
-                    identity = $folderName
-                    folderName = $permission.folderName
-                    user = $permission.user
-                    accessRights = $permission.accessRights
-                }
-
-                out-logfile -string $forPermissionObject
-
-                $auditFolderPermissions+=$forPermissionObject
-            }
-        }
-
-        $PercentComplete += $ProgressDelta
     }
+
+    out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+
+
+    foreach ($permission in $forPermissions)
+    {
+        $forUser = $Permission.User.tostring()
+        out-logfile -string ("Found User = "+$forUser)
+
+        if (($forUser -ne "Default") -and ($foruser -ne "Anonymous"))
+        {
+            out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+
+            $forPermissionObject = New-Object PSObject -Property @{
+                identity = $permission.identity
+                folderName = $permission.folderName
+                user = $permission.user
+                accessRights = $permission.accessRights
+            }
+
+            out-logfile -string $forPermissionObject
+
+            $auditFolderPermissions+=$forPermissionObject
+        }
+    }
+
+    $PercentComplete += $ProgressDelta
 
     #At thsi time we need to export the results to a XML file that will be used by the main function.
 
