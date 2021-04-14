@@ -3438,7 +3438,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxes = get-mailbox -resultsize unlimited | where {$_.name -like "DummyMailbox0" -or $_.name -like "DummyMailbox1"}
+        $auditMailboxes = get-mailbox -resultsize unlimited 
     }
     catch 
     {
@@ -3523,7 +3523,7 @@ function start-collectOnPremMailboxFolders
         {
             $forCounter++    
         }
-        
+
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
         try {
