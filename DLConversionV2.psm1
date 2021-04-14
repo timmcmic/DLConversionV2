@@ -3387,7 +3387,7 @@ function start-collectOnPremMailboxFolders
 
     $auditMailboxes=$NULL
     $auditFolders=$NULL
-    $auditFolderNames=$NULL
+    [array]$auditFolderNames=@()
     $auditFolderPermissions=$NULL
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -3497,7 +3497,7 @@ function start-collectOnPremMailboxFolders
 
     out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
 
-    $ProgressDelta = 100/($auditFoldersNames.count); $PercentComplete = 0; $FolderNumber = 0
+    $ProgressDelta = 100/($auditFolderNames.count); $PercentComplete = 0; $FolderNumber = 0
 
     foreach ($folderName in $auditFolderNames)
     {
