@@ -3503,7 +3503,7 @@ function start-collectOnPremMailboxFolders
 
         $PercentComplete += $ProgressDelta
 
-        $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId
+        $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
 
         out-logfile -string ("Temp folder name = "+$tempFolderName)
 
