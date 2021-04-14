@@ -3454,6 +3454,8 @@ function start-collectOnPremMailboxFolders
 
         Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
 
+        $PercentComplete += $ProgressDelta
+
         try {
             $auditFolders+=get-mailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
         }
