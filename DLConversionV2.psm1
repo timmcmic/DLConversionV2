@@ -3504,7 +3504,7 @@ function start-collectOnPremMailboxFolders
         out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
         try {
-            $forPermissions = Get-mailboxFolderPermission -Identity $FolderName -ErrorAction SilentlyContinue
+            $forPermissions = Get-mailboxFolderPermission -Identity $FolderName -ErrorAction Stop
         }
         catch {
             out-logfile -string "Unable to obtain folder permissions."
@@ -3537,5 +3537,11 @@ function start-collectOnPremMailboxFolders
         $PercentComplete += $ProgressDelta
     }
 
+    #At thsi time we need to export the results to a XML file that will be used by the main function.
 
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "onPremMailboxFolderPermissions.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+    
+    $auditFolderPermissions | export-clixml -path $exportFile
 }
