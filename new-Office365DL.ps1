@@ -73,13 +73,13 @@
         {
             out-logfile -string "A group type override was not specified.  Using group type from on premises."
 
-            if ($originalDLConfiguration.groupType -eq "-2147483640")
+            if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
             {
                 out-logfile -string "The group type from on premises is security."
 
                 $functionGroupType = "Security"
             }
-            elseif ($originalDLConfiguration.grouptype -eq "8")
+            elseif (($originalDLConfiguration.grouptype -eq "8") -or ($originalDLConfiguration.grouptype -eq "4") -or ($originalDLConfiguration.grouptype -eq "2"))
             {
                 out-logfile -string "The group type from on premises is distribution."
 
