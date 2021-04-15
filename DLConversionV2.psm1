@@ -3772,7 +3772,7 @@ function start-collectOffice365MailboxFolders
         {
             out-logfile -string "Sleeping for 5 seconds - powershell refresh."
             start-sleep -seconds 5
-            $forCounter
+            $forCounter=0
         }
         else 
         {
