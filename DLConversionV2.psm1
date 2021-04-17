@@ -3660,7 +3660,9 @@ function start-collectOffice365MailboxFolders
         [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineAppID=""
+        [string]$exchangeOnlineAppID="",
+        [Parameter(Mandatory = $false)]
+        [boolean]$retryCollection=$FALSE
     )
 
     #Delare global variables.
@@ -3675,6 +3677,8 @@ function start-collectOffice365MailboxFolders
     [array]$auditFolderNames=@()
     [array]$auditFolderPermissions=@()
     [int]$forCounter=0
+    [int]$mailboxCounter=0
+    [int]$totalMailboxes=0
 
     new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
 
@@ -3759,13 +3763,27 @@ function start-collectOffice365MailboxFolders
         out-logfile -string $_ -isError:$TRUE
     }
 
+    #Exporting mailbox operations to csv - the goal here will be to allow retry.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "office365MailboxList.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+    
+    $auditMailboxes | export-clixml -path $exportFile
+
     #For each mailbox - we will iterate and grab the folders for processing.
 
     out-logfile -string "Gathering mailbox folders for assessment."
 
     $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
 
-    foreach ($mailbox in $auditMailboxes)
+    $totalMailboxes=$auditMailboxes.count
+    $mailboxCounter=0
+
+    #Here we're going to use a for loop based on count.
+    #This is to support a retry operation.
+
+    for ($mailboxCounter ; $mailboxCounter -lt $totalMailboxes ; $mailboxCounter++)
     {
         if ($forCounter -gt 1000)
         {
@@ -3813,7 +3831,7 @@ function start-collectOffice365MailboxFolders
     
             $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
 
-            start-sleep -Seconds 5 #Debug sleep to watch status bar.
+            #start-sleep -Seconds 5 #Debug sleep to watch status bar.
     
             out-logfile -string ("Temp folder name = "+$tempFolderName)
     
@@ -3873,7 +3891,7 @@ function start-collectOffice365MailboxFolders
 
             $PercentCompletePermissions += $ProgressDeltaPermissions
 
-            start-sleep -seconds 5 #Debug sleep to watch status bar.
+            #start-sleep -seconds 5 #Debug sleep to watch status bar.
 
             if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
             {
@@ -3896,6 +3914,12 @@ function start-collectOffice365MailboxFolders
     }
 
     #At thsi time we need to export the results to a XML file that will be used by the main function.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "office365MailboxProcessed.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+
+    $mailboxCounter.tostring() | export-clixml -path $exportFile
 
     $logFolderPath = $logFolderPath+$global:staticFolderName
     $fileName = "office365MailboxFolderPermissions.xml"
