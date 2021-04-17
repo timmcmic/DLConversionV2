@@ -3794,6 +3794,8 @@ function start-collectOffice365MailboxFolders
                 #It's permissions were already exported - add 1 to start with the next mailbox in the list.
 
                 $mailboxCounter=$mailboxCounter+1
+
+                out-logfile -string ("Next mailbox to process = "+$mailboCounter.toString())
             }
             catch {
                 
