@@ -3812,6 +3812,8 @@ function start-collectOffice365MailboxFolders
             $PercentCompleteFolders += $ProgressDeltaFolders
     
             $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
+
+            start-sleep -m 5 #Debug sleep to watch status bar.
     
             out-logfile -string ("Temp folder name = "+$tempFolderName)
     
@@ -3869,7 +3871,9 @@ function start-collectOffice365MailboxFolders
 
             Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 1 -id 2
 
-            $PercentComplete += $ProgressDeltaPermissions
+            $PercentCompletePermissions += $ProgressDeltaPermissions
+
+            start-sleep -seconds 5 #Debug sleep to watch status bar.
 
             if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
             {
