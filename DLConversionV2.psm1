@@ -3750,23 +3750,44 @@ function start-collectOffice365MailboxFolders
 
     try 
     {
-        out-logFile -string "Obtaining all on premises mailboxes."
+        if ($retryCollection -eq $FALSE)
+        {
+            out-logFile -string "Obtaining all on premises mailboxes."
 
-        $auditMailboxes = get-exomailbox -resultsize unlimited
+            $auditMailboxes = get-exomailbox -resultsize unlimited
+
+            #Exporting mailbox operations to csv - the goal here will be to allow retry.
+
+            $logFolderPath = $logFolderPath+$global:staticFolderName
+            $fileName = "office365MailboxList.xml"
+            $exportFile=Join-path $logFolderPath $fileName
+            
+            $auditMailboxes | export-clixml -path $exportFile
+        }
+        elseif ($retryCollection -eq $TRUE)
+        {
+            out-logfile -string "Retry operation - importing the mailboxes from previous export."
+
+            $logFolderPath = $logFolderPath+$global:staticFolderName
+            $fileName = "office365MailboxList.xml"
+            $importFile=Join-path $logFolderPath $fileName
+
+            try{
+                $auditMailboxes = import-clixml -path $importFile
+            }
+            catch{
+                out-logfile -string "Retry was specified - unable to import the XML file."
+                out-logfile -string $_ -isError:$TRUE -isAudit:$true
+            }
+
+        }
+        
     }
     catch 
     {
         out-logFile -string "Unable to get mailboxes."
         out-logfile -string $_ -isError:$TRUE
     }
-
-    #Exporting mailbox operations to csv - the goal here will be to allow retry.
-
-    $logFolderPath = $logFolderPath+$global:staticFolderName
-    $fileName = "office365MailboxList.xml"
-    $exportFile=Join-path $logFolderPath $fileName
-    
-    $auditMailboxes | export-clixml -path $exportFile
 
     #For each mailbox - we will iterate and grab the folders for processing.
 
@@ -3920,8 +3941,8 @@ function start-collectOffice365MailboxFolders
         
         $auditFolderPermissions | export-csv -path $exportFile -Append
 
-        #At this time we'll write the mailbox counter out.
         #This will be utilized for the retry function.
+        #If we made it this far - 
 
         $fileName = "office365MailboxProcessed.xml"
         $exportFile=Join-path $logFolderPath $fileName
