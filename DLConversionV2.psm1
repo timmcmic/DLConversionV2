@@ -3913,19 +3913,22 @@ function start-collectOffice365MailboxFolders
         write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
     }
 
-    #At thsi time we need to export the results to a XML file that will be used by the main function.
-
-    $logFolderPath = $logFolderPath+$global:staticFolderName
-    $fileName = "office365MailboxProcessed.xml"
-    $exportFile=Join-path $logFolderPath $fileName
-
-    $mailboxCounter.tostring() | export-clixml -path $exportFile
+    #At this time write out the permissions.
 
     $logFolderPath = $logFolderPath+$global:staticFolderName
     $fileName = "office365MailboxFolderPermissions.xml"
     $exportFile=Join-path $logFolderPath $fileName
     
     $auditFolderPermissions | export-clixml -path $exportFile
+
+    #At this time we'll write the mailbox counter out.
+    #This will be utilized for the retry function.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "office365MailboxProcessed.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+
+    $mailboxCounter.tostring() | export-clixml -path $exportFile
 }
     <#
  
