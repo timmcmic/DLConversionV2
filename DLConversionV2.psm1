@@ -3947,7 +3947,7 @@ function start-collectOffice365MailboxFolders
 
                 out-logfile -string $forPermissionObject
 
-                $auditFolderPermissions=$forPermissionObject
+                $auditFolderPermissions+=$forPermissionObject
             }
         }
 
@@ -3967,6 +3967,12 @@ function start-collectOffice365MailboxFolders
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter.tostring() | export-clixml -path $exportFile
+
+        #Null out all the arrays for the next run except mailboxes.
+
+        $auditFolderNames=@()
+        $auditFolders=@()
+        $auditFolderPermissions=@()
     }
 }
     <#
