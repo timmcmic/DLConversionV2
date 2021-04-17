@@ -3782,6 +3782,10 @@ function start-collectOffice365MailboxFolders
 
     for ($mailboxCounter ; $mailboxCounter -lt $totalMailboxes ; $mailboxCounter++)
     {
+        #Drop the mailbox into a working variable.
+        
+        $mailbox = $auditMailboxes[$mailboxCounter]
+
         if ($forCounter -gt 1000)
         {
             out-logfile -string "Sleeping for 5 seconds - powershell refresh."
