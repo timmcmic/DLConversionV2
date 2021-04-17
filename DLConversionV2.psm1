@@ -3680,7 +3680,7 @@ function start-collectOffice365MailboxFolders
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
 
-    new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
+    new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath
 
     #Validate that only one method of engaging exchange online was specified.
 
@@ -3717,9 +3717,6 @@ function start-collectOffice365MailboxFolders
     {
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
-    
-
-    new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath
 
     #Start the connection to Exchange Online.
 
