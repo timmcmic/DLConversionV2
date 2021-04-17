@@ -3813,7 +3813,7 @@ function start-collectOffice365MailboxFolders
     
             $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
 
-            start-sleep -m 5 #Debug sleep to watch status bar.
+            start-sleep -Seconds 5 #Debug sleep to watch status bar.
     
             out-logfile -string ("Temp folder name = "+$tempFolderName)
     
