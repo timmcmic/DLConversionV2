@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             $String,
             [Parameter(Mandatory = $false)]
-            [boolean]$isError=$FALSE
+            [boolean]$isError=$FALSE,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isAudit=$FALSE
         )
     
         # Get the current date
@@ -74,7 +76,11 @@
         {
             write-error $logString
             disable-allPowerShellSessions
-            Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
+
+            if ($isAudit -eq $FALSE)
+            {
+                Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
+            }
             exit
         }
     }
