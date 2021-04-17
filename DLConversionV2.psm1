@@ -3915,7 +3915,6 @@ function start-collectOffice365MailboxFolders
 
         #At this time write out the permissions.
 
-        $logFolderPath = $logFolderPath+$global:staticFolderName
         $fileName = "office365MailboxFolderPermissions.csv"
         $exportFile=Join-path $logFolderPath $fileName
         
@@ -3924,7 +3923,6 @@ function start-collectOffice365MailboxFolders
         #At this time we'll write the mailbox counter out.
         #This will be utilized for the retry function.
 
-        $logFolderPath = $logFolderPath+$global:staticFolderName
         $fileName = "office365MailboxProcessed.xml"
         $exportFile=Join-path $logFolderPath $fileName
 
