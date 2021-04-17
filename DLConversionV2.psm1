@@ -3799,7 +3799,7 @@ function start-collectOffice365MailboxFolders
             }
             catch {
                 out-logfile -string "Unable to read the previous mailbox processed."
-                out-logfeil -string $_ -isError:$TRUE -isAudit:$true
+                out-logfile -string $_ -isError:$TRUE -isAudit:$true
             }
         }
     }
