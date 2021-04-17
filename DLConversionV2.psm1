@@ -3748,6 +3748,10 @@ function start-collectOffice365MailboxFolders
 
     }
 
+    #Define the log file path one time.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+
     try 
     {
         if ($retryCollection -eq $FALSE)
@@ -3758,7 +3762,6 @@ function start-collectOffice365MailboxFolders
 
             #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $logFolderPath = $logFolderPath+$global:staticFolderName
             $fileName = "office365MailboxList.xml"
             $exportFile=Join-path $logFolderPath $fileName
             
@@ -3768,11 +3771,10 @@ function start-collectOffice365MailboxFolders
         {
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
-            $logFolderPath = $logFolderPath+$global:staticFolderName
-            $fileName = "office365MailboxList.xml"
-            $importFile=Join-path $logFolderPath $fileName
-
             try{
+                $fileName = "office365MailboxList.xml"
+                $importFile=Join-path $logFolderPath $fileName
+
                 $auditMailboxes = import-clixml -path $importFile
             }
             catch{
@@ -3780,8 +3782,24 @@ function start-collectOffice365MailboxFolders
                 out-logfile -string $_ -isError:$TRUE -isAudit:$true
             }
 
+            out-logfile -string "Import the count of the last mailbox processed."
+
+            try {
+                $fileName = "office365MailboxProcessed.xml"
+                $importFile=Join-path $logFolderPath $fileName
+
+                $mailboxCounter=Import-Clixml -path $importFile
+
+                #The import represents the last mailbox processed. 
+                #It's permissions were already exported - add 1 to start with the next mailbox in the list.
+
+                $mailboxCounter=$mailboxCounter+1
+            }
+            catch {
+                
+            }
+            
         }
-        
     }
     catch 
     {
