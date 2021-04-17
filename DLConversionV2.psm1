@@ -3758,6 +3758,148 @@ function start-collectOffice365MailboxFolders
         out-logFile -string "Unable to get mailboxes."
         out-logfile -string $_ -isError:$TRUE
     }
+
+    #For each mailbox - we will iterate and grab the folders for processing.
+
+    out-logfile -string "Gathering mailbox folders for assessment."
+
+    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+
+    foreach ($mailbox in $auditMailboxes)
+    {
+        if ($forCounter -gt 1000)
+        {
+            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            start-sleep -seconds 5
+            $forCounter=0
+        }
+        else 
+        {
+            $forCounter++    
+        }
+
+        out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
+
+        $MbxNumber++
+
+        Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete -parentID 1
+
+        $PercentComplete += $ProgressDelta
+
+        try {
+            $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
+        }
+        catch {
+            out-logfile -string "Error obtaining folder statistics."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        #Audit folders have been obtained.
+        #For each folder - normalize the folder names.
+
+        $ProgressDeltaFolders = 100/($auditFolders.count); $PercentCompleteFolders = 0; $FolderNumber = 0
+
+        foreach ($folder in $auditFolders)
+        {
+            out-logFile -string ("Processing folder name ="+$folder.Identity)
+            out-logfile -string ("Processing folder = "+$folder.FolderId)
+            out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
+    
+            $folderNumber++
+    
+            Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentCompleteFolders -id 2 -ParentId 1
+    
+            $PercentCompleteFolders += $ProgressDeltaFolders
+    
+            $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
+    
+            out-logfile -string ("Temp folder name = "+$tempFolderName)
+    
+            $auditFolderNames+=$tempFolderName
+        }
+
+        write-progress -activity "Processing Folders" -ParentId 1 -Id 2 -Completed
+
+        #At this time the folder names have been normalized to mailbox ID and folder ID - this allows us to store them in an object later.
+
+        out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+        $ProgressDeltaAuditNames = 100/($auditFolderNames.count); $PercentCompleteAuditNames = 0; $FolderNameCount = 0
+
+        foreach ($folderName in $auditFolderNames)
+        {
+            if ($forCounter -gt 1000)
+            {
+                out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+                start-sleep -seconds 5
+                $forCounter=0
+            }
+            else 
+            {
+                $forCounter++    
+            }
+
+            out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
+
+            $FolderNameCount++
+
+            Write-Progress -Activity "Processing folder" -Status $folderName -PercentComplete $PercentCompleteAuditNames -parentid 1 -Id 2
+
+            $PercentCompleteAuditNames += $ProgressDeltaAuditNames
+
+            try {
+                $forPermissions += Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+            }
+            catch {
+                out-logfile -string "Unable to obtain folder permissions."
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
+        write-progress "Processing folders" -ParentId 1 -id 2 -Completed
+
+        $ProgressDeltaPermissions = 100/($forPermissions.count); $PercentCompletePermissions = 0; $permissionNumber = 0
+
+        foreach ($permission in $forPermissions)
+        {
+            $forUser = $Permission.User.tostring()
+            out-logfile -string ("Found User = "+$forUser)
+
+            $forNumberr++
+
+            Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 1 -id 2
+
+            $PercentComplete += $ProgressDeltaPermissions
+
+            if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
+            {
+                out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+
+                $forPermissionObject = New-Object PSObject -Property @{
+                    identity = $permission.identity
+                    folderName = $permission.folderName
+                    user = $permission.user
+                    accessRights = $permission.accessRights
+                }
+
+                out-logfile -string $forPermissionObject
+
+                $auditFolderPermissions+=$forPermissionObject
+            }
+        }
+
+        write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
+    }
+
+    #At thsi time we need to export the results to a XML file that will be used by the main function.
+
+    $logFolderPath = $logFolderPath+$global:staticFolderName
+    $fileName = "office365MailboxFolderPermissions.xml"
+    $exportFile=Join-path $logFolderPath $fileName
+    
+    $auditFolderPermissions | export-clixml -path $exportFile
+}
+    <#
  
     #At this time we have all the mailboxes.
     #Now we need to audit folders.
@@ -3896,11 +4038,7 @@ function start-collectOffice365MailboxFolders
 
     write-progress -activity "Processing permission" -completed
 
-    #At thsi time we need to export the results to a XML file that will be used by the main function.
 
-    $logFolderPath = $logFolderPath+$global:staticFolderName
-    $fileName = "office365MailboxFolderPermissions.xml"
-    $exportFile=Join-path $logFolderPath $fileName
-    
-    $auditFolderPermissions | export-clixml -path $exportFile
 }
+
+#>
