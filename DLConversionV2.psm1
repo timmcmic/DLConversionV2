@@ -3783,7 +3783,7 @@ function start-collectOffice365MailboxFolders
     for ($mailboxCounter ; $mailboxCounter -lt $totalMailboxes ; $mailboxCounter++)
     {
         #Drop the mailbox into a working variable.
-        
+
         $mailbox = $auditMailboxes[$mailboxCounter]
 
         if ($forCounter -gt 1000)
@@ -3912,24 +3912,24 @@ function start-collectOffice365MailboxFolders
         }
 
         write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
+
+        #At this time write out the permissions.
+
+        $logFolderPath = $logFolderPath+$global:staticFolderName
+        $fileName = "office365MailboxFolderPermissions.csv"
+        $exportFile=Join-path $logFolderPath $fileName
+        
+        $auditFolderPermissions | export-csv -path $exportFile -Append
+
+        #At this time we'll write the mailbox counter out.
+        #This will be utilized for the retry function.
+
+        $logFolderPath = $logFolderPath+$global:staticFolderName
+        $fileName = "office365MailboxProcessed.xml"
+        $exportFile=Join-path $logFolderPath $fileName
+
+        $mailboxCounter.tostring() | export-clixml -path $exportFile
     }
-
-    #At this time write out the permissions.
-
-    $logFolderPath = $logFolderPath+$global:staticFolderName
-    $fileName = "office365MailboxFolderPermissions.csv"
-    $exportFile=Join-path $logFolderPath $fileName
-    
-    $auditFolderPermissions | export-csv -path $exportFile -Append
-
-    #At this time we'll write the mailbox counter out.
-    #This will be utilized for the retry function.
-
-    $logFolderPath = $logFolderPath+$global:staticFolderName
-    $fileName = "office365MailboxProcessed.xml"
-    $exportFile=Join-path $logFolderPath $fileName
-
-    $mailboxCounter.tostring() | export-clixml -path $exportFile
 }
     <#
  
