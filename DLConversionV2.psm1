@@ -3816,7 +3816,6 @@ function start-collectOffice365MailboxFolders
     $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
 
     $totalMailboxes=$auditMailboxes.count
-    $mailboxCounter=0
 
     #Here we're going to use a for loop based on count.
     #This is to support a retry operation.
