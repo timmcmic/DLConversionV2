@@ -3795,12 +3795,12 @@ function start-collectOffice365MailboxFolders
 
                 $mailboxCounter=$mailboxCounter+1
 
-                out-logfile -string ("Next mailbox to process = "+$mailboCounter.toString())
+                out-logfile -string ("Next mailbox to process = "+$mailboxCounter.toString())
             }
             catch {
-                
+                out-logfile -string "Unable to read the previous mailbox processed."
+                out-logfeil -string $_ -isError:$TRUE -isAudit:$true
             }
-            
         }
     }
     catch 
