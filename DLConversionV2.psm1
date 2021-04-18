@@ -912,7 +912,26 @@ Function Start-DistributionListMigration
         out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
         out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
 
-        $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
+        if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
+        {
+            out-logfile -string "Administrator has selected to import previously gathered permissions."
+
+            $importFilePath=Join-path $importFile $retainOnPremRecipientFullMailboxAccessXML
+
+            try {
+                $importData = import-CLIXML -path $importFilePath
+            }
+            catch {
+                out-logfile -string "Error importing the send as permissions from collect function."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+        }
+        else 
+        {
+            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
+        }
     }
     else
     {
