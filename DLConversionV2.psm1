@@ -220,6 +220,7 @@ Function Start-DistributionListMigration
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\DLMigration\"
     [string]$global:staticAuditFolderName="\AuditData\"
+    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
     [int]$global:unDoStatus=0
 
     #Define variables utilized in the core function that are not defined by parameters.
@@ -858,11 +859,13 @@ Function Start-DistributionListMigration
 
         if ($useCollectedSendAsOnPrem -eq $TRUE)
         {
-            $logFolderPath = $logFolderPath+$global:staticAuditFolderName
-            $importFile=Join-path $logFolderPath $retainOnPremRecipientSendAsXML
+            out-logfile -string "Administrator has selected to import previously gathered permissions."
+
+            
+            $importFilePath=Join-path $importFile $retainOnPremRecipientSendAsXML
 
             try {
-                $importData = import-CLIXML -path $importFile
+                $importData = import-CLIXML -path $importFilePath
             }
             catch {
                 out-logfile -string "Error importing the send as permissions from collect function."
