@@ -105,7 +105,11 @@
             {
                 #Since each permission is in domain\samAccountName format split the string.
 
-                $stringTest = $sendAsRight.user.split("\")
+                if ($sendAsRight.user -notlike "*S-1-5-21*")
+                {
+                    #Need to ignore anything that looks like a SID / orphaned entry.
+                    $stringTest = $sendAsRight.user.split("\")
+                }
 
                 #Test the second half of the string for a direct eq to samAccountName.
 
@@ -135,7 +139,11 @@
 
                     $functionPercentComplete+=$functionProgress
 
-                    $stringTest = $recipient.user.split("\")
+                    if ($recipient.user -notlike "*S-1-5-21*")
+                    {
+                        #Need to ignore anything that looks like a SID / orphaned entry.
+                        $stringTest = $sendAsRight.user.split("\")
+                    }
 
                     if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
                     {
