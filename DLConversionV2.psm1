@@ -307,6 +307,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
+    [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
 
@@ -979,20 +980,19 @@ Function Start-DistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }  
         }
-        else 
-        {
-            try {
-                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premsies."
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
     }
     else
     {
         out-logfile -string "Administrator has choosen to not audit on premises send as."
+    }
+
+    #Record what was returned.
+
+    if ($allMailboxesFolderPermissions -ne 0)
+    {
+        out-logfile -string $allMailboxesFolderPermissions
+
+        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $allMailboxesFolderPermissionsXML
     }
 
     #If there are any sendAs or mailbox access permissiosn for the group.
