@@ -60,7 +60,9 @@ function start-collectOnPremMailboxFolders
         [pscredential]$exchangeCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
-        [string]$exchangeAuthenticationMethod="Basic"
+        [string]$exchangeAuthenticationMethod="Basic",
+        [Parameter(Mandatory = $false)]
+        [boolean]$retryCollection=$FALSE
     )
 
     #Delare global variables.
@@ -81,7 +83,6 @@ function start-collectOnPremMailboxFolders
     [string]$onPremMailboxList="onPremMailboxList.xml"
     [string]$onPremMailboxProcessed="onPremMailboxProcessed.xml"
     [int]$auditPermissionsFound=0
-    [boolean]$retryCollection=$FALSE
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
    
