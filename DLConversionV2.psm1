@@ -192,19 +192,34 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$auditFullMailboxAccessOnPrem=$FALSE,
+        [boolean]$retainFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$auditSendAsOnPrem=$FALSE,
+        [boolean]$retainSendAsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainMailboxFolderPermsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$retainFullMailboxAccessOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainSendAsOffice365=$FALSE
+        [boolean]$retainSendAsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainMailboxFolderPermsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedSendAsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
     )
 
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\DLMigration\"
+    [string]$global:staticAuditFolderName="\AuditData\"
     [int]$global:unDoStatus=0
 
     #Define variables utilized in the core function that are not defined by parameters.
@@ -291,6 +306,14 @@ Function Start-DistributionListMigration
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
+
+    #Define the retention files.
+
+    [string]$retainOffice365RecipientFullMailboxAccess="office365RecipientFullMailboxAccess.xml"
+    [string]$retainOffice365MailboxFolderPermissions="office365MailboxFolderPermissions.xml"
+    [string]$retainOnPremRecipientFullMailboxAccess="onPremRecipientFullMailboxAccess.xml"
+    [string]$retainOnPremMailboxFolderPermissions="onPremailboxFolderPermissions.xml"
+    [string]$reaintOnPremRecipientSendAs="onPremRecipientSendAs.xml"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
