@@ -3374,4 +3374,4 @@ Function Start-DistributionListMigration
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
-
+}
