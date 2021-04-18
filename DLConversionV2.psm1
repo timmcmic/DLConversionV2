@@ -2206,7 +2206,7 @@ Function Start-DistributionListMigration
                 }
 
                 try {
-                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress -collectedUser $importData
+                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress -collecteData $importData
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE
