@@ -87,8 +87,6 @@
                         $functionCounter++    
                     }
 
-                    $functionPercentComplete+=$functionProgress
-
                     $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
                     #$functionSendAsRights+= invoke-command {Get-ADPermission -identity $args[0] | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)}}-ArgumentList $recipient.identity,$functionQueryName
                 } 
@@ -131,15 +129,15 @@
 
                 foreach ($recipient in $collectedData)
                 {
-                    out-logfile -string $recipient.user
-                    out-logfile -string $recipient.identity
                     $MbxNumber++
 
                     write-progress -activity "Processing Recipient" -status "Something" -PercentComplete $PercentComplete
 
+                    Write-Host "1" -ForegroundColor Red
+
                     $PercentComplete += $ProgressDelta
 
-                    $functionPercentComplete+=$functionProgress
+                    Write-Host "2" -ForegroundColor Red
 
                     if ($recipient.user -notlike "*S-1-5-21*")
                     {
