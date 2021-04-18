@@ -330,7 +330,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsManagedBy=$NULL
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
-    [array]$allMailboxesFolderPermissions=$NULL
+    [array]$allMailboxesFolderPermissions=@()
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
