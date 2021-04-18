@@ -3909,49 +3909,51 @@ function start-collectOffice365MailboxFolders
             $PercentCompleteAuditNames += $ProgressDeltaAuditNames
 
             try {
-                $forPermissions += Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+                $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
             }
             catch {
                 out-logfile -string "Unable to obtain folder permissions."
                 out-logfile -string $_ -isError:$TRUE
             }
+
+            #Check the permissions found to see if they meet the criteria.
+
+            $ProgressDeltaPermissions = 100/($forPermissions.count); $PercentCompletePermissions = 0; $permissionNumber = 0
+
+            foreach ($permission in $forPermissions)
+            {
+                $forUser = $Permission.User.tostring()
+                out-logfile -string ("Found User = "+$forUser)
+
+                $forNumberr++
+
+                Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 1 -id 2
+
+                $PercentCompletePermissions += $ProgressDeltaPermissions
+
+                #start-sleep -seconds 5 #Debug sleep to watch status bar.
+
+                if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
+                {
+                    out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+
+                    $forPermissionObject = New-Object PSObject -Property @{
+                        identity = $permission.identity
+                        folderName = $permission.folderName
+                        user = $permission.user
+                        accessRights = $permission.accessRights
+                    }
+
+                    out-logfile -string $forPermissionObject
+
+                    $auditFolderPermissions+=$forPermissionObject
+                }
+            }
+
+            write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
         }
 
         write-progress "Processing folders" -ParentId 1 -id 2 -Completed
-
-        $ProgressDeltaPermissions = 100/($forPermissions.count); $PercentCompletePermissions = 0; $permissionNumber = 0
-
-        foreach ($permission in $forPermissions)
-        {
-            $forUser = $Permission.User.tostring()
-            out-logfile -string ("Found User = "+$forUser)
-
-            $forNumberr++
-
-            Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 1 -id 2
-
-            $PercentCompletePermissions += $ProgressDeltaPermissions
-
-            #start-sleep -seconds 5 #Debug sleep to watch status bar.
-
-            if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
-            {
-                out-logfile -string ("Not default or anonymous permission = "+$permission.user)
-
-                $forPermissionObject = New-Object PSObject -Property @{
-                    identity = $permission.identity
-                    folderName = $permission.folderName
-                    user = $permission.user
-                    accessRights = $permission.accessRights
-                }
-
-                out-logfile -string $forPermissionObject
-
-                $auditFolderPermissions+=$forPermissionObject
-            }
-        }
-
-        write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
 
         #At this time write out the permissions.
 
