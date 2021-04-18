@@ -3927,7 +3927,7 @@ function start-collectOffice365MailboxFolders
 
                 $forNumberr++
 
-                Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 1 -id 2
+                Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 2 -id 3
 
                 $PercentCompletePermissions += $ProgressDeltaPermissions
 
@@ -3950,7 +3950,7 @@ function start-collectOffice365MailboxFolders
                 }
             }
 
-            write-progress -activity 'Processing permissions' -ParentId 1 -id 2 -Completed
+            write-progress -activity 'Processing permissions' -ParentId 2 -id 3 -Completed
         }
 
         write-progress "Processing folders" -ParentId 1 -id 2 -Completed
