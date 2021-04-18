@@ -129,6 +129,8 @@
 
                 $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
+                out-logfile -string $collectedData
+
                 foreach ($recipient in $collectedData)
                 {
                     $MbxNumber++
