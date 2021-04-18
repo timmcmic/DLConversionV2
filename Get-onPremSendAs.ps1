@@ -129,13 +129,11 @@
 
                 $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
-                out-logfile -string $collectedData
-
                 foreach ($recipient in $collectedData)
                 {
                     $MbxNumber++
 
-                    write-progress -activity "Processing Recipient" -status $recipient.Identity -PercentComplete $PercentComplete
+                    write-progress -activity "Processing Recipient" -status $recipient.Identity.tostring() -PercentComplete $PercentComplete
 
                     $PercentComplete += $ProgressDelta
 
