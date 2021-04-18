@@ -3844,7 +3844,7 @@ function start-collectOffice365MailboxFolders
 
         $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter
 
-        Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -parentID 1
+        Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
         $PercentComplete += $ProgressDelta
 
@@ -3960,7 +3960,7 @@ function start-collectOffice365MailboxFolders
 
         #At this time write out the permissions.
 
-        $fileName = "office365MailboxFolderPermissions.csv"
+        $fileName = "office365MailboxFolderPermissions.xml"
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditFolderPermissions | Export-Clixml -Path $exportFile
