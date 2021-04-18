@@ -860,13 +860,31 @@ Function Start-DistributionListMigration
             $logFolderPath = $logFolderPath+$global:staticAuditFolderName
             $importFile=Join-path $logFolderPath $retainOnPremRecipientSendAsXML
 
-            $importData = import-CLIXML -path $importFile
+            try {
+                $importData = import-CLIXML -path $importFile
+            }
+            catch {
+                out-logfile -string "Error importing the send as permissions from collect function."
+                out-logfile -string $_ -isError:$TRUE
+            }
 
-            $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+            try {
+                $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+            }
+            catch {
+                out-logfile -string "Unable to process send as rights on premises."
+                out-logfile -string $_ -isError:$TRUE
+            }  
         }
         else 
         {
-            $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+            try {
+                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+            }
+            catch {
+                out-logfile -string "Unable to process send as rights on premsies."
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
     }
     else
