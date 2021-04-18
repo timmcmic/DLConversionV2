@@ -127,7 +127,7 @@
             try {
                 out-logfile -string "Test for send as rights."
 
-                $ProgressDelta = 100/($functionRecipients.count); $PercentComplete = 0; $MbxNumber = 0
+                $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
                 foreach ($recipient in $collectedData)
                 {
