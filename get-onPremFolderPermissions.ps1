@@ -59,8 +59,11 @@
 
                 if ($recipient.user -notlike "*S-1-5-21*")
                 {
+                    write-host "Not SID" -ForegroundColor REd
                     if ($recipient.user -eq $originalDLConfiguration.samAccountName)
                     {
+                        write-host "This is a user." -ForegroundColor Green
+
                         out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
                         $functionFolderRightsUsers+=$recipient.identity
                     }
