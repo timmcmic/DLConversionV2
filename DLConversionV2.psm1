@@ -2366,6 +2366,10 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $allOffice365MailboxesFolderPermissionsXML
         }
+        else 
+        {
+            $allOffice365MailboxFolderPermissions=@()    
+        }
     }
     else 
     {
@@ -2388,7 +2392,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
