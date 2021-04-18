@@ -222,6 +222,8 @@ Function Start-DistributionListMigration
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
     [int]$global:unDoStatus=0
+    [array]$importData=@()
+    [string]$importFilePath=$NULL
 
     #Define variables utilized in the core function that are not defined by parameters.
 
