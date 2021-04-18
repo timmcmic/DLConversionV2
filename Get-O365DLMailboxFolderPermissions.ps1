@@ -73,6 +73,8 @@
             }
         }
 
+        write-progress -activity "Processing Recipient" -completed
+
         Out-LogFile -string "END Get-O365DLMailboxFolderPermissions"
         Out-LogFile -string "********************************************************************************"
         
