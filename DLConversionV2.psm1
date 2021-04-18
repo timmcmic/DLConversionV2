@@ -3838,6 +3838,7 @@ function start-collectOffice365MailboxFolders
         }
 
         out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
+        out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
 
         $MbxNumber++
 
