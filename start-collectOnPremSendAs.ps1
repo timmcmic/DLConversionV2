@@ -182,13 +182,13 @@ function start-collectOnPremSendAs
 
             try {
 
-                $fileName=$onPremMailboxFolderPermissions
+                $fileName=$onPremRecipientSendAs
                 $importFile=Join-path $logFolderPath $fileName
     
                 $auditFolderPermissions = import-clixml -Path $importFile
             }
             catch {
-                out-logfile -string "Unable to import the previously exported permissions."
+                out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$true
             }
         }
     }
