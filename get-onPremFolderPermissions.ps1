@@ -73,6 +73,8 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
+        out-logfile -string $functionFolderRightsUsers
+
         write-progress -Activity "Processing Recipient" -Completed
 
         Out-LogFile -string "********************************************************************************"
