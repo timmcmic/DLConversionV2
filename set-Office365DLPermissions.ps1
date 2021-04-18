@@ -119,7 +119,7 @@
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights
+                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE
                 }
                 catch {
                     out-logFile -string "Unable to add the full mailbox access permission in Office 365."
@@ -135,7 +135,7 @@
         $global:unDoStatus=$global:unDoStatus+1
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-        
+
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
     }
