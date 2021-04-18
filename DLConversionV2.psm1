@@ -988,7 +988,7 @@ Function Start-DistributionListMigration
 
     #Record what was returned.
 
-    if ($allMailboxesFolderPermissions -ne 0)
+    if ($allMailboxesFolderPermissions.count -ne 0)
     {
         out-logfile -string $allMailboxesFolderPermissions
 

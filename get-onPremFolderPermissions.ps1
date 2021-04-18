@@ -49,8 +49,6 @@
 
             foreach ($recipient in $collectedData)
             {
-                out-logfile -string $recipient.user 
-                write-host "Here" -ForegroundColor RED
                 $MbxNumber++
 
                 write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
@@ -59,7 +57,9 @@
 
                 if ($recipient.user -notlike "*S-1-5-21*")
                 {
-                    write-host "Not SID" -ForegroundColor REd
+                    write-host $recipient.user
+                    write-host $originalDLConfiguration.samAccountName
+                    
                     if ($recipient.user -eq $originalDLConfiguration.samAccountName)
                     {
                         write-host "This is a user." -ForegroundColor Green
