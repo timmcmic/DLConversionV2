@@ -329,6 +329,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsManagedBy=$NULL
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
+    [array]$allMailboxesFolderPermissions=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -947,6 +948,51 @@ Function Start-DistributionListMigration
         out-logfile -string $allObjectsFullMailboxAccess
 
         out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $allGroupsFullMailboxAccessXML
+    }
+
+    out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
+
+    if ($retainMailboxFolderPermsOnPrem -eq $TRUE)
+    {
+        out-logfile -string "Administrator has choosen to retain mailbox folder permissions.."
+        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+
+        if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
+        {
+            out-logfile -string "Administrator has selected to import previously gathered permissions."
+
+            $importFilePath=Join-path $importFile $retainOnPremMailboxFolderPermissionsXML
+
+            try {
+                $importData = import-CLIXML -path $importFilePath
+            }
+            catch {
+                out-logfile -string "Error importing the send as permissions from collect function."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try {
+                $allMailboxesFolderPermissions = get-onPremFolderPermissions -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+            }
+            catch {
+                out-logfile -string "Unable to process send as rights on premises."
+                out-logfile -string $_ -isError:$TRUE
+            }  
+        }
+        else 
+        {
+            try {
+                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+            }
+            catch {
+                out-logfile -string "Unable to process send as rights on premsies."
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else
+    {
+        out-logfile -string "Administrator has choosen to not audit on premises send as."
     }
 
     #If there are any sendAs or mailbox access permissiosn for the group.
