@@ -1000,7 +1000,7 @@ Function Start-DistributionListMigration
     #In testing disabling the group will allow the permissions to continue functioning - deleting the group would loose it.
     #Overrideing the administrators decision to delete the group.
 
-    if (($allObjectSendAsAccess -ne 0) -or ($allObjectsFullMailboxAccess -ne 0))
+    if (($allObjectSendAsAccess -ne 0) -or ($allObjectsFullMailboxAccess -ne 0) -or ($allMailboxesFolderPermissions -ne 0))
     {
         out-logfile -string "Overriding any administrator action to delete the group as dependencies exist."
         $retainOriginalGroup = $TRUE
