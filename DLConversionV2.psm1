@@ -3842,7 +3842,9 @@ function start-collectOffice365MailboxFolders
 
         $MbxNumber++
 
-        Write-Progress -Activity "Processing mailbox" -Status $mailbox.primarySMTPAddress+" "+$mailboxCounter -PercentComplete $PercentComplete -parentID 1
+        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter
+
+        Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -parentID 1
 
         $PercentComplete += $ProgressDelta
 
