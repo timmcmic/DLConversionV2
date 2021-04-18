@@ -59,8 +59,8 @@
                 {
                     write-host $recipient.user
                     write-host $originalDLConfiguration.samAccountName
-                    
-                    if ($recipient.user -eq $originalDLConfiguration.samAccountName)
+
+                    if ($recipient.user.tostring() -eq $originalDLConfiguration.samAccountName)
                     {
                         write-host "This is a user." -ForegroundColor Green
 
