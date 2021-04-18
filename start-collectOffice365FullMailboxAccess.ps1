@@ -1,4 +1,4 @@
-function start-collectOnPremFullMailboxAccess
+function start-collectOffice365FullMailboxAccess
 {
     <#
     .SYNOPSIS
@@ -40,7 +40,7 @@ function start-collectOnPremFullMailboxAccess
 
     .EXAMPLE
 
-    Start-collectOnPremFolderPermissions -exchangeServer Server -exchangeCredential $credential
+    Start-collectoffice365FolderPermissions -exchangeServer Server -exchangeCredential $credential
 
     #>
 
@@ -55,12 +55,16 @@ function start-collectOnPremFullMailboxAccess
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         [Parameter(Mandatory = $false)]
-        [string]$exchangeServer=$NULL,
+        [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeCredential=$NULL,
+        [string]$exchangeOnlineCertificateThumbPrint="",
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        [string]$exchangeAuthenticationMethod="Basic",
+        [string]$exchangeOnlineOrganizationName="",
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
+        [string]$exchangeOnlineEnvironmentName="O365Default",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
         [boolean]$retryCollection=$FALSE
     )
@@ -72,56 +76,83 @@ function start-collectOnPremFullMailboxAccess
 
     #Declare function variables.
 
+    #Declare function variables.
+
     $auditMailboxes=$NULL
     [array]$auditFullMailboxAccess=@()
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
-    [string]$onPremRecipientFullMailboxAccess="onPremRecipientFullMailboxAccess.xml"
-    [string]$onPremMailboxList="onPremMailboxList.xml"
-    [string]$onPremRecipientProcessed="onPremRecipientProcessed.xml"
+    [string]$office365RecipientFullMailboxAccess="office365RecipientFullMailboxAccess.xml"
+    [string]$office365MailboxList="office365MailboxList.xml"
+    [string]$office365RecipientProcessed="office365RecipientProcessed.xml"
 
-    #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+    new-LogFile -groupSMTPAddress Office365FullMailboxAccessPermissions -logFolderPath $logFolderPath
 
-    new-LogFile -groupSMTPAddress OnPremFullMailboxAccessPermissions -logFolderPath $logFolderPath
+    #Validate that only one method of engaging exchange online was specified.
 
-    try 
+    Out-LogFile -string "Validating Exchange Online Credentials."
+
+    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
     {
-        out-logFile -string "Creating session to import."
-
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
     }
-    catch 
+    elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
     {
-        out-logFile -string "Unable to create session to import."
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -string "Only one method of Exchange Online authentication specified."
+    }
+
+    #Validate that all information for the certificate connection has been provieed.
+
+    if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
+    {
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
+    {
+        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
+    {
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+    }
+
+    #Start the connection to Exchange Online.
+
+    if ($exchangeOnlineCredential -ne $NULL)
+    {
+       #User specified non-certifate authentication credentials.
+
+       try {
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+       }
+       catch {
+           out-logfile -string "Unable to create the exchange online connection using credentials."
+           out-logfile -string $_ -isError:$TRUE
+       }
+       
+
+    }
+    elseif ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+       #User specified thumbprint authentication.
+
+       try {
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+       }
+       catch {
+        out-logfile -string "Unable to create the exchange online connection using certificate."
         out-logfile -string $_ -isError:$TRUE
-    }
-    try 
-    {
-        out-logFile -string "Attempting to import powershell session."
+       }
 
-        import-powershellsession -powershellsession $sessionToImport
-    }
-    catch 
-    {
-        out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE
-    }
-    try 
-    {
-        out-logFile -string "Attempting to set view entire forest to TRUE."
-
-        enable-ExchangeOnPremEntireForest
-    }
-    catch 
-    {
-        out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE
     }
 
     #Define the log file path one time.
@@ -138,7 +169,7 @@ function start-collectOnPremFullMailboxAccess
 
             #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = $onPremMailboxList
+            $fileName = $office365MailboxList
             $exportFile=Join-path $logFolderPath $fileName
             
             $auditMailboxes | export-clixml -path $exportFile
@@ -148,7 +179,7 @@ function start-collectOnPremFullMailboxAccess
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = $onPremMailboxList
+                $fileName = $office365MailboxList
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditMailboxes = import-clixml -path $importFile
@@ -161,7 +192,7 @@ function start-collectOnPremFullMailboxAccess
             out-logfile -string "Import the count of the last mailbox processed."
 
             try {
-                $fileName = $onPremRecipientProcessed
+                $fileName = $office365RecipientProcessed
                 $importFile=Join-path $logFolderPath $fileName
 
                 $mailboxCounter=Import-Clixml -path $importFile
@@ -182,7 +213,7 @@ function start-collectOnPremFullMailboxAccess
 
             try {
 
-                $fileName=$onPremRecipientFullMailboxAccess
+                $fileName=$office365RecipientFullMailboxAccess
                 $importFile=Join-path $logFolderPath $fileName
     
                 $auditFullMailboxAccess = import-clixml -Path $importFile
@@ -247,19 +278,19 @@ function start-collectOnPremFullMailboxAccess
                 $forCounter++    
             }
 
-            $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.identity | Where-Object {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
+            $auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity | Where-Object {$_.user -notlike "NT Authority\Self")
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
             out-logfile -string $_ -isError:$TRUE
         }
 
-        $fileName = $onPremRecipientFullMailboxAccess
+        $fileName = $office365RecipientFullMailboxAccess
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditFullMailboxAccess | Export-Clixml -Path $exportFile
         
-        $fileName = $onPremRecipientProcessed
+        $fileName = $office365RecipientProcessed
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter | export-clixml -path $exportFile
