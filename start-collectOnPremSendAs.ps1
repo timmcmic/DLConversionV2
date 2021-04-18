@@ -185,7 +185,7 @@ function start-collectOnPremSendAs
                 $fileName=$onPremRecipientSendAs
                 $importFile=Join-path $logFolderPath $fileName
     
-                $auditFolderPermissions = import-clixml -Path $importFile
+                $auditSendAs = import-clixml -Path $importFile
             }
             catch {
                 out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$true
@@ -199,8 +199,6 @@ function start-collectOnPremSendAs
     }
 
     #For each mailbox - we will iterate and grab the folders for processing.
-
-    out-logfile -string "Gathering mailbox folders for assessment."
 
     $ProgressDelta = 100/($auditRecipients.count); $PercentComplete = 0; $recipientNumber = 0
 
