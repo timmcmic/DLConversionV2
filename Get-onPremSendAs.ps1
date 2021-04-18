@@ -131,6 +131,7 @@
 
                 foreach ($recipient in $collectedData)
                 {
+                    out-logfile -string $recipient
                     $MbxNumber++
 
                     write-progress -activity "Processing Recipient" -status "Something" -PercentComplete $PercentComplete
