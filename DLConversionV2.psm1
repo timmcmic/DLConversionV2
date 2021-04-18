@@ -309,11 +309,11 @@ Function Start-DistributionListMigration
 
     #Define the retention files.
 
-    [string]$retainOffice365RecipientFullMailboxAccess="office365RecipientFullMailboxAccess.xml"
-    [string]$retainOffice365MailboxFolderPermissions="office365MailboxFolderPermissions.xml"
-    [string]$retainOnPremRecipientFullMailboxAccess="onPremRecipientFullMailboxAccess.xml"
-    [string]$retainOnPremMailboxFolderPermissions="onPremailboxFolderPermissions.xml"
-    [string]$reaintOnPremRecipientSendAs="onPremRecipientSendAs.xml"
+    [string]$retainOffice365RecipientFullMailboxAccessXML="office365RecipientFullMailboxAccess.xml"
+    [string]$retainMailboxFolderPermsOffice365XML="office365MailboxFolderPermissions.xml"
+    [string]$retainOnPremRecipientFullMailboxAccessXML="onPremRecipientFullMailboxAccess.xml"
+    [string]$retainOnPremMailboxFolderPermissionsXML="onPremailboxFolderPermissions.xml"
+    [string]$retainOnPremRecipientSendAsXML="onPremRecipientSendAs.xml"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -653,6 +653,46 @@ Function Start-DistributionListMigration
         out-logfile -string "When retaining Office 365 Full Mailbox Access you must retain Office 365 settings." -isError:$TRUE
     }
 
+    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
+    {
+        out-logfile -string "When retaining Office 365 Mailbox Folder Permissions you must retain Office 365 settings." -isError:$TRUE
+    }
+
+    if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
+    {
+        $retainFullMailboxAccessOnPrem=$TRUE
+    }
+
+    if ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
+    {
+        $retainFullMailboxAccessOffice365=$TRUE
+    }
+
+    if ($useCollectedSendAsOnPrem -eq $TRUE)
+    {
+        $retainSendAsOnPrem=$TRUE
+    }
+
+    if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
+    {
+        $retainMailboxFolderPermsOnPrem=$TRUE
+    
+    if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
+    {
+        $retainMailboxFolderPermsOffice365=$TRUE
+    }
+
+    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
+    {
+        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
+    }
+
+    if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
+    {
+        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
+    }
+
+
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
@@ -810,12 +850,24 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
-    if ($auditSendAsOnPrem -eq $TRUE)
+    if ($retainSendAsOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies send as."
         out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
 
-        $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+        if ($useCollectedSendAsOnPrem -eq $TRUE)
+        {
+            $logFolderPath = $logFolderPath+$global:staticAuditFolderName
+            $importFile=Join-path $logFolderPath $retainOnPremRecipientSendAsXML
+
+            $importData = import-CLIXML -path $importFile
+
+            $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+        }
+        else 
+        {
+            $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+        }
     }
     else
     {
@@ -833,7 +885,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
 
-    if ($auditFullMailboxAccessOnPrem -eq $TRUE)
+    if ($retainFullMailboxAccessOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
         out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
