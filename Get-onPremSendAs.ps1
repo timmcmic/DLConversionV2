@@ -107,14 +107,14 @@
                 {
                     #Need to ignore anything that looks like a SID / orphaned entry.
                     $stringTest = $sendAsRight.user.split("\")
-                }
 
-                #Test the second half of the string for a direct eq to samAccountName.
+                    #Test the second half of the string for a direct eq to samAccountName.
 
-                if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
-                {
-                    out-logfile -string ("Send as permission matching group found - recording."+$sendAsRight.identity)
-                    $functionSendAsIdentities+=$sendAsRight.identity
+                    if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
+                    {
+                        out-logfile -string ("Send as permission matching group found - recording."+$sendAsRight.identity)
+                        $functionSendAsIdentities+=$sendAsRight.identity
+                    }
                 }
             }
 
@@ -122,7 +122,8 @@
         }
         elseif ($collectedData -ne $NULL)
         {
-            try {
+            try 
+            {
                 out-logfile -string "Test for send as rights."
 
                 $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
@@ -141,12 +142,12 @@
                         $stringTest = $recipient.user.split("\")
 
                         if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
-                    {
-                        out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
-                        $functionSendAsIdentities+=$recipient.identity
-                    }
-                    }
-                } 
+                        {
+                            out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
+                            $functionSendAsIdentities+=$recipient.identity
+                        }
+                    } 
+                }
             }
             catch 
             {
