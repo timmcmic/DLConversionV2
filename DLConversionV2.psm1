@@ -3679,6 +3679,10 @@ function start-collectOffice365MailboxFolders
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
+    [string]$office365MailboxFolderPermissions="office365MailboxFolderPermissions.xml"
+    [string]$office365MailboxList="office365MailboxList.xml"
+    [string]$office365MailboxProcessed="office365MailboxProcessed.xml"
+    [int]$auditPermissionsFound=0
 
     new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath
 
@@ -3762,7 +3766,7 @@ function start-collectOffice365MailboxFolders
 
             #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = "office365MailboxList.xml"
+            $fileName = office365MailboxList
             $exportFile=Join-path $logFolderPath $fileName
             
             $auditMailboxes | export-clixml -path $exportFile
@@ -3772,7 +3776,7 @@ function start-collectOffice365MailboxFolders
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = "office365MailboxList.xml"
+                $fileName = $office365MailboxList
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditMailboxes = import-clixml -path $importFile
@@ -3785,7 +3789,7 @@ function start-collectOffice365MailboxFolders
             out-logfile -string "Import the count of the last mailbox processed."
 
             try {
-                $fileName = "office365MailboxProcessed.xml"
+                $fileName = $office365MailboxProcessed
                 $importFile=Join-path $logFolderPath $fileName
 
                 $mailboxCounter=Import-Clixml -path $importFile
@@ -3800,6 +3804,19 @@ function start-collectOffice365MailboxFolders
             catch {
                 out-logfile -string "Unable to read the previous mailbox processed."
                 out-logfile -string $_ -isError:$TRUE -isAudit:$true
+            }
+
+            out-logfile -string "Importing the previously exported permissions."
+
+            try {
+
+                $fileName=$office365MailboxFolderPermissions
+                $importFile=Join-path $logFolderPath $fileName
+    
+                $auditFolderNames = import-clixml -Path $importFile
+            }
+            catch {
+                out-logfile -string "Unable to import the previously exported permissions."
             }
         }
     }
@@ -3950,6 +3967,8 @@ function start-collectOffice365MailboxFolders
                     out-logfile -string $forPermissionObject
 
                     $auditFolderPermissions+=$forPermissionObject
+
+                    $auditPermissionsFound = 1
                 }
             }
 
@@ -3960,18 +3979,15 @@ function start-collectOffice365MailboxFolders
 
         #At this time write out the permissions.
 
-        $fileName = "office365MailboxFolderPermissions.xml"
+        $fileName = $office365MailboxFolderPermissions
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditFolderPermissions | Export-Clixml -Path $exportFile
         
-        #This will be utilized for the retry function.
-        #If we made it this far - 
-
-        $fileName = "office365MailboxProcessed.xml"
+        $fileName = $office365MailboxProcessed
         $exportFile=Join-path $logFolderPath $fileName
 
-        $mailboxCounter.tostring() | export-clixml -path $exportFile
+        $mailboxCounter | export-clixml -path $exportFile
 
         #Null out all the arrays for the next run except mailboxes.
 
