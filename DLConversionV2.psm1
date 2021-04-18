@@ -2345,6 +2345,10 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffic365SendAsAccessXML
+
+            out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
+
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -2355,6 +2359,10 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOffice365FullMailboxAccessXML
+
+            out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
+
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -2365,6 +2373,10 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $allOffice365MailboxesFolderPermissionsXML
+
+            out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
+
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3394,7 +3406,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess
+        set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
     }
     catch 
     {
