@@ -36,7 +36,10 @@
             [array]$allSendAs=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allFullMailboxAccess=$NULL
+            [array]$allFullMailboxAccess=$NULL,
+            [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
+            [array]$allFolderPermissions=$NULL
         )
 
         #Declare function variables.
@@ -104,6 +107,8 @@
         $global:unDoStatus=$global:unDoStatus+1
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        
 
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"

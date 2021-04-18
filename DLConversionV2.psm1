@@ -308,6 +308,7 @@ Function Start-DistributionListMigration
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
+    [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
 
@@ -347,6 +348,7 @@ Function Start-DistributionListMigration
     [array]$allOffice365ManagedBy=$NULL
     [array]$allOffice365FullMailboxAccess=$NULL
     [array]$allOffice365SendAsAccess=$NULL
+    [array]$allOffice365MailboxFolderPermissions=$NULL
 
     #The following are the cloud parameters we query for to look for dependencies.
 
@@ -2215,6 +2217,28 @@ Function Start-DistributionListMigration
  
         }  
 
+        if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
+        {
+            out-logfile -string "Administrator has opted to retain folder permissions in Office 365."
+
+            $importFilePath=Join-path $importFile $retainMailboxFolderPermsOffice365XML
+
+            try {
+                $importData = import-CLIXML -path $importFilePath
+            }
+            catch {
+                out-logfile -string "Error importing the send as permissions from collect function."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try {
+                $allOffice365MailboxFolderPermissions = Get-O365DLMailboxFolderPermissions -groupSMTPAddress $groupSMTPAddress -collectedData $importData
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
 
         if ($allOffice365MemberOf -ne $NULL)
@@ -2335,6 +2359,12 @@ Function Start-DistributionListMigration
         else 
         {
             $allOffice365FullMailboxAccess=@()    
+        }
+
+        if ($allOffice365MailboxFolderPermissions -ne $NULL)
+        {
+            out-logfile -string $allOffice365MailboxFolderPermissions
+            out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $allOffice365MailboxesFolderPermissionsXML
         }
     }
     else 
