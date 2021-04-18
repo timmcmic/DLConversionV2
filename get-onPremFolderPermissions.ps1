@@ -34,7 +34,6 @@
 
         #Declare function variables.
 
-        [array]$functionFolderRights=@()
         [array]$functionFolderRightsUsers=@()
         [int]$functionCounter=0
 
@@ -50,6 +49,8 @@
 
             foreach ($recipient in $collectedData)
             {
+                out-logfile -string $recipient.user 
+                write-host "Here" -ForegroundColor RED
                 $MbxNumber++
 
                 write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
