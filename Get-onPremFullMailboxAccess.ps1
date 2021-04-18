@@ -161,7 +161,7 @@
 
                     $PercentComplete += $ProgressDelta
 
-                    if ($recipient.user -notlike "*S-1-5-21*")
+                    if ($recipient.user.tostring() -notlike "*S-1-5-21*")
                     {
                         #Need to ignore anything that looks like a SID / orphaned entry.
                         $stringTest = $recipient.user.split("\")

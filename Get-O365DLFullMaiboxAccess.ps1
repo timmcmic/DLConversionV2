@@ -119,9 +119,12 @@
 
                 $PercentComplete += $ProgressDelta
 
-                if ($mailbox.user.tostring() -eq $functionRecipient.Identity )
+                if ($mailbox.user.tostring() -notlike "*S-1-5-21*")
                 {
-                    $functionFullMailboxAccess+=$mailbox
+                    if ($mailbox.user.tostring() -eq $functionRecipient.Identity )
+                    {
+                        $functionFullMailboxAccess+=$mailbox
+                    }
                 }
             }
         }
