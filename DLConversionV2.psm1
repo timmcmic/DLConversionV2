@@ -3963,17 +3963,8 @@ function start-collectOffice365MailboxFolders
         $fileName = "office365MailboxFolderPermissions.csv"
         $exportFile=Join-path $logFolderPath $fileName
 
-        if ($mailboxCounter -eq 0)
-        {
-            $auditFolderPermissions | export-csv -path $exportFile
-        }
-        else 
-        {
-            $auditFolderPermissions | export-csv -path $exportFile -Append    
-        }
+        $auditFolderPermissions | Export-Clixml -Path $exportFile
         
-        
-
         #This will be utilized for the retry function.
         #If we made it this far - 
 
@@ -3986,7 +3977,6 @@ function start-collectOffice365MailboxFolders
 
         $auditFolderNames=@()
         $auditFolders=@()
-        $auditFolderPermissions=@()
     }
 }
     <#
