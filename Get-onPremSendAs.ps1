@@ -139,12 +139,12 @@
                     {
                         #Need to ignore anything that looks like a SID / orphaned entry.
                         $stringTest = $recipient.user.split("\")
-                    }
 
-                    if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
+                        if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
                     {
                         out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
                         $functionSendAsIdentities+=$recipient.identity
+                    }
                     }
                 } 
             }
