@@ -1492,8 +1492,6 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-
-
     #Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
@@ -2069,8 +2067,6 @@ Function Start-DistributionListMigration
     {
         $allGroupsGrantSendOnBehalfTo =@()
     }
-
-    #EXIT #Debug Exit
 
     #EXIT #Debug Exit
 

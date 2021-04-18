@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $false)]
+            $collectedData=$NULL
         )
 
         #Declare function variables.
@@ -48,52 +50,87 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        try {
-            out-logfile -string "Getting recipient..."
-
-            $functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        #Get all of the mailboxes to test.
-
-        try {
-            out-logfile -string "Getting all Office 365 mailboxes."
-
-            $functionMailboxes = get-exomailbox -resultsize unlimited
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
-        
-        try 
+        if ($collectedData -eq $NULL)
         {
-            Out-LogFile -string "Using Exchange Online to locate all of the full mailbox access rights in Office 365."
+            try {
+                out-logfile -string "Getting recipient..."
+    
+                $functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+    
+            #Get all of the mailboxes to test.
+    
+            try {
+                out-logfile -string "Getting all Office 365 mailboxes."
+    
+                $functionMailboxes = get-exomailbox -resultsize unlimited
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+            
+            try 
+            {
+                Out-LogFile -string "Using Exchange Online to locate all of the full mailbox access rights in Office 365."
+    
+                $ProgressDelta = 100/($functionMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+    
+                foreach ($mailbox in $functionMailboxes)
+                {
+                    $MbxNumber++
+    
+                    write-progress -activity "Processing Recipient" -status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
+    
+                    $PercentComplete += $ProgressDelta
+    
+                    $functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
+                }
+            }
+            catch 
+            {
+                Out-LogFile -string $_ -isError:$TRUE
+            }
+    
+            write-progress -activity "Processing Recipient" -completed
+        }
+        elseif ($collectedData -ne $NULL)
+        {
+            try {
+                out-logfile -string "Getting recipient..."
+    
+                $functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
 
-            $ProgressDelta = 100/($functionMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+            $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
-            foreach ($mailbox in $functionMailboxes)
+            out-logfile -string "Processing full mailbox access based on imported data."
+
+            foreach ($mailbox in $collectedData)
             {
                 $MbxNumber++
-
+    
                 write-progress -activity "Processing Recipient" -status $mailbox.primarySMTPAddress -PercentComplete $PercentComplete
 
                 $PercentComplete += $ProgressDelta
 
-                $functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
+                if ($mailbox.user.tostring() -eq $functionRecipient.Identity )
+                {
+                    $functionFullMailboxAccess+=$mailbox
+                }
             }
         }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
-
-        write-progress -activity "Processing Recipient" -completed
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
         Out-LogFile -string "********************************************************************************"
         
-        return $functionFullMailboxAccess
+        if ($functionFullMailboxAccess.count -gt 0)
+        {
+            return $functionFullMailboxAccess
+        }
     }
