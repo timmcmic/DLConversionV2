@@ -850,47 +850,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
-    if ($retainSendAsOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to audit on premsies send as."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedSendAsOnPrem -eq $TRUE)
-        {
-            $logFolderPath = $logFolderPath+$global:staticAuditFolderName
-            $importFile=Join-path $logFolderPath $retainOnPremRecipientSendAsXML
-
-            try {
-                $importData = import-CLIXML -path $importFile
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try {
-                $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premises."
-                out-logfile -string $_ -isError:$TRUE
-            }  
-        }
-        else 
-        {
-            try {
-                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premsies."
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises send as."
-    }
+   
 
     #Record what was returned.
 
