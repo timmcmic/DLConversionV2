@@ -2184,12 +2184,35 @@ Function Start-DistributionListMigration
 
         if ($retainFullMailboxAccessOffice365 -eq $TRUE)
         {
-            try {
-                $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
+            if ($useCollectedFullMailboxAccessOffice365 -eq $FALSE)
+            {
+                try {
+                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch {
-                out-logfile -string $_ -isError:$TRUE
+            elseif ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
+            {
+                $importFilePath=Join-path $importFile $retainOffice365RecipientFullMailboxAccessXML
+
+                try {
+                    $importData = import-CLIXML -path $importFilePath
+                }
+                catch {
+                    out-logfile -string "Error importing the send as permissions from collect function."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                try {
+                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress -collectedUser $importData
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
+ 
         }  
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
