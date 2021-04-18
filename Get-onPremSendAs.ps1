@@ -131,24 +131,20 @@
                 {
                     $MbxNumber++
 
-                    write-progress -activity "Processing Recipient" -status "Something" -PercentComplete $PercentComplete
-
-                    Write-Host "1" -ForegroundColor Red
+                    write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
 
                     $PercentComplete += $ProgressDelta
-
-                    Write-Host "2" -ForegroundColor Red
 
                     if ($recipient.user -notlike "*S-1-5-21*")
                     {
                         #Need to ignore anything that looks like a SID / orphaned entry.
-                        $stringTest = $sendAsRight.user.split("\")
+                        $stringTest = $recipient.user.split("\")
                     }
 
                     if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
                     {
-                        out-logfile -string ("Send as permission matching group found - recording."+$sendAsRight.identity)
-                        $functionSendAsIdentities+=$sendAsRight.identity
+                        out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
+                        $functionSendAsIdentities+=$recipient.identity
                     }
                 } 
             }
