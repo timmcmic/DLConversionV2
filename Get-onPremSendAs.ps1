@@ -133,7 +133,7 @@
                 {
                     $MbxNumber++
 
-                    write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -PercentComplete $PercentComplete
+                    write-progress -activity "Processing Recipient" -status $recipient.Identity -PercentComplete $PercentComplete
 
                     $PercentComplete += $ProgressDelta
 
