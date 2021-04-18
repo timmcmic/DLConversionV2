@@ -77,9 +77,9 @@ function start-collectOnPremMailboxFolders
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
-    [string]$office365MailboxFolderPermissions="onPremailboxFolderPermissions.xml"
-    [string]$office365MailboxList="onPremMailboxList.xml"
-    [string]$office365MailboxProcessed="onPremMailboxProcessed.xml"
+    [string]$onPremMailboxFolderPermissions="onPremailboxFolderPermissions.xml"
+    [string]$onPremMailboxList="onPremMailboxList.xml"
+    [string]$onPremMailboxProcessed="onPremMailboxProcessed.xml"
     [int]$auditPermissionsFound=0
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -135,11 +135,11 @@ function start-collectOnPremMailboxFolders
         {
             out-logFile -string "Obtaining all on premises mailboxes."
 
-            $auditMailboxes = get-exomailbox -resultsize unlimited
+            $auditMailboxes = get-mailbox -resultsize unlimited
 
             #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = $office365MailboxList
+            $fileName = $onPremMailboxList
             $exportFile=Join-path $logFolderPath $fileName
             
             $auditMailboxes | export-clixml -path $exportFile
@@ -149,7 +149,7 @@ function start-collectOnPremMailboxFolders
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = $office365MailboxList
+                $fileName = $onPremMailboxList
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditMailboxes = import-clixml -path $importFile
@@ -162,7 +162,7 @@ function start-collectOnPremMailboxFolders
             out-logfile -string "Import the count of the last mailbox processed."
 
             try {
-                $fileName = $office365MailboxProcessed
+                $fileName = $onPremMailboxProcessed
                 $importFile=Join-path $logFolderPath $fileName
 
                 $mailboxCounter=Import-Clixml -path $importFile
@@ -183,7 +183,7 @@ function start-collectOnPremMailboxFolders
 
             try {
 
-                $fileName=$office365MailboxFolderPermissions
+                $fileName=$onPremMailboxFolderPermissions
                 $importFile=Join-path $logFolderPath $fileName
     
                 $auditFolderPermissions = import-clixml -Path $importFile
@@ -239,7 +239,7 @@ function start-collectOnPremMailboxFolders
         $PercentComplete += $ProgressDelta
 
         try {
-            $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
+            $auditFolders=get-mailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
@@ -302,7 +302,7 @@ function start-collectOnPremMailboxFolders
             $PercentCompleteAuditNames += $ProgressDeltaAuditNames
 
             try {
-                $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+                $forPermissions = get-mailboxFolderPermission -Identity $FolderName -ErrorAction Stop
             }
             catch {
                 out-logfile -string "Unable to obtain folder permissions."
@@ -352,12 +352,12 @@ function start-collectOnPremMailboxFolders
 
         #At this time write out the permissions.
 
-        $fileName = $office365MailboxFolderPermissions
+        $fileName = $onPremMailboxFolderPermissions
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditFolderPermissions | Export-Clixml -Path $exportFile
         
-        $fileName = $office365MailboxProcessed
+        $fileName = $onPremMailboxProcessed
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter | export-clixml -path $exportFile
