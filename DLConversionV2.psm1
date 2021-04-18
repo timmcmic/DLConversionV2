@@ -676,6 +676,7 @@ Function Start-DistributionListMigration
     if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
     {
         $retainMailboxFolderPermsOnPrem=$TRUE
+    }
     
     if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
     {
@@ -886,6 +887,7 @@ Function Start-DistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+    }
     else
     {
         out-logfile -string "Administrator has choosen to not audit on premises send as."
@@ -3413,4 +3415,3 @@ Function Start-DistributionListMigration
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
-
