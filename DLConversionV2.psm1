@@ -3766,7 +3766,7 @@ function start-collectOffice365MailboxFolders
 
             #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = office365MailboxList
+            $fileName = $office365MailboxList
             $exportFile=Join-path $logFolderPath $fileName
             
             $auditMailboxes | export-clixml -path $exportFile
