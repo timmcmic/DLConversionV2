@@ -133,7 +133,7 @@
                 {
                     $MbxNumber++
 
-                    write-progress -activity "Processing Recipient" -status $recipient.Identity.tostring() -PercentComplete $PercentComplete
+                    write-progress -activity "Processing Recipient" -status "Something" -PercentComplete $PercentComplete
 
                     $PercentComplete += $ProgressDelta
 
