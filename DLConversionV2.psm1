@@ -2295,6 +2295,10 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
+
+            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
+
+            $groupTypeOverride="Security"
         }
         else 
         {
