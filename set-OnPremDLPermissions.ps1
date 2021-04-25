@@ -60,13 +60,14 @@
 
             foreach ($permission in $allOnPremSendAs)
             {
-                out-logfile -string ("Processing permission identity = "+$permission)
+                out-logfile -string ("Processing permission identity = "+$permission.identity)
+                out-logfile -string ("Processing permission trustee = "+$permission.user)
 
                 try {
-                    add-adPermission -identity $permission -user $groupSMTPAddress -AccessRights ExtendedRight -ExtendedRights "Send As"
+                    add-adPermission -identity $permission.identity -user $permission.user -AccessRights ExtendedRight -ExtendedRights "Send As"
                 }
                 catch {
-                    out-logfile -string "Unable to add the recipient permission in office 365."
+                    out-logfile -string "Unable to add the recipient permission send as on premises."
                     out-logfile -string $_ -isError:$TRUE
                 }
             }
@@ -117,6 +118,7 @@
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
+                    out-logfile -string ("Processing permissions folder = "+$permission.folderName)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                     add-MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE
