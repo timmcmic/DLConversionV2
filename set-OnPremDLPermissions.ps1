@@ -33,7 +33,7 @@
         (
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allPremSendAs=$NULL,
+            [array]$allOnPremSendAs=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
             [array]$allOnPremFullMailboxAccess=$NULL,
