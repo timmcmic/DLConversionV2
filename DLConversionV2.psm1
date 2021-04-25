@@ -3057,6 +3057,7 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    <#
     out-logFile -string "Start replacing Office 365 permissions."
 
     try 
@@ -3072,6 +3073,8 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #>
 
     #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
 
