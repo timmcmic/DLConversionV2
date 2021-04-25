@@ -2422,7 +2422,7 @@ Function Start-DistributionListMigration
     #The move here will allow us to preserve the original groups with attributes until we know that the migration was successful.
     #We will use the move to the non-SYNC OU to trigger deletion.
 
-    EXIT
+    #EXIT
 
     try {
         move-toNonSyncOU -dn $originalDLConfiguration.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
