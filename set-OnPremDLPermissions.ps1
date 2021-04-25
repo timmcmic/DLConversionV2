@@ -56,7 +56,7 @@
         {
             out-logfile -string "There are objects that have send as rights - processing."
 
-            foreach ($permission in $allSendAs)
+            foreach ($permission in $allOnPremSendAs)
             {
                 out-logfile -string ("Processing permission identity = "+$permission.identity)
                 out-logfile -string ("Processing permission trustee = "+$permission.trustee)
@@ -85,7 +85,7 @@
             out-logfile -string "There are objects that have full mailbox access rights - processing."
 
             try {
-                foreach ($permission in $allFullMailboxAccess)
+                foreach ($permission in $allOnPremFullMailboxAccess)
                 {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
@@ -112,7 +112,7 @@
         {
             out-logfile -string "Processing mailbox folder permissions in Office 365."
 
-            foreach ($permission in $allFolderPermissiosn)
+            foreach ($permission in $allOnPremFolderPermissions)
             {
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)

@@ -112,7 +112,7 @@
         {
             out-logfile -string "Processing mailbox folder permissions in Office 365."
 
-            foreach ($permission in $allFolderPermissiosn)
+            foreach ($permission in $allFolderPermissions)
             {
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
