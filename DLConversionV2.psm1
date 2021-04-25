@@ -3059,7 +3059,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        set-OnPremDLPermissions -allOnPremSendAs $allOnPremSendAs -allOnPremFullMailboxAccess $allOnPremFullMailboxAccess -allOnPremFolderPermissions $allOnPremFolderPermissions
+        set-OnPremDLPermissions -allOnPremSendAs $allObjectSendAsAccess -allOnPremFullMailboxAccess $allObjectsFullMailboxAccess -allOnPremFolderPermissions $allMailboxesFolderPermissions
     }
     catch 
     {
