@@ -295,6 +295,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
+    [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
     [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
     [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
@@ -307,7 +308,6 @@ Function Start-DistributionListMigration
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
-    [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
@@ -3049,6 +3049,22 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logFile -string "Start replacing Office 365 permissions."
+
+    try 
+    {
+        set-OnPremDLPermissions -allOnPremSendAs $allOnPremSendAs -allOnPremFullMailboxAccess $allOnPremFullMailboxAccess -allOnPremFolderPermissions $allOnPremFolderPermissions
+    }
+    catch 
+    {
+        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
+        out-logfile -string $_ -isError:$TRUE
     }
 
     $global:unDoStatus=$global:unDoStatus+1
