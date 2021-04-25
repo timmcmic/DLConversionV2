@@ -144,7 +144,7 @@
                         if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
                         {
                             out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
-                            $functionSendAsIdentities+=$recipient.identity
+                            $functionSendAsIdentities+=$recipient
                         }
                     } 
                 }

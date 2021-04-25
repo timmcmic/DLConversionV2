@@ -39,7 +39,9 @@
             [array]$allOnPremFullMailboxAccess=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allOnPremFolderPermissions=$NULL
+            [array]$allOnPremFolderPermissions=$NULL,
+            [Parameter(Mandatory = $TRUE)]
+            [string]$groupSMTPAddress
         )
 
         #Declare function variables.
@@ -58,12 +60,10 @@
 
             foreach ($permission in $allOnPremSendAs)
             {
-                out-logfile -string ("Processing permission identity = "+$permission.identity)
-                out-logfile -string ("Processing permission trustee = "+$permission.trustee)
-                out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
+                out-logfile -string ("Processing permission identity = "+$permission)
 
                 try {
-                    add-RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights -confirm:$FALSE
+                    add-adPermission -identity $permission -user $groupSMTPAddress -AccessRights ExtendedRight -ExtendedRights "Send As"
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."

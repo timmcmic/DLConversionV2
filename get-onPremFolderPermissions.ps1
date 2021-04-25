@@ -63,7 +63,7 @@
                     if ($recipient.user.tostring() -eq $originalDLConfiguration.samAccountName)
                     {
                         out-logfile -string ("Mailbox folder permission found - recording."+$recipient.identity)
-                        $functionFolderRightsUsers+=$recipient.identity
+                        $functionFolderRightsUsers+=$recipient
                     }
                 } 
             }

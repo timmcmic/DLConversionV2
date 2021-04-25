@@ -93,57 +93,6 @@
             }
 
             write-progress -activity "Processing Recipient" -completed
-            
-            #Start function processing.
-
-            try {
-                out-logfile -string "Gathering all on premises mailboxes."
-
-                $functionRecipients = invoke-command {get-mailbox -resultsize unlimited}
-            }
-            catch {
-                out-logfile -string "Error attempting to invoke command to gather all recipients."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            #We now have all the mailbox recipients.
-
-            try {
-                out-logfile -string "Test for mailbox permissions."
-
-                $ProgressDelta = 100/($functionRecipients.count); $PercentComplete = 0; $MbxNumber = 0
-
-                foreach ($recipient in $functionRecipients)
-                {
-                    $MbxNumber++
-
-                    write-progress -activity "Processing Recipient" -status $recipient.primarySMTPAddress -PercentComplete $PercentComplete
-
-                    $PercentComplete += $ProgressDelta
-
-                    if ($functionCounter -gt 1000)
-                    {
-                        #Implement function counter for long running operations - pause for 5 seconds every 1000 queries.
-
-                        out-logfile -string "Invoking 5 second sleep for powershell recovery."
-                        start-sleep -seconds 5
-
-                        $functionCounter=0
-                    }
-                    else 
-                    {
-                        $functionCounter++    
-                    }
-
-                    $functionPermissions+= invoke-command {Get-MailboxPermission -identity $args[0] -user $args[1]}-ArgumentList $recipient.identity,$originalDLConfiguration.samAccountName
-                } 
-            }
-            catch {
-                out-logfile -string "Error attempting to invoke command to gather all mailbox permissions."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            write-progress -activity "Processing Recipient" -completed  
         }
         elseif ($collectedData -ne $NULL)
         {
@@ -169,7 +118,7 @@
                         if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
                         {
                             out-logfile -string ("Full mailbox access permission found - recording."+$recipient.identity)
-                            $functionPermissions+=$recipient.identity
+                            $functionPermissions+=$recipient
                         }
                     } 
                 }

@@ -3061,7 +3061,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        set-OnPremDLPermissions -allOnPremSendAs $allObjectSendAsAccess -allOnPremFullMailboxAccess $allObjectsFullMailboxAccess -allOnPremFolderPermissions $allMailboxesFolderPermissions
+        set-OnPremDLPermissions -allOnPremSendAs $allObjectSendAsAccess -allOnPremFullMailboxAccess $allObjectsFullMailboxAccess -allOnPremFolderPermissions $allMailboxesFolderPermissions -groupSMTPAddress $groupSMTPAddress
     }
     catch 
     {
