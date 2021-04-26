@@ -53,7 +53,9 @@ function start-collectOffice365MailboxFolders
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
-        [boolean]$retryCollection=$FALSE
+        [boolean]$retryCollection=$FALSE,
+        [Parameter](Mandatory = $false)
+        $bringMyOwnMailboxes=$NULL
     )
 
     #Delare global variables.
@@ -151,16 +153,34 @@ function start-collectOffice365MailboxFolders
     {
         if ($retryCollection -eq $FALSE)
         {
-            out-logFile -string "Obtaining all on premises mailboxes."
+            if ($bringMyOwnMailboxes -eq $NULL)
+            {
+                out-logFile -string "Obtaining all office 365 mailboxes."
 
-            $auditMailboxes = get-exomailbox -resultsize unlimited
+                $auditMailboxes = get-exomailbox -resultsize unlimited
 
-            #Exporting mailbox operations to csv - the goal here will be to allow retry.
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = $office365MailboxList
-            $exportFile=Join-path $logFolderPath $fileName
+                $fileName = $office365MailboxList
+                $exportFile=Join-path $logFolderPath $fileName
             
-            $auditMailboxes | export-clixml -path $exportFile
+                $auditMailboxes | export-clixml -path $exportFile
+            }
+            else 
+            {
+                out-logfile -string "Using the mailboxes that the administrator provided."
+                out-logfile -string "Following the same logic as our get so that the retry file aligns if necessary."
+
+                $auditMailboxes = $bringMyOwnMailboxes
+
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+
+                $fileName = $office365MailboxList
+                $exportFile=Join-path $logFolderPath $fileName
+            
+                $auditMailboxes | export-clixml -path $exportFile
+            }
+            
         }
         elseif ($retryCollection -eq $TRUE)
         {
