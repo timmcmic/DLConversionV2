@@ -54,7 +54,7 @@ function start-collectOffice365MailboxFolders
         [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
         [boolean]$retryCollection=$FALSE,
-        [Parameter](Mandatory = $false)
+        [Parameter(Mandatory = $false)]
         $bringMyOwnMailboxes=$NULL
     )
 
