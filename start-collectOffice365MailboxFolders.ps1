@@ -115,6 +115,14 @@ function start-collectOffice365MailboxFolders
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
 
+    #Ensure bring your own mailboes not included with retry.
+
+    if (($bringMyOwnMailboxes -ne $NULL)-and ($retryCollection -EQ $TRUE))
+    {
+        out-logfile -string "Cannot combine bring your own mailboxes with retry collection."
+        out-logfile -string "If this is a retry after bringning your own mailbox - specify just retry." -isError:$TRUE -isAudit:$true
+    }
+
     #Start the connection to Exchange Online.
 
     if ($exchangeOnlineCredential -ne $NULL)
