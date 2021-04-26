@@ -62,7 +62,9 @@ function start-collectOnPremFullMailboxAccess
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
-        [boolean]$retryCollection=$FALSE
+        [boolean]$retryCollection=$FALSE,
+        [Parameter(Mandatory = $false)]
+        $bringMyOwnMailboxes=$NULL
     )
 
     #Delare global variables.
@@ -89,6 +91,12 @@ function start-collectOnPremFullMailboxAccess
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
 
     new-LogFile -groupSMTPAddress OnPremFullMailboxAccessPermissions -logFolderPath $logFolderPath
+
+    if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
+    {
+        out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+    }
 
     try 
     {
@@ -132,16 +140,31 @@ function start-collectOnPremFullMailboxAccess
     {
         if ($retryCollection -eq $FALSE)
         {
-            out-logFile -string "Obtaining all on premises mailboxes."
+            if ($bringMyOwnMailboxes -ne $NULL)
+            {
+                out-logFile -string "Obtaining all on premises mailboxes."
 
-            $auditMailboxes = get-mailbox -resultsize unlimited
+                $auditMailboxes = get-mailbox -resultsize unlimited
+    
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+    
+                $fileName = $onPremMailboxList
+                $exportFile=Join-path $logFolderPath $fileName
+                
+                $auditMailboxes | export-clixml -path $exportFile
+            }
+            else 
+            {
+                $auditMailboxes = $bringMyOwnMailboxes
+    
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+    
+                $fileName = $onPremMailboxList
+                $exportFile=Join-path $logFolderPath $fileName
+                
+                $auditMailboxes | export-clixml -path $exportFile
+            }
 
-            #Exporting mailbox operations to csv - the goal here will be to allow retry.
-
-            $fileName = $onPremMailboxList
-            $exportFile=Join-path $logFolderPath $fileName
-            
-            $auditMailboxes | export-clixml -path $exportFile
         }
         elseif ($retryCollection -eq $TRUE)
         {

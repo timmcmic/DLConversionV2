@@ -66,7 +66,9 @@ function start-collectOffice365FullMailboxAccess
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
         [Parameter(Mandatory = $false)]
-        [boolean]$retryCollection=$FALSE
+        [boolean]$retryCollection=$FALSE,
+        [Parameter(Mandatory = $false)]
+        $bringMyOwnMailboxes=$NULL
     )
 
     #Delare global variables.
@@ -125,6 +127,12 @@ function start-collectOffice365FullMailboxAccess
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
 
+    if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
+    {
+        out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+    }
+
     #Start the connection to Exchange Online.
 
     if ($exchangeOnlineCredential -ne $NULL)
@@ -163,16 +171,30 @@ function start-collectOffice365FullMailboxAccess
     {
         if ($retryCollection -eq $FALSE)
         {
-            out-logFile -string "Obtaining all on premises mailboxes."
+            if ($bringMyOwnMailboxes -eq $NULL)
+            {
+                out-logFile -string "Obtaining all on premises mailboxes."
 
-            $auditMailboxes = get-exomailbox -resultsize unlimited
+                $auditMailboxes = get-exomailbox -resultsize unlimited
 
-            #Exporting mailbox operations to csv - the goal here will be to allow retry.
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-            $fileName = $office365MailboxList
-            $exportFile=Join-path $logFolderPath $fileName
+                $fileName = $office365MailboxList
+                $exportFile=Join-path $logFolderPath $fileName
             
-            $auditMailboxes | export-clixml -path $exportFile
+                $auditMailboxes | export-clixml -path $exportFile
+            }
+            else 
+            {
+                $auditMailboxes = $bringMyOwnMailboxes
+
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+
+                $fileName = $office365MailboxList
+                $exportFile=Join-path $logFolderPath $fileName
+            
+                $auditMailboxes | export-clixml -path $exportFile
+            }
         }
         elseif ($retryCollection -eq $TRUE)
         {

@@ -62,7 +62,9 @@ function start-collectOnPremSendAs
         [ValidateSet("Basic","Kerberos")]
         [string]$exchangeAuthenticationMethod="Basic",
         [Parameter(Mandatory = $false)]
-        [boolean]$retryCollection=$FALSE
+        [boolean]$retryCollection=$FALSE,
+        [Parameter(Mandatory = $false)]
+        $bringMyOwnRecipients=$NULL
     )
 
     #Delare global variables.
@@ -87,6 +89,12 @@ function start-collectOnPremSendAs
     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+
+    if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
+    {
+        out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+    }
 
     new-LogFile -groupSMTPAddress OnPremSendAsPermissions -logFolderPath $logFolderPath
 
@@ -132,16 +140,32 @@ function start-collectOnPremSendAs
     {
         if ($retryCollection -eq $FALSE)
         {
-            out-logFile -string "Obtaining all on premises mailboxes."
+            if ($bringMyOwnRecipients -eq $NULL)
+            {
+                out-logFile -string "Obtaining all on premises mailboxes."
 
-            $auditRecipients = get-recipient -resultsize unlimited
+                $auditRecipients = get-recipient -resultsize unlimited
+    
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+    
+                $fileName = $onPremRecipientList
+                $exportFile=Join-path $logFolderPath $fileName
+                
+                $auditRecipients | export-clixml -path $exportFile
+            }
+            else 
+            {
+                out-logFile -string "Obtaining all on premises mailboxes."
 
-            #Exporting mailbox operations to csv - the goal here will be to allow retry.
-
-            $fileName = $onPremRecipientList
-            $exportFile=Join-path $logFolderPath $fileName
-            
-            $auditRecipients | export-clixml -path $exportFile
+                $auditRecipients = $bringMyOwnRecipients
+    
+                #Exporting mailbox operations to csv - the goal here will be to allow retry.
+    
+                $fileName = $onPremRecipientList
+                $exportFile=Join-path $logFolderPath $fileName
+                
+                $auditRecipients | export-clixml -path $exportFile
+            }
         }
         elseif ($retryCollection -eq $TRUE)
         {
