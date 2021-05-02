@@ -306,7 +306,7 @@
             {
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
-                    out-logfile -string ("Processing directory ID: "+$member.ExternalDirectoryObjectID
+                    out-logfile -string ("Processing directory ID: "+$member.ExternalDirectoryObjectID)
                     $functionRecipients+=$member.ExternalDirectoryObjectID
                 }
                 else 
