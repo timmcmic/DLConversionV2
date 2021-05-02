@@ -324,7 +324,7 @@
             out-logfile -string "Updating membership with unique values."
             out-logfile -string $functionRecipients
                 
-            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue  
+            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue -verbose
 
             ##>
         }
