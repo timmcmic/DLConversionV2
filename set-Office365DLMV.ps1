@@ -316,10 +316,10 @@
                 }
             }
 
-            $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | select-object -Unique
+            $functionRecipients = $functionRecipients | select-object -Unique
 
             out-logfile -string "Updating membership with unique values."
-            out-logfile -string $exchangeDLMembershipSMTP
+            out-logfile -string $functionRecipients
                 
             update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $exchangeDLMembershipSMTP -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue  
         }
