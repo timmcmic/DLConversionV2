@@ -298,8 +298,15 @@
             #Removing the original code that would iterate through each member and doing a bulk update
             #All of the members were previously verified as present - so no member should be gone by now unless removed.
             #This adds all members as a single operation.  Errors we silently continue.
+
+            #Ensureing all addresses in the array are unique.
+
+            $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | select-object -Unique
+
+            out-logfile -string "Updating membership with unique values."
+            out-logfile -string $exchangeDLMembershipSMTP
                 
-            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $exchangeDLMembershipSMTP -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction silientlyContinue  
+            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $exchangeDLMembershipSMTP -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue  
         }
         else 
         {
