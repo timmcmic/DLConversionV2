@@ -107,6 +107,7 @@
         [array]$workingAddressArray=@()
         [int]$functionLoopCounter=0
         [boolean]$functionFirstRun=$TRUE
+        [array]$functionRecipients=@()
 
         #Start function processing.
 
@@ -300,6 +301,20 @@
             #This adds all members as a single operation.  Errors we silently continue.
 
             #Ensureing all addresses in the array are unique.
+
+            foreach ($member in $exchangeDLMembershipSMTP)
+            {
+                if ($member.externalDirectoryObjectID -ne $NULL)
+                {
+                    out-logfile -string ("Processing directory ID: "+$member.ExternalDirectoryObjectID
+                    $functionRecipients+=$member.ExternalDirectoryObjectID
+                }
+                else 
+                {
+                    out-logfile -string ("Processing SMTPAddress: "+$member.primarySMTPAddressOrUPN)  
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
+                }
+            }
 
             $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | select-object -Unique
 
