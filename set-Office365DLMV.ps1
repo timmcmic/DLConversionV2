@@ -228,7 +228,7 @@
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
         {
-            <#
+            
             foreach ($member in $exchangeDLMembershipSMTP)
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
@@ -294,8 +294,9 @@
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
-            #>
             
+            
+            <#
             #Removing the original code that would iterate through each member and doing a bulk update
             #All of the members were previously verified as present - so no member should be gone by now unless removed.
             #This adds all members as a single operation.  Errors we silently continue.
@@ -321,7 +322,9 @@
             out-logfile -string "Updating membership with unique values."
             out-logfile -string $functionRecipients
                 
-            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $exchangeDLMembershipSMTP -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue  
+            update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue  
+
+            #>
         }
         else 
         {
