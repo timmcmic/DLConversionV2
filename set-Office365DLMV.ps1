@@ -228,10 +228,10 @@
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
         {
-            
+            <# 
             foreach ($member in $exchangeDLMembershipSMTP)
             {
-                <#
+                
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
                 if ($functionLoopCounter -eq 1000)
@@ -310,7 +310,8 @@
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-logfile -string ("Processing directory ID: "+$member.ExternalDirectoryObjectID)
-                    $functionRecipients+=$member.ExternalDirectoryObjectID
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 else 
                 {
