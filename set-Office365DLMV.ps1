@@ -320,10 +320,15 @@
                 }
             }
 
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
             $functionRecipients = $functionRecipients | select-object -Unique
 
             out-logfile -string "Updating membership with unique values."
             out-logfile -string $functionRecipients
+
+            #Using update to reset the entire membership of the DL to the unique array.
+            #Alberto Larrinaga for the suggestion.
                 
             update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction SilentlyContinue -verbose
 
