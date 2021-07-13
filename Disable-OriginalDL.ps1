@@ -38,15 +38,13 @@
 
         Param
         (
-            [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
+            [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
-            [Parameter(Mandatory = $true,ParameterSetName = "AD")]
-            [Parameter(Mandatory = $true,ParameterSetName = "Exchange")]
+            [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
-            [Parameter(Mandatory = $false,ParameterSetName = "AD")]
+            [Parameter(Mandatory = $false)]
             [array]$parameterSet="None",
-            [Parameter(Mandatory = $false,ParameterSetName="Exchange")]
+            [Parameter(Mandatory = $false)]
             [boolean]$useOnPremsiesExchange=$FALSE,
             [Parameter(Mandatory = $true)]
             $adCredential
