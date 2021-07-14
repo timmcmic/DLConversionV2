@@ -45,7 +45,7 @@
             [Parameter(Mandatory = $false)]
             [array]$parameterSet="None",
             [Parameter(Mandatory = $false)]
-            [boolean]$useOnPremsiesExchange=$FALSE,
+            [boolean]$useOnPremisesExchange=$FALSE,
             [Parameter(Mandatory = $true)]
             $adCredential
         )
@@ -68,7 +68,7 @@
 
         Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        out-logfile -string ("Use Exchange On Premises ="+$useOnPremsiesExchange)
+        out-logfile -string ("Use Exchange On Premises ="+$useOnPremisesExchange)
         out-logfile -string ("DN of object to modify / disable "+$originalDLConfiguration.distinguishedName)
 
         OUt-LogFile -string ("Parameter Set:")
@@ -87,14 +87,14 @@
         {
             Out-LogFile -string "Determine if exchange should be utilized to clear the DL."
 
-            if ($useOnPremsiesExchange -eq $FALSE)
+            if ($useOnPremisesExchange -eq $FALSE)
             {
                 Out-LogFile -string "Using AD providers to clear the given attributes"
 
                 set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential
             }
 
-            elseif ($useOnPremsiesExchange -eq $TRUE)
+            elseif ($useOnPremisesExchange -eq $TRUE)
             {
                 out-logfile -string "Using Exchange providers to clear the distribution list."
 

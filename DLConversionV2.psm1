@@ -227,7 +227,7 @@ Function Start-DistributionListMigration
 
     #Define variables utilized in the core function that are not defined by parameters.
 
-    [boolean]$useOnPremsiesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
+    [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
     [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
     [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
@@ -464,7 +464,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
     out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
-    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremsiesExchange)
+    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremisesExchange)
     Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
     Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
     Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
@@ -579,13 +579,13 @@ Function Start-DistributionListMigration
 
         #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
-        $useOnPremsiesExchange=$TRUE
+        $useOnPremisesExchange=$TRUE
 
-        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremsiesExchange)
+        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
     }
     else
     {
-        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremsiesExchange)
+        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
     }
 
     #Validate that only one method of engaging exchange online was specified.
@@ -635,17 +635,17 @@ Function Start-DistributionListMigration
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
 
-    if (($useOnPremsiesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
+    if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
     {
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
     }
 
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremsiesExchange -eq $FALSE))
+    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremisesExchange -eq $FALSE))
     {
         out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
     }
 
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremsiesExchange -eq $FALSE))
+    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremisesExchange -eq $FALSE))
     {
         out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
     }
@@ -756,7 +756,7 @@ Function Start-DistributionListMigration
    
    Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
 
-    if ($useOnPremsiesExchange -eq $TRUE)
+    if ($useOnPremisesExchange -eq $TRUE)
     {
         try 
         {
@@ -2641,7 +2641,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Disabling the mail attributes on the group."
 
         try{
-            Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremsiesExchange -errorAction STOP
+            Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremisesExchange -errorAction STOP
         }
         catch{
             out-LogFile -string $_ -isError:$TRUE
