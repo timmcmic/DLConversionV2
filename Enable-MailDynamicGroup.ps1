@@ -127,6 +127,24 @@
             out-logfile -string "Sender authentication settings retained at default value - not set."
         }
 
+        #Evaluate hide from address book.
+
+        if (($originalDLConfiguration.msExchHideFromAddressLists -eq $TRUE) -or ($originalDLConfiguration.msExchHideFromAddressLists -eq $FALSE))
+        {
+            out-logfile -string "Evaluating hide from address list."
+
+            try {
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -HiddenFromAddressListsEnabled $originalDLConfiguration.msExchHideFromAddressLists -domainController $globalCatalogServer
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+        else
+        {
+            out-logfile -string "Hide from address list settings retained at default value - not set."
+        }
+
         Out-LogFile -string "END Enable-MailDyamicGroup"
         Out-LogFile -string "********************************************************************************"
     }
