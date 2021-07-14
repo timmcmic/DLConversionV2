@@ -111,12 +111,14 @@
         #It allows all restriction to be evaluated once the mail reaches office 365.
         #The only restriction I set it require sender authentication - this ensures that anonymous email can still use the DL if the source is on prem.
 
-        if (($originalDLConfiguration.msExchRequireAuthToSendTo -eq $TRUE) -or ($originalDLConfiguration.msExchRequireAuthToSendTo -eq $FALSE))
+        
+        if ($originalDLConfiguration.msExchRequireAuthToSendTo -eq $NULL)
         {
-            out-logfile -string "The sender authentication setting was change by administrator."
+            out-logfile -string "The sender authentication setting was not set - maybe legacy version of Exchange."
+            out-logfile -string "The sender authentication setting value FALSE in this instance."
 
             try {
-                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -domainController $globalCatalogServer
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $FALSE -domainController $globalCatalogServer
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
@@ -124,7 +126,14 @@
         }
         else
         {
-            out-logfile -string "Sender authentication settings retained at default value - not set."
+            out-logfile -string "Sender authentication setting is present - retaining setting as present."
+
+            try {
+                set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -domainController $globalCatalogServer
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
 
         #Evaluate hide from address book.
