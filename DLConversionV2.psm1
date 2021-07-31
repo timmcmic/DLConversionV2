@@ -303,9 +303,14 @@ Function Start-DistributionListMigration
     [string]$allOffice365AcceptXML="allOffice365AcceptXML"
     [string]$allOffice365RejectXML="allOffice365RejectXML"
     [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
-    [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
+    [string]$allOffice365DynamicAcceptXML="allOffice365DynamicAcceptXML"
+    [string]$allOffice365DynamicRejectXML="allOffice365DynamicRejectXML"
+    [string]$allOffice365DynamicBypassModerationXML="allOffice365DynamicBypassModerationXML"
+    [string]$allOffice365DynamicGrantSendOnBehalfToXML="allOffice365DynamicGrantSentOnBehalfToXML"
+    [string]$allOffice365DynamicManagedByXML="allOffice365DynamicManagedByXML"
+    [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
     [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
@@ -2231,6 +2236,8 @@ Function Start-DistributionListMigration
             out-logFile -string $_ -isError:$TRUE
         }
 
+        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
+
         #Process other mail enabled object dependencies.
 
         try {
@@ -2307,8 +2314,6 @@ Function Start-DistributionListMigration
             }
         }
 
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
-
         if ($allOffice365MemberOf -ne $NULL)
         {
             out-logfile -string $allOffice365MemberOf
@@ -2371,6 +2376,60 @@ Function Start-DistributionListMigration
         else 
         {
             $allOffice365ManagedBy=@()    
+        }
+
+        if ($allOffice365DynamicAccept -ne $NULL)
+        {
+            out-logfile -string $allOffice365DynamicAccept
+            out-xmlFile -itemToExport $allOffice365DynamicAccept -itemNameToExport $allOffice365DynamicAcceptXML
+        }
+        else 
+        {
+            $allOffice365DynamicAccept=@()    
+        }
+
+        if ($allOffice365DynamicReject -ne $NULL)
+        {
+            out-logfile -string $allOffice365DynamicReject
+            out-xmlFile -itemToExport $allOffice365DynamicReject -itemNameToExport $allOffice365DynamicRejectXML
+        }
+        else 
+        {
+            $allOffice365DynamicReject=@()    
+        }
+        
+        if ($allOffice365DynamicBypassModeration -ne $NULL)
+        {
+            out-logfile -string $allOffice365DynamicBypassModeration
+            out-xmlFile -itemToExport $allOffice365DynamicBypassModeration -itemNameToExport $allOffice365DynamicBypassModerationXML
+        }
+        else 
+        {
+            $allOffice365DynamicBypassModeration=@()    
+        }
+
+        if ($allOffice365DynamicGrantSendOnBehalfTo -ne $NULL)
+        {
+            out-logfile -string $allOffice365DynamicGrantSendOnBehalfTo
+            out-xmlfile -itemToExport $allOffice365DynamicGrantSendOnBehalfTo -itemNameToExport $allOffice365DynamicGrantSendOnBehalfToXML
+        }
+        else 
+        {
+            $allOffice365DynamicGrantSendOnBehalfTo=@()    
+        }
+
+        if ($allOffice365DynamicManagedBy -ne $NULL)
+        {
+            out-logfile -string $allOffice365DynamicManagedBy
+            out-xmlFile -itemToExport $allOffice365DynamicManagedBy -itemNameToExport $allOffice365DynamicManagedByXML
+
+            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
+
+            $groupTypeOverride="Security"
+        }
+        else 
+        {
+            $allOffice365DynamicManagedBy=@()    
         }
 
         if ($allOffice365ForwardingAddress -ne $NULL)
