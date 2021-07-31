@@ -304,7 +304,6 @@
             #This adds all members as a single operation.  Errors we silently continue.
 
             #Ensureing all addresses in the array are unique.
-
             foreach ($member in $exchangeDLMembershipSMTP)
             {
                 if ($member.externalDirectoryObjectID -ne $NULL)
