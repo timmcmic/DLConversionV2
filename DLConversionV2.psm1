@@ -3284,40 +3284,6 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    out-logfile -string "Processing Office 365 Bypass Moderation From Users"
-
-    if ($allOffice365BypassModeration.count -gt 0)
-    {
-        foreach ($member in $allOffice365BypassModeration)
-        {
-            if ($forLoopCounter -eq 1000)
-            {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
-    }
-
-    $global:unDoStatus=$global:unDoStatus+1
-
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
     out-logfile -string "Processing Office 365 Managed By"
 
     if ($allOffice365ManagedBy.count -gt 0)
@@ -3346,6 +3312,180 @@ Function Start-DistributionListMigration
     else 
     {
         out-LogFile -string "There were no Office 365 managed by permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    #Start the process of updating any dynamic distribution groups.
+
+    $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
+
+    out-logfile -string "Processing Office 365 Dynamic Accept Messages From"
+
+    if ($allOffice365DynamicAccept.count -gt 0)
+    {
+        foreach ($member in $allOffice365DynamicAccept)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 Dynamic groups with accept permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Dynamic Reject Messages From"
+
+    if ($allOffice365DynamicReject.count -gt 0)
+    {
+        foreach ($member in $allOffice365DynamicReject)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 Dynamic groups with reject permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Dynamic Bypass Moderation From Users"
+
+    if ($allOffice365DyBypanamicssModeration.count -gt 0)
+    {
+        foreach ($member in $allOffice365DynamicBypassModeration)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 Dynamic groups with bypass moderation permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Dynamic Grant Send On Behalf To Users"
+
+    if ($allOffice365DynamicGrantSendOnBehalfTo.count -gt 0)
+    {
+        foreach ($member in $allOffice365DynamicGrantSendOnBehalfTo)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 Dynamic groups with grant send on behalf to permissions."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string "Processing Office 365 Dynamic Managed By"
+
+    if ($allOffice365DynamicManagedBy.count -gt 0)
+    {
+        foreach ($member in $allOffice365DynamicManagedBy)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1
