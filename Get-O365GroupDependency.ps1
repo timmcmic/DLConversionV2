@@ -35,7 +35,7 @@
             [Parameter(Mandatory = $TRUE)]
             [string]$attributeType,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("Standard","Unified")]
+            [ValidateSet("Standard","Unified","Dynamic")]
             [string]$groupType="Standard"
         )
 
@@ -108,6 +108,16 @@
                     out-logfile -string "The group type is unified - querying distribution groups."
                     
                     $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                    $functionTest = invoke-expression -command $functionCommand
+                    
+                    out-logfile -string ("The function command executed = "+$functionCommand)
+                }
+                elseif ($groupType -eq "Dynamic")
+                {
+                    out-logfile -string "The group type is dynamic - querying distribution groups."
+                    
+                    $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
 
                     $functionTest = invoke-expression -command $functionCommand
                     
