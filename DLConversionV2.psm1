@@ -335,17 +335,32 @@ Function Start-DistributionListMigration
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
+    #The following are for standard distribution groups.
+
     [array]$allOffice365MemberOf=$NULL
     [array]$allOffice365Accept=$NULL
     [array]$allOffice365Reject=$NULL
     [array]$allOffice365BypassModeration=$NULL
-    [array]$allOffice365ForwardingAddress=$NULL
     [array]$allOffice365ManagedBy=$NULL
     [array]$allOffice365GrantSendOnBehalfTo=$NULL
+
+    #The following are for universal distribution groups.
+
     [array]$allOffice365UniversalAccept=$NULL
     [array]$allOffice365UniversalReject=$NULL
     [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
-    [array]$allOffice365ManagedBy=$NULL
+
+    #The following are for dynamic distribution groups.
+
+    [array]$allOffice365DynamicAccept=$NULL
+    [array]$allOffice365DynamicReject=$NULL
+    [array]$allOffice365DynamicBypassModeration=$NULL
+    [array]$allOffice365DynamicManagedBy=$NULL
+    [array]$allOffice365DynamicGrantSendOnBehalfTo=$NULL
+
+    #These are for other mail enabled objects.
+
+    [array]$allOffice365ForwardingAddress=$NULL
     [array]$allOffice365FullMailboxAccess=$NULL
     [array]$allOffice365SendAsAccess=$NULL
     [array]$allOffice365MailboxFolderPermissions=$NULL
@@ -2082,6 +2097,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
+    #Process normal mail enabled groups.
+
     if ($retainOffice365Settings -eq $TRUE)
     {
         out-logFile -string "Office 365 settings are to be retained."
@@ -2140,14 +2157,54 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has managedBY = "+$allOffice365ManagedBy.count)
 
+        #Process all dynamic distribution groups.
+
         try {
-            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress -errorAction STOP
+            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
         }
 
-        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
+        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has accept rights = "+$allOffice365DynamicAccept.count)
+
+        try {
+            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Dynamic" -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has reject rights = "+$allOffice365DynamicReject.count)
+
+        try {
+            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom -groupType "Dynamic" -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365DynamicBypassModeration.count)
+
+        try {
+            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Dynamic" -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grantSendOnBehalFto = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
+
+        try {
+            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy -groupType "Dynamic" -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has managedBY = "+$allOffice365DynamicManagedBy.count)
+
+        #Process universal groups.
 
         try {
             $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Unified" -errorAction STOP
@@ -2173,6 +2230,17 @@ Function Start-DistributionListMigration
         catch {
             out-logFile -string $_ -isError:$TRUE
         }
+
+        #Process other mail enabled object dependencies.
+
+        try {
+            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
 
         if ($retainSendAsOffice365 -eq $TRUE)
         {
