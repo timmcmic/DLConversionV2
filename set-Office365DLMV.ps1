@@ -120,89 +120,10 @@
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
 
-        $newOffice365DLPrimarySMTPAddress = get-O365DistributionGroup -identity $originalDLConfiguration.mailNickname
-
+        out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
         
-        #This function implements an overall function loop counter.
-        #For every 1000 set operations against Office 365 we will sleep for 5 seconds.
-        #The counter does not reset for each configuration evaluation - but is rather global to this function.
-        #This ensures appropriate time for powershell recharge rates should a distribution list have bulk operations.
+        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $originalDLConfiguration.proxyAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
         
-        #At this time begin the iteraction through the arrays that have passed.
-
-        Out-LogFile -string "Reset the DL proxy addresses to match original object."
-
-        out-logfile -string "Reset just the primary SMTP Address first since the array contains SMTP and smtp"
-
-        out-logfile -string $originalDLConfiguration.mail
-
-        try {
-            set-o365DistributionGroup -identity $originalDLConfiguration.mailnickname -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
-        }
-        catch {
-            out-logfile $_ -isError:$TRUE
-        }
-
-        $global:unDoStatus=$global:unDoStatus+1
-    
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-        out-logfile -string "Processing on premises legacy ExchangeDN to X500"
-        out-logfile -string $originalDLConfiguration.legacyExchangeDN
-
-        $functionEmailAddress = "X500:"+$originalDLConfiguration.legacyExchangeDN
-
-        out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
-
-        try {
-            Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        $global:unDoStatus=$global:unDoStatus+1
-    
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-        foreach ($address in $originalDLConfiguration.proxyAddresses)
-        {   
-            #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
-
-            if ($functionLoopCounter -eq 1000)
-            {
-                out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                start-sleep -seconds 5
-                $functionLoopCounter = 0
-            }
-            else 
-            {
-                out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                $functionLoopCounter++
-            }
-
-            out-Logfile -string "Processing address:"
-            out-Logfile -string $address
-
-            if ($address.contains("mail.onmicrosoft.com"))
-            {
-                out-logfile -string ("Hybrid remote routing address found.")
-                out-logfile -string $address
-                $routingAddressIsPresent=$TRUE
-            }
-
-            try {
-                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
-            }
-            catch {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-
-        $global:unDoStatus=$global:unDoStatus+1
-    
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
