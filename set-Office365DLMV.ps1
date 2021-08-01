@@ -774,6 +774,9 @@
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+        out-logfile -string "Sleeping 15 seconds to allow for Office 365 directory replication."
+        start-sleep -Seconds 15
+
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
     }
