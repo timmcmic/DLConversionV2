@@ -59,18 +59,34 @@
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
-        out-logfile -string ("The command to execute:  "+$functionCommand)
+        if ($office365Attribute -eq "ManagedBy")
+        {
+            out-logfile -string "Attribute is managedBy - this is single value on Dynamic DLs"
 
-        try{
-            invoke-expression -Command $functionCommand -errorAction Stop
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'}"
+
+            out-logfile -string ("The command to execute:  "+$functionCommand)
+
+            try{
+                invoke-expression -Command $functionCommand -errorAction Stop
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
+        else 
+        {
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
+            out-logfile -string ("The command to execute:  "+$functionCommand)
+
+            try{
+                invoke-expression -Command $functionCommand -errorAction Stop
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
-
-
-
+        
         Out-LogFile -string "END start-ReplaceOffice365Dynamic"
         Out-LogFile -string "********************************************************************************"
     }
