@@ -338,7 +338,7 @@
             out-logfile -string "Updating reject messages SMTP with unique values."
             out-logfile -string $functionRecipients
 
-            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
