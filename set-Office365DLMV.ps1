@@ -126,6 +126,7 @@
 
         foreach ($address in $originalDLConfiguration.proxyAddresses)
         {
+            out-logfile -string $address
             $temp+=$address.tostring()
         }
         
