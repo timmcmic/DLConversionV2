@@ -3451,7 +3451,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Processing Office 365 Dynamic Bypass Moderation From Users"
 
-    if ($allOffice365DyBypanamicssModeration.count -gt 0)
+    if ($allOffice365DynamicBypassModeration.count -gt 0)
     {
         foreach ($member in $allOffice365DynamicBypassModeration)
         {
