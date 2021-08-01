@@ -272,6 +272,9 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
+        out-logfile -string "Sleeping 15 seconds to allow for Office 365 directory replication."
+        start-sleep -Seconds 15
+
         Out-LogFile -string "END SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
     }
