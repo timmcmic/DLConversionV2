@@ -121,8 +121,15 @@
         out-logfile -string $originalDLConfiguration
 
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
+
+        $temp=@()
+
+        foreach ($address in $originalDLConfiguration.proxyAddresses)
+        {
+            $temp+=$address.tostring()
+        }
         
-        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $originalDLConfiguration.proxyAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $temp -errorAction STOP -BypassSecurityGroupManagerCheck
         
         if ($routingAddressIsPresent -eq $FALSE)
         {
