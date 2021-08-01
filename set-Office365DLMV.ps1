@@ -108,6 +108,7 @@
         [int]$functionLoopCounter=0
         [boolean]$functionFirstRun=$TRUE
         [array]$functionRecipients=@()
+        [array]$functionEmailAddresses=@()
 
         #Start function processing.
 
@@ -122,15 +123,42 @@
 
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 
-        $temp=@()
-
         foreach ($address in $originalDLConfiguration.proxyAddresses)
         {
+            if ($address.contains("mail.onmicrosoft.com"))
+            {
+                out-logfile -string ("Hybrid remote routing address found.")
+                out-logfile -string $address
+                $routingAddressIsPresent=$TRUE
+            }
+
             out-logfile -string $address
-            $temp+=$address.tostring()
+            $functionEmailAddresses+=$address.tostring()
         }
         
-        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $temp -errorAction STOP -BypassSecurityGroupManagerCheck
+        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        out-logfile -string "Processing on premises legacy ExchangeDN to X500"
+        out-logfile -string $originalDLConfiguration.legacyExchangeDN
+
+        $functionEmailAddress = "X500:"+$originalDLConfiguration.legacyExchangeDN
+
+        out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
+
+        try {
+            Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
         
         if ($routingAddressIsPresent -eq $FALSE)
         {
