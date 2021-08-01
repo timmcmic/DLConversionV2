@@ -70,7 +70,7 @@
         [string]$functionOU=$originalDLConfiguration.distinguishedname.substring($originaldlconfiguration.distinguishedname.indexof("OU"))
         out-logfile -string ("Function OU = "+$functionOU)
 
-        foreach ($address in $originalDLConfiguration.proxyAddresses)
+        foreach ($address in $office365DLConfiguration.emailAddresses)
         {
             out-logfile -string ("Testing address for remote routing address = "+$address)
 
