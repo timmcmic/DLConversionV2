@@ -63,7 +63,7 @@
         {
             out-logfile -string "Attribute is managedBy - this is single value on Dynamic DLs"
 
-            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'}"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'"
 
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
