@@ -299,6 +299,8 @@
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+        $functionRecipients=@() #Reset the test array.
+
         out-logFile -string "Evaluating exchangeRejectMessagesSMTP"
 
         if ($exchangeRejectMessagesSMTP -ne $NULL)
@@ -306,18 +308,6 @@
             foreach ($member in $exchangeRejectMessagesSMTP)
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
-
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
 
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
@@ -327,31 +317,28 @@
 
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating reject messages SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
@@ -361,6 +348,8 @@
         $global:unDoStatus=$global:unDoStatus+1
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        $functionRecipients=@() #Reset the test array.
 
         out-logFile -string "Evaluating exchangeAcceptMessagesSMTP"
 
@@ -370,17 +359,55 @@
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                if ($functionLoopCounter -eq 1000)
+                if ($member.externalDirectoryObjectID -ne $NULL)
                 {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
+                    out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
+
+                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
+
+                    $functionRecipients+=$functionDirectoryObjectID[1]
+                }
+                elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
+                {
+                    out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
+
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
+                    out-logfile -string "Invalid function object for recipient." -isError:$TRUE
+                } 
+            }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating accept messages SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        else 
+        {
+            Out-LogFile -string "There were no members to process."    
+        }
+
+        $global:unDoStatus=$global:unDoStatus+1
+    
+        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        $functionRecipients=@() #Reset the test array.
+
+        out-logFile -string "Evaluating exchangeManagedBySMTP"
+
+        if ($exchangeManagedBySMTP -ne $NULL)
+        {
+            foreach ($member in $exchangeManagedBySMTP)
+            {
+                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
@@ -390,31 +417,28 @@
 
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating managed by SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
@@ -425,102 +449,7 @@
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-        out-logFile -string "Evaluating exchangeManagedBySMTP"
-
-        if ($exchangeManagedBySMTP -ne $NULL)
-        {
-            out-logfile -string ("Is this the first run for managed by = "+$functionFirstRun)
-
-            foreach ($member in $exchangeManagedBySMTP)
-            {
-                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
-
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
-
-                if (($member.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution"))
-                {
-                    out-logFile "The migrated DL has managed by permissions of iteself.  The administrator overrode the type to distribution."
-                    out-logilfe "Security is required in order to manage a distribution group"
-                    out-logfile "Skipping = "+$member.primarySMTPAddressOrUPN
-                }
-                elseif ($member.externalDirectoryObjectID -ne $NULL)
-                {
-                    out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
-
-                    $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
-
-                    out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
-
-                    try {
-                        if ($functionFirstRun -eq $FALSE)
-                        {
-                            out-logfile -string "Not first manager of group - adding."
-
-                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                        }
-                        else 
-                        {
-                            out-logfile -string "First manager - resetting managed by list."
-
-                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy $functionDirectoryObjectID[1] -errorAction STOP -BypassSecurityGroupManagerCheck  
-
-                            $functionFirstRun = $FALSE
-                        }
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
-                }
-                elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
-                {
-                    out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
-
-                    try {
-                        if ($functionFirstRun -ne $TRUE)
-                        {
-                            out-logfile -string "Not first manager of group - adding."
-
-                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                        }
-                        else 
-                        {
-                            out-logfile -string "First manager - resetting managed by list."
-
-                            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ManagedBy $member.primarySMTPAddressOrUPN -errorAction STOP -BypassSecurityGroupManagerCheck
-
-                            $functionFirstRun = $FALSE
-                        }
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Invalid function object for recipient." -isError:$TRUE
-                } 
-            }
-        }
-        else 
-        {
-            Out-LogFile -string "There were no members to process."    
-        }
-
-        $global:unDoStatus=$global:unDoStatus+1
-    
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        $functionRecipients=@() #Reset the test array.
 
         out-logFile -string "Evaluating exchangeModeratedBy"
 
@@ -530,18 +459,6 @@
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
-
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -550,31 +467,28 @@
 
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -ModeratedBy @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating moderated by SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
@@ -584,6 +498,8 @@
         $global:unDoStatus=$global:unDoStatus+1
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+        $functionRecipients=@() #Reset the test array.
 
         out-logFile -string "Evaluating exchangeBypassModerationSMTP"
 
@@ -593,18 +509,6 @@
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
-
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -613,31 +517,28 @@
 
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating bypass moderation from senders or members SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
@@ -648,6 +549,8 @@
     
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+        $functionRecipients=@() #Reset the test array.
+
         out-logFile -string "Evaluating exchangeGrantSendOnBehalfToSMTP"
 
         if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
@@ -655,18 +558,6 @@
             foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
             {
                 #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
-
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
 
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
@@ -676,31 +567,28 @@
 
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$functionDirectoryObjectID[1]} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
-                    }
+                    $functionRecipients+=$functionDirectoryObjectID[1]
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                    try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$member.primarySMTPAddressOrUPN} -errorAction STOP -BypassSecurityGroupManagerCheck
-                    }
-                    catch {
-                        out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
-                    }
+                    $functionRecipients+=$member.primarySMTPAddressOrUPN    
                 }
                 else 
                 {
                     out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
+
+            #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
+
+            $functionRecipients = $functionRecipients | select-object -Unique
+
+            out-logfile -string "Updating grant send on behalf to SMTP with unique values."
+            out-logfile -string $functionRecipients
+
+            set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         else 
         {
@@ -717,20 +605,6 @@
         {
             foreach ($member in $exchangeSendAsSMTP)
             {
-                #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
-
-                if ($functionLoopCounter -eq 1000)
-                {
-                    out-logfile -string "Sleeping for 5 seconds - powershell refresh interval"
-                    start-sleep -seconds 5
-                    $functionLoopCounter = 0
-                }
-                else 
-                {
-                    out-logfile -string ("Function Loop Counter = "+$functionLoopCounter)
-                    $functionLoopCounter++
-                }
-
                 if ($member.externalDirectoryObjectID -ne $NULL)
                 {
                     out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
