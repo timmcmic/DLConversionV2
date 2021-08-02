@@ -113,15 +113,6 @@
 
         #Ensure that the mail contact email address policy is set to false - prevents modifications of email addresses.
 
-        try{
-            out-logfile -string "Setting email address policy enabled to $FALSE - stop further automatic email addressing."
-
-            set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE
-        }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
-        }
-
         #Set the primary SMTP address of the mail contact to not be the target address.
         #This is required before removing the target address.
 

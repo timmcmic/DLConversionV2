@@ -98,7 +98,7 @@
             {
                 out-logfile -string "Using Exchange providers to clear the distribution list."
 
-                disable-distributionGroup -identity $originalDLConfiguration.distinguishedName -domainController $globalCatalogServer -confirm:$false -verbose
+                disable-distributionGroup -identity $originalDLConfiguration.distinguishedName -domainController $globalCatalogServer -confirm:$false -errorAction STOP
             }
         }
         catch 
