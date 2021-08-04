@@ -423,8 +423,7 @@ Function Start-DistributionListMigration
 
     #Exchange Schema Version
 
-    $exchangeRangeUpper=$NULL
-    [int]$exchangeRangeUpperConverted=0
+    [int]$exchangeRangeUpper=$NULL
     [int]$exchangeLegacySchemaVersion=15137
 
     #Log start of DL migration to the log file.
@@ -753,15 +752,15 @@ Function Start-DistributionListMigration
     out-logfile -string "Converting range upper to string..."
     $exchangeRangeUpperConverted = $exchangeRangeUpper -as [int]
     
-    if ($exchangeLegacySchemaVersion -lt $exchangeRangeUpperConverted)
+    if ($exchangeRangeUpper -ge $exchangeLegacySchemaVersion)
     {
         out-logfile -string "Legacy exchange version detected - using legacy parameters"
-        $dlPropertySetToClear=$dlPropertiesToClearLegacy
+        $dlPropertySetToClear=$dlPropertiesToClearModern
     }
     else 
     {
         out-logfile -string "Modern exchange versions detected - using modern parameters"
-        $dlPropertySetToClear = $dlPropertiesToClearModern    
+        $dlPropertySetToClear = $dlPropertiesToClearLegacy   
     }
 
     Out-LogFile -string ("DL property set to be cleared after schema evaluation = ")
