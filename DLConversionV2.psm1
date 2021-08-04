@@ -745,6 +745,7 @@ Function Start-DistributionListMigration
     }
     catch{
         out-logfile -string "Error occured obtaining the Exchange Schema Version."
+        out-logfile -string $_ -isError:$TRUE
     }
 
     EXIT #Debug Exit
