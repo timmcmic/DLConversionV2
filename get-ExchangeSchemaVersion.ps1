@@ -62,7 +62,8 @@
 
         try{
             $functionExchangeSchemaObject = Get-AdObject $functionExchangeSchemaContext -server $globalCatalogServer -credential $adCredential -properties * -errorAction STOP 
-            out-logfile -string ("The Exchange Schema Object is: "+$functionExchangeSchemaObject)
+            out-logfile -string ("The Exchange Schema Object is: ")
+            out-logfile -string $functionExchangeSchemaObject
         }
         catch{
             out-logfile -string ("Unable to retrieve the Exchange Schema object.")

@@ -424,6 +424,7 @@ Function Start-DistributionListMigration
     #Exchange Schema Version
 
     $exchangeRangeUpper=$NULL
+    [int]$exchangeLegacySchemaVersion=15137
 
     #Log start of DL migration to the log file.
 
@@ -746,6 +747,27 @@ Function Start-DistributionListMigration
     catch{
         out-logfile -string "Error occured obtaining the Exchange Schema Version."
         out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Converting range upper to string..."
+    $exchangeRangeUpper = $exchangeRangeUpper -as [int]
+    
+    if ($exchangeLegacySchemaVersion -lt $exchangeRangeUpper)
+    {
+        out-logfile -string "Legacy exchange version detected - using legacy parameters"
+        $dlPropertySetToClear=$dlPropertiesToClearLegacy
+    }
+    else 
+    {
+        out-logfile -string "Modern exchange versions detected - using modern parameters"
+        $dlPropertySetToClear = $dlPropertiesToClearModern    
+    }
+
+    Out-LogFile -string ("DL property set to be cleared after schema evaluation = ")
+
+    foreach ($dlProperty in $dlPropertySetToClear)
+    {
+        Out-LogFile -string $dlProperty
     }
 
     EXIT #Debug Exit
