@@ -93,29 +93,6 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
-        #When a mail contact has a target address - it is added as a proxy address.
-        #This has to be removed or you'll have a proxy address conflict with the migrated group.
-
-        <#out-logfile -string "Searching for the remote routing address as a proxy address."
-
-        foreach ($address in $functiongroup.emailaddresses)
-        {
-            if ($address.contains($routingContactConfig.targetAddress))
-            {
-                out-logfile -string ("Remote routing address found = "+$address)
-
-                $functionRemoteRoutingAddress=$address
-
-                out-logfile -string ("Function routing address = "+$functionRemoteRoutingAddress)
-            }
-        }
-        #>
-
-        #Ensure that the mail contact email address policy is set to false - prevents modifications of email addresses.
-
-        #Set the primary SMTP address of the mail contact to not be the target address.
-        #This is required before removing the target address.
-
         try{
             out-logfile -string "Removing the remote routing address..."
 
