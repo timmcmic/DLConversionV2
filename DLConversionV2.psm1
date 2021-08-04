@@ -748,18 +748,15 @@ Function Start-DistributionListMigration
         out-logfile -string "Error occured obtaining the Exchange Schema Version."
         out-logfile -string $_ -isError:$TRUE
     }
-
-    out-logfile -string "Converting range upper to string..."
-    $exchangeRangeUpperConverted = $exchangeRangeUpper -as [int]
     
     if ($exchangeRangeUpper -ge $exchangeLegacySchemaVersion)
     {
-        out-logfile -string "Legacy exchange version detected - using legacy parameters"
+        out-logfile -string "Modern exchange version detected - using modern parameters"
         $dlPropertySetToClear=$dlPropertiesToClearModern
     }
     else 
     {
-        out-logfile -string "Modern exchange versions detected - using modern parameters"
+        out-logfile -string "Legacy exchange versions detected - using legacy parameters"
         $dlPropertySetToClear = $dlPropertiesToClearLegacy   
     }
 
