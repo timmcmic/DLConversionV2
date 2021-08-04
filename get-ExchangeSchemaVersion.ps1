@@ -54,7 +54,7 @@
 
         $functionSchemaNamingContext=($functionADRootDSE).SchemaNamingContext
 
-        out-logfile -stirng ("The functionSchemaNamingContext is :"+$functionSchemaNamingContext)
+        out-logfile -string ("The functionSchemaNamingContext is :"+$functionSchemaNamingContext)
 
         $functionExchangeSchemaContext = "CN=ms-Exch-Schema-Version-Pt," + $functionSchemaNamingContext
 
