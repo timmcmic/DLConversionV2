@@ -74,4 +74,6 @@
 
         Out-LogFile -string "END get-exchangeSchemaVersion"
         Out-LogFile -string "********************************************************************************"
+
+        return $functionExchangeRangeUpper
     }
