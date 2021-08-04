@@ -45,11 +45,11 @@
         try{
             $functionADRootDSE=Get-ADRootDSE -server $globalCatalogServer -credential $adCredential -errorAction STOP
             out-logfile -string "The AD Root Schema:"
-            out-logfile -string $functionSchemaNamingContext
+            out-logfile -string $functionADRootDSE
         }
         catch
         {
-            out-logfile -string "Error getting PSSessions - hard abort since this is called in exit code."
+            out-logfile -string "Unable to get AD Root DSE."
         }
 
         $functionSchemaNamingContext=($functionADRootDSE).SchemaNamingContext
@@ -61,7 +61,7 @@
         out-logfile -string ("The functionExchangeSchemaContext is: "+$functionExchangeSchemaContext)
 
         try{
-            $functionExchangeSchemaObject = Get-AdObject $functionExchangeSchemaObject -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            $functionExchangeSchemaObject = Get-AdObject $functionExchangeSchemaContext -server $globalCatalogServer -credential $adCredential -properties * -errorAction STOP 
             out-logfile -string ("The Exchange Schema Object is: "+$functionExchangeSchemaObject)
         }
         catch{
