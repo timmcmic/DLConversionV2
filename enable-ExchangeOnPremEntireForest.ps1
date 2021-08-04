@@ -29,7 +29,7 @@
         try {
             out-logfile -string "Attempting to set view entire forest = TRUE."
 
-            Set-ADServerSettings -ViewEntireForest:$TRUE
+            Set-ADServerSettings -ViewEntireForest:$TRUE -ErrorAction STOP
         }
         catch {
             out-logfile -string "Unable to set the entire forest settings to true."
