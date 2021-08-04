@@ -43,7 +43,7 @@
         $functionExchangeRangeUpper = $null
 
         try{
-            $functionSchemaNamingContext=Get-ADRootDSE -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            $functionADRootDSE=Get-ADRootDSE -server $globalCatalogServer -credential $adCredential -errorAction STOP
             out-logfile -string "The AD Root Schema:"
             out-logfile -string $functionSchemaNamingContext
         }
