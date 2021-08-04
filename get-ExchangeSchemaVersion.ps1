@@ -16,7 +16,7 @@
     get-ExchangeSchemaVersion
 
     #>
-    Function get-exchangeSchemaVersion
+    Function get-ExchangeSchemaVersion
      {
 
         [cmdletbinding()]
