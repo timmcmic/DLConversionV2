@@ -740,7 +740,7 @@ Function Start-DistributionListMigration
     Out-Logfile -string "Determine Exchange Schema Version"
 
     try{
-        $exchangeRangeUpper = get-ExchangeSchemaVersion -globalCatalogServer $globalCatalogServer -adCredential $adCredential -errorAction STOP
+        $exchangeRangeUpper = get-ExchangeSchemaVersion -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
         out-logfile -string ("The range upper for Exchange Schema is: "+ $exchangeRangeUpper)
     }
     catch{
