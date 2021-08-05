@@ -767,7 +767,7 @@ Function Start-DistributionListMigration
         Out-LogFile -string $dlProperty
     }
 
-    EXIT #Debug Exit
+    # EXIT #Debug Exit
 
     #If exchange server information specified - create the on premises powershell session.
 
