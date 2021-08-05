@@ -85,21 +85,8 @@
         
         try 
         {
-            Out-LogFile -string "Determine if exchange should be utilized to clear the DL."
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential
 
-            if ($useOnPremisesExchange -eq $FALSE)
-            {
-                Out-LogFile -string "Using AD providers to clear the given attributes"
-
-                set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential
-            }
-
-            elseif ($useOnPremisesExchange -eq $TRUE)
-            {
-                out-logfile -string "Using Exchange providers to clear the distribution list."
-
-                disable-distributionGroup -identity $originalDLConfiguration.distinguishedName -domainController $globalCatalogServer -confirm:$false -errorAction STOP
-            }
         }
         catch 
         {
