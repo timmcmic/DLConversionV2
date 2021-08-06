@@ -26,15 +26,21 @@
         [array]$childItems=@()
 
         $childItems=get-childitem -path $global:fullStatusPath -file
-
-        out-logfile -string "The child items found in the status directory."
-        out-logfile -string $childItems
-
         $functionFileCount = $childItems.count
 
-        out-logfile -string "The number of items found in the status directory."
-        out-logfile -string $functionFileCount
+        if ($functionFileCount -gt 0)
+        {
+            out-logfile -string "The child items found in the status directory."
+            out-logfile -string $childItems     
 
+            out-logfile -string "The number of items found in the status directory."
+            out-logfile -string $functionFileCount
+        }
+        else 
+        {
+            out-logfile -string "No files found in directory."    
+        }
+        
         out-logfile -string "================================================================================"
         out-logfile -string "END Get-StatusFileCount"
         out-logfile -string "================================================================================"
