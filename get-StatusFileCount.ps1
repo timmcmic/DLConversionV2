@@ -25,7 +25,13 @@
         [int]$functionFileCount = 0
         [array]$childItems=@()
 
-        $childItems=get-childitem -path $global:fullStatusPath -file
+        try{
+            $childItems=get-childitem -path $global:fullStatusPath -file -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Unable to get count of files in status directory." -isError:$TRUE
+        }
+        
         $functionFileCount = $childItems.count
 
         if ($functionFileCount -gt 0)

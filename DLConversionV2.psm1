@@ -2673,7 +2673,12 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Thread number is greater than 1."
 
-        out-statusFile -threadNumber $threadNumber
+        try{
+            out-statusFile -threadNumber $threadNumber -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Unable to write status file." -isError:$TRUE
+        }
     }
     else 
     {
@@ -2704,7 +2709,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Other threads are pending.  Sleep 5 seconds."
 
                 start-sleep -s 5
-            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
+            } until ((try{get-statusFileCount}catch{Out-Logfile -string "Unable to get file count." -isError:$TRUE}) -eq ($totalThreadCount - 1))
         }
         elseif ($threadNumber -ge 2)
         {
@@ -2716,7 +2721,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
                 
                 start-sleep -s 5
-            } until ((get-statusFileCount) -eq $totalThreadCount)
+            } until ((try{get-statusFileCount}catch{Out-Logfile -string "Unable to get file count." -isError:$TRUE} -eq $totalThreadCount)
         }
     }
 
@@ -2759,6 +2764,20 @@ Function Start-DistributionListMigration
     #The single functions have triggered operations.  Other threads may continue.
 
     out-statusFile -threadNumber 1
+
+    #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
+    #Reset the status directory for furture thread dependencies.
+
+    if ($threadNumber -eq 1)
+    {
+        out-logfile -string "Starting thread 1 sleep for other threads to gather status."
+
+        start-sleep -s 10
+
+        out-logfile -string "Trigger cleanup of all status files for future thread coordination."
+
+        remove-statusFiles
+    }
     
     #At this time we have processed the deletion to azure.
     #We need to wait for that deletion to occur in Exchange Online.
