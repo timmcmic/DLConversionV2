@@ -212,7 +212,11 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [int]$threadNumber=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0
     )
 
     #Define global variables.
@@ -426,6 +430,48 @@ Function Start-DistributionListMigration
     [int]$exchangeRangeUpper=$NULL
     [int]$exchangeLegacySchemaVersion=15137
 
+    #Define the sub folders for multi-threading.
+
+    [string]$threadOneFolder="\Thread1"
+    [string]$threadTwoFolder="\Thread2"
+    [string]$threadThreeFolder="\Thread3"
+    [string]$threadFourFolder="\Thread4"
+    [string]$threadFiveFolder="\Thread5"
+
+    #Define the status directory.
+
+    [string]$global:statusPath="\Status\"
+
+
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
+    {
+        new-statusFile -logFolderPath $logFolderPath
+        
+        if ($threadNumber -eq 1)
+        {
+            $logFolderPath=$logFolderPath+$threadOneFolder
+        }
+        elseif ($threadNumber -eq 2)
+        {
+            $logFolderPath=$logFolderPath+$threadTwoFolder
+        }
+        elseif ($threadNumber -eq 3)
+        {
+            $logFolderPath=$logFolderPath+$threadThreeFolder
+        }
+        elseif ($threadNumber -eq 4)
+        {
+            $logFolderPath=$logFolderPath+$threadFourFolder
+        }
+        elseif ($threadNumber -eq 4)
+        {
+            $logFolderPath=$logFolderPath+$threadFiveFolder
+        }
+    }
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
@@ -433,8 +479,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
-
-    
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
