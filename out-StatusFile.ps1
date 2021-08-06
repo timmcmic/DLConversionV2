@@ -29,6 +29,10 @@
             [Parameter(Mandatory = $false)]
             [int]$threadNumber=$FALSE
         )
+
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN OUT-STATUSFILE"
+        Out-LogFile -string "********************************************************************************"
     
         #Define the status file.
 
@@ -43,31 +47,31 @@
 
         if ($threadNumber -eq 1)
         {
-            out-logfile -string "Building status file for threadd 1."
+            out-logfile -string "Building status file for thread 1."
 
             [String]$functionStatus = Join-path $global:fullStatusPath $threadOneStatus
         }
         elseif ($threadNumber -eq 2)
         {
-            out-logfile -string "Building status file for threadd 2."
+            out-logfile -string "Building status file for thread 2."
 
             [String]$functionStatus = Join-path $global:fullStatusPath $threadTwoStatus
         }
         elseif ($threadNumber -eq 3)
         {
-            out-logfile -string "Building status file for threadd 3."
+            out-logfile -string "Building status file for thread 3."
 
             [String]$functionStatus = Join-path $global:fullStatusPath $threadThreeStatus
         }
         elseif ($threadNumber -eq 4)
         {
-            out-logfile -string "Building status file for threadd 4."
+            out-logfile -string "Building status file for thread 4."
 
             [String]$functionStatus = Join-path $global:fullStatusPath $threadFourStatus
         }
         elseif ($threadNumber -eq 5)
         {
-            out-logfile -string "Building status file for threadd 5."
+            out-logfile -string "Building status file for thread 5."
 
             [String]$functionStatus = Join-path $global:fullStatusPath $threadFiveStatus
         }
@@ -80,5 +84,9 @@
         # Write everything to our log file and the screen
 
         $statusString | Out-File -FilePath $functionStatus
+
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "END OUT-STATUSFILE"
+        Out-LogFile -string "********************************************************************************"
 
     }
