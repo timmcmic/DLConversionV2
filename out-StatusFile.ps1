@@ -36,45 +36,11 @@
     
         #Define the status file.
 
-        [string]$threadOneStatus="ThreadOneStatus.txt"
-        [string]$threadTwoStatus="ThreadTwoStatus.txt"
-        [string]$threadThreeStatus="ThreadThreeStatus.txt"
-        [string]$threadFourStatus="ThreadFourStatus.txt"
-        [string]$threadFiveStatus="ThreadFiveStatus.txt"
+        [array]$threadStatus="ThreadZeroStatus.txt","ThreadOneStatus.txt","ThreadTwoStatus.txt",,"ThreadThreeStatus.txt","ThreadFourStatus.txt","ThreadFiveStatus.txt",,"ThreadSixStatus.txt","ThreadSevenStatus.txt","ThreadEightStatus.txt",,"ThreadNineStatus.txt",,"ThreadTenStatus.txt"
 
         [string]$statusString="DONE"
 
-
-        if ($threadNumber -eq 1)
-        {
-            out-logfile -string "Building status file for thread 1."
-
-            [String]$functionStatus = Join-path $global:fullStatusPath $threadOneStatus
-        }
-        elseif ($threadNumber -eq 2)
-        {
-            out-logfile -string "Building status file for thread 2."
-
-            [String]$functionStatus = Join-path $global:fullStatusPath $threadTwoStatus
-        }
-        elseif ($threadNumber -eq 3)
-        {
-            out-logfile -string "Building status file for thread 3."
-
-            [String]$functionStatus = Join-path $global:fullStatusPath $threadThreeStatus
-        }
-        elseif ($threadNumber -eq 4)
-        {
-            out-logfile -string "Building status file for thread 4."
-
-            [String]$functionStatus = Join-path $global:fullStatusPath $threadFourStatus
-        }
-        elseif ($threadNumber -eq 5)
-        {
-            out-logfile -string "Building status file for thread 5."
-
-            [String]$functionStatus = Join-path $global:fullStatusPath $threadFiveStatus
-        }
+        [String]$functionStatus = Join-path $global:fullStatusPath $threadStatus[$threadNumber]
 
         #Write the generic thread to the file - we only care that the file was created.
 

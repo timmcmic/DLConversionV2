@@ -432,11 +432,7 @@ Function Start-DistributionListMigration
 
     #Define the sub folders for multi-threading.
 
-    [string]$threadOneFolder="\Thread1"
-    [string]$threadTwoFolder="\Thread2"
-    [string]$threadThreeFolder="\Thread3"
-    [string]$threadFourFolder="\Thread4"
-    [string]$threadFiveFolder="\Thread5"
+    [array]$threadFolder="\Thread0","\Thread1","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
 
     #Define the status directory.
 
@@ -452,26 +448,7 @@ Function Start-DistributionListMigration
     {
         new-statusFile -logFolderPath $logFolderPath
         
-        if ($threadNumber -eq 1)
-        {
-            $logFolderPath=$logFolderPath+$threadOneFolder
-        }
-        elseif ($threadNumber -eq 2)
-        {
-            $logFolderPath=$logFolderPath+$threadTwoFolder
-        }
-        elseif ($threadNumber -eq 3)
-        {
-            $logFolderPath=$logFolderPath+$threadThreeFolder
-        }
-        elseif ($threadNumber -eq 4)
-        {
-            $logFolderPath=$logFolderPath+$threadFourFolder
-        }
-        elseif ($threadNumber -eq 4)
-        {
-            $logFolderPath=$logFolderPath+$threadFiveFolder
-        }
+        $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
     }
 
     #Log start of DL migration to the log file.
