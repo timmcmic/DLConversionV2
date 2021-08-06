@@ -76,12 +76,7 @@
             [String]$functionStatus = Join-path $global:fullStatusPath $threadFiveStatus
         }
 
-    
-        # Build output string
-        #In this case since I abuse the function to write data to screen and record it in log file
-        #If the input is not a string type do not time it just throw it to the log.
-       
-        # Write everything to our log file and the screen
+        #Write the generic thread to the file - we only care that the file was created.
 
         $statusString | Out-File -FilePath $functionStatus
 
