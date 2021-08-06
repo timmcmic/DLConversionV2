@@ -2776,7 +2776,12 @@ Function Start-DistributionListMigration
 
         out-logfile -string "Trigger cleanup of all status files for future thread coordination."
 
-        remove-statusFiles
+        try{
+            remove-statusFiles
+        }
+        catch{
+            out-logfile -string "Unable to remove status files" -isError:$TRUE
+        }
     }
     
     #At this time we have processed the deletion to azure.
