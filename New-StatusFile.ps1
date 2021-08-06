@@ -35,6 +35,10 @@
 
         $logFolderPath = $logFolderPath+$global:statusPath
 
+        #Set the global status path.
+
+        $global:fullStatusPath = $logFolderPath
+
         #Test the path to see if this exists if not create.
 
         [boolean]$pathExists = Test-Path -Path $logFolderPath

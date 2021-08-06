@@ -441,6 +441,8 @@ Function Start-DistributionListMigration
     #Define the status directory.
 
     [string]$global:statusPath="\Status\"
+    [string]$global:fullStatusPath=$NULL
+    [int]$statusFileCount=0
 
 
     #If multi threaded - the log directory needs to be created for each thread.
@@ -2663,17 +2665,75 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    #Replicate domain controllers so that the change is received as soon as possible.   
+    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
-    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-    start-sleep -seconds 15
-    out-logfile -string "Invoking AD replication."
+    out-logfile -string "If thread number > 1 - write the status file here."
 
-    try {
-        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+    if ($threadNumber -ge 2)
+    {
+        out-logfile -string "Thread number is greater than 1."
+
+        out-statusFile -threadNumber $threadNumber
     }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
+    else 
+    {
+        out-logfile -string "Thread number is 1 - do not write status at this time."    
+    }
+
+    #If there are multiple threads - only replicate the domain controllers and trigger AD connect if all threads have completed their work.
+
+    out-logfile -string "Determine if multiple migration threads are in use..."
+
+    if ($totalThreadCount -eq 0)
+    {
+        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+    }
+    else 
+    {
+        out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
+        
+        if ($threadNumber -eq 1)
+        {
+            out-logfile -string "This is the master thread responsible for triggering operations."
+            out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
+
+            #Do the following until the count of the files in the directory = number of threads - 1.
+
+            do 
+            {
+                out-logfile -string "Other threads are pending.  Sleep 5 seconds."
+
+                start-sleep -s 5
+            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
+        }
+        elseif ($threadNumber -ge 2)
+        {
+            out-logfile -string "This is not the master thread responsible for triggering operations."
+            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
+
+            do 
+            {
+                out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
+                
+                start-sleep -s 5
+            } until ((get-statusFileCount) -eq $totalThreadCount)
+        }
+    }
+
+    #Replicate domain controllers so that the change is received as soon as possible.()
+    
+    if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+    {
+        out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+        start-sleep -seconds 15
+        out-logfile -string "Invoking AD replication."
+
+        try {
+            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
@@ -2695,8 +2755,11 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
     }
+
+    #The single functions have triggered operations.  Other threads may continue.
+
+    out-statusFile -threadNumber 1
     
-  
     #At this time we have processed the deletion to azure.
     #We need to wait for that deletion to occur in Exchange Online.
 
