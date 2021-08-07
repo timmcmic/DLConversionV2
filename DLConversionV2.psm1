@@ -2772,7 +2772,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Other threads are pending.  Sleep 5 seconds."
 
                 start-sleep -s 5
-            } until ((try{get-statusFileCount}catch{Out-Logfile -string "Unable to get file count." -isError:$TRUE}) -eq ($totalThreadCount - 1))
+            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
         elseif ($threadNumber -ge 2)
         {
@@ -2784,7 +2784,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
                 
                 start-sleep -s 5
-            } until ((try{get-statusFileCount}catch{Out-Logfile -string "Unable to get file count." -isError:$TRUE} -eq $totalThreadCount))
+            } until ((get-statusFileCount) -eq  $totalThreadCount)
         }
     }
 
