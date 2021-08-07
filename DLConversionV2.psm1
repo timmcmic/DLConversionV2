@@ -1593,6 +1593,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string "Being validating all distribution list members."
+    
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
@@ -1624,6 +1626,8 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "There are no DL members to test."    
     }
+
+    out-logfile -string "Begin evaluating all members with reject rights."
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
@@ -1657,6 +1661,8 @@ Function Start-DistributionListMigration
         out-logfile -string "There are no reject members to test."    
     }
 
+    out-logfile -string "Begin evaluating all members with accept rights."
+
     if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
         out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
@@ -1684,6 +1690,12 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There are no accept members to test."    
+    }
+
+    out-logfile -string "Begin evaluating all managed by members."
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
@@ -1712,6 +1724,12 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no managed by members to evaluate."    
+    }
+
+    out-logfile -string "Being evaluating all moderated by members."
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
@@ -1740,6 +1758,12 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no moderated by members to evaluate."    
+    }
+
+    out-logfile -string "Being evaluating all bypass moderation members."
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
@@ -1768,6 +1792,12 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no bypass moderation members to evaluate."    
+    }
+
+    out-logfile -string "Begin evaluation of all grant send on behalf to members."
 
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
@@ -1795,6 +1825,44 @@ Function Start-DistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+    }
+    else 
+    {
+        out-logfile -string "There were no grant send on behalf to members to evaluate."    
+    }
+
+    out-logfile -string "Begin evaluation all members with send as rights."
+
+    if ($exchangeSendAsSMTP -ne $NULL)
+    {
+        out-logfile -string "Ensuring each DL send as is in Office 365."
+
+        foreach ($member in $exchangeSendAsSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "There were no members with send as rights."    
     }
 
     Out-LogFile -string "********************************************************************************"
