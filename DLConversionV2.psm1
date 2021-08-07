@@ -2705,11 +2705,52 @@ Function Start-DistributionListMigration
 
     #EXIT #Debug exit
 
+    #In this case we should write a status file for all threads.
+    #When all threads have reached this point it is safe to have them all move their DLs to the non-Sync OU.
+
+    try{
+        out-statusFile -threadNumber $threadNumber -errorAction STOP
+    }
+    catch{
+        out-logfile -string "Unable to write status file." -isError:$TRUE
+    }
+
+    #If there are multiple threads in use hold all of them for thread 
+
+    out-logfile -string "Determine if multiple migration threads are in use..."
+
+    if ($totalThreadCount -eq 0)
+    {
+        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+    }
+    else 
+    {
+        out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
+        do 
+        {
+            out-logfile -string "All threads are not ready - sleeping."
+            
+            start-sleep -s 5
+        } until ((get-statusFileCount) -eq  $totalThreadCount)
+    }
+
     try {
         move-toNonSyncOU -dn $originalDLConfiguration.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
+    }
+
+    #If there are multiple threads have all threads > 1 sleep for 15 seconds while thread one deletes all status files.
+    #This should cover the 5 seconds that any other threads may be sleeping looking to read the status directory.
+
+    if ($threadNumber -gt 1)
+    {
+        start-sleep s 15
+    }
+    else 
+    {
+        remove-statusFiles  
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2835,7 +2876,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Starting thread 1 sleep for other threads to gather status."
 
-        start-sleep -s 10
+        start-sleep -s 15
 
         out-logfile -string "Trigger cleanup of all status files for future thread coordination."
 
