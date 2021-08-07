@@ -432,7 +432,7 @@ Function Start-DistributionListMigration
 
     #Define the sub folders for multi-threading.
 
-    [array]$threadFolder="\Thread0","\Thread1","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
 
     #Define the status directory.
 
