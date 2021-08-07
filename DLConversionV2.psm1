@@ -269,7 +269,7 @@ Function Start-DistributionListMigration
     $routingDynamicGroupConfig=$NULL
     [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    [array]$exchangeAcceptMessageSMTP=@() #Array of members with accept permissions from AD.
+    [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
     [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
     [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
     [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
@@ -1271,7 +1271,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
             }
             catch 
             {
@@ -1299,7 +1299,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
             }
             catch 
             {
@@ -1308,11 +1308,11 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
         Out-LogFile -string "The following objects are members of the accept messages from senders:"
         
-        out-logfile -string $exchangeAcceptMessageSMTP
+        out-logfile -string $exchangeAcceptMessagesSMTP
     }
     else
     {
@@ -1569,7 +1569,7 @@ Function Start-DistributionListMigration
     out-logFile -string "Summary of group information:"
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
-    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
+    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
@@ -2114,13 +2114,13 @@ Function Start-DistributionListMigration
         $exchangeRejectMessagesSMTP=@()
     }
 
-    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     }
     else 
     {
-        $exchangeAcceptMessageSMTP=@()
+        $exchangeAcceptMessagesSMTP=@()
     }
 
     if ($exchangeManagedBySMTP -ne $NULL)
@@ -2887,7 +2887,7 @@ Function Start-DistributionListMigration
     out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
 
     try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
     }
     catch {
         out-logFile -string $_ -isError:$TRUE
