@@ -1590,7 +1590,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Being validating all distribution list members."
     
-    if ($exchangeDLMembershipSMTP -ne $NULL)
+    if ($exchangeDLMembershipSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
 
@@ -1624,7 +1624,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin evaluating all members with reject rights."
 
-    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    if ($exchangeRejectMessagesSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL reject messages is in Office 365."
 
@@ -1658,7 +1658,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin evaluating all members with accept rights."
 
-    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
 
@@ -1692,7 +1692,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin evaluating all managed by members."
 
-    if ($exchangeManagedBySMTP -ne $NULL)
+    if ($exchangeManagedBySMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
 
@@ -1726,7 +1726,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Being evaluating all moderated by members."
 
-    if ($exchangeModeratedBySMTP -ne $NULL)
+    if ($exchangeModeratedBySMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
 
@@ -1760,7 +1760,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Being evaluating all bypass moderation members."
 
-    if ($exchangeBypassModerationSMTP -ne $NULL)
+    if ($exchangeBypassModerationSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
 
@@ -1794,7 +1794,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin evaluation of all grant send on behalf to members."
 
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
 
@@ -1828,7 +1828,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin evaluation all members with send as rights."
 
-    if ($exchangeSendAsSMTP -ne $NULL)
+    if ($exchangeSendAsSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL send as is in Office 365."
 
