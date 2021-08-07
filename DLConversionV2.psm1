@@ -451,6 +451,10 @@ Function Start-DistributionListMigration
         $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
     }
 
+    #Ensure that no status files exist at the start of the run.
+
+    remove-statusFiles
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
