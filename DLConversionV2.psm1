@@ -1620,6 +1620,10 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There are no DL members to test."    
+    }
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
@@ -1647,6 +1651,10 @@ Function Start-DistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+    }
+    else 
+    {
+        out-logfile -string "There are no reject members to test."    
     }
 
     if ($exchangeAcceptMessagesSMTP -ne $NULL)
