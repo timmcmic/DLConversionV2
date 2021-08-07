@@ -446,14 +446,23 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-        new-statusFile -logFolderPath $logFolderPath
+        if ($threadNumber -eq 1)
+        {
+            new-statusFile -logFolderPath $logFolderPath
         
-        $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
+            $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
+        }
     }
 
     #Ensure that no status files exist at the start of the run.
 
-    remove-statusFiles
+    if ($totalThreadCount -gt 0)
+    {
+        if ($threadNumber -eq 1)
+        {
+            remove-statusFiles
+        }
+    }
 
     #Log start of DL migration to the log file.
 
