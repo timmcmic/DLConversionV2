@@ -1558,11 +1558,6 @@ Function Start-DistributionListMigration
         
         out-logfile -string $exchangeSendAsSMTP
     }
-    else 
-    {
-        $exchangeSendAsSMTP=@()
-        out-logfile "The group has no grant send on behalf to."    
-    }
 
     #exit #Debug Exit
 
