@@ -1867,6 +1867,8 @@ Function Start-DistributionListMigration
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
 
+    Exit #Debug Exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
