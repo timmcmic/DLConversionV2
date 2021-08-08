@@ -20,20 +20,12 @@
     {
         [string]$functionPath=$global:fullStatusPath+"*"
 
-        out-logfile -string "================================================================================"
-        out-logfile -string "START remove-statusFiles"
-        out-logfile -string "================================================================================"
-
         try
         {
-            remove-item -path $functionPath -force -errorAction SilentlyContinue
+            remove-item -path $functionPath -force -errorAction STOP
         }
         catch
         {
-            out-logfile -string "Unable to remove status files from directory."
+            $_
         }
-        
-        out-logfile -string "================================================================================"
-        out-logfile -string "END remove-statusFiles"
-        out-logfile -string "================================================================================"
     }
