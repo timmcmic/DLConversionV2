@@ -214,7 +214,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [int]$threadNumber=0,
+        [int]$global:threadNumber=0,
         [Parameter(Mandatory = $false)]
         [int]$totalThreadCount=0
     )
@@ -4191,21 +4191,17 @@ Function Start-DistributionListMigration
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
 
-    if ($threadNumber -eq 1)
-    {
-        out-logfile -string "Starting thread 1 sleep for other threads to gather status."
+   if ($totalThreadCount -gt 0)
+   {
+       start-sleep -s 5
 
-        start-sleep -s 10
-
-        out-logfile -string "Trigger cleanup of all status files for future thread coordination."
-
-        try{
-            remove-statusFiles
+       try{
+        remove-statusFiles -fullCleanup:$TRUE
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
-    }
+   }
 
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
