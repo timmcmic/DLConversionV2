@@ -18,7 +18,30 @@
     #>
     Function remove-statusFiles
     {
-        [string]$functionPath=$global:fullStatusPath+"*"
+        [cmdletbinding()]
+
+        Param
+        (
+            [Parameter(Mandatory = $false)]
+            [int]$threadNumber=0,
+            [Parameter(Mandatory = $false)]
+            [boolean]$fullCleanup=$FALSE
+        )
+
+        [array]$threadStatus="ThreadZeroStatus.txt","ThreadOneStatus.txt","ThreadTwoStatus.txt","ThreadThreeStatus.txt","ThreadFourStatus.txt","ThreadFiveStatus.txt","ThreadSixStatus.txt","ThreadSevenStatus.txt","ThreadEightStatus.txt","ThreadNineStatus.txt","ThreadTenStatus.txt"
+
+        [string]$functionPath=$NULL
+
+        
+        if ($fullCleanUp -eq $TRUE)
+        {
+            $functionPath=Join-path $global:fullStatusPath $threadStatus[$threadNumber]
+        }
+        else 
+        {
+            $functionPath=$global:fullStatusPath+"*"
+        }
+        
 
         try
         {
