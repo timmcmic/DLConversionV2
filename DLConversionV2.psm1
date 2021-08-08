@@ -2727,7 +2727,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "All threads are not ready - sleeping."
             
-            start-sleep -m 5
+            start-sleep -s 1
         } until ((get-statusFileCount) -eq  $totalThreadCount)
     }
 
@@ -2743,7 +2743,7 @@ Function Start-DistributionListMigration
 
     if ($threadNumber -gt 1)
     {
-        start-sleep s 15
+        start-sleep -s 15
     }
     else 
     {
@@ -2770,7 +2770,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "If thread number > 1 - write the status file here."
 
-    if ($threadNumber -ge 2)
+    if ($threadNumber -gt 1)
     {
         out-logfile -string "Thread number is greater than 1."
 
@@ -2813,7 +2813,7 @@ Function Start-DistributionListMigration
                 start-sleep -s 5
             } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
-        elseif ($threadNumber -ge 2)
+        elseif ($threadNumber -gt 1)
         {
             out-logfile -string "This is not the master thread responsible for triggering operations."
             out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
