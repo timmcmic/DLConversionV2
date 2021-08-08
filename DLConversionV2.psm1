@@ -446,13 +446,13 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
+        $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
+        
         if ($threadNumber -eq 1)
         {
             new-statusFile -logFolderPath $logFolderPath
         }
     }
-
-    $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
 
     #Ensure that no status files exist at the start of the run.
 
