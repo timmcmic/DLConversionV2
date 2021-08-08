@@ -42,11 +42,13 @@
 
         [String]$functionStatus = Join-path $global:fullStatusPath $threadStatus[$threadNumber]
 
+        out-logFile -string $functionStatus
+
         #Write the generic thread to the file - we only care that the file was created.
 
         try
         {
-            $statusString | Out-File -FilePath $functionStatus
+            $statusString | Out-File -FilePath $functionStatus -force
         }
         catch
         {
