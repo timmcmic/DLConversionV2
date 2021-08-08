@@ -2876,7 +2876,7 @@ Function Start-DistributionListMigration
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
 
-    if ($threadNumber -eq 1)
+    if ($totalThreadCount -gt 0)
     {
         out-logfile -string "Starting thread 1 sleep for other threads to gather status."
 
