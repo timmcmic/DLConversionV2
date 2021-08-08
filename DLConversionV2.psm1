@@ -2727,8 +2727,6 @@ Function Start-DistributionListMigration
         do 
         {
             out-logfile -string "All threads are not ready - sleeping."
-            
-            start-sleep -s 1
         } until ((get-statusFileCount) -eq  $totalThreadCount)
     }
 
@@ -2812,8 +2810,6 @@ Function Start-DistributionListMigration
             do 
             {
                 out-logfile -string "Other threads are pending.  Sleep 5 seconds."
-
-                start-sleep -s 5
             } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
         elseif ($threadNumber -gt 1)
@@ -2824,8 +2820,6 @@ Function Start-DistributionListMigration
             do 
             {
                 out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
-                
-                start-sleep -s 5
             } until ((get-statusFileCount) -eq  $totalThreadCount)
         }
     }
