@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $false)]
-            [int]$threadNumber=$FALSE
+            [int]$threadNumber=0
         )
 
         Out-LogFile -string "********************************************************************************"
