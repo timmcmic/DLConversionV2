@@ -44,7 +44,14 @@
 
         #Write the generic thread to the file - we only care that the file was created.
 
-        $statusString | Out-File -FilePath $functionStatus
+        try
+        {
+            $statusString | Out-File -FilePath $functionStatus
+        }
+        catch
+        {
+            out-logfile $_ -isError:$TRUE
+        }
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END OUT-STATUSFILE"
