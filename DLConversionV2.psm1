@@ -446,11 +446,7 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-
-        if ($threadNumber -eq 1)
-        {
-            new-statusFile -logFolderPath $logFolderPath
-        }
+        new-statusFile -logFolderPath $logFolderPath
 
         $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
     }
