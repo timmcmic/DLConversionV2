@@ -448,14 +448,14 @@ Function Start-DistributionListMigration
     {
         new-statusFile -logFolderPath $logFolderPath
 
-        $logFolderPath=$logFolderPath+$threadFolder[$threadNumber]
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
     }
 
     #Ensure that no status files exist at the start of the run.
 
     if ($totalThreadCount -gt 0)
     {
-        if ($threadNumber -eq 1)
+        if ($global:threadNumber -eq 1)
         {
             remove-statusFiles -fullCleanup:$TRUE
         }
@@ -2718,7 +2718,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
 
         try{
-            out-statusFile -threadNumber $threadNumber -errorAction STOP
+            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
         }
         catch{
             out-logfile -string "Unable to write status file." -isError:$TRUE
@@ -2745,7 +2745,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Starting multi-thread sleep post move to non-sync OU"
 
         try {
-            remove-statusFiles -threadNumber $threadNumber
+            remove-statusFiles -threadNumber $global:threadNumber
         }
         catch {
             out-logfile -string "Unable to remove the status file associated with this thread." -isError:$TRUE
@@ -2775,12 +2775,12 @@ Function Start-DistributionListMigration
 
     out-logfile -string "If thread number > 1 - write the status file here."
 
-    if ($threadNumber -gt 1)
+    if ($global:threadNumber -gt 1)
     {
         out-logfile -string "Thread number is greater than 1."
 
         try{
-            out-statusFile -threadNumber $threadNumber -errorAction STOP
+            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
         }
         catch{
             out-logfile -string $_
@@ -2804,7 +2804,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
         
-        if ($threadNumber -eq 1)
+        if ($global:threadNumber -eq 1)
         {
             out-logfile -string "This is the master thread responsible for triggering operations."
             out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
@@ -2816,7 +2816,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Other threads are pending.  Sleep 5 seconds."
             } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
-        elseif ($threadNumber -gt 1)
+        elseif ($global:threadNumber -gt 1)
         {
             out-logfile -string "This is not the master thread responsible for triggering operations."
             out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
@@ -2830,7 +2830,7 @@ Function Start-DistributionListMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.()
     
-    if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
         out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
         start-sleep -seconds 15
@@ -2847,7 +2847,7 @@ Function Start-DistributionListMigration
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-    if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
         if ($useAADConnect -eq $TRUE)
         {
@@ -2883,7 +2883,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Trigger cleanup of all status files for future thread coordination."
 
         try{
-            remove-statusFiles -threadNumber $threadNumber
+            remove-statusFiles -threadNumber $global:threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
@@ -4088,12 +4088,12 @@ Function Start-DistributionListMigration
 
    out-logfile -string "If thread number > 1 - write the status file here."
 
-   if ($threadNumber -gt 1)
+   if ($global:threadNumber -gt 1)
    {
        out-logfile -string "Thread number is greater than 1."
 
        try{
-           out-statusFile -threadNumber $threadNumber -errorAction STOP
+           out-statusFile -threadNumber $global:threadNumber -errorAction STOP
        }
        catch{
            out-logfile -string $_
@@ -4117,7 +4117,7 @@ Function Start-DistributionListMigration
    {
        out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
        
-       if ($threadNumber -eq 1)
+       if ($global:threadNumber -eq 1)
        {
            out-logfile -string "This is the master thread responsible for triggering operations."
            out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
@@ -4131,7 +4131,7 @@ Function Start-DistributionListMigration
                start-sleep -s 5
            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
        }
-       elseif ($threadNumber -gt 1)
+       elseif ($global:threadNumber -gt 1)
        {
            out-logfile -string "This is not the master thread responsible for triggering operations."
            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
@@ -4147,7 +4147,7 @@ Function Start-DistributionListMigration
 
    #Replicate domain controllers so that the change is received as soon as possible.()
    
-   if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
    {
        out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
        start-sleep -seconds 15
@@ -4164,7 +4164,7 @@ Function Start-DistributionListMigration
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-   if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
    {
        if ($useAADConnect -eq $TRUE)
        {
