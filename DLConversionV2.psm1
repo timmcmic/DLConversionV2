@@ -457,7 +457,7 @@ Function Start-DistributionListMigration
     {
         if ($threadNumber -eq 1)
         {
-            remove-statusFiles
+            remove-statusFiles -fullCleanup:$TRUE
         }
     }
 
@@ -2743,12 +2743,16 @@ Function Start-DistributionListMigration
     if ($totalThreadCount -gt 0)
     {
         out-logfile -string "Starting multi-thread sleep post move to non-sync OU"
-        start-sleep -s 5
 
-        if ($threadNumber -eq 1)
-        {
-            remove-statusFiles
+        try {
+            remove-statusFiles -threadNumber $threadNumber
         }
+        catch {
+            out-logfile -string "Unable to remove the status file associated with this thread." -isError:$TRUE
+        }
+        
+
+        start-sleep -seconds 5
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2874,16 +2878,18 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Starting thread 1 sleep for other threads to gather status."
 
-        start-sleep -s 15
+        start-sleep -s 5
 
         out-logfile -string "Trigger cleanup of all status files for future thread coordination."
 
         try{
-            remove-statusFiles
+            remove-statusFiles -threadNumber $threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
+
+        start-sleep -s 5
     }
     
     #At this time we have processed the deletion to azure.
