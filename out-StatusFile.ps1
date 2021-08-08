@@ -36,7 +36,7 @@
     
         #Define the status file.
 
-        [array]$threadStatus="ThreadZeroStatus.txt","ThreadOneStatus.txt","ThreadTwoStatus.txt",,"ThreadThreeStatus.txt","ThreadFourStatus.txt","ThreadFiveStatus.txt",,"ThreadSixStatus.txt","ThreadSevenStatus.txt","ThreadEightStatus.txt",,"ThreadNineStatus.txt",,"ThreadTenStatus.txt"
+        [array]$threadStatus="ThreadZeroStatus.txt","ThreadOneStatus.txt","ThreadTwoStatus.txt","ThreadThreeStatus.txt","ThreadFourStatus.txt","ThreadFiveStatus.txt","ThreadSixStatus.txt","ThreadSevenStatus.txt","ThreadEightStatus.txt","ThreadNineStatus.txt","ThreadTenStatus.txt"
 
         [string]$statusString="DONE"
 
