@@ -2705,13 +2705,6 @@ Function Start-DistributionListMigration
     #In this case we should write a status file for all threads.
     #When all threads have reached this point it is safe to have them all move their DLs to the non-Sync OU.
 
-    try{
-        out-statusFile -threadNumber $threadNumber -errorAction STOP
-    }
-    catch{
-        out-logfile -string "Unable to write status file." -isError:$TRUE
-    }
-
     #If there are multiple threads in use hold all of them for thread 
 
     out-logfile -string "Determine if multiple migration threads are in use..."
@@ -2723,6 +2716,14 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
+
+        try{
+            out-statusFile -threadNumber $threadNumber -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Unable to write status file." -isError:$TRUE
+        }
+
         do 
         {
             out-logfile -string "All threads are not ready - sleeping."
@@ -2743,10 +2744,12 @@ Function Start-DistributionListMigration
 
     if ($threadNumber -gt 1)
     {
+        out-logfile -string "This thread is sleeping to allow thread 1 to clean up files."
         start-sleep -s 15
     }
     else 
     {
+        out-logfile -string "This thread is now removing log files since it's thread 1."
         remove-statusFiles  
     }
 
