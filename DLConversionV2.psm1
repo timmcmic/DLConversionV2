@@ -2864,9 +2864,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
         }
-    }
-
-    
+    }   
 
     #The single functions have triggered operations.  Other threads may continue.
 
@@ -4083,62 +4081,109 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    #If there are multiple threads and we've reached this point - we're ready to write a status file.
+   #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
-    out-logfile -string "If thread number > 1 - write the status file here."
+   out-logfile -string "If thread number > 1 - write the status file here."
 
-    if ($threadNumber -ge 2)
-    {
-        out-logfile -string "Thread number is greater than 1."
+   if ($threadNumber -gt 1)
+   {
+       out-logfile -string "Thread number is greater than 1."
 
-        try{
-            out-statusFile -threadNumber $threadNumber -errorAction STOP
-        }
-        catch{
-            out-logfile -string "Unable to write status file." -isError:$TRUE
-        }
-    }
-    else 
-    {
-        out-logfile -string "Thread number is 1 - do not write status at this time."    
-    }
+       try{
+           out-statusFile -threadNumber $threadNumber -errorAction STOP
+       }
+       catch{
+           out-logfile -string $_
+           out-logfile -string "Unable to write status file." -isError:$TRUE
+       }
+   }
+   else 
+   {
+       out-logfile -string "Thread number is 1 - do not write status at this time."    
+   }
 
-    if (($threadNumber -eq 1) -or ($threadNumber -eq 0))
-    {
-        #Trigger ad replication and triggering AD connect for all final updates.
+   #If there are multiple threads - only replicate the domain controllers and trigger AD connect if all threads have completed their work.
 
-        out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-        start-sleep -seconds 15
-        out-logfile -string "Invoking AD replication."
+   out-logfile -string "Determine if multiple migration threads are in use..."
 
-        try {
-            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
-    }
+   if ($totalThreadCount -eq 0)
+   {
+       out-logfile -string "Multiple threads are not in use.  Continue functions..."
+   }
+   else 
+   {
+       out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
+       
+       if ($threadNumber -eq 1)
+       {
+           out-logfile -string "This is the master thread responsible for triggering operations."
+           out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
 
-    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
-    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+           #Do the following until the count of the files in the directory = number of threads - 1.
 
-    if ($useAADConnect -eq $TRUE)
-    {
-        out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-        start-sleep -seconds 30
-        out-logfile -string "Invoking AD Connect."
+           do 
+           {
+               out-logfile -string "Other threads are pending.  Sleep 5 seconds."
 
-        start-sleep -s 5
-        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
-    }
-    else 
-    {
-        out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
-    }
+               start-sleep -s 5
+           } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
+       }
+       elseif ($threadNumber -gt 1)
+       {
+           out-logfile -string "This is not the master thread responsible for triggering operations."
+           out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
 
-    #The single functions have triggered operations.  Other threads may continue.
+           do 
+           {
+               out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
+               
+               start-sleep -s 5
+           } until ((get-statusFileCount) -eq  $totalThreadCount)
+       }
+   }
 
-    out-statusFile -threadNumber 1
+   #Replicate domain controllers so that the change is received as soon as possible.()
+   
+   if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+   {
+       out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+       start-sleep -seconds 15
+       out-logfile -string "Invoking AD replication."
+
+       try {
+           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+       }
+       catch {
+           out-logfile -string $_ -isError:$TRUE
+       }
+   }
+
+   #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
+   #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+   if ($threadNumber -eq 0 -or ($threadNumber -eq 1))
+   {
+       if ($useAADConnect -eq $TRUE)
+       {
+           out-logfile -string "Starting sleep before invoking AD Connect - one minute."
+           start-sleep -seconds 60
+           out-logfile -string "Invoking AD Connect."
+
+           start-sleep -s 5
+           invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+
+           out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
+           start-sleep -seconds 60
+       }   
+       else 
+       {
+           out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
+       }
+   }   
+
+   #The single functions have triggered operations.  Other threads may continue.
+
+   out-statusFile -threadNumber 1
 
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
