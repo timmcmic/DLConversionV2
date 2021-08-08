@@ -2782,6 +2782,7 @@ Function Start-DistributionListMigration
             out-statusFile -threadNumber $threadNumber -errorAction STOP
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to write status file." -isError:$TRUE
         }
     }
