@@ -2731,7 +2731,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "All threads are not ready - sleeping."
             
-            start-sleep -s 5
+            start-sleep -m 5
         } until ((get-statusFileCount) -eq  $totalThreadCount)
     }
 
