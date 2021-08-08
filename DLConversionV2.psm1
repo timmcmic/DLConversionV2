@@ -2742,15 +2742,15 @@ Function Start-DistributionListMigration
     #If there are multiple threads have all threads > 1 sleep for 15 seconds while thread one deletes all status files.
     #This should cover the 5 seconds that any other threads may be sleeping looking to read the status directory.
 
-    if ($threadNumber -gt 1)
+    if ($totalThreadCount -gt 0)
     {
-        out-logfile -string "This thread is sleeping to allow thread 1 to clean up files."
-        start-sleep -s 15
-    }
-    else 
-    {
-        out-logfile -string "This thread is now removing log files since it's thread 1."
-        remove-statusFiles  
+        out-logfile -string "Starting multi-thread sleep post move to non-sync OU"
+        start-sleep -s 5
+
+        if ($threadNumber -eq 1)
+        {
+            remove-statusFiles
+        }
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
