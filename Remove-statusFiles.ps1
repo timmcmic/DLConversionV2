@@ -33,19 +33,19 @@
         [string]$functionPath=$NULL
 
         
-        if ($fullCleanUp -eq $TRUE)
-        {
-            $functionPath=Join-path $global:fullStatusPath $threadStatus[$functionThreadNumber]
-        }
-        else 
+        if ($fullCleanUp -eq $FALSE)
         {
             Out-LogFile -string "********************************************************************************"
             Out-LogFile -string "BEGIN remove-StatusFile"
             Out-LogFile -string "********************************************************************************"
 
-            $functionPath=$global:fullStatusPath+"*"
+            $functionPath=Join-path $global:fullStatusPath $threadStatus[$functionThreadNumber]
 
             out-logfile -string $functionPath
+        }
+        else 
+        {
+            $functionPath=$global:fullStatusPath+"*"
         }
         
         try
