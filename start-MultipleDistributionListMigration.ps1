@@ -472,7 +472,7 @@ Function Start-MultipleDistributionListMigration
     {
         out-logfile -string $arrayLocation
         $arrayLocation=$arrayLocation+1
-    } until ($arrayLocation -lt $totalAddressCount)
+    } until ($arrayLocation -eq $totalAddressCount)
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
