@@ -481,12 +481,47 @@ Function Start-MultipleDistributionListMigration
             Out-logfile -string "More than 5 groups to process."
             $loopThreadCount = 5
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
+
+            out-logfile -string $groupSMTPAddresses[$arrayLocation]
+            out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
+            out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
+            out-logfile -string $groupSMTPAddresses[$arrayLocation+3]
+            out-logfile -string $groupSMTPAddresses[$arrayLocation+4]
+
+            $arrayLocation=$arrayLocation+5
         }
         else 
         {
             Out-logfile -string "Less than 5 groups to process."
             $loopThreadCount = $remainingAddresses
-            out-logfile -string ("The loop thread counter = "+$loopThreadCount)    
+            out-logfile -string ("The loop thread counter = "+$loopThreadCount)
+            
+            if ($arrayLocation -eq 1)
+            {
+                out-logfile -string $groupSMTPAddresses[$arrayLocation]
+                $arrayLocation=$arrayLocation+1
+            }
+            elseif ($arrayLocation -eq 2)
+            {
+                out-logfile -string $groupSMTPAddresses[$arrayLocation]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
+                $arrayLocation=$arrayLocation+2
+            }
+            elseif ($arrayLocation -eq 3)
+            {
+                out-logfile -string $groupSMTPAddresses[$arrayLocation]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
+                $arrayLocation=$arrayLocation+3
+            }
+            elseif ($arrayLocation -eq 3)
+            {
+                out-logfile -string $groupSMTPAddresses[$arrayLocation]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+3]
+                $arrayLocation=$arrayLocation+4
+            }
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
