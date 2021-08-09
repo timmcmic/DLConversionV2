@@ -4203,7 +4203,7 @@ Function Start-DistributionListMigration
        start-sleep -s 10
 
        try{
-        remove-statusFiles -fullCleanup:$TRUE
+        remove-statusFiles -threadNumber $global:threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
