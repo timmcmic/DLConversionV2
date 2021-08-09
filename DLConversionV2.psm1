@@ -221,9 +221,13 @@ Function Start-DistributionListMigration
 
     #Define global variables.
 
-    [int]$global:threadNumber = $threadNumberAssigned
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLConversion\"
+    [string]$global:staticFolderName="\DLMigration\"
+    [string]$global:staticAuditFolderName="\AuditData\"
+    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
+    [int]$global:unDoStatus=0
+    [array]$importData=@()
+    [string]$importFilePath=$NULL
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
