@@ -222,7 +222,9 @@ Function Start-MultipleDistributionListMigration
     [boolean]$retainFullMailboxAccessOffice365=$FALSE
     [boolean]$retainMailboxFolderPermsOffice365=$FALSE
 
-    $jobOutPut=$NULL
+    $jobOutput=$NULL
+
+    [int]$totalAddressCount = $groupSMTPAddresses.Count
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
@@ -451,7 +453,50 @@ Function Start-MultipleDistributionListMigration
     {
         out-logfile -string $GroupSMTPAddress
     }
+
+    #Maximum thread count that can be supported at one time is 5 for now.
+    #Performance degrades over time at greater intervals.
+    #The code overall is set to take a max of 10 - but for now we're capping it at 5 concurrent / per batch.
+
+    #The goal of this operation will be to batch moves in groups of 5 - and do another group after that.
+
+    out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
     
+    [boolean]$allDone=$FALSE
+    [int]$arrayLocation=0
+    [int]$maxArrayLocation = $totalAddressCount - 1
+    [int]$remainingAddresses = 0
+    [int]$loopThreadCount = 0
+
+    do {
+        do {
+            $remainingAddresses = $maxArrayLocations - $totalAddressCount
+
+            out-logfile -string $remainingAddresses
+
+            if ($remainingAddresses -ge 5)
+            {
+                out-logfile -string "Remaining addresses >= 5 -> total threads 5."
+                $loopThreadCount = 5
+            }
+            else 
+            {
+                out-logfile -string "Remaining addresses < 5 -> total threads = remaining addresses"
+                $loopThreadCount = $remainingAddresses    
+            }
+
+            Write-Host $groupSMTPAddresses[$arrayLocation]
+            $arrayLocation+=$arrayLocation+1
+            
+        } until ($arrayLocation -lt $totalAddressCount)
+
+        out-logfile -string "All done processing array members."
+
+        $allDone = $TRUE
+        
+    } until ($allDone -eq $TRUE)
+
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
