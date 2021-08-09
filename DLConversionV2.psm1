@@ -214,13 +214,14 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [int]$global:threadNumber=0,
+        [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
         [int]$totalThreadCount=0
     )
 
     #Define global variables.
 
+    $global:threadNumber=$threadNumberAssigned
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\DLMigration\"
     [string]$global:staticAuditFolderName="\AuditData\"
