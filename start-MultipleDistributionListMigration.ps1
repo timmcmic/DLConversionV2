@@ -498,35 +498,9 @@ Function Start-MultipleDistributionListMigration
             $loopThreadCount = $remainingAddresses
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
             
-            if ($arrayLocation -eq 1)
+            if ($arrayLocation -gt 1)
             {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                $arrayLocation=$arrayLocation+1
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($arrayLocation -eq 2)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                $arrayLocation=$arrayLocation+2
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($arrayLocation -eq 3)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
-                $arrayLocation=$arrayLocation+3
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($arrayLocation -eq 4)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+3]
-                $arrayLocation=$arrayLocation+4
-                out-logfile -string ("The array location is = "+$arrayLocation)
+                out-logfile -string "Test"
             }
         }
     } until ($arrayLocation -eq $totalAddressCount)
