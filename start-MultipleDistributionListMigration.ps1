@@ -490,7 +490,7 @@ Function Start-MultipleDistributionListMigration
             Write-Host $groupSMTPAddresses[$arrayLocation]
             $arrayLocation+=$arrayLocation+1
             
-        } until ($arrayLocation -lt $totalAddressCount)
+        } until ($arrayLocation -eq $totalAddressCount)
 
         out-logfile -string "All done processing array members."
 
