@@ -519,7 +519,7 @@ Function Start-MultipleDistributionListMigration
                 $arrayLocation=$arrayLocation+3
                 out-logfile -string ("The array location is = "+$arrayLocation)
             }
-            elseif ($arrayLocation -eq 3)
+            elseif ($arrayLocation -eq 4)
             {
                 out-logfile -string $groupSMTPAddresses[$arrayLocation]
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
