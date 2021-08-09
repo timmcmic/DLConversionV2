@@ -479,13 +479,15 @@ Function Start-MultipleDistributionListMigration
         if ($remainingAddresses -ge 5)
         {
             Out-logfile -string "More than 5 groups to process."
+            $loopThreadCount = 5
+            out-logfile -string ("The loop thread counter = "+$loopThreadCount)
         }
         else 
         {
-            Out-logfile -string "Less than 5 groups to process."    
+            Out-logfile -string "Less than 5 groups to process."
+            $loopThreadCount = $remainingAddresses
+            out-logfile -string ("The loop thread counter = "+$loopThreadCount)    
         }
-
-        $arrayLocation=$arrayLocation+1
     } until ($arrayLocation -eq $totalAddressCount)
 
     Out-LogFile -string "================================================================================"
