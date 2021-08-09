@@ -472,7 +472,7 @@ Function Start-MultipleDistributionListMigration
     {
         out-logfile -string $arrayLocation
 
-        $remainingAddresses = $maxArrayLocation - $arrayLocation
+        $remainingAddresses = $totalAddressCount - $arrayLocation
 
         out-logfile -string $remainingAddresses
 
