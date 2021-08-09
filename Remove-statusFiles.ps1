@@ -23,7 +23,7 @@
         Param
         (
             [Parameter(Mandatory = $false)]
-            [int]$threadNumber=0,
+            [int]$functionThreadNumber=0,
             [Parameter(Mandatory = $false)]
             [boolean]$fullCleanup=$FALSE
         )
@@ -35,20 +35,45 @@
         
         if ($fullCleanUp -eq $TRUE)
         {
-            $functionPath=Join-path $global:fullStatusPath $threadStatus[$threadNumber]
+            $functionPath=Join-path $global:fullStatusPath $threadStatus[$functionThreadNumber]
         }
         else 
         {
+            Out-LogFile -string "********************************************************************************"
+            Out-LogFile -string "BEGIN remove-StatusFile"
+            Out-LogFile -string "********************************************************************************"
+
             $functionPath=$global:fullStatusPath+"*"
+
+            out-logfile -string $functionPath
         }
         
-
         try
         {
+            if ($fullCleanup -eq $FALSE)
+            {
+                out-logfile -string "Removing files from the status directory."
+            }
+
             remove-item -path $functionPath -force -errorAction STOP
         }
         catch
         {
-            $_
+            if ($fullCleanup -eq $FALSE)
+            {
+                out-logfile -string "Error removing log files." -isError:$TRUE
+            }
+            else 
+            {
+                $_
+            }
+           
+        }
+
+        if ($fullCleanup -eq $FALSE)
+        {
+            Out-LogFile -string "********************************************************************************"
+            Out-LogFile -string "END remove-StatusFile"
+            Out-LogFile -string "********************************************************************************"
         }
     }

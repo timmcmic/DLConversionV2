@@ -2870,7 +2870,10 @@ Function Start-DistributionListMigration
 
     #The single functions have triggered operations.  Other threads may continue.
 
-    out-statusFile -threadNumber 1
+    if ($global:threadNumber -eq 1)
+    {
+        out-statusFile -threadNumber $global:threadNumber
+    }
 
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
@@ -4187,14 +4190,17 @@ Function Start-DistributionListMigration
 
    #The single functions have triggered operations.  Other threads may continue.
 
-   out-statusFile -threadNumber 1
+   if ($global:threadNumber -eq 1)
+   {
+       out-statusFile -threadNumber $global:threadNumber
+   }
 
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
 
    if ($totalThreadCount -gt 0)
    {
-       start-sleep -s 5
+       start-sleep -s 10
 
        try{
         remove-statusFiles -fullCleanup:$TRUE
