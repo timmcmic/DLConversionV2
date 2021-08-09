@@ -471,6 +471,20 @@ Function Start-MultipleDistributionListMigration
     do 
     {
         out-logfile -string $arrayLocation
+
+        $remainingAddresses = $maxArrayLocation - $arrayLocation
+
+        out-logfile -string $remainingAddresses
+
+        if ($remainingAddresses -ge 5)
+        {
+            Out-logfile -string "More than 5 groups to process."
+        }
+        else 
+        {
+            Out-logfile -string "Less than 5 groups to process."    
+        }
+
         $arrayLocation=$arrayLocation+1
     } until ($arrayLocation -eq $totalAddressCount)
 
