@@ -468,36 +468,11 @@ Function Start-MultipleDistributionListMigration
     [int]$remainingAddresses = 0
     [int]$loopThreadCount = 0
 
-    do {
-        do {
-            $remainingAddresses = $totalAddressCount - $arrayLocation
-
-            out-logfile -string $remainingAddresses
-
-            if ($remainingAddresses -ge 5)
-            {
-                out-logfile -string "Remaining addresses >= 5 -> total threads 5."
-                $loopThreadCount = 5
-                out-logfile -string $loopThreadCount
-            }
-            else 
-            {
-                out-logfile -string "Remaining addresses < 5 -> total threads = remaining addresses"
-                $loopThreadCount = $remainingAddresses
-                out-logfile -string $loopThreadCount    
-            }
-
-            Write-Host $groupSMTPAddresses[$arrayLocation]
-            $arrayLocation+=$arrayLocation+1
-            
-        } until ($arrayLocation -eq $totalAddressCount)
-
-        out-logfile -string "All done processing array members."
-
-        $allDone = $TRUE
-        
-    } until ($allDone -eq $TRUE)
-
+    do 
+    {
+        out-logfile -string $arrayLocation
+        $arrayLocation=$arrayLocation+1
+    } until ($arrayLocation -lt $totalAddressCount)
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
