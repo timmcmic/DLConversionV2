@@ -2743,17 +2743,20 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-        out-logfile -string "Starting multi-thread sleep post move to non-sync OU"
+        out-logfile -string "Starting sleep before removing individual status files.."
 
-        try {
-            remove-statusFiles -threadNumber $global:threadNumber
-        }
-        catch {
-            out-logfile -string "Unable to remove the status file associated with this thread." -isError:$TRUE
-        }
-        
+        start-sleep -s 5
 
-        start-sleep -seconds 5
+        out-logfile -string "Trigger cleanup of individual status files."
+
+        try{
+            remove-statusFiles -functionThreadNumber $global:threadNumber
+        }
+        catch{
+            out-logfile -string "Unable to remove status files" -isError:$TRUE
+        }
+
+        start-sleep -s 5
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2880,14 +2883,14 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-        out-logfile -string "Starting thread 1 sleep for other threads to gather status."
+        out-logfile -string "Starting sleep before removing individual status files.."
 
         start-sleep -s 5
 
-        out-logfile -string "Trigger cleanup of all status files for future thread coordination."
+        out-logfile -string "Trigger cleanup of individual status files."
 
         try{
-            remove-statusFiles -threadNumber $global:threadNumber
+            remove-statusFiles -functionThreadNumber $global:threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
@@ -4203,7 +4206,7 @@ Function Start-DistributionListMigration
        start-sleep -s 10
 
        try{
-        remove-statusFiles -threadNumber $global:threadNumber
+        remove-statusFiles -functionThreadNumber $global:threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
