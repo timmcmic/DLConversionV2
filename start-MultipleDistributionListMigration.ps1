@@ -498,9 +498,13 @@ Function Start-MultipleDistributionListMigration
             $loopThreadCount = $remainingAddresses
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
             
-            if ($arrayLocation -gt 1)
+            if ($arrayLocation -eq 3)
             {
-                out-logfile -string "Test"
+                out-logfile -string $groupSMTPAddresses[$arrayLocation]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
+                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
+
+                $arrayLocation=$arrayLocation+3
             }
         }
     } until ($arrayLocation -eq $totalAddressCount)
