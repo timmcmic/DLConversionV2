@@ -214,15 +214,16 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [int]$global:threadNumber=0,
+        [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
         [int]$totalThreadCount=0
     )
 
     #Define global variables.
 
+    [int]$global:threadNumber = $threadNumberAssigned
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\Master\"
+    [string]$global:staticFolderName="\DLConversion\"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 

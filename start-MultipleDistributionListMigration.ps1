@@ -441,6 +441,12 @@ Function Start-MultipleDistributionListMigration
 
     Out-LogFile -string "The following SMTP addresses have been requested for migration."
 
+    #Ensure that no addresses are specified more than once.
+
+    out-logfile -string "Unique list of SMTP addresses included in the array."
+
+    $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
+
     foreach ($groupSMTPAddress in $groupSMTPAddresses)
     {
         out-logfile -string $GroupSMTPAddress
