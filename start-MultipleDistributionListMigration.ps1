@@ -148,7 +148,7 @@ Function Start-MultipleDistributionListMigration
     Param
     (
         [Parameter(Mandatory = $true)]
-        [string]$groupSMTPAddress,
+        [array]$groupSMTPAddresses,
         [Parameter(Mandatory = $true)]
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
@@ -191,17 +191,7 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainFullMailboxAccessOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
         [boolean]$retainSendAsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
@@ -222,14 +212,20 @@ Function Start-MultipleDistributionListMigration
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\Master\"
-    [string]$global:staticAuditFolderName="\AuditData\"
+    [string]$masterFileName="Master"
 
-    
+    #Define parameters that are variables here (not available as parameters in this function.)
 
-    new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
+    [boolean]$retainSendAsOnPrem=$FALSE
+    [boolean]$retainFullMailboxAccessOnPrem=$FALSE
+    [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
+    [boolean]$retainFullMailboxAccessOffice365=$FALSE
+    [boolean]$retainMailboxFolderPermsOffice365=$FALSE
+
+    new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "BEGIN START-MULTIPLEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
     #Output parameters to the log file for recording.
@@ -238,7 +234,11 @@ Function Start-MultipleDistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "PARAMETERS"
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+    out-logfile -string "SMTP Addresses:"
+    foreach ($smtpAddress in $groupSMTPAddresses)
+    {
+        Out-LogFile -string $smtpAddress
+    }
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
@@ -279,71 +279,18 @@ Function Start-MultipleDistributionListMigration
     out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
     out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
     out-logfile -string ("Group type override = "+$groupTypeOverride)
-    Out-LogFile -string "********************************************************************************"
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string " RECORD VARIABLES"
-    Out-LogFile -string "********************************************************************************"
-
-    out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
-    out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
-    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremisesExchange)
-    Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
-    Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
-    Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
-    Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
-    Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
-    Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
-    out-logFile -string ("Static property for accept messages from members = "+$acceptMessagesFromDLMembers)
-    out-logFile -string ("Static property for accept messages from members = "+$rejectMessagesFromDLMembers)
-    Out-LogFile -string ("DL Properties to collect = ")
-
-    foreach ($dlProperty in $dlPropertySet)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared legacy = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearLegacy)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared modern = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearModern)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
-    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$exchangeServerAllowRedirection)
-    Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
-    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
-    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
-    Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
-    Out-LogFile -string ("Exchange DL members XML Name - "+$exchangeDLMembershipSMTPXML)
-    Out-LogFile -string ("Exchange Reject members XML Name - "+$exchangeRejectMessagesSMTPXML)
-    Out-LogFile -string ("Exchange Accept members XML Name - "+$exchangeAcceptMessagesSMTPXML)
-    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$exchangeManagedBySMTPXML)
-    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$exchangeModeratedBySMTPXML)
-    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$exchangeBypassModerationSMTPXML)
-    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$exchangeGrantSendOnBehalfToSMTPXML)
-    Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
-    Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
-    Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
-    Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
-    out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
-    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
-    out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
-    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for managed by members = "+$office365ManagedBy)
-    out-logfile -string ("Property in office 365 for members = "+$office365Members)
-    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365RejectMessagesFrom)
+    out-logfile -string ("Trigger upgrade to Office 365 Group = "+$triggerUpgradeToOffice365Group)
+    out-logfile -string ("Retain full mailbox access on premises = "+$retainFullMailboxAccessOnPrem)
+    out-logfile -string ("Retain send as rights on premise = "+$retainSendAsOnPrem)
+    out-logfile -string ("Retain mailbox folder permissions on premises = "+$retainMailboxFolderPermsOnPrem)
+    out-logfile -string ("Retain full mailbox access Office 365 = "+$retainFullMailboxAccessOffice365)
+    out-logfile -string ("Retain send as rights Office 365 = "+$retainSendAsOffice365)
+    out-logfile -string ("Retain mailbox folder permissions Office 365 = "+$retainMailboxFolderPermsOffice365)
+    out-logfile -string ("Use collected full mailbox permissions on premises = "+$useCollectedFullMailboxAccessOnPrem)
+    out-logfile -string ("Use collected full mailbox permissions Office 365 ="+$useCollectedFullMailboxAccessOffice365)
+    out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
+    out-logfile -string ("Use colleced mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
+    out-logfile -string ("Use collected mailbox folder permissions Office 365 = "+$useCollectedFolderPermissionsOffice365)
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
@@ -373,16 +320,6 @@ Function Start-MultipleDistributionListMigration
         #The server name and credential were specified for AADConnect.
 
         Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-    
-        #Set useAADConnect to TRUE since the parameters necessary for use were passed.
-        
-        $useAADConnect=$TRUE
-
-        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$useAADConnect)
-    }
-    else
-    {
-        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$useAADConnect)
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -406,12 +343,6 @@ Function Start-MultipleDistributionListMigration
         #The server name and credential were specified for Exchange.
 
         Out-LogFile -string "The server name and credential were specified for Exchange."
-
-        #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
-
-        $useOnPremisesExchange=$TRUE
-
-        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
     }
     else
     {
@@ -454,8 +385,6 @@ Function Start-MultipleDistributionListMigration
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
 
-    #exit #Debug exit.
-
     #Validate that an OU was specified <if> retain group is not set to true.
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
@@ -468,31 +397,6 @@ Function Start-MultipleDistributionListMigration
     if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
     {
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-    }
-
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremisesExchange -eq $FALSE))
-    {
-        out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
-    }
-
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremisesExchange -eq $FALSE))
-    {
-        out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
-    }
-
-    if (($retainSendAsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Send As you must retain Office 365 settings." -isError:$TRUE
-    }
-
-    if (($retainFullMailboxAccessOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Full Mailbox Access you must retain Office 365 settings." -isError:$TRUE
-    }
-
-    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Mailbox Folder Permissions you must retain Office 365 settings." -isError:$TRUE
     }
 
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
@@ -529,7 +433,6 @@ Function Start-MultipleDistributionListMigration
     {
         out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
     }
-
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"

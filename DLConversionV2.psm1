@@ -409,6 +409,18 @@ Function Start-DistributionListMigration
     out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
     out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
     out-logfile -string ("Group type override = "+$groupTypeOverride)
+    out-logfile -string ("Trigger upgrade to Office 365 Group = "+$triggerUpgradeToOffice365Group)
+    out-logfile -string ("Retain full mailbox access on premises = "+$retainFullMailboxAccessOnPrem)
+    out-logfile -string ("Retain send as rights on premise = "+$retainSendAsOnPrem)
+    out-logfile -string ("Retain mailbox folder permissions on premises = "+$retainMailboxFolderPermsOnPrem)
+    out-logfile -string ("Retain full mailbox access Office 365 = "+$retainFullMailboxAccessOffice365)
+    out-logfile -string ("Retain send as rights Office 365 = "+$retainSendAsOffice365)
+    out-logfile -string ("Retain mailbox folder permissions Office 365 = "+$retainMailboxFolderPermsOffice365)
+    out-logfile -string ("Use collected full mailbox permissions on premises = "+$useCollectedFullMailboxAccessOnPrem)
+    out-logfile -string ("Use collected full mailbox permissions Office 365 ="+$useCollectedFullMailboxAccessOffice365)
+    out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
+    out-logfile -string ("Use colleced mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
+    out-logfile -string ("Use collected mailbox folder permissions Office 365 = "+$useCollectedFolderPermissionsOffice365)
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
@@ -598,16 +610,6 @@ Function Start-DistributionListMigration
     if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
     {
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-    }
-
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremisesExchange -eq $FALSE))
-    {
-        out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
-    }
-
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremisesExchange -eq $FALSE))
-    {
-        out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
     }
 
     if (($retainSendAsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
