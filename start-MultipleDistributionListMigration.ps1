@@ -489,6 +489,8 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string $groupSMTPAddresses[$arrayLocation+4]
 
             $arrayLocation=$arrayLocation+5
+
+            out-logfile -string ("The array location is = "+$arrayLocation)
         }
         else 
         {
@@ -500,12 +502,14 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string $groupSMTPAddresses[$arrayLocation]
                 $arrayLocation=$arrayLocation+1
+                out-logfile -string ("The array location is = "+$arrayLocation)
             }
             elseif ($arrayLocation -eq 2)
             {
                 out-logfile -string $groupSMTPAddresses[$arrayLocation]
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
                 $arrayLocation=$arrayLocation+2
+                out-logfile -string ("The array location is = "+$arrayLocation)
             }
             elseif ($arrayLocation -eq 3)
             {
@@ -513,6 +517,7 @@ Function Start-MultipleDistributionListMigration
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
                 $arrayLocation=$arrayLocation+3
+                out-logfile -string ("The array location is = "+$arrayLocation)
             }
             elseif ($arrayLocation -eq 3)
             {
@@ -521,6 +526,7 @@ Function Start-MultipleDistributionListMigration
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
                 out-logfile -string $groupSMTPAddresses[$arrayLocation+3]
                 $arrayLocation=$arrayLocation+4
+                out-logfile -string ("The array location is = "+$arrayLocation)
             }
         }
     } until ($arrayLocation -eq $totalAddressCount)
