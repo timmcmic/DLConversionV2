@@ -222,6 +222,8 @@ Function Start-MultipleDistributionListMigration
     [boolean]$retainFullMailboxAccessOffice365=$FALSE
     [boolean]$retainMailboxFolderPermsOffice365=$FALSE
 
+    $jobOutPut=$NULL
+
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
@@ -437,6 +439,12 @@ Function Start-MultipleDistributionListMigration
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
+    Out-LogFile -string "The following SMTP addresses have been requested for migration."
+
+    foreach ($groupSMTPAddress in $groupSMTPAddresses)
+    {
+        out-logfile -string $GroupSMTPAddress
+    }
     
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
