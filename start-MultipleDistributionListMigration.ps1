@@ -470,7 +470,7 @@ Function Start-MultipleDistributionListMigration
 
     do {
         do {
-            $remainingAddresses = $maxArrayLocations - $totalAddressCount
+            $remainingAddresses = $totalAddressCount - 
 
             out-logfile -string $remainingAddresses
 
@@ -478,11 +478,13 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Remaining addresses >= 5 -> total threads 5."
                 $loopThreadCount = 5
+                out-logfile -string $loopThreadCount
             }
             else 
             {
                 out-logfile -string "Remaining addresses < 5 -> total threads = remaining addresses"
-                $loopThreadCount = $remainingAddresses    
+                $loopThreadCount = $remainingAddresses
+                out-logfile -string $loopThreadCount    
             }
 
             Write-Host $groupSMTPAddresses[$arrayLocation]
