@@ -568,12 +568,48 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
                 Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 30}
+
+                if ($forCounter -eq 0)
+                {
+                    start-sleep -s 5
+                }
+    
             }
 
-            if ($forCounter -eq 0)
+            #We cannot allow the next batch to be processed - until the current batch has no running threads.
+
+            do 
             {
-                start-sleep -s 5
+                out-logfile -string "Jobs are not yet completed in this batch."
+
+                $loopJobs = get-job -state Running
+
+                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
+
+                foreach ($job in $loopJobs)
+                {
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                }
+
+                start-sleep -seconds 30
+
+            } until ((get-job -State Completed).count -eq $remainingAddresses)
+
+            out-logfile -string ("The array location is = "+$arrayLocation)
+
+            #Remove all completed jobs at this time.
+
+            $loopJobs = get-job -state Completed
+
+            foreach ($job in $loopJobs)
+            {
+                $jobOutput+=receive-job -id $job.Id
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
             }
+
+            out-logfile -string "Removing all completed jobs."
+
+            get-job | remove-job    
 
             $arrayLocation=$arrayLocation+$remainingAddresses
         }
