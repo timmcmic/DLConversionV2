@@ -503,7 +503,7 @@ Function Start-MultipleDistributionListMigration
             for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
-                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 30}
+                Start-Job -ScriptBlock {get-content c:\temp\bulk.txt}
 
                 if ($forCounter -eq 0)
                 {
@@ -567,7 +567,7 @@ Function Start-MultipleDistributionListMigration
             for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
-                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 30}
+                Start-Job -ScriptBlock {get-content c:\temp\bulk.txt}
 
                 if ($forCounter -eq 0)
                 {
