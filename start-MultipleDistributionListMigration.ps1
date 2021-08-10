@@ -615,6 +615,8 @@ Function Start-MultipleDistributionListMigration
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
+    out-logfile -string $jobOutput
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
