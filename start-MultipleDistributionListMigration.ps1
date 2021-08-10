@@ -516,7 +516,11 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                out-logfile -string (get-job)
+                $loopJobs = get-job -state Running
+
+                out-logfile -string ("Number of jobs that are running = "+$loopJobs)
+
+                start-sleep -seconds 30
 
             } until ((get-job -State Completed).count -eq $maxThreadCount)
 
