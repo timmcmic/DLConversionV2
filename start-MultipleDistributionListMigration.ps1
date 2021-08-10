@@ -520,6 +520,11 @@ Function Start-MultipleDistributionListMigration
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count)
 
+                foreach ($job in $loopJob)
+                {
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                }
+
                 start-sleep -seconds 30
 
             } until ((get-job -State Completed).count -eq $maxThreadCount)
