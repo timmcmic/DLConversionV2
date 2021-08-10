@@ -479,7 +479,7 @@ Function Start-MultipleDistributionListMigration
 
         if ($remainingAddresses -ge $maxThreadCount)
         {
-            Out-logfile -string "More than 5 groups to process."
+            Out-logfile -string ("More than "+$maxThreadCount.ToString()+" groups to process.")
             $loopThreadCount = $maxThreadCount
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
 
@@ -494,7 +494,7 @@ Function Start-MultipleDistributionListMigration
         }
         else 
         {
-            Out-logfile -string "Less than 5 groups to process."
+            Out-logfile -string ("Less than "+$maxThreadCount.ToString()+" groups to process.")
             $loopThreadCount = $remainingAddresses
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
 
