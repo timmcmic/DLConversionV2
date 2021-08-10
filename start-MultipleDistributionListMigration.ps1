@@ -225,6 +225,7 @@ Function Start-MultipleDistributionListMigration
     $jobOutput=$NULL
 
     [int]$totalAddressCount = $groupSMTPAddresses.Count
+    [int]$maxThreadCount = 5
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
@@ -476,18 +477,18 @@ Function Start-MultipleDistributionListMigration
 
         out-logfile -string $remainingAddresses
 
-        if ($remainingAddresses -ge 5)
+        if ($remainingAddresses -ge $maxThreadCount)
         {
             Out-logfile -string "More than 5 groups to process."
-            $loopThreadCount = 5
+            $loopThreadCount = $maxThreadCount
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
 
-            for ($forCounter = 0 ; $forCounter -lt 5 ; $forCounter ++)
+            for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
             }
 
-            $arrayLocation=$arrayLocation+5
+            $arrayLocation=$arrayLocation+$maxThreadCount
 
             out-logfile -string ("The array location is = "+$arrayLocation)
         }
@@ -503,39 +504,6 @@ Function Start-MultipleDistributionListMigration
             }
 
             $arrayLocation=$arrayLocation+$remainingAddresses
-
-            <#
-            if ($remainingAddresses -eq 1)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                $arrayLocation=$arrayLocation+1
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($remainingAddresses -eq 2)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                $arrayLocation=$arrayLocation+2
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($remainingAddresses -eq 3)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
-                $arrayLocation=$arrayLocation+3
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            elseif ($remainingAddresses -eq 4)
-            {
-                out-logfile -string $groupSMTPAddresses[$arrayLocation]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+1]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+2]
-                out-logfile -string $groupSMTPAddresses[$arrayLocation+3]
-                $arrayLocation=$arrayLocation+4
-                out-logfile -string ("The array location is = "+$arrayLocation)
-            }
-            #>
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
