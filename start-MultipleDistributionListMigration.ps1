@@ -506,7 +506,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread = $forCounter+1
 
-                Start-Job -InitalizationScript {Import-Module c:\test\DLConversionV2}
+                Start-Job -InitializationScript {Import-Module c:\test\DLConversionV2}
                     -ScriptBlock { 
                         -groupSMTPAddress $args[0]
                         -globalCatalogServer $args[1]
@@ -542,7 +542,7 @@ Function Start-MultipleDistributionListMigration
                         -threadNumberAssigned $args[31]
                         -totalThreadCount $args[32]
                     }
-                    -argumentList
+                    -ArgumentList
                         $groupSMTPAddresses[$arrayLocation + $forCounter],
                         $globalCatalogServer,
                         $activeDirectoryCredential,
