@@ -528,7 +528,7 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleep -seconds 30
 
-            } until ((get-job -State Completed).count -eq $maxThreadCount)
+            } until ((get-job -State Running).count -eq 0)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -593,7 +593,7 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleep -seconds 30
 
-            } until ((get-job -State Completed).count -eq $remainingAddresses)
+            } until ((get-job -State Running).count -eq 0)
 
             out-logfile -string ("The array location is = "+$arrayLocation)
 
