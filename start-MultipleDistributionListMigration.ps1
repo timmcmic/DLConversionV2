@@ -469,29 +469,61 @@ Function Start-MultipleDistributionListMigration
     [int]$remainingAddresses = 0
     [int]$loopThreadCount = 0
 
+    #Begin processing batches of members in the SMTP array.
+    #Current max jobs recommended 5 per batch.
+
     do 
     {
         out-logfile -string $arrayLocation
+
+        #The remaining addrsses is the total addresses - the number of addresses alread processed by incrementing the array location.
 
         $remainingAddresses = $totalAddressCount - $arrayLocation
 
         out-logfile -string $remainingAddresses
 
+        #If the remaining number of addresses to process is greater than 5 - this means that we can do another bach of 5.
+        #The logic below processes groups in batches of 5.
+
         if ($remainingAddresses -ge $maxThreadCount)
         {
             Out-logfile -string ("More than "+$maxThreadCount.ToString()+" groups to process.")
+
+            #Set the max threads for the job to 5 so each job knows that 5 groups are being processed.
+
             $loopThreadCount = $maxThreadCount
             out-logfile -string ("The loop thread counter = "+$loopThreadCount)
+
+            #Iterate through each group with a for loop.
+            #The loop counter will be the thread number (IE if forCounter=0 then thread number is 1 for the job)
+            #The group to be processed is always where your at in the array + for counter.
+            #If this is the first job being procsesed - sleep for 5 before provisioning any more jobs (allows priority to thread 1 to do some pre-work before others kick in.)
 
             for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
+                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 120}
+
+                if ($forCounter -eq 0)
+                {
+                    start-sleep -s 5
+                }
             }
+
+            #Increment the array location +5 since this loop processed 5 jobs.
 
             $arrayLocation=$arrayLocation+$maxThreadCount
 
             out-logfile -string ("The array location is = "+$arrayLocation)
         }
+
+        #In this instance we have reached a batch of less than 5.
+        #That means when we call the job we need to specify the total thread count of remaining groups .
+        #In this case loop thread count would be the number of remaining groups.
+        #The loop creates the jobs based on the same logic - but this time only up to the number of remaining addresses.
+        #Iterate the array counter to the max number of locations when concluded.
+        #This should trigger the end of the DO UNTIL for batch processing.
+
         else 
         {
             Out-logfile -string ("Less than "+$maxThreadCount.ToString()+" groups to process.")
@@ -501,6 +533,13 @@ Function Start-MultipleDistributionListMigration
             for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
+            }
+
+            Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 120}
+
+            if ($forCounter -eq 0)
+            {
+                start-sleep -s 5
             }
 
             $arrayLocation=$arrayLocation+$remainingAddresses
