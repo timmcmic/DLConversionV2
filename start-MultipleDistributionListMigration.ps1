@@ -468,6 +468,7 @@ Function Start-MultipleDistributionListMigration
     [int]$maxArrayLocation = $totalAddressCount - 1
     [int]$remainingAddresses = 0
     [int]$loopThreadCount = 0
+    $jobOutput=$NULL
 
     #Begin processing batches of members in the SMTP array.
     #Current max jobs recommended 5 per batch.
@@ -536,6 +537,15 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string ("The array location is = "+$arrayLocation)
 
             #Remove all completed jobs at this time.
+
+            $loopJobs = get-job -status Completed
+
+            foreach ($job in $loopJobs)
+            {
+                $jobOutput+=receive-job -id $job.Id
+            }
+
+            out-logfile -string "Removing all completed jobs."
 
             get-job | remove-job    
         }
