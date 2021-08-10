@@ -518,7 +518,7 @@ Function Start-MultipleDistributionListMigration
 
                 $loopJobs = get-job -state Running
 
-                out-logfile -string ("Number of jobs that are running = "+$loopJobs)
+                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count)
 
                 start-sleep -seconds 30
 
