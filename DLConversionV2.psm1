@@ -187,7 +187,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution")]
+        [ValidateSet("Security","Distribution","None")]
         [string]$groupTypeOverride="None",
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
