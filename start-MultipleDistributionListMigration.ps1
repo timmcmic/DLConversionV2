@@ -502,7 +502,7 @@ Function Start-MultipleDistributionListMigration
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation]
             }
 
-            $arrayLocation=$arrayLocation+1
+            $arrayLocation=$arrayLocation+$remainingAddresses
 
             <#
             if ($remainingAddresses -eq 1)
