@@ -534,6 +534,10 @@ Function Start-MultipleDistributionListMigration
             $arrayLocation=$arrayLocation+$maxThreadCount
 
             out-logfile -string ("The array location is = "+$arrayLocation)
+
+            #Remove all completed jobs at this time.
+
+            get-job | remove-job    
         }
 
         #In this instance we have reached a batch of less than 5.
