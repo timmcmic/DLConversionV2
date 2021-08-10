@@ -540,40 +540,7 @@ Function Start-MultipleDistributionListMigration
                         -useCollectedFolderPermissionsOffice365 $args[30]
                         -threadNumberAssigned $args[31]
                         -totalThreadCount $args[32]
-                    } -ArgumentList
-                        $groupSMTPAddresses[$arrayLocation + $forCounter],
-                        $globalCatalogServer,
-                        $activeDirectoryCredential,
-                        $logFolderPath,
-                        $aadConnectServer,
-                        $aadConnectCredential,
-                        $exchangeServer,
-                        $exchangecredential,
-                        $exchangeOnlineCredential,
-                        $exchangeOnlineCertificateThumbPrint,
-                        $exchangeOnlineOrganizationName,
-                        $exchangeOnlineEnvironmentName,
-                        $exchangeOnlineAppID,
-                        $exchangeAuthenticationMethod,
-                        $retainOffice365Settings,
-                        $dnNoSyncOU,
-                        $retainOriginalGroup,
-                        $enableHybridMailflow,
-                        $groupTypeOverride,
-                        $triggerUpgradeToOffice365Group,
-                        $retainFullMailboxAccessOnPrem,
-                        $retainSendAsOnPrem,
-                        $retainMailboxFolderPermsOnPrem,
-                        $retainFullMailboxAccessOffice365,
-                        $retainSendAsOffice365,
-                        $retainMailboxFolderPermsOffice365,
-                        $useCollectedFolderPermissionsOnPrem,
-                        $useCollectedFullMailboxAccessOffice365,
-                        $useCollectedSendAsOnPrem,
-                        $useCollectedFolderPermissionsOnPrem,
-                        $useCollectedFolderPermissionsOffice365,
-                        $forThread,
-                        $loopThreadCount
+                    } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
 
                 if ($forCounter -eq 0)
                 {
