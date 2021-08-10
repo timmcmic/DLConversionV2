@@ -543,6 +543,7 @@ Function Start-MultipleDistributionListMigration
             foreach ($job in $loopJobs)
             {
                 $jobOutput+=receive-job -id $job.Id
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
             }
 
             out-logfile -string "Removing all completed jobs."
