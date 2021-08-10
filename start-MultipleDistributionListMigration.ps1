@@ -499,7 +499,7 @@ Function Start-MultipleDistributionListMigration
 
             for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
             {
-                out-logfile -string $groupSMTPAddresses[$ArrayLocation]
+                out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
             }
 
             $arrayLocation=$arrayLocation+$remainingAddresses
