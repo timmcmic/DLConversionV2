@@ -502,13 +502,23 @@ Function Start-MultipleDistributionListMigration
             for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
-                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 120}
+                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 30}
 
                 if ($forCounter -eq 0)
                 {
                     start-sleep -s 5
                 }
             }
+
+            #We cannot allow the next batch to be processed - until the current batch has no running threads.
+
+            do 
+            {
+                out-logfile -string "Jobs are not yet completed in this batch."
+
+                out-logfile -string (get-job)
+
+            } until ((get-job -State Completed).count -eq $maxThreadCount)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -533,7 +543,7 @@ Function Start-MultipleDistributionListMigration
             for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
             {
                 out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
-                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 120}
+                Start-Job -ScriptBlock {write-host "I am working...";start-sleep -s 30}
             }
 
             if ($forCounter -eq 0)
