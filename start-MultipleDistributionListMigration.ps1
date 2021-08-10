@@ -506,8 +506,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread = $forCounter+1
 
-                Start-Job -InitializationScript {Import-Module c:\test\DLConversionV2}
-                    -ScriptBlock { 
+                Start-Job -InitializationScript {Import-Module c:\test\DLConversionV2} -ScriptBlock { 
                         -groupSMTPAddress $args[0]
                         -globalCatalogServer $args[1]
                         -activeDirectoryCredential $args[2]
@@ -541,8 +540,7 @@ Function Start-MultipleDistributionListMigration
                         -useCollectedFolderPermissionsOffice365 $args[30]
                         -threadNumberAssigned $args[31]
                         -totalThreadCount $args[32]
-                    }
-                    -ArgumentList
+                    } -ArgumentList
                         $groupSMTPAddresses[$arrayLocation + $forCounter],
                         $globalCatalogServer,
                         $activeDirectoryCredential,
