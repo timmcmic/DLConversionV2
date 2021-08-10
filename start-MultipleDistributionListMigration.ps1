@@ -538,7 +538,7 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -status Completed
+            $loopJobs = get-job -state Completed
 
             foreach ($job in $loopJobs)
             {
