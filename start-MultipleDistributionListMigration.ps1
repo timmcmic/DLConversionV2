@@ -545,7 +545,7 @@ Function Start-MultipleDistributionListMigration
 
             foreach ($job in $loopJobs)
             {
-                $jobOutput+=receive-job -id $job.Id
+                $jobOutput+=(get-job -id $job.id).childjobs.output
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
             }
 
@@ -609,7 +609,7 @@ Function Start-MultipleDistributionListMigration
 
             foreach ($job in $loopJobs)
             {
-                $jobOutput+=receive-job -id $job.Id
+                $jobOutput+=(get-job -id $job.id).childjobs.output
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
             }
 
