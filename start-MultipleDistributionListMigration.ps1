@@ -518,9 +518,9 @@ Function Start-MultipleDistributionListMigration
 
                 $loopJobs = get-job -state Running
 
-                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count)
+                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
-                foreach ($job in $loopJob)
+                foreach ($job in $loopJobs)
                 {
                     out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
                 }
