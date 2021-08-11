@@ -541,11 +541,10 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -state Completed
+            $loopJobs = get-job
 
             foreach ($job in $loopJobs)
             {
-                $jobOutput+=(get-job -id $job.id).childjobs.output
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
             }
 
