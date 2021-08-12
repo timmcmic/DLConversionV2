@@ -50,8 +50,10 @@
             }
             else 
             {
+                Get-PSSession
                 out-logfile -string $sesssion.id
                 remove-pssession -id $session.id  
+                Get-PSSession
             }
         }
         <#
