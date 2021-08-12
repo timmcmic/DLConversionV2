@@ -239,51 +239,6 @@ function start-collectOnPremSendAs
 
         if ($forCounter -gt 50)
         {
-            try 
-            {
-                disable-allPowerShellSessions -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string "Unable to remove powershell sessions." -isError:$TRUE
-            }
-
-            try 
-            {
-                out-logFile -string "Creating session to import."
-        
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -errorAction:STOP
-            }
-            catch 
-            {
-                out-logFile -string "Unable to create session to import."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try 
-            {
-                out-logFile -string "Attempting to import powershell session."
-        
-                import-powershellsession -powershellsession $sessionToImport -errorAction STOP
-            }
-            catch 
-            {
-                out-logFile -string "Unable to import powershell session."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try 
-            {
-                out-logFile -string "Attempting to set view entire forest to TRUE."
-        
-                enable-ExchangeOnPremEntireForest -errorAction STOP
-            }
-            catch 
-            {
-                out-logFile -string "Unable to set view entire forest to TRUE."
-                out-logfile -string $_ -isError:$TRUE
-            }
-            
             start-sleep -seconds 5
             $forCounter=0
         }
