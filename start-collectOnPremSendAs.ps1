@@ -102,7 +102,7 @@ function start-collectOnPremSendAs
     {
         out-logFile -string "Creating session to import."
 
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        $global:sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
     }
     catch 
     {
@@ -113,7 +113,7 @@ function start-collectOnPremSendAs
     {
         out-logFile -string "Attempting to import powershell session."
 
-        import-powershellsession -powershellsession $sessionToImport
+        import-powershellsession -powershellsession $global:SessionToImport
     }
     catch 
     {
@@ -252,7 +252,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Creating session to import."
         
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -errorAction:STOP
+                $global:sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -errorAction:STOP
             }
             catch 
             {
@@ -264,7 +264,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Attempting to import powershell session."
         
-                import-powershellsession -powershellsession $sessionToImport -errorAction STOP
+                import-powershellsession -powershellsession $global:SessionToImport -errorAction STOP
             }
             catch 
             {

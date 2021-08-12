@@ -56,18 +56,9 @@
             {
                 out-logfile -string "Removing other non-Exchange Online powershell sessions."
 
-                out-logfile -string $session.id
-                out-logfile -string $session.name
-                out-logfile -string $session.computerName
+                remove-pssession $global:sessiontoImport
 
-                remove-pssession -id $session.id
-
-                Get-PSSession
-
-                Start-Sleep -s 60
-
-               
-                
+                Get-PSSession | remove-pssession
             }
         }
         <#
