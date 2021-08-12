@@ -51,8 +51,7 @@
             else 
             {
                 Get-PSSession
-                out-logfile -string $sesssion.id
-                remove-pssession -id $session.id  
+                get-pssession | remove-pssession
                 Get-PSSession
             }
         }
