@@ -237,7 +237,7 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 1000)
+        if ($forCounter -gt 250)
         {
             out-logfile "Resetting powershell sessions."
 
@@ -305,7 +305,7 @@ function start-collectOnPremSendAs
         $PercentComplete += $ProgressDelta
 
         try {
-            if ($forCounter -gt 1000)
+            if ($forCounter -gt 250)
             {
                 out-logfile "Resetting powershell sessions."
 
