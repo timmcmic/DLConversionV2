@@ -61,6 +61,9 @@
                 out-logfile -string $session.computerName
 
                 remove-pssession -id $session.id
+                remove-pssession -session $session
+                remove-pssession -name $session.name
+                remove-pssession -computerName $session.computerName
             }
         }
         <#
