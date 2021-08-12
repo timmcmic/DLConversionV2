@@ -239,8 +239,53 @@ function start-collectOnPremSendAs
 
         if ($forCounter -gt 1000)
         {
-            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-            start-sleep -seconds 5
+            out-logfile "Resetting powershell sessions."
+
+            try
+            {
+                disable-allPowershellSessions
+            }
+            catch
+            {
+                out-logfile "Unable to disable powershell sessions." -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Creating session to import."
+        
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logFile -string "Unable to create session to import."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Attempting to import powershell session."
+        
+                import-powershellsession -powershellsession $sessionToImport
+            }
+            catch 
+            {
+                out-logFile -string "Unable to import powershell session."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Attempting to set view entire forest to TRUE."
+        
+                enable-ExchangeOnPremEntireForest
+            }
+            catch 
+            {
+                out-logFile -string "Unable to set view entire forest to TRUE."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
             $forCounter=0
         }
         else 
@@ -262,7 +307,52 @@ function start-collectOnPremSendAs
         try {
             if ($forCounter -gt 1000)
             {
-                out-logfile -string "Starting sleep at 1000 operations."
+                out-logfile "Resetting powershell sessions."
+
+                try
+                {
+                    disable-allPowershellSessions
+                }
+                catch
+                {
+                    out-logfile "Unable to disable powershell sessions." -isError:$TRUE
+                }
+
+                try 
+                {
+                    out-logFile -string "Creating session to import."
+            
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    out-logFile -string "Unable to create session to import."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                try 
+                {
+                    out-logFile -string "Attempting to import powershell session."
+            
+                    import-powershellsession -powershellsession $sessionToImport
+                }
+                catch 
+                {
+                    out-logFile -string "Unable to import powershell session."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                
+                try 
+                {
+                    out-logFile -string "Attempting to set view entire forest to TRUE."
+            
+                    enable-ExchangeOnPremEntireForest
+                }
+                catch 
+                {
+                    out-logFile -string "Unable to set view entire forest to TRUE."
+                    out-logfile -string $_ -isError:$TRUE
+                }
 
                 $forCounter=0
             }
