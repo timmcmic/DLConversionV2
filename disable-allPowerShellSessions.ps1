@@ -60,8 +60,9 @@
                 out-logfile -string $session.name
                 out-logfile -string $session.computerName
 
-                disconnect-pssession -id $session.id
                 remove-pssession -id $session.id
+
+                Start-Sleep -s 60
                 
             }
         }
