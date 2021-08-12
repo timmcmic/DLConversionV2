@@ -50,6 +50,7 @@
             }
             else 
             {
+                out-logfile -string "Removing other non-Exchange Online powershell sessions."
                 Get-PSSession
                 get-pssession | remove-pssession
                 Get-PSSession
