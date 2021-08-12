@@ -50,7 +50,7 @@
             }
             else 
             {
-                remove-pssession -Session $session    
+                remove-pssession -id $session.id    
             }
         }
         <#
