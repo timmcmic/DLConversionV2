@@ -41,6 +41,10 @@
             if ($session.computerName -eq "outlook.office365.com")
             {
                 try{
+                    out-logfile -string $session.id
+                    out-logfile -string $session.name
+                    out-logfile -string $session.computerName
+
                     Disconnect-ExchangeOnline -confirm:$FALSE -errorAction STOP
                 }
                 catch{
@@ -51,9 +55,12 @@
             else 
             {
                 out-logfile -string "Removing other non-Exchange Online powershell sessions."
-                Get-PSSession
-                get-pssession | remove-pssession
-                Get-PSSession
+
+                out-logfile -string $session.id
+                out-logfile -string $session.name
+                out-logfile -string $session.computerName
+
+                remove-pssession -id $session.id
             }
         }
         <#
