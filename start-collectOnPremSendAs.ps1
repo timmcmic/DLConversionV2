@@ -155,7 +155,7 @@ function start-collectOnPremSendAs
             }
             else 
             {
-                out-logFile -string "Obtaining all on premises mailboxes."
+                out-logFile -string "Using recipients provided by function caller.."
 
                 $auditRecipients = $bringMyOwnRecipients
     
@@ -237,9 +237,53 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 1000)
+        if ($forCounter -gt 250)
         {
-            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+            try 
+            {
+                disable-allPowerShellSessions
+            }
+            catch 
+            {
+                out-logfile -string "Unable to remove powershell sessions." -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Creating session to import."
+        
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logFile -string "Unable to create session to import."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Attempting to import powershell session."
+        
+                import-powershellsession -powershellsession $sessionToImport
+            }
+            catch 
+            {
+                out-logFile -string "Unable to import powershell session."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try 
+            {
+                out-logFile -string "Attempting to set view entire forest to TRUE."
+        
+                enable-ExchangeOnPremEntireForest
+            }
+            catch 
+            {
+                out-logFile -string "Unable to set view entire forest to TRUE."
+                out-logfile -string $_ -isError:$TRUE
+            }
+            
             start-sleep -seconds 5
             $forCounter=0
         }
@@ -260,17 +304,6 @@ function start-collectOnPremSendAs
         $PercentComplete += $ProgressDelta
 
         try {
-            if ($forCounter -gt 1000)
-            {
-                out-logfile -string "Starting sleep at 1000 operations."
-
-                $forCounter=0
-            }
-            else 
-            {
-                $forCounter++    
-            }
-
             $auditSendAs+=get-adPermission -identity $recipient.identity | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)}
         }
         catch {
