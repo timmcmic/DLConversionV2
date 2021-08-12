@@ -241,7 +241,7 @@ function start-collectOnPremSendAs
         {
             try 
             {
-                disable-allPowerShellSessions
+                disable-allPowerShellSessions -errorAction STOP
             }
             catch 
             {
@@ -252,7 +252,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Creating session to import."
         
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -errorAction:STOP
             }
             catch 
             {
@@ -264,7 +264,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Attempting to import powershell session."
         
-                import-powershellsession -powershellsession $sessionToImport
+                import-powershellsession -powershellsession $sessionToImport -errorAction STOP
             }
             catch 
             {
@@ -276,7 +276,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Attempting to set view entire forest to TRUE."
         
-                enable-ExchangeOnPremEntireForest
+                enable-ExchangeOnPremEntireForest -errorAction STOP
             }
             catch 
             {
