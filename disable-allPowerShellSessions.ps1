@@ -63,6 +63,8 @@
                 remove-pssession -id $session.id
 
                 Start-Sleep -s 60
+
+                Get-PSSession
                 
             }
         }
