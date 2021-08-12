@@ -237,7 +237,7 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 250)
+        if ($forCounter -gt 50)
         {
             try 
             {
