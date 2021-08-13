@@ -237,7 +237,7 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 50)
+        if ($forCounter -gt 250)
         {
             start-sleep -seconds 5
             $forCounter=0
