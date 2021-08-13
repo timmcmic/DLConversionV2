@@ -239,6 +239,7 @@ function start-collectOnPremSendAs
 
         if ($forCounter -gt 250)
         {
+            out-logfile -string "Reached processing batch - sleep 5 seconds."
             start-sleep -seconds 5
             $forCounter=0
         }
