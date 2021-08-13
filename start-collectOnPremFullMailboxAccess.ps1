@@ -138,6 +138,8 @@ function start-collectOnPremFullMailboxAccess
 
     try 
     {
+        out-logfile -string "Determining mailboxes to process."
+        
         if ($retryCollection -eq $FALSE)
         {
             if ($bringMyOwnMailboxes -ne $NULL)
