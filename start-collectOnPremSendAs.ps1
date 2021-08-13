@@ -259,7 +259,7 @@ function start-collectOnPremSendAs
         $PercentComplete += $ProgressDelta
 
         try {
-            $auditSendAs+=get-adPermission -identity $recipient.identity | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)}
+            $auditSendAs+=get-adPermission -identity $recipient.identity | Where-Object {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)} -errorAction STOP
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
