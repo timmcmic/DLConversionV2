@@ -142,7 +142,7 @@ function start-collectOnPremFullMailboxAccess
 
         if ($retryCollection -eq $FALSE)
         {
-            if ($bringMyOwnMailboxes -ne $NULL)
+            if ($bringMyOwnMailboxes -eq $NULL)
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
