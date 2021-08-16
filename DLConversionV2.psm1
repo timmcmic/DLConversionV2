@@ -2914,8 +2914,8 @@ Function Start-DistributionListMigration
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
-    out-logfile "Sleeping 30 seconds before creating the DL."
-    start-sleep -seconds 30
+    out-logfile "Sleeping 15 seconds before creating the DL."
+    start-sleep -seconds 15
 
     try {
         new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
@@ -2923,6 +2923,9 @@ Function Start-DistributionListMigration
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
+
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
 
     try {
         $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction STOP
@@ -2958,6 +2961,9 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
+
     try {
         $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
     }
@@ -2992,6 +2998,9 @@ Function Start-DistributionListMigration
     start-sleep -seconds 5
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
 
     out-logFile -string ("Capture the DL status post migration.")
 
