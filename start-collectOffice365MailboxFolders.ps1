@@ -245,89 +245,27 @@ function start-collectOffice365MailboxFolders
         out-logfile -string $_ -isError:$TRUE
     }
 
-    #For each mailbox - we will iterate and grab the folders for processing.
+    #Ensure the count of mailboxes is greater than zero before proceeding.
 
-    out-logfile -string "Gathering mailbox folders for assessment."
-
-    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
-
-    $totalMailboxes=$auditMailboxes.count
-
-    #Here we're going to use a for loop based on count.
-    #This is to support a retry operation.
-
-    for ($mailboxCounter ; $mailboxCounter -lt $totalMailboxes ; $mailboxCounter++)
+    if ($auditMailboxes -gt 0)
     {
-        #Drop the mailbox into a working variable.
+        #For each mailbox - we will iterate and grab the folders for processing.
 
-        $mailbox = $auditMailboxes[$mailboxCounter]
+        out-logfile -string "Gathering mailbox folders for assessment."
 
-        if ($forCounter -gt 1000)
+        $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+
+        $totalMailboxes=$auditMailboxes.count
+
+        #Here we're going to use a for loop based on count.
+        #This is to support a retry operation.
+
+        for ($mailboxCounter ; $mailboxCounter -lt $totalMailboxes ; $mailboxCounter++)
         {
-            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-            start-sleep -seconds 5
-            $forCounter=0
-        }
-        else 
-        {
-            $forCounter++    
-        }
+            #Drop the mailbox into a working variable.
 
-        out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
+            $mailbox = $auditMailboxes[$mailboxCounter]
 
-        $MbxNumber++
-
-        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter
-
-        Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
-
-        $PercentComplete += $ProgressDelta
-
-        try {
-            $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
-        }
-        catch {
-            out-logfile -string "Error obtaining folder statistics."
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        #Audit folders have been obtained.
-        #For each folder - normalize the folder names.
-
-        $ProgressDeltaFolders = 100/($auditFolders.count); $PercentCompleteFolders = 0; $FolderNumber = 0
-
-        foreach ($folder in $auditFolders)
-        {
-            out-logFile -string ("Processing folder name ="+$folder.Identity)
-            out-logfile -string ("Processing folder = "+$folder.FolderId)
-            out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
-    
-            $folderNumber++
-    
-            Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentCompleteFolders -id 2 -ParentId 1
-    
-            $PercentCompleteFolders += $ProgressDeltaFolders
-    
-            $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
-
-            #start-sleep -Seconds 5 #Debug sleep to watch status bar.
-    
-            out-logfile -string ("Temp folder name = "+$tempFolderName)
-    
-            $auditFolderNames+=$tempFolderName
-        }
-
-        write-progress -activity "Processing Folders" -ParentId 1 -Id 2 -Completed
-
-        #At this time the folder names have been normalized to mailbox ID and folder ID - this allows us to store them in an object later.
-
-        out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
-
-        $ProgressDeltaAuditNames = 100/($auditFolderNames.count); $PercentCompleteAuditNames = 0; $FolderNameCount = 0
-
-        foreach ($folderName in $auditFolderNames)
-        {
             if ($forCounter -gt 1000)
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh."
@@ -339,78 +277,170 @@ function start-collectOffice365MailboxFolders
                 $forCounter++    
             }
 
-            out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
+            out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
+            out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
 
-            $FolderNameCount++
+            $MbxNumber++
 
-            Write-Progress -Activity "Processing folder" -Status $folderName -PercentComplete $PercentCompleteAuditNames -parentid 1 -Id 2
+            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter
 
-            $PercentCompleteAuditNames += $ProgressDeltaAuditNames
+            Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
+
+            $PercentComplete += $ProgressDelta
 
             try {
-                $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+                $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
             }
             catch {
-                out-logfile -string "Unable to obtain folder permissions."
+                out-logfile -string "Error obtaining folder statistics."
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            #Check the permissions found to see if they meet the criteria.
-
-            $ProgressDeltaPermissions = 100/($forPermissions.count); $PercentCompletePermissions = 0; $permissionNumber = 0
-
-            foreach ($permission in $forPermissions)
+            if ($auditFolders -gt 0)
             {
-                $forUser = $Permission.User.tostring()
-                out-logfile -string ("Found User = "+$forUser)
+                #Audit folders have been obtained.
+                #For each folder - normalize the folder names.
 
-                $forNumberr++
+                $ProgressDeltaFolders = 100/($auditFolders.count); $PercentCompleteFolders = 0; $FolderNumber = 0
 
-                Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 2 -id 3
-
-                $PercentCompletePermissions += $ProgressDeltaPermissions
-
-                #start-sleep -seconds 5 #Debug sleep to watch status bar.
-
-                if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
+                foreach ($folder in $auditFolders)
                 {
-                    out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+                    out-logFile -string ("Processing folder name ="+$folder.Identity)
+                    out-logfile -string ("Processing folder = "+$folder.FolderId)
+                    out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
+            
+                    $folderNumber++
+            
+                    Write-Progress -Activity "Processing folder" -Status $folder.identity -PercentComplete $PercentCompleteFolders -id 2 -ParentId 1
+            
+                    $PercentCompleteFolders += $ProgressDeltaFolders
+            
+                    $tempFolderName=$folder.ContentMailboxGuid.tostring()+":"+$folder.FolderId.tostring()
 
-                    $forPermissionObject = New-Object PSObject -Property @{
-                        identity = $permission.identity
-                        folderName = $permission.folderName
-                        user = $permission.user
-                        accessRights = $permission.accessRights
+                    #start-sleep -Seconds 5 #Debug sleep to watch status bar.
+            
+                    out-logfile -string ("Temp folder name = "+$tempFolderName)
+            
+                    $auditFolderNames+=$tempFolderName
+                }
+
+                write-progress -activity "Processing Folders" -ParentId 1 -Id 2 -Completed
+
+                #At this time the folder names have been normalized to mailbox ID and folder ID - this allows us to store them in an object later.
+
+                out-logfile -string "Obtaining any custom folder permissions that are not default or anonymous."
+
+                $ProgressDeltaAuditNames = 100/($auditFolderNames.count); $PercentCompleteAuditNames = 0; $FolderNameCount = 0
+
+                foreach ($folderName in $auditFolderNames)
+                {
+                    if ($forCounter -gt 1000)
+                    {
+                        out-logfile -string "Sleeping for 5 seconds - powershell refresh."
+                        start-sleep -seconds 5
+                        $forCounter=0
+                    }
+                    else 
+                    {
+                        $forCounter++    
                     }
 
-                    out-logfile -string $forPermissionObject
+                    out-logfile -string ("Obtaining permissions on the following folder = "+$folderName)
 
-                    $auditFolderPermissions+=$forPermissionObject
+                    $FolderNameCount++
 
-                    $auditPermissionsFound = 1
+                    Write-Progress -Activity "Processing folder" -Status $folderName -PercentComplete $PercentCompleteAuditNames -parentid 1 -Id 2
+
+                    $PercentCompleteAuditNames += $ProgressDeltaAuditNames
+
+                    try {
+                        $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+                    }
+                    catch {
+                        out-logfile -string "Unable to obtain folder permissions."
+                        out-logfile -string $_ -isError:$TRUE
+                    }
+
+                    if ($forPermissions.count -gt 0)
+                    {
+                        #Check the permissions found to see if they meet the criteria.
+
+                        $ProgressDeltaPermissions = 100/($forPermissions.count); $PercentCompletePermissions = 0; $permissionNumber = 0
+
+                        foreach ($permission in $forPermissions)
+                        {
+                            $forUser = $Permission.User.tostring()
+                            out-logfile -string ("Found User = "+$forUser)
+
+                            $forNumberr++
+
+                            Write-Progress -Activity "Processing permission" -Status $permission.identity -PercentComplete $PercentCompletePermissions -parentID 2 -id 3
+
+                            $PercentCompletePermissions += $ProgressDeltaPermissions
+
+                            #start-sleep -seconds 5 #Debug sleep to watch status bar.
+
+                            if (($forUser -ne "Default") -and ($foruser -ne "Anonymous") -and ($foruser -notLike "NT:S-1-5-21*"))
+                            {
+                                out-logfile -string ("Not default or anonymous permission = "+$permission.user)
+
+                                $forPermissionObject = New-Object PSObject -Property @{
+                                    identity = $permission.identity
+                                    folderName = $permission.folderName
+                                    user = $permission.user
+                                    accessRights = $permission.accessRights
+                                }
+
+                                out-logfile -string $forPermissionObject
+
+                                $auditFolderPermissions+=$forPermissionObject
+
+                                $auditPermissionsFound = 1
+                            }
+                        }
+
+                        write-progress -activity 'Processing permissions' -ParentId 2 -id 3 -Completed
+                    }
+                    else 
+                    {
+                        out-logfile -string "There were no permissions to process."    
+                    }
                 }
+
+                write-progress "Processing folders" -ParentId 1 -id 2 -Completed
+
+                #At this time write out the permissions.
+
+                $fileName = $office365MailboxFolderPermissions
+                $exportFile=Join-path $logFolderPath $fileName
+
+                if ($auditFolderPermissions.count -gt 0)
+                {
+                    $auditFolderPermissions | Export-Clixml -Path $exportFile
+                }
+                else 
+                {
+                    out-logfile -string "No permissions to write to file."    
+                }
+                
+                $fileName = $office365MailboxProcessed
+                $exportFile=Join-path $logFolderPath $fileName
+
+                $mailboxCounter | export-clixml -path $exportFile
+
+                #Null out all the arrays for the next run except mailboxes.
+
+                $auditFolderNames=@()
+                $auditFolders=@()
             }
-
-            write-progress -activity 'Processing permissions' -ParentId 2 -id 3 -Completed
+            else 
+            {
+                out-logfile -string "There were no audit folders to process."
+            }
         }
-
-        write-progress "Processing folders" -ParentId 1 -id 2 -Completed
-
-        #At this time write out the permissions.
-
-        $fileName = $office365MailboxFolderPermissions
-        $exportFile=Join-path $logFolderPath $fileName
-
-        $auditFolderPermissions | Export-Clixml -Path $exportFile
-        
-        $fileName = $office365MailboxProcessed
-        $exportFile=Join-path $logFolderPath $fileName
-
-        $mailboxCounter | export-clixml -path $exportFile
-
-        #Null out all the arrays for the next run except mailboxes.
-
-        $auditFolderNames=@()
-        $auditFolders=@()
+    }
+    else 
+    {
+        out-logfile -string "There were no mailboxes to process."
     }
 }
