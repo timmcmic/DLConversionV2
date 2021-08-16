@@ -296,7 +296,7 @@ function start-collectOffice365MailboxFolders
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            if ($auditFolders -gt 0)
+            if ($auditFolders.count -gt 0)
             {
                 #Audit folders have been obtained.
                 #For each folder - normalize the folder names.
