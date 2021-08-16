@@ -187,7 +187,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution")]
+        [ValidateSet("Security","Distribution","None")]
         [string]$groupTypeOverride="None",
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
@@ -212,11 +212,16 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [int]$threadNumberAssigned=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0
     )
 
     #Define global variables.
 
+    $global:threadNumber=$threadNumberAssigned
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\DLMigration\"
     [string]$global:staticAuditFolderName="\AuditData\"
@@ -265,7 +270,7 @@ Function Start-DistributionListMigration
     $routingDynamicGroupConfig=$NULL
     [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    [array]$exchangeAcceptMessageSMTP=@() #Array of members with accept permissions from AD.
+    [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
     [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
     [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
     [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
@@ -424,7 +429,38 @@ Function Start-DistributionListMigration
     #Exchange Schema Version
 
     [int]$exchangeRangeUpper=$NULL
-    [int]$exchangeLegacySchemaVersion=15137
+    [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
+
+    #Define the sub folders for multi-threading.
+
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+
+    #Define the status directory.
+
+    [string]$global:statusPath="\Status\"
+    [string]$global:fullStatusPath=$NULL
+    [int]$statusFileCount=0
+
+
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
+    {
+        new-statusFile -logFolderPath $logFolderPath
+
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+    }
+
+    #Ensure that no status files exist at the start of the run.
+
+    if ($totalThreadCount -gt 0)
+    {
+        if ($global:threadNumber -eq 1)
+        {
+            remove-statusFiles -fullCleanup:$TRUE
+        }
+    }
 
     #Log start of DL migration to the log file.
 
@@ -433,8 +469,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
-
-    
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -1248,7 +1282,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
             }
             catch 
             {
@@ -1276,7 +1310,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessageSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
             }
             catch 
             {
@@ -1285,11 +1319,11 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
         Out-LogFile -string "The following objects are members of the accept messages from senders:"
         
-        out-logfile -string $exchangeAcceptMessageSMTP
+        out-logfile -string $exchangeAcceptMessagesSMTP
     }
     else
     {
@@ -1535,11 +1569,6 @@ Function Start-DistributionListMigration
         
         out-logfile -string $exchangeSendAsSMTP
     }
-    else 
-    {
-        $exchangeSendAsSMTP=@()
-        out-logfile "The group has no grant send on behalf to."    
-    }
 
     #exit #Debug Exit
 
@@ -1551,7 +1580,7 @@ Function Start-DistributionListMigration
     out-logFile -string "Summary of group information:"
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
     out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
-    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessageSMTP.count)
+    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
     out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
     out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
@@ -1570,7 +1599,9 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    if ($exchangeDLMembershipSMTP -ne $NULL)
+    out-logfile -string "Being validating all distribution list members."
+    
+    if ($exchangeDLMembershipSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
 
@@ -1597,8 +1628,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There are no DL members to test."    
+    }
 
-    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    out-logfile -string "Begin evaluating all members with reject rights."
+
+    if ($exchangeRejectMessagesSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL reject messages is in Office 365."
 
@@ -1625,8 +1662,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There are no reject members to test."    
+    }
 
-    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    out-logfile -string "Begin evaluating all members with accept rights."
+
+    if ($exchangeAcceptMessagesSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
 
@@ -1653,8 +1696,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There are no accept members to test."    
+    }
 
-    if ($exchangeManagedBySMTP -ne $NULL)
+    out-logfile -string "Begin evaluating all managed by members."
+
+    if ($exchangeManagedBySMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
 
@@ -1681,8 +1730,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no managed by members to evaluate."    
+    }
 
-    if ($exchangeModeratedBySMTP -ne $NULL)
+    out-logfile -string "Being evaluating all moderated by members."
+
+    if ($exchangeModeratedBySMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
 
@@ -1709,8 +1764,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no moderated by members to evaluate."    
+    }
 
-    if ($exchangeBypassModerationSMTP -ne $NULL)
+    out-logfile -string "Being evaluating all bypass moderation members."
+
+    if ($exchangeBypassModerationSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
 
@@ -1737,8 +1798,14 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no bypass moderation members to evaluate."    
+    }
 
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    out-logfile -string "Begin evaluation of all grant send on behalf to members."
+
+    if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
     {
         out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
 
@@ -1765,6 +1832,44 @@ Function Start-DistributionListMigration
             }
         }
     }
+    else 
+    {
+        out-logfile -string "There were no grant send on behalf to members to evaluate."    
+    }
+
+    out-logfile -string "Begin evaluation all members with send as rights."
+
+    if ($exchangeSendAsSMTP.count -gt 0)
+    {
+        out-logfile -string "Ensuring each DL send as is in Office 365."
+
+        foreach ($member in $exchangeSendAsSMTP)
+        {
+            if ($forLoopCounter -eq 1000)
+            {
+                out-logFile -string "Throttling for 5 seconds at 1000 operations."
+                start-sleep -seconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                test-O365Recipient -member $member
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "There were no members with send as rights."    
+    }
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
@@ -1772,6 +1877,8 @@ Function Start-DistributionListMigration
 
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
+
+    #Exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
@@ -2018,13 +2125,13 @@ Function Start-DistributionListMigration
         $exchangeRejectMessagesSMTP=@()
     }
 
-    if ($exchangeAcceptMessageSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeAcceptMessageSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
     }
     else 
     {
-        $exchangeAcceptMessageSMTP=@()
+        $exchangeAcceptMessagesSMTP=@()
     }
 
     if ($exchangeManagedBySMTP -ne $NULL)
@@ -2596,11 +2703,60 @@ Function Start-DistributionListMigration
 
     #EXIT #Debug exit
 
+    #In this case we should write a status file for all threads.
+    #When all threads have reached this point it is safe to have them all move their DLs to the non-Sync OU.
+
+    #If there are multiple threads in use hold all of them for thread 
+
+    out-logfile -string "Determine if multiple migration threads are in use..."
+
+    if ($totalThreadCount -eq 0)
+    {
+        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+    }
+    else 
+    {
+        out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
+
+        try{
+            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Unable to write status file." -isError:$TRUE
+        }
+
+        do 
+        {
+            out-logfile -string "All threads are not ready - sleeping."
+        } until ((get-statusFileCount) -eq  $totalThreadCount)
+    }
+
     try {
         move-toNonSyncOU -dn $originalDLConfiguration.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
+    }
+
+    #If there are multiple threads have all threads > 1 sleep for 15 seconds while thread one deletes all status files.
+    #This should cover the 5 seconds that any other threads may be sleeping looking to read the status directory.
+
+    if ($totalThreadCount -gt 0)
+    {
+        out-logfile -string "Starting sleep before removing individual status files.."
+
+        start-sleep -s 5
+
+        out-logfile -string "Trigger cleanup of individual status files."
+
+        try{
+            remove-statusFiles -functionThreadNumber $global:threadNumber
+        }
+        catch{
+            out-logfile -string "Unable to remove status files" -isError:$TRUE
+        }
+
+        start-sleep -s 5
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2619,40 +2775,130 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    #Replicate domain controllers so that the change is received as soon as possible.   
+    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
-    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-    start-sleep -seconds 15
-    out-logfile -string "Invoking AD replication."
+    out-logfile -string "If thread number > 1 - write the status file here."
 
-    try {
-        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+    if ($global:threadNumber -gt 1)
+    {
+        out-logfile -string "Thread number is greater than 1."
+
+        try{
+            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to write status file." -isError:$TRUE
+        }
     }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
+    else 
+    {
+        out-logfile -string "Thread number is 1 - do not write status at this time."    
+    }
+
+    #If there are multiple threads - only replicate the domain controllers and trigger AD connect if all threads have completed their work.
+
+    out-logfile -string "Determine if multiple migration threads are in use..."
+
+    if ($totalThreadCount -eq 0)
+    {
+        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+    }
+    else 
+    {
+        out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
+        
+        if ($global:threadNumber -eq 1)
+        {
+            out-logfile -string "This is the master thread responsible for triggering operations."
+            out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
+
+            #Do the following until the count of the files in the directory = number of threads - 1.
+
+            do 
+            {
+                out-logfile -string "Other threads are pending.  Sleep 5 seconds."
+            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
+        }
+        elseif ($global:threadNumber -gt 1)
+        {
+            out-logfile -string "This is not the master thread responsible for triggering operations."
+            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
+
+            do 
+            {
+                out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
+            } until ((get-statusFileCount) -eq  $totalThreadCount)
+        }
+    }
+
+    #Replicate domain controllers so that the change is received as soon as possible.()
+    
+    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    {
+        out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+        start-sleep -seconds 15
+        out-logfile -string "Invoking AD replication."
+
+        try {
+            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-    if ($useAADConnect -eq $TRUE)
+    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
-        out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-        start-sleep -seconds 60
-        out-logfile -string "Invoking AD Connect."
+        if ($useAADConnect -eq $TRUE)
+        {
+            out-logfile -string "Starting sleep before invoking AD Connect - one minute."
+            start-sleep -seconds 60
+            out-logfile -string "Invoking AD Connect."
+
+            start-sleep -s 5
+            invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+
+            out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
+            start-sleep -seconds 60
+        }   
+        else 
+        {
+            out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
+        }
+    }   
+
+    #The single functions have triggered operations.  Other threads may continue.
+
+    if ($global:threadNumber -eq 1)
+    {
+        out-statusFile -threadNumber $global:threadNumber
+    }
+
+    #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
+    #Reset the status directory for furture thread dependencies.
+
+    if ($totalThreadCount -gt 0)
+    {
+        out-logfile -string "Starting sleep before removing individual status files.."
 
         start-sleep -s 5
-        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
-        out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
-        start-sleep -seconds 60
-    }
-    else 
-    {
-        out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
+        out-logfile -string "Trigger cleanup of individual status files."
+
+        try{
+            remove-statusFiles -functionThreadNumber $global:threadNumber
+        }
+        catch{
+            out-logfile -string "Unable to remove status files" -isError:$TRUE
+        }
+
+        start-sleep -s 5
     }
     
-  
     #At this time we have processed the deletion to azure.
     #We need to wait for that deletion to occur in Exchange Online.
 
@@ -2668,8 +2914,8 @@ Function Start-DistributionListMigration
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
-    out-logfile "Sleeping 30 seconds before creating the DL."
-    start-sleep -seconds 30
+    out-logfile "Sleeping 15 seconds before creating the DL."
+    start-sleep -seconds 15
 
     try {
         new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
@@ -2677,6 +2923,9 @@ Function Start-DistributionListMigration
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
+
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
 
     try {
         $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction STOP
@@ -2706,11 +2955,14 @@ Function Start-DistributionListMigration
     out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
 
     try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessageSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
     }
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
+
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
 
     try {
         $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
@@ -2746,6 +2998,9 @@ Function Start-DistributionListMigration
     start-sleep -seconds 5
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile "Sleeping 15 seconds before capturing the DL."
+    start-sleep -seconds 15
 
     out-logFile -string ("Capture the DL status post migration.")
 
@@ -3845,35 +4100,127 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    #Trigger ad replication and triggering AD connect for all final updates.
+   #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
-    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-    start-sleep -seconds 15
-    out-logfile -string "Invoking AD replication."
+   out-logfile -string "If thread number > 1 - write the status file here."
 
-    try {
-        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+   if ($global:threadNumber -gt 1)
+   {
+       out-logfile -string "Thread number is greater than 1."
 
-    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
-    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+       try{
+           out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+       }
+       catch{
+           out-logfile -string $_
+           out-logfile -string "Unable to write status file." -isError:$TRUE
+       }
+   }
+   else 
+   {
+       out-logfile -string "Thread number is 1 - do not write status at this time."    
+   }
 
-    if ($useAADConnect -eq $TRUE)
-    {
-        out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-        start-sleep -seconds 30
-        out-logfile -string "Invoking AD Connect."
+   #If there are multiple threads - only replicate the domain controllers and trigger AD connect if all threads have completed their work.
 
-        start-sleep -s 5
-        invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
-    }
-    else 
-    {
-        out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
-    }
+   out-logfile -string "Determine if multiple migration threads are in use..."
+
+   if ($totalThreadCount -eq 0)
+   {
+       out-logfile -string "Multiple threads are not in use.  Continue functions..."
+   }
+   else 
+   {
+       out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
+       
+       if ($global:threadNumber -eq 1)
+       {
+           out-logfile -string "This is the master thread responsible for triggering operations."
+           out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
+
+           #Do the following until the count of the files in the directory = number of threads - 1.
+
+           do 
+           {
+               out-logfile -string "Other threads are pending.  Sleep 5 seconds."
+
+               start-sleep -s 5
+           } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
+       }
+       elseif ($global:threadNumber -gt 1)
+       {
+           out-logfile -string "This is not the master thread responsible for triggering operations."
+           out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
+
+           do 
+           {
+               out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
+               
+               start-sleep -s 5
+           } until ((get-statusFileCount) -eq  $totalThreadCount)
+       }
+   }
+
+   #Replicate domain controllers so that the change is received as soon as possible.()
+   
+   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   {
+       out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
+       start-sleep -seconds 15
+       out-logfile -string "Invoking AD replication."
+
+       try {
+           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+       }
+       catch {
+           out-logfile -string $_ -isError:$TRUE
+       }
+   }
+
+   #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
+   #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   {
+       if ($useAADConnect -eq $TRUE)
+       {
+           out-logfile -string "Starting sleep before invoking AD Connect - one minute."
+           start-sleep -seconds 60
+           out-logfile -string "Invoking AD Connect."
+
+           start-sleep -s 5
+           invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+
+           out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
+           start-sleep -seconds 60
+       }   
+       else 
+       {
+           out-logfile -string "AD Connect information not specified - allowing ad connect to run on normal cycle and process deletion."    
+       }
+   }   
+
+   #The single functions have triggered operations.  Other threads may continue.
+
+   if ($global:threadNumber -eq 1)
+   {
+       out-statusFile -threadNumber $global:threadNumber
+   }
+
+    #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
+    #Reset the status directory for furture thread dependencies.
+
+   if ($totalThreadCount -gt 0)
+   {
+       start-sleep -s 10
+
+       try{
+        remove-statusFiles -functionThreadNumber $global:threadNumber
+        }
+        catch{
+            out-logfile -string "Unable to remove status files" -isError:$TRUE
+        }
+   }
 
     out-logfile -string "Calling function to disconnect all powershell sessions."
 

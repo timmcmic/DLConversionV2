@@ -33,12 +33,24 @@
         out-logFile -string "Archiving files associated with run."
 
         $functionDate = Get-Date -Format FileDateTime
+        $functionNameSplit = $global:logFile.split("\")
+
+        out-logfile -string "Split string for group name."
+        out-logfile -string $functionNameSplit
+
+        $functionNameSplit = $functionNameSplit[-1].split(".")
+
+        out-logfile -string "Split string for group name."
+        out-logfile -string $functionNameSplit
+
+
        
         if ($isSuccess -eq $TRUE)
         {
             out-logfile -string "Success - renaming directory."
 
             $functionFolderName = $functionDate+"-Success"
+            $functionFolderName = $functionNameSplit[0]+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
             out-logfile -string $functionFolderName

@@ -41,6 +41,10 @@
             if ($session.computerName -eq "outlook.office365.com")
             {
                 try{
+                    out-logfile -string $session.id
+                    out-logfile -string $session.name
+                    out-logfile -string $session.computerName
+
                     Disconnect-ExchangeOnline -confirm:$FALSE -errorAction STOP
                 }
                 catch{
@@ -48,8 +52,18 @@
                     EXIT
                 }
             }
+            else 
+            {
+                out-logfile -string "Removing other non-Exchange Online powershell sessions."
+
+                out-logfile -string $session.id
+                out-logfile -string $session.name
+                out-logfile -string $session.computerName
+
+                Get-PSSession | remove-pssession
+            }
         }
-        
+        <#
         out-logfile -string "Remove all other PSSessions"
 
         try{
@@ -59,6 +73,8 @@
             out-logfile -string "Error removing other PS Sessions.  Hard exit as this function is called in error code."
             exit
         }
+
+        #>
 
         Out-LogFile -string "END disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"

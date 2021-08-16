@@ -138,9 +138,11 @@ function start-collectOnPremFullMailboxAccess
 
     try 
     {
+        out-logfile -string "Determining mailboxes to process."
+
         if ($retryCollection -eq $FALSE)
         {
-            if ($bringMyOwnMailboxes -ne $NULL)
+            if ($bringMyOwnMailboxes -eq $NULL)
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
@@ -236,7 +238,7 @@ function start-collectOnPremFullMailboxAccess
 
         $mailbox = $auditMailboxes[$mailboxCounter]
 
-        if ($forCounter -gt 1000)
+        if ($forCounter -gt 250)
         {
             out-logfile -string "Sleeping for 5 seconds - powershell refresh."
             start-sleep -seconds 5
@@ -259,17 +261,6 @@ function start-collectOnPremFullMailboxAccess
         $PercentComplete += $ProgressDelta
 
         try {
-            if ($forCounter -gt 1000)
-            {
-                out-logfile -string "Starting sleep at 1000 operations."
-
-                $forCounter=0
-            }
-            else 
-            {
-                $forCounter++    
-            }
-
             $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.identity | Where-Object {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
         }
         catch {

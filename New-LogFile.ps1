@@ -26,7 +26,7 @@
 
     #>
     Function new-LogFile
-     {
+    {
         [cmdletbinding()]
 
         Param
