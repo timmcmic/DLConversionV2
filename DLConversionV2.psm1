@@ -429,7 +429,7 @@ Function Start-DistributionListMigration
     #Exchange Schema Version
 
     [int]$exchangeRangeUpper=$NULL
-    [int]$exchangeLegacySchemaVersion=15137
+    [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
 
     #Define the sub folders for multi-threading.
 
