@@ -247,7 +247,7 @@ function start-collectOffice365MailboxFolders
 
     #Ensure the count of mailboxes is greater than zero before proceeding.
 
-    if ($auditMailboxes -gt 0)
+    if ($auditMailboxes.count -gt 0)
     {
         #For each mailbox - we will iterate and grab the folders for processing.
 
