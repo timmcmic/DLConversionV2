@@ -47,8 +47,8 @@
         {
             out-logfile -string "Success - renaming directory."
 
-            $functionFolderName = $functionDate+"-Success"
-            $functionFolderName = $functionNameSplit[0]+"-"+$functionFolderName
+            $functionFolderName = $functionNameSplit[0]+"-Success"
+            $functionFolderName = $functionDate+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
             out-logfile -string $functionFolderName
@@ -60,8 +60,8 @@
         {
             out-logfile -string "FAILED - renaming directory."
 
-            $functionFolderName = $functionDate+"-FAILED"
-            $functionFolderName = $functionNameSplit[0]+"-"+$functionFolderName
+            $functionFolderName = $functionNameSplit[0]+"-FAILED"
+            $functionFolderName = $functionDate+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
             out-logfile -string $functionFolderName
