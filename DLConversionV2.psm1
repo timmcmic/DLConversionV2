@@ -3085,17 +3085,38 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Obtain the migrated DL membership and record it for validation."
 
-    try{
-        $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
-    }
-    catch{
-        out-LogFile -string $_ -isError:$TRUE
-    }
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    out-logFile -string "Write the new DL membership to XML."
-    out-logfile -string office365DLMembershipPostMigration
+    do {
+        try{
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
 
-    out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $office365DLMembershipPostMigrationXML
+            #Membership obtained - export.
+
+            out-logFile -string "Write the new DL membership to XML."
+            out-logfile -string office365DLMembershipPostMigration
+
+            out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $office365DLMembershipPostMigrationXML
+
+            #Exports complete - stop loop
+
+            $stopLoop=$TRUE
+        }
+        catch{
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop -eq $TRUE
+            }
+            else 
+            {
+                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
+                start-sleep -s 15   
+                $loopCounter = $loopCounter+1 
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
 
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
