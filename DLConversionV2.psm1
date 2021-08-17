@@ -2924,20 +2924,47 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
+    <#
     out-logfile "Sleeping 15 seconds before capturing the DL."
     start-sleep -seconds 15
+    #>
 
-    try {
-        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
+    #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
 
-    out-LogFile -string "Write new DL configuration to XML."
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    out-Logfile -string $office365DLConfigurationPostMigration
-    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+    do 
+    {
+        try {
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+            
+            #If we hit here we did not get a terminating error.  Write the configuration.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            
+            #If we made it this far we can end the loop - we were succssful.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop -eq $TRUE
+            }
+            else 
+            {
+                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
+                start-sleep -s 15   
+                $loopCounter = $loopCounter+1 
+            }
+        }   
+    } while ($stopLoop -eq $false)
 
     $global:unDoStatus=$global:unDoStatus+1
 
@@ -2961,20 +2988,42 @@ Function Start-DistributionListMigration
         out-logFile -string $_ -isError:$TRUE
     }
 
-    out-logfile "Sleeping 15 seconds before capturing the DL."
-    start-sleep -seconds 15
+    #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
+    #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
 
-    try {
-        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    out-LogFile -string "Write new DL configuration to XML."
+    do {
+        try {
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
 
-    out-Logfile -string $office365DLConfigurationPostMigration
-    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            #If we made it this far we were successful - output the information to XML.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+
+            #Now that we are this far - we can exit the loop.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop -eq $TRUE
+            }
+            else 
+            {
+                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
+                start-sleep -s 15   
+                $loopCounter = $loopCounter+1 
+            }
+        }
+        
+    } while ($stopLoop -eq $FALSE)
 
     $global:unDoStatus=$global:unDoStatus+1
 
@@ -2999,17 +3048,41 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    out-logfile "Sleeping 15 seconds before capturing the DL."
-    start-sleep -seconds 15
-
     out-logFile -string ("Capture the DL status post migration.")
 
-    try {
-        $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+
+            #If we made it this far we successfully got the DL.  Write it.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+
+            #Now that we wrote it - stop the loop.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop -eq $TRUE
+            }
+            else 
+            {
+                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
+                start-sleep -s 15   
+                $loopCounter = $loopCounter+1 
+            }
+        }   
+    } while ($stopLoop -eq $false)
+
 
     out-LogFile -string "Write new DL configuration to XML."
 
