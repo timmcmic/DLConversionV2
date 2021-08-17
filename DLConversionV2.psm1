@@ -3083,12 +3083,6 @@ Function Start-DistributionListMigration
         }   
     } while ($stopLoop -eq $false)
 
-
-    out-LogFile -string "Write new DL configuration to XML."
-
-    out-Logfile -string $office365DLConfigurationPostMigration
-    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
-
     out-logfile -string "Obtain the migrated DL membership and record it for validation."
 
     try{
