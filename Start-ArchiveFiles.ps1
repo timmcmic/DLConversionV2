@@ -43,8 +43,6 @@
         out-logfile -string "Split string for group name."
         out-logfile -string $functionNameSplit
 
-
-       
         if ($isSuccess -eq $TRUE)
         {
             out-logfile -string "Success - renaming directory."
@@ -63,6 +61,7 @@
             out-logfile -string "FAILED - renaming directory."
 
             $functionFolderName = $functionDate+"-FAILED"
+            $functionFolderName = $functionNameSplit[0]+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
             out-logfile -string $functionFolderName
