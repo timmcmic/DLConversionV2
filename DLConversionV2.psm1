@@ -2914,20 +2914,31 @@ Function Start-DistributionListMigration
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
 
-    out-logfile "Sleeping 15 seconds before creating the DL."
-    start-sleep -seconds 15
+    out-logfile "Attempting to create the DL in Office 365."
 
-    try {
-        new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
-    }
-    catch {
-        out-logFile -string $_ -isError:$TRUE
-    }
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    <#
-    out-logfile "Sleeping 15 seconds before capturing the DL."
-    start-sleep -seconds 15
-    #>
+    do {
+        try {
+            new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+
+            #If we made it this far then the group was created.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logFile -string $_ -isError:$TRUE 
+            }
+            else 
+            {
+                out-logfile -string "Unable to create the distribution list on attempt.  Retry"
+                $loopCounter=$loopCounter+1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
 
     #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
     #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
@@ -3029,22 +3040,30 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-    start-sleep -seconds 5
-
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
-    try {
-        set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    #EXIT #Debug Exit.
+    do {
+        try {
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+        }
+        catch {
+            if ($loopCounter -gt 0)
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile "Transient error updating distribution group - retrying."
+                start-sleep -s 15
+                $loopCounter=$loopCounter+1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
 
     $global:unDoStatus=$global:unDoStatus+1
-
-    start-sleep -seconds 5
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
