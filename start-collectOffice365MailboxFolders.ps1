@@ -293,7 +293,7 @@ function start-collectOffice365MailboxFolders
             
             do {
                 try {
-                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} -ErrorAction STOP
+                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -ErrorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
 
                     #We were able to get the audit folders - stopping the loop.
 
