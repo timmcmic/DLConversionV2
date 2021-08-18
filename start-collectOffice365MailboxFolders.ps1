@@ -288,13 +288,37 @@ function start-collectOffice365MailboxFolders
 
             $PercentComplete += $ProgressDelta
 
-            try {
-                $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"}
-            }
-            catch {
-                out-logfile -string "Error obtaining folder statistics."
-                out-logfile -string $_ -isError:$TRUE
-            }
+            $stopLoop = $FALSE
+            [int]$loopCounter = 0
+            
+            do {
+                try {
+                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} -ErrorAction STOP
+
+                    #We were able to get the audit folders - stopping the loop.
+
+                    $stopLoop = $TRUE
+                }
+                catch {
+                    if ($loopCounter -gt 4) 
+                    {
+                        out-logfile -string "Unable to capture mailbox folder statistics for mailbox:"
+                        out-logfile -string $mailbox.Identity
+                    }
+                    else 
+                    {
+                        #Disable all powershell sessions.
+
+                        disable-allPowerShellSessions    
+
+                        #Re-establish powershell session.
+
+                        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+
+                        $loopCounter=$loopCounter+1
+                    }
+                }
+            } while ($stopLoop -eq $FALSE)
 
             if ($auditFolders.count -gt 0)
             {
