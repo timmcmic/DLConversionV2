@@ -293,7 +293,11 @@ function start-collectOffice365MailboxFolders
             
             do {
                 try {
+                    out-logfile -string "Pulling mailbox folder statistics."
+
                     $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -ErrorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+
+                    out-logfile -string "Mailbox folder statistics obtained."
 
                     #We were able to get the audit folders - stopping the loop.
 
@@ -311,9 +315,30 @@ function start-collectOffice365MailboxFolders
 
                         disable-allPowerShellSessions    
 
-                        #Re-establish powershell session.
+                        if ($exchangeOnlineCredential -ne $NULL)
+                        {
+                            #User specified non-certifate authentication credentials.
 
-                        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+                            try {
+                                New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+                            }
+                            catch {
+                                out-logfile -string "Unable to create the exchange online connection using credentials."
+                                out-logfile -string $_ -isError:$TRUE
+                            }
+                        }
+                        elseif ($exchangeOnlineCertificateThumbPrint -ne "")
+                            {
+                            #User specified thumbprint authentication.
+
+                            try {
+                                new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+                            }
+                            catch {
+                                out-logfile -string "Unable to create the exchange online connection using certificate."
+                                out-logfile -string $_ -isError:$TRUE
+                            }
+                        }
 
                         $loopCounter=$loopCounter+1
                     }
