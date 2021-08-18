@@ -288,18 +288,37 @@ function start-collectOffice365MailboxFolders
 
             $PercentComplete += $ProgressDelta
 
-            try 
-            {
-                out-logfile -string "Pulling mailbox folder statistics."
+            $stopLoop = $FALSE
+            [int]$loopCounter = 0
 
-                $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+            do {
+                try 
+                {
+                    out-logfile -string "Pulling mailbox folder statistics."
+    
+                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+    
+                    out-logfile -string "Mailbox folder statistics obtained."
 
-                out-logfile -string "Mailbox folder statistics obtained."
-            }
-            catch
-            {
-                out-logfile -string "Error obtaining milbox folder statistics."
-            }
+                    $stopLoop = $TRUE
+                }
+                catch
+                {
+                    if ($loopCounter -gt 4)
+                    {
+                        out-logfile -string "Error obtaining milbox folder statistics."
+                        out-logfile -string "Collection operation will need to be retried - STOP failure."
+                        out-logfile -string $_ -isError:$TRUE
+                    }                    
+                    else 
+                    {
+                        out-logfile -string "Error on attempt to gather folder statistics.  -  trying again..."
+                        $loopcounter = $loopCounter+1
+                    }     
+                }
+            } while ($stopLoop -eq $FALSE)
+
+           
 
             if ($auditFolders.count -gt 0)
             {
