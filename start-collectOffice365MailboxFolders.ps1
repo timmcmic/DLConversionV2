@@ -291,8 +291,10 @@ function start-collectOffice365MailboxFolders
             $stopLoop = $FALSE
             [int]$loopCounter = 0
             
-            do {
-                try {
+            do 
+            {
+                try 
+                {
                     out-logfile -string "Pulling mailbox folder statistics."
 
                     $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -ErrorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
@@ -303,7 +305,8 @@ function start-collectOffice365MailboxFolders
 
                     $stopLoop = $TRUE
                 }
-                catch {
+                catch 
+                {
                     if ($loopCounter -gt 4) 
                     {
                         out-logfile -string "Unable to capture mailbox folder statistics for mailbox:"
