@@ -288,65 +288,18 @@ function start-collectOffice365MailboxFolders
 
             $PercentComplete += $ProgressDelta
 
-            $stopLoop = $FALSE
-            [int]$loopCounter = 0
-            
-            do 
+            try 
             {
-                try 
-                {
-                    out-logfile -string "Pulling mailbox folder statistics."
+                out-logfile -string "Pulling mailbox folder statistics."
 
-                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
 
-                    out-logfile -string "Mailbox folder statistics obtained."
-
-                    #We were able to get the audit folders - stopping the loop.
-
-                    $stopLoop = $TRUE
-                }
-                catch 
-                {
-                    if ($loopCounter -gt 4) 
-                    {
-                        out-logfile -string "Unable to capture mailbox folder statistics for mailbox:"
-                        out-logfile -string $mailbox.Identity
-                    }
-                    else 
-                    {
-                        #Disable all powershell sessions.
-
-                        disable-allPowerShellSessions    
-
-                        if ($exchangeOnlineCredential -ne $NULL)
-                        {
-                            #User specified non-certifate authentication credentials.
-
-                            try {
-                                New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
-                            }
-                            catch {
-                                out-logfile -string "Unable to create the exchange online connection using credentials."
-                                out-logfile -string $_ -isError:$TRUE
-                            }
-                        }
-                        elseif ($exchangeOnlineCertificateThumbPrint -ne "")
-                            {
-                            #User specified thumbprint authentication.
-
-                            try {
-                                new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
-                            }
-                            catch {
-                                out-logfile -string "Unable to create the exchange online connection using certificate."
-                                out-logfile -string $_ -isError:$TRUE
-                            }
-                        }
-
-                        $loopCounter=$loopCounter+1
-                    }
-                }
-            } while ($stopLoop -eq $FALSE)
+                out-logfile -string "Mailbox folder statistics obtained."
+            }
+            catch
+            {
+                out-logfile -string "Error obtaining milbox folder statistics."
+            }
 
             if ($auditFolders.count -gt 0)
             {
