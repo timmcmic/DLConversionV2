@@ -297,7 +297,7 @@ function start-collectOffice365MailboxFolders
                 {
                     out-logfile -string "Pulling mailbox folder statistics."
 
-                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -ErrorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
 
                     out-logfile -string "Mailbox folder statistics obtained."
 
