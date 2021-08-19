@@ -318,8 +318,6 @@ function start-collectOffice365MailboxFolders
                 }
             } while ($stopLoop -eq $FALSE)
 
-           
-
             if ($auditFolders.count -gt 0)
             {
                 #Audit folders have been obtained.
@@ -377,13 +375,29 @@ function start-collectOffice365MailboxFolders
 
                     $PercentCompleteAuditNames += $ProgressDeltaAuditNames
 
-                    try {
-                        $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
-                    }
-                    catch {
-                        out-logfile -string "Unable to obtain folder permissions."
-                        out-logfile -string $_ -isError:$TRUE
-                    }
+                    $stopLoop=$FALSE
+                    [int]$loopCounter=0
+
+                    do {
+                        try {
+                            $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+
+                            $stopLoop=$TRUE
+                        }
+                        catch {
+                            if ($loopCounter -gt 4)
+                            {
+                                out-logfile -string "Unable to obtain folder permissions."
+                                out-logfile -string "This is a hard stop error - retry collection."
+                                out-logfile -string $_ -isError:$TRUE
+                            }
+                            else 
+                            {
+                                out-logfile -string "Issues obtaining folder permssions - retry."
+                                $loopCounter = $loopCounter+1    
+                            }
+                        }
+                    } while ($stopLoop -eq $TRUE)
 
                     if ($forPermissions.count -gt 0)
                     {
