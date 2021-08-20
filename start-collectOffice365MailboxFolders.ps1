@@ -394,7 +394,9 @@ function start-collectOffice365MailboxFolders
 
                     do {
                         try {
+                            out-logfile -string "Obtaining folder permissions..."
                             $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -ErrorAction Stop
+                            out-logfile -string "Folder permissions obtained..."
 
                             $stopLoop=$TRUE
                         }
