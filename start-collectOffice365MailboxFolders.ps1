@@ -370,7 +370,7 @@ function start-collectOffice365MailboxFolders
 
                 foreach ($folderName in $auditFolderNames)
                 {
-                    if ($forCounter -gt 1000)
+                    if ($forCounter -gt 25)
                     {
                         out-logfile -string "Sleeping for 5 seconds - powershell refresh."
                         start-sleep -seconds 5
@@ -411,7 +411,7 @@ function start-collectOffice365MailboxFolders
                                 $loopCounter = $loopCounter+1    
                             }
                         }
-                    } while ($stopLoop -eq $TRUE)
+                    } while ($stopLoop -eq $FALSE)
 
                     if ($forPermissions.count -gt 0)
                     {
