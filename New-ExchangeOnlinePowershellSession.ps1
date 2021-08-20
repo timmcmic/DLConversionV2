@@ -41,7 +41,10 @@
             [string]$exchangeOnlineOrganizationName,
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
-            [string]$exchangeOnlineEnvironmentName
+            [string]$exchangeOnlineEnvironmentName,
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
+            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [string]$debugLogPath
         )
 
         #Define variables that will be utilzed in the function.
@@ -79,7 +82,7 @@
             {
                 Out-LogFile -string "Creating the exchange online powershell session."
 
-                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName 
+                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
             }
             catch 
             {
@@ -92,7 +95,7 @@
             {
                 out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
 
-                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
             } 
             catch 
             {

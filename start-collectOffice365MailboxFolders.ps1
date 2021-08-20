@@ -130,7 +130,7 @@ function start-collectOffice365MailboxFolders
        #User specified non-certifate authentication credentials.
 
        try {
-        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $global:logFile
        }
        catch {
            out-logfile -string "Unable to create the exchange online connection using credentials."
@@ -144,7 +144,7 @@ function start-collectOffice365MailboxFolders
        #User specified thumbprint authentication.
 
        try {
-        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $global:logFile
        }
        catch {
         out-logfile -string "Unable to create the exchange online connection using certificate."
