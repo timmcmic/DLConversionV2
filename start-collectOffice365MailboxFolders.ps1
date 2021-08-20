@@ -302,6 +302,20 @@ function start-collectOffice365MailboxFolders
 
                     $stopLoop = $TRUE
                 }
+                catch[System.Exception]
+                {
+                    if ($loopCounter -gt 4)
+                    {
+                        out-logfile -string "Error obtaining milbox folder statistics."
+                        out-logfile -string "Collection operation will need to be retried - STOP failure."
+                        out-logfile -string $_ -isError:$TRUE
+                    }                    
+                    else 
+                    {
+                        out-logfile -string "Error on attempt to gather folder statistics.  -  trying again..."
+                        $loopcounter = $loopCounter+1
+                    }     
+                }
                 catch
                 {
                     if ($loopCounter -gt 4)
