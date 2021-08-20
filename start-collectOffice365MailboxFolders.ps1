@@ -266,7 +266,7 @@ function start-collectOffice365MailboxFolders
 
             $mailbox = $auditMailboxes[$mailboxCounter]
 
-            if ($forCounter -gt 1000)
+            if ($forCounter -gt 25)
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh."
                 start-sleep -seconds 5
