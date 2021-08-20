@@ -302,7 +302,7 @@ function start-collectOffice365MailboxFolders
 
                     $stopLoop = $TRUE
                 }
-                catch[System.Exception]
+                catch [System.Exception]
                 {
                     if ($loopCounter -gt 4)
                     {
