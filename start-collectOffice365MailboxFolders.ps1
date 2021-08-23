@@ -85,11 +85,11 @@ function start-collectOffice365MailboxFolders
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
     {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE -isAudit:$true
     }
     elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
     {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE -isAudit:$true
     }
     else
     {
@@ -100,15 +100,15 @@ function start-collectOffice365MailboxFolders
 
     if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
     {
-        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE -isAudit:$true
     }
     elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
     {
-        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE -isAudit:$true
     }
     elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
     {
-        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE -isAudit:$true
     }
     else 
     {
@@ -148,7 +148,7 @@ function start-collectOffice365MailboxFolders
        }
        catch {
         out-logfile -string "Unable to create the exchange online connection using certificate."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$true
        }
 
     }
@@ -242,7 +242,7 @@ function start-collectOffice365MailboxFolders
     catch 
     {
         out-logFile -string "Unable to get mailboxes."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$true
     }
 
     #Ensure the count of mailboxes is greater than zero before proceeding.
@@ -308,8 +308,8 @@ function start-collectOffice365MailboxFolders
                     {
                         out-logfile -string "Error obtaining milbox folder statistics."
                         out-logfile -string "Collection operation will need to be retried - STOP failure."
-                        out-logfile -string $_ -isError:$TRUE
-                    }                    
+                        out-logfile -string $_ -isError:$TRUE -isAudit:$true
+                    }                     
                     else 
                     {
                         out-logfile -string "Error on attempt to gather folder statistics.  -  trying again..."
@@ -322,7 +322,7 @@ function start-collectOffice365MailboxFolders
                     {
                         out-logfile -string "Error obtaining milbox folder statistics."
                         out-logfile -string "Collection operation will need to be retried - STOP failure."
-                        out-logfile -string $_ -isError:$TRUE
+                        out-logfile -string $_ -isError:$TRUE -isAudit:$true
                     }                    
                     else 
                     {
@@ -405,7 +405,7 @@ function start-collectOffice365MailboxFolders
                             {
                                 out-logfile -string "Unable to obtain folder permissions."
                                 out-logfile -string "This is a hard stop error - retry collection."
-                                out-logfile -string $_ -isError:$TRUE
+                                out-logfile -string $_ -isError:$TRUE -isAudit:$true
                             }
                             else 
                             {
