@@ -253,7 +253,7 @@ function start-collectOffice365MailboxFolders
 
         out-logfile -string "Gathering mailbox folders for assessment."
 
-        $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+        $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = $mailboxCounter
 
         $totalMailboxes=$auditMailboxes.count
 
