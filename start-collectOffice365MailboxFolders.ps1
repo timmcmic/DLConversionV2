@@ -270,7 +270,7 @@ function start-collectOffice365MailboxFolders
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh."
 
-                For ($i=5; $i -gt 1; $i–-) 
+                For ($i=5; $i -gt 1; $i--) 
                 {  
                     Write-Progress -Activity "Throttle sleep..." -SecondsRemaining $i -Id 2 -ParentId 1
                     Start-Sleep 1
@@ -379,7 +379,8 @@ function start-collectOffice365MailboxFolders
                     if ($forCounter -gt 25)
                     {
                         out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-                        For ($i=5; $i -gt 1; $i–-) 
+
+                        For ($i=5; $i -gt 1; $i--) 
                         {  
                             Write-Progress -Activity "Throttle sleep..." -SecondsRemaining $i -Id 2 -ParentId 1
                             Start-Sleep 1
