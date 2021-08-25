@@ -266,7 +266,7 @@ function start-collectOffice365MailboxFolders
 
             $mailbox = $auditMailboxes[$mailboxCounter]
 
-            if ($forCounter -gt 25)
+            if ($forCounter -gt 500)
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh."
 
@@ -376,7 +376,7 @@ function start-collectOffice365MailboxFolders
 
                 foreach ($folderName in $auditFolderNames)
                 {
-                    if ($forCounter -gt 25)
+                    if ($forCounter -gt 500)
                     {
                         out-logfile -string "Sleeping for 5 seconds - powershell refresh."
 
