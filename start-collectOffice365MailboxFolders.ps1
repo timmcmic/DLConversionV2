@@ -302,7 +302,7 @@ function start-collectOffice365MailboxFolders
                 {
                     out-logfile -string "Pulling mailbox folder statistics."
     
-                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -userPrinciplname $mailbox.userPrincipalName   -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -UserPrincipalName $mailbox.userPrincipalName -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
     
                     out-logfile -string "Mailbox folder statistics obtained."
 
@@ -406,7 +406,7 @@ function start-collectOffice365MailboxFolders
                     do {
                         try {
                             out-logfile -string "Obtaining folder permissions..."
-                            $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -userPrincipalName $mailbox.userPrincipalName  -ErrorAction Stop
+                            $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -UserPrincipalName $mailbox.userPrincipalName  -ErrorAction Stop
                             out-logfile -string "Folder permissions obtained..."
 
                             $stopLoop=$TRUE
