@@ -3231,6 +3231,8 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
+    out-logfile -string "Pause after routing contact"
+
     try {
         $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
         out-logfile -string $tempOU
