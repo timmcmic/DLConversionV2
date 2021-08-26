@@ -1162,8 +1162,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1203,8 +1203,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1231,8 +1231,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1271,8 +1271,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1299,8 +1299,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1340,8 +1340,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1368,8 +1368,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1409,8 +1409,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1450,8 +1450,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1480,8 +1480,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1518,8 +1518,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1609,8 +1609,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1643,8 +1643,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1677,8 +1677,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1711,8 +1711,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1745,8 +1745,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1779,8 +1779,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1813,8 +1813,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -1847,8 +1847,8 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -2743,9 +2743,7 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-        out-logfile -string "Starting sleep before removing individual status files.."
-
-        start-sleep -s 5
+        start-sleepProgress -sleepString "Starting sleep before removing individual status files.." -sleepSeconds 5
 
         out-logfile -string "Trigger cleanup of individual status files."
 
@@ -2756,7 +2754,8 @@ Function Start-DistributionListMigration
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
 
-        start-sleep -s 5
+        start-sleepProgress -sleepString "Starting sleep after removing individual status files.." -sleepSeconds 5
+
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2836,8 +2835,8 @@ Function Start-DistributionListMigration
     
     if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
-        out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-        start-sleep -seconds 15
+        start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
+
         out-logfile -string "Invoking AD replication."
 
         try {
@@ -2855,15 +2854,13 @@ Function Start-DistributionListMigration
     {
         if ($useAADConnect -eq $TRUE)
         {
-            out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-            start-sleep -seconds 60
+            start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
+
             out-logfile -string "Invoking AD Connect."
 
-            start-sleep -s 5
             invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
-            out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
-            start-sleep -seconds 60
+            start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
         }   
         else 
         {
@@ -2883,9 +2880,7 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -gt 0)
     {
-        out-logfile -string "Starting sleep before removing individual status files.."
-
-        start-sleep -s 5
+        start-sleepProgress -sleepString "Starting sleep before removing individual status files.." -sleepSeconds 5
 
         out-logfile -string "Trigger cleanup of individual status files."
 
@@ -2896,7 +2891,8 @@ Function Start-DistributionListMigration
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
 
-        start-sleep -s 5
+        start-sleepProgress -sleepString "Starting sleep after removing individual status files.." -sleepSeconds 5
+
     }
     
     #At this time we have processed the deletion to azure.
@@ -2970,8 +2966,8 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
-                start-sleep -s 15   
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
                 $loopCounter = $loopCounter+1 
             }
         }   
@@ -2980,8 +2976,6 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-    start-sleep -seconds 5
 
     #EXIT #Debug Exit.
 
@@ -3028,8 +3022,8 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
-                start-sleep -s 15   
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
                 $loopCounter = $loopCounter+1 
             }
         }
@@ -3056,8 +3050,8 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile "Transient error updating distribution group - retrying."
-                start-sleep -s 15
+                start-sleepProgress -sleepString "Transient error updating distribution group - retrying." -sleepSeconds 5
+
                 $loopCounter=$loopCounter+1
             }
         }
@@ -3095,8 +3089,8 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
-                start-sleep -s 15   
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
                 $loopCounter = $loopCounter+1 
             }
         }   
@@ -3130,8 +3124,8 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds."
-                start-sleep -s 15   
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+ 
                 $loopCounter = $loopCounter+1 
             }
         }
@@ -3262,8 +3256,8 @@ Function Start-DistributionListMigration
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
 
-    out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-    start-sleep -seconds 15
+    start-sleepProgress -sleepString "Starting sleep before invoking AD replicatoin.  Sleeping 15 seconds." -sleepSeconds 15
+
     out-logfile -string "Invoking AD replication."
 
     try {
@@ -3285,8 +3279,8 @@ Function Start-DistributionListMigration
         {  
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+
                 $forLoopCounter = 0
             }
             else 
@@ -3330,8 +3324,7 @@ Function Start-DistributionListMigration
         {  
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3379,8 +3372,7 @@ Function Start-DistributionListMigration
 
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3424,8 +3416,7 @@ Function Start-DistributionListMigration
 
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3469,8 +3460,7 @@ Function Start-DistributionListMigration
 
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3519,8 +3509,7 @@ Function Start-DistributionListMigration
 
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3567,8 +3556,7 @@ Function Start-DistributionListMigration
 
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3624,8 +3612,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3658,8 +3645,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3692,8 +3678,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3726,8 +3711,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3760,8 +3744,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3798,8 +3781,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3832,8 +3814,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3866,8 +3847,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3900,8 +3880,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3934,8 +3913,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3970,8 +3948,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4004,8 +3981,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4038,8 +4014,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4076,8 +4051,7 @@ Function Start-DistributionListMigration
         {
             if ($forLoopCounter -eq 1000)
             {
-                out-logFile -string "Throttling for 5 seconds at 1000 operations."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4251,9 +4225,7 @@ Function Start-DistributionListMigration
 
            do 
            {
-               out-logfile -string "Other threads are pending.  Sleep 5 seconds."
-
-               start-sleep -s 5
+               start-sleepProgress -sleepString "Other threads are pending.  Sleep 5 seconds." -sleepSeconds 5
            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
        }
        elseif ($global:threadNumber -gt 1)
@@ -4262,10 +4234,9 @@ Function Start-DistributionListMigration
            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
 
            do 
-           {
-               out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
-               
-               start-sleep -s 5
+           {               
+               start-sleepProgress -sleepString "Thread 1 is not ready to trigger.  Sleep 5 seconds." -sleepSeconds 5
+
            } until ((get-statusFileCount) -eq  $totalThreadCount)
        }
    }
@@ -4274,8 +4245,8 @@ Function Start-DistributionListMigration
    
    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
    {
-       out-logfile -string "Starting sleep before invoking AD replication - 15 seconds."
-       start-sleep -seconds 15
+       start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
+
        out-logfile -string "Invoking AD replication."
 
        try {
@@ -4293,15 +4264,14 @@ Function Start-DistributionListMigration
    {
        if ($useAADConnect -eq $TRUE)
        {
-           out-logfile -string "Starting sleep before invoking AD Connect - one minute."
-           start-sleep -seconds 60
+           start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
+
            out-logfile -string "Invoking AD Connect."
 
-           start-sleep -s 5
            invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
 
-           out-logfile -string "Sleeping after ad connect instance to allow deletion to process."
-           start-sleep -seconds 60
+           start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
+
        }   
        else 
        {
@@ -4321,9 +4291,9 @@ Function Start-DistributionListMigration
 
    if ($totalThreadCount -gt 0)
    {
-       start-sleep -s 10
+        start-sleepProgress -sleepString "Sleep..." -sleepSeconds 10
 
-       try{
+        try{
         remove-statusFiles -functionThreadNumber $global:threadNumber
         }
         catch{

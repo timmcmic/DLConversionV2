@@ -44,6 +44,9 @@
         Out-LogFile -string "BEGIN  start-sleepProgess"
         Out-LogFile -string "********************************************************************************"
 
+        out-logfile -string $sleepString
+        out-logfile -string $sleepSeconds
+
         if(($sleepId = 0)-and ($sleepParentID =0))
         {
             For ($i=$sleepSeconds; $i -gt 0; $i--) 
