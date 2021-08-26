@@ -97,9 +97,8 @@
 
                 if ($functionSleepTest -ne $FALSE)
                 {
-                    out-logFile -string "Failed adding member to group - sleep 30 seconds."
+                    start-sleepProgress -sleepString "Failed adding member to the group - sleeping before rety." -sleepSeconds 30
 
-                    start-sleep -seconds 30
                 }
 
                 try

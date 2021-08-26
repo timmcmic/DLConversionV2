@@ -73,9 +73,7 @@
         {
             if ($invokeSleep -eq $TRUE)
             {
-                out-logfile -string "Sleeping for 30 seconds."
-
-                start-sleep -s 30
+                start-sleepProgress -sleepString "Retrying after waiting 30 seconds." -sleepSeconds 30
             }
             else 
             {

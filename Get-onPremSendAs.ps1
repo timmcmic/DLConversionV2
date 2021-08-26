@@ -76,9 +76,9 @@
                     if ($functionCounter -gt 1000)
                     {
                         #Implement function counter for long running operations - pause for 5 seconds every 1000 queries.
+                        
+                        start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
 
-                        out-logfile -string "Invoking 5 second sleep for powershell recovery."
-                        start-sleep -seconds 5
 
                         $functionCounter=0
                     }

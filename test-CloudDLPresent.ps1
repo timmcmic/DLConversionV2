@@ -53,8 +53,7 @@
             }
             else 
             {
-                Out-LogFile -string "Group found in Office 365  Sleep for 30 seconds and check again."
-                start-sleep -seconds 30
+                start-sleepProgress -sleepString "Group found in Office 365 - sleep for 30 seconds - try again." -sleepSeconds 30
             }
 
         } while (get-exoRecipient -identity $groupSMTPAddress)
