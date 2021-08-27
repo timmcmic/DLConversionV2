@@ -291,7 +291,7 @@ function start-collectOffice365FullMailboxAccess
         try {
             if ($forCounter -gt 1000)
             {
-                out-logfile -string "Starting sleep at 1000 operations."
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
 
                 $forCounter=0
             }
