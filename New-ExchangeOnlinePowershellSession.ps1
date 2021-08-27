@@ -44,7 +44,10 @@
             [string]$exchangeOnlineEnvironmentName,
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
-            [string]$debugLogPath
+            [string]$debugLogPath,
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
+            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $false)]
+            [boolean]$isAudit=$FALSE
         )
 
         #Define variables that will be utilzed in the function.
@@ -86,7 +89,7 @@
             }
             catch 
             {
-                Out-LogFile -string $_ -isError:$TRUE
+                Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
             }
         }
         elseif ($isCertAuth -eq $TRUE) 
@@ -99,12 +102,10 @@
             } 
             catch 
             {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_ -isError:$TRUE -isAudit $isAudit
             }
         }
                
-        
-
         Out-LogFile -string "The exchange online powershell session was created successfully."
 
         Out-LogFile -string "END NEW-EXCHANGEONLINEPOWERSHELLSESSION"

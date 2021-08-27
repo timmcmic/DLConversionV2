@@ -18,6 +18,12 @@
     #>
     Function enable-ExchangeOnPremEntireForest
      {
+        Param
+        (
+            [Parameter(Mandatory = $false)]
+            [boolean]$isAudit=$FALSE
+        )
+        
         #Declare function variables.
 
         #Start function processing.
@@ -33,7 +39,7 @@
         }
         catch {
             out-logfile -string "Unable to set the entire forest settings to true."
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_ -isError:$TRUE -isAudit $isAudit
         }
 
         Out-LogFile -string "END enable-ExchangeOnPremEntireForest"

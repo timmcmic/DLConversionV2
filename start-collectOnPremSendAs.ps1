@@ -93,7 +93,7 @@ function start-collectOnPremSendAs
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
-        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
     new-LogFile -groupSMTPAddress OnPremSendAsPermissions -logFolderPath $logFolderPath
@@ -102,34 +102,34 @@ function start-collectOnPremSendAs
     {
         out-logFile -string "Creating session to import."
 
-        $sessionToImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        $sessionToImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to import powershell session."
 
-        import-powershellsession -powershellsession $sessionToImport
+        import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to set view entire forest to TRUE."
 
-        enable-ExchangeOnPremEntireForest
+        enable-ExchangeOnPremEntireForest -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #Define the log file path one time.
@@ -219,7 +219,7 @@ function start-collectOnPremSendAs
     catch 
     {
         out-logFile -string "Unable to get mailboxes."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #For each mailbox - we will iterate and grab the folders for processing.
@@ -264,7 +264,7 @@ function start-collectOnPremSendAs
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
         $fileName = $onPremRecipientSendAs

@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $PowershellSession
+            $PowershellSession,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isAudit=$false
         )
 
         #Define variables that will be utilzed in the function."
@@ -46,7 +48,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -iserror:$TRUE
+            Out-LogFile -string $_ -iserror:$TRUE -isAudit $isAudit
         }
 
         Out-LogFile -string "The powershell session imported successfully."

@@ -95,41 +95,41 @@ function start-collectOnPremFullMailboxAccess
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
-        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
     try 
     {
         out-logFile -string "Creating session to import."
 
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to import powershell session."
 
-        import-powershellsession -powershellsession $sessionToImport
+        import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to set view entire forest to TRUE."
 
-        enable-ExchangeOnPremEntireForest
+        enable-ExchangeOnPremEntireForest -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #Define the log file path one time.
@@ -146,8 +146,14 @@ function start-collectOnPremFullMailboxAccess
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditMailboxes = get-mailbox -resultsize unlimited
-    
+                try {
+                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to capture on premises mailboxes."
+                    out-logfile $_ -isError:$TRUE -isAudit:$TRUE
+                }
+
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
                 $fileName = $onPremMailboxList
@@ -240,8 +246,7 @@ function start-collectOnPremFullMailboxAccess
 
         if ($forCounter -gt 250)
         {
-            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-            start-sleep -seconds 5
+            start-sleepProgress -sleepString "Sleeping for 5 seconds." -sleepSeconds 5
             $forCounter=0
         }
         else 
@@ -265,7 +270,7 @@ function start-collectOnPremFullMailboxAccess
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
         $fileName = $onPremRecipientFullMailboxAccess

@@ -97,11 +97,11 @@ function start-collectOffice365FullMailboxAccess
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
     {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE -isAudit:$TRUE
     }
     elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
     {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE -isAudit:$TRUE
     }
     else
     {
@@ -112,15 +112,15 @@ function start-collectOffice365FullMailboxAccess
 
     if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
     {
-        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE -isAudit:$TRUE
     }
     elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
     {
-        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE -isAudit:$TRUE
     }
     elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
     {
-        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE -isAudit:$TRUE
     }
     else 
     {
@@ -130,7 +130,7 @@ function start-collectOffice365FullMailboxAccess
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
-        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
     #Start the connection to Exchange Online.
@@ -140,11 +140,11 @@ function start-collectOffice365FullMailboxAccess
        #User specified non-certifate authentication credentials.
 
        try {
-        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -isAudit:$TRUE
        }
        catch {
            out-logfile -string "Unable to create the exchange online connection using credentials."
-           out-logfile -string $_ -isError:$TRUE
+           out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
        }
        
 
@@ -154,7 +154,7 @@ function start-collectOffice365FullMailboxAccess
        #User specified thumbprint authentication.
 
        try {
-        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -isAudit:$true
        }
        catch {
         out-logfile -string "Unable to create the exchange online connection using certificate."
@@ -248,7 +248,7 @@ function start-collectOffice365FullMailboxAccess
     catch 
     {
         out-logFile -string "Unable to get mailboxes."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #For each mailbox - we will iterate and grab the folders for processing.
@@ -304,7 +304,7 @@ function start-collectOffice365FullMailboxAccess
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
         $fileName = $office365RecipientFullMailboxAccess

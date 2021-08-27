@@ -51,7 +51,10 @@
             [Parameter(ParameterSetName="Online")]
             [boolean]$allowRedirection=$FALSE,
             [Parameter(ParameterSetName="Online")]
-            [boolean]$requiresImport=$FALSE
+            [boolean]$requiresImport=$FALSE,
+            [Parameter(ParameterSetName="NotOnline",Mandatory = $false)]
+            [Parameter(ParameterSetName="Online",Mandatory = $false)]
+            [boolean]$isAudit=$FALSE
         )
 
         #Declare function variables.
@@ -118,7 +121,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
         }
 
         Out-LogFile -string "The powershell session was created successfully."

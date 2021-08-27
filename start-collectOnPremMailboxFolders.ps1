@@ -98,41 +98,41 @@ function start-collectOnPremMailboxFolders
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
-        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isArchive:$TRUE
+        out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
     try 
     {
         out-logFile -string "Creating session to import."
 
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to import powershell session."
 
-        import-powershellsession -powershellsession $sessionToImport
+        import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
     try 
     {
         out-logFile -string "Attempting to set view entire forest to TRUE."
 
-        enable-ExchangeOnPremEntireForest
+        enable-ExchangeOnPremEntireForest -isAudit:$TRUE
     }
     catch 
     {
         out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #Define the log file path one time.
@@ -216,14 +216,14 @@ function start-collectOnPremMailboxFolders
                 $auditFolderPermissions = import-clixml -Path $importFile
             }
             catch {
-                out-logfile -string "Unable to import the previously exported permissions."
+                out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$TRUE
             }
         }
     }
     catch 
     {
         out-logFile -string "Unable to get mailboxes."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
 
     #For each mailbox - we will iterate and grab the folders for processing.
@@ -245,8 +245,7 @@ function start-collectOnPremMailboxFolders
 
         if ($forCounter -gt 1000)
         {
-            out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-            start-sleep -seconds 5
+            start-sleepProgress -sleepString "Sleeping for 5 seconds - powershell refresh." -sleepSeconds 5
             $forCounter=0
         }
         else 
@@ -270,7 +269,7 @@ function start-collectOnPremMailboxFolders
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
         #Audit folders have been obtained.
@@ -333,7 +332,7 @@ function start-collectOnPremMailboxFolders
             }
             catch {
                 out-logfile -string "Unable to obtain folder permissions."
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
             }
 
             #Check the permissions found to see if they meet the criteria.

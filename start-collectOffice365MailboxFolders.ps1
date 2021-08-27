@@ -130,7 +130,7 @@ function start-collectOffice365MailboxFolders
        #User specified non-certifate authentication credentials.
 
        try {
-        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath -isAudit:$TRUE
        }
        catch {
            out-logfile -string "Unable to create the exchange online connection using credentials."
@@ -144,7 +144,7 @@ function start-collectOffice365MailboxFolders
        #User specified thumbprint authentication.
 
        try {
-        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath -isAudit:$TRUE
        }
        catch {
         out-logfile -string "Unable to create the exchange online connection using certificate."
@@ -235,7 +235,7 @@ function start-collectOffice365MailboxFolders
                 $auditFolderPermissions = import-clixml -Path $importFile
             }
             catch {
-                out-logfile -string "Unable to import the previously exported permissions."
+                out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$TRUE
             }
         }
     }
