@@ -3225,26 +3225,39 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
-    out-logfile -string "Pause after routing contact"
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
 
-    try {
-        $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
-        out-logfile -string $tempOU
-        $tempName=$originalDLConfiguration.cn
-        out-logfile -string $tempName
-        $tempName=$tempname.replace(' ','')
-        out-logfile -string $tempname
-        $tempName=$tempName+"-MigratedByScript"
-        out-logfile -string $tempName
-        $tempName="CN="+$tempName
-        out-logfile -string $tempName
-        $tempDN=$tempName+","+$tempOU
-        out-logfile -string $tempDN
-        $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-    }
-    catch {
-        out-logFile -string $_ -isError:$TRUE
-    }
+    do {
+        try {
+            $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+            out-logfile -string $tempOU
+            $tempName=$originalDLConfiguration.cn
+            out-logfile -string $tempName
+            $tempName=$tempname.replace(' ','')
+            out-logfile -string $tempname
+            $tempName=$tempName+"-MigratedByScript"
+            out-logfile -string $tempName
+            $tempName="CN="+$tempName
+            out-logfile -string $tempName
+            $tempDN=$tempName+","+$tempOU
+            out-logfile -string $tempDN
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch 
+        {
+            if ($loopCounter -gt 5)
+            {
+                out-logfile -string "Unable to obtain routing contact information post creation."
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to obtain routing contact after creation - sleep try again." -sleepSeconds 10
+                $loopCounter = $loopCounter + 1                
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
 
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
