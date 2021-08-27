@@ -246,7 +246,7 @@ function start-collectOnPremFullMailboxAccess
 
         if ($forCounter -gt 250)
         {
-            start-sleepProgress -sleepString "Sleeping for 5 seconds." -sleepSeconds 5
+            start-sleepProgress -sleepString "Sleeping for 5 seconds." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
         }
         else 
