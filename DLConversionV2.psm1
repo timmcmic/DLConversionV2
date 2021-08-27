@@ -3243,6 +3243,8 @@ Function Start-DistributionListMigration
             $tempDN=$tempName+","+$tempOU
             out-logfile -string $tempDN
             $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+            $stopLoop=$TRUE
         }
         catch 
         {
@@ -4147,12 +4149,30 @@ Function Start-DistributionListMigration
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-        try{
-            $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
-        }
-        catch{
-            out-logFile -string "Error obtaining dynamic group information post creation."
-        }
+        [boolean]$stopLoop=$FALSE
+        [int]$loopCounter=0
+
+        do {
+            try{
+                $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+
+                $stopLoop = $TRUE
+            }
+            catch{
+                if($loopCounter -gt 10)
+                {
+                    out-logfile -string "Unable to obtain the routing group after multiple tries."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Unable to obtain the dynamic group - retrying..."
+                    start-sleepProgress -string "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
+
+                    $loopCounter = $loopCounter+1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $routingDynamicGroupConfig
         out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $routingDynamicGroupXML
