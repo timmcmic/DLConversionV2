@@ -173,7 +173,7 @@ function start-collectOffice365FullMailboxAccess
         {
             if ($bringMyOwnMailboxes -eq $NULL)
             {
-                out-logFile -string "Obtaining all on premises mailboxes."
+                out-logFile -string "Obtaining all Office 365 mailboxes."
 
                 $auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
 
