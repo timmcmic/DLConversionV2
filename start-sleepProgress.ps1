@@ -24,7 +24,7 @@
     start-sleepProgess -sleepString "String" -seconds Seconds
 
     #>
-    Function  start-sleepProgess
+    Function  start-sleepProgress
     {
         [cmdletbinding()]
 
