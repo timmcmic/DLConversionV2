@@ -310,8 +310,8 @@ function start-collectOnPremMailboxFolders
         {
             if ($forCounter -gt 500)
             {
-                out-logfile -string "Sleeping for 5 seconds - powershell refresh."
-                start-sleep -seconds 5
+                start-sleepProgress -sleepString "Sleeping for 5 seconds - powershell refresh." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+
                 $forCounter=0
             }
             else 
