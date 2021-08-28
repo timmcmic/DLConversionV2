@@ -175,7 +175,7 @@ function start-collectOffice365FullMailboxAccess
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditMailboxes = get-exomailbox -resultsize unlimited
+                $auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
