@@ -224,7 +224,7 @@ function start-collectOnPremSendAs
 
     #For each mailbox - we will iterate and grab the folders for processing.
 
-    $ProgressDelta = 100/($auditRecipients.count); $PercentComplete = 0; $recipientNumber = 0
+    $ProgressDelta = 100/($auditRecipients.count); $PercentComplete = (($recipientCounter / $auditRecipients.count)*100); $recipientNumber = 0
 
     $totalRecipients=$auditRecipients.count
 

@@ -230,7 +230,7 @@ function start-collectOnPremMailboxFolders
 
     out-logfile -string "Gathering mailbox folders for assessment."
 
-    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $MbxNumber = 0
+    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = (($mailboxCounter / $auditMailboxes.count)*100); $MbxNumber = 0
 
     $totalMailboxes=$auditMailboxes.count
 

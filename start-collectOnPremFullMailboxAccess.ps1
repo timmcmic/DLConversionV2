@@ -231,7 +231,7 @@ function start-collectOnPremFullMailboxAccess
 
     #For each mailbox - we will iterate and grab the folders for processing.
 
-    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = 0; $mailboxNumber = 0
+    $ProgressDelta = 100/($auditMailboxes.count); $PercentComplete = (($mailboxCounter / $auditMailboxes.count)*100); $mailboxNumber = 0
 
     $totalMailboxes=$auditMailboxes.count
 
