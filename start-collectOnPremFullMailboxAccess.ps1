@@ -246,7 +246,7 @@ function start-collectOnPremFullMailboxAccess
 
         if ($forCounter -gt 250)
         {
-            start-sleepProgress -string "Powershell pause at 25 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            start-sleepProgress -sleepstring "Powershell pause at 25 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
         }
         else 
