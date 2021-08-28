@@ -54,6 +54,8 @@
                 Write-Progress -Activity $sleepString -SecondsRemaining $i
                 Start-Sleep 1
             }
+
+            write-progress -activity $sleepString -Completed
         }
         else 
         {
@@ -62,9 +64,9 @@
                 Write-Progress -Activity $sleepString -SecondsRemaining $i -Id $sleepID -ParentId $sleepParentID
                 Start-Sleep 1
             }
-        }
 
-        write-progress -Activity $sleepString -Completed
+            Write-Progress -Activity $sleepString -Id $sleepID -ParentId $sleepParentID -Completed
+        }
 
         Out-LogFile -string "END start-sleepProgess"
         Out-LogFile -string "********************************************************************************"
