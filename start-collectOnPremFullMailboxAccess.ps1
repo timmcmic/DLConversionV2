@@ -244,7 +244,7 @@ function start-collectOnPremFullMailboxAccess
 
         $mailbox = $auditMailboxes[$mailboxCounter]
 
-        if ($forCounter -gt 250)
+        if ($forCounter -gt 500)
         {
             start-sleepProgress -sleepstring "Powershell pause at 25 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0

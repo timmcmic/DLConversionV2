@@ -237,9 +237,9 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 250)
+        if ($forCounter -gt 500)
         {
-            start-sleepProgress -sleepString "Throttling for 5 seconds at 250 operations." -sleepSeconds 5
+            start-sleepProgress -sleepString "Throttling for 5 seconds at 500 operations." -sleepSeconds 5
 
             $forCounter=0
         }

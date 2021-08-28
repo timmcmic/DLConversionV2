@@ -243,7 +243,7 @@ function start-collectOnPremMailboxFolders
 
         $mailbox = $auditMailboxes[$mailboxCounter]
 
-        if ($forCounter -gt 1000)
+        if ($forCounter -gt 500)
         {
             start-sleepProgress -sleepString "Sleeping for 5 seconds - powershell refresh." -sleepSeconds 5
             $forCounter=0
@@ -308,7 +308,7 @@ function start-collectOnPremMailboxFolders
 
         foreach ($folderName in $auditFolderNames)
         {
-            if ($forCounter -gt 1000)
+            if ($forCounter -gt 500)
             {
                 out-logfile -string "Sleeping for 5 seconds - powershell refresh."
                 start-sleep -seconds 5
