@@ -147,7 +147,7 @@ function start-collectOnPremFullMailboxAccess
                 out-logFile -string "Obtaining all on premises mailboxes."
 
                 try {
-                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP
+                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP | select-object Identity
                 }
                 catch {
                     out-logfile -string "Unable to capture on premises mailboxes."
