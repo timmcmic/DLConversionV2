@@ -64,6 +64,8 @@
             }
         }
 
+        write-progress -Activity $sleepString -Completed
+
         Out-LogFile -string "END start-sleepProgess"
         Out-LogFile -string "********************************************************************************"
     }
