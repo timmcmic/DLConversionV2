@@ -3238,7 +3238,7 @@ Function Start-DistributionListMigration
                     $loopCounter = $loopCounter + 1
                 }
             }
-        } while ($stopLoop -eq $TRUE)
+        } while ($stopLoop -eq $false)
 
         $global:unDoStatus=$global:unDoStatus+1
 
