@@ -2986,12 +2986,29 @@ Function Start-DistributionListMigration
 
     out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
 
-    try {
-        set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
-    }
-    catch {
-        out-logFile -string $_ -isError:$TRUE
-    }
+    [int]$loopCounter=0
+    [boolean]$stopLoop = $FALSE
+    
+    do {
+        try {
+            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+
+            $stopLoop = $TRUE
+        }
+        catch {
+            if ($loopCounter -gt 4)
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+            else {
+                start-sleepProgress -sleepString "Uanble to set Office 365 DL Multi Value attributes - try again." -sleepSeconds 5
+
+                $loopCounter = $loopCounter +1
+            } 
+        }
+    } while ($stopLoop -eq $FALSE)
+
+
 
     #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
     #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
@@ -3192,7 +3209,7 @@ Function Start-DistributionListMigration
                     $loopCounter = $loopCounter+1
                 }
             }
-        } while ($stopLoop -eq $TRUE)
+        } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
