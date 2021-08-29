@@ -3145,23 +3145,54 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Administrator has choosen to retain the original group."
         out-logfile -string "Rename the group by adding the fixed character !"
 
-        try {
-            set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfigurationUpdated.Name -dlSAMAccountName $originalDLConfigurationUpdated.SAMAccountName -dn $originalDLConfigurationUpdated.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
+        [int]$loopCounter=0
+        [boolean]$stopLoop=$FALSE   
+
+        do {
+            try {
+                set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfigurationUpdated.Name -dlSAMAccountName $originalDLConfigurationUpdated.SAMAccountName -dn $originalDLConfigurationUpdated.distinguishedName -adCredential $activeDirectoryCredential -errorAction STOP
+
+                $stopLoop=$TRUE
+            }
+            catch {
+                if($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    start-sleepProgress -sleepString "Uanble to change DL name - try again." -sleepSeconds 5
+                    $loopCounter = $loopCounter+1    
+                }
+            }
+        } while ($stopLoop=$FALSE)
 
         $global:unDoStatus=$global:unDoStatus+1
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-        try {
-            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
+        [int]$loopCounter=0
+        [boolean]$stopLoop=$FALSE
+
+        do {
+            try {
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+                $stopLoop=$TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    start-sleepProgress -sleepString "Unable to obtain updated original DL Configuration - try again." -sleepSeconds 5
+
+                    $loopCounter = $loopCounter+1
+                }
+            }
+        } while ($stopLoop -eq $TRUE)
 
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
@@ -3169,45 +3200,107 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
 
-        try{
-            Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremisesExchange -errorAction STOP
-        }
-        catch{
-            out-LogFile -string $_ -isError:$TRUE
-        }
+        [int]$loopCounter=0
+        [boolean]$stopLoop=$FALSE
+        
+        do {
+            try{
+                Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremisesExchange -errorAction STOP
+
+                $stopLoop = $TRUE
+            }
+            catch{
+                if ($loopCounter -gt 4)
+                {
+                    out-LogFile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    start-sleepProgress -sleepString "Unable to disable distribution group - try again." -sleepSeconds 5
+
+                    $loopCounter = $loopCounter + 1
+                }
+            }
+        } while ($stopLoop -eq $TRUE)
 
         $global:unDoStatus=$global:unDoStatus+1
 
         out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
-        try {
-            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
+        [int]$loopCounter=0
+        [boolean]$stopLoop=$FALSE
+        
+        do {
+            try {
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleeProgress -sleepString "Attempt to gather updated DL configuration failed - try again." -sleepSeconds 5
+
+                    $loopCounter = $loopCounter + 1
+                } 
+            }
+        } while ($stopLoop -eq $FALSE)
+
 
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
-        try {
-            move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof("OU")) -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
-        }
-        catch {
-            out-logfile -string $_ -isError:$TRUE
-        }
+        [int]$loopCounter=0
+        [boolean]$stopLoop=$FALSE
 
-        try {
-            $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
-            $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
-            $tempDN=$tempNameArray[0]+","+$tempOU
-            $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
+        do {
+            try {
+                move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof("OU")) -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to move the DL to a non-sync OU - try again." -sleepSeconds 5
+
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+
+        [int]$loopCounter = 0
+        [boolean]$stopLoop = $FALSE
+
+        do {
+            try {
+                $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+                $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
+                $tempDN=$tempNameArray[0]+","+$tempOU
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to obtain moved DL configuration - try again." -sleepSeconds 5
+
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop = $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
@@ -3219,12 +3312,27 @@ Function Start-DistributionListMigration
 
     #Now it is time to create the routing contact.
 
-    try {
-        new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
+    [int]$loopCounter = 0
+    [boolean]$stopLoop = $FALSE
+    
+    do {
+        try {
+            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+
+            $stopLoop = $TRUE
+        }
+        catch {
+            if ($loopCounter -gt 4)
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else {
+                start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+
+                $loopCounter = $loopCounter +1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0
