@@ -497,4 +497,6 @@ function start-collectOffice365MailboxFolders
     {
         out-logfile -string "There were no mailboxes to process."
     }
+
+    disable-allPowerShellSessions
 }

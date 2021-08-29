@@ -316,5 +316,7 @@ function start-collectOffice365FullMailboxAccess
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter | export-clixml -path $exportFile
+
+        disable-allPowerShellSessions
     }
 }

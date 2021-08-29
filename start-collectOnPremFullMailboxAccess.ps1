@@ -282,5 +282,7 @@ function start-collectOnPremFullMailboxAccess
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter | export-clixml -path $exportFile
+
+        disable-allPowerShellSessions
     }
 }
