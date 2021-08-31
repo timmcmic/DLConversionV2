@@ -45,7 +45,7 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string $sleepString
-        out-logfile -string $sleepSeconds
+        out-logfile -string $sleepSeconds.tostring()
 
         if(($sleepId -eq 0)-and ($sleepParentID -eq 0))
         {
