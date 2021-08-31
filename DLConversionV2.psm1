@@ -3285,7 +3285,7 @@ Function Start-DistributionListMigration
                 $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof(",OU="))
                 out-logfile -string "Temp OU Substring = "
                 out-logfile -string $tempOUSubstring
-                $tempOUSubstring = $tempOUSubstring.substring($testOUSubstring.indexOF("OU"))
+                $tempOUSubstring = $tempOUSubstring.substring($tempOUSubstring.indexOF("OU"))
                 out-logfile -string "Temp OU Substring Substring ="
                 out-logfile -string $tempOUSubstring
 
