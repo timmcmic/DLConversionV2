@@ -601,7 +601,6 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
 
-
             } until ((get-job -State Running).count -eq 0)
 
             out-logfile -string ("The array location is = "+$arrayLocation)
