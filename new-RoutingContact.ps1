@@ -68,12 +68,8 @@
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
         out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
 
-        $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof(",OU="))
-        out-logfile -string "Temp OU Substring = "
-        out-logfile -string $tempOUSubstring
-        $tempOUSubstring = $tempOUSubstring.substring($tempOUSubstring.indexOF("OU"))
-        out-logfile -string "Temp OU Substring Substring ="
-        out-logfile -string $tempOUSubstring
+        $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
+
         [string]$functionOU=$tempOUSubstring
         out-logfile -string ("Function OU = "+$functionOU)
 

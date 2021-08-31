@@ -3282,12 +3282,7 @@ Function Start-DistributionListMigration
                 #To do so - we know that the DN has ,OU= so the first substring we'll search is ,OU=. 
                 #Then we'll do it again - this time for just OU.  And that should give us what we need for the OU.
 
-                $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof(",OU="))
-                out-logfile -string "Temp OU Substring = "
-                out-logfile -string $tempOUSubstring
-                $tempOUSubstring = $tempOUSubstring.substring($tempOUSubstring.indexOF("OU"))
-                out-logfile -string "Temp OU Substring Substring ="
-                out-logfile -string $tempOUSubstring
+                $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
                 move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $tempOUSubstring -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
 

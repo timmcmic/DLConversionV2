@@ -60,13 +60,9 @@
 
         try{
             out-logfile -string "Creating dynamic group..."
+            
+            $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
-            $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof(",OU="))
-            out-logfile -string "Temp OU Substring = "
-            out-logfile -string $tempOUSubstring
-            $tempOUSubstring = $tempOUSubstring.substring($tempOUSubstring.indexOF("OU"))
-            out-logfile -string "Temp OU Substring Substring ="
-            out-logfile -string $tempOUSubstring
 
             new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName
         }
