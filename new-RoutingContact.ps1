@@ -87,7 +87,9 @@
 
         [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
         $functionDisplayName=$functionDisplayName.replace(' ','')
-        [string]$functionName=$functionDisplayName
+        [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+        $functionCN=$functionCN.replace(' ','')
+        [string]$functionName=$functionCN
         [string]$functionFirstName = $originalDLConfiguration.DisplayName
         $functionFirstName=$functionFirstName.replace(' ','')
         [string]$functionLastName = "MigratedByScript"
