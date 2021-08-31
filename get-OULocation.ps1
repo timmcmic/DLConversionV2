@@ -46,7 +46,7 @@
         out-logfile -string "Temp OU Substring Substring ="
         out-logfile -string $tempOUSubstring
 
-        $returnOU = $testOUSubstring
+        $returnOU = $tempOUSubstring
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END Get-OULocation"
