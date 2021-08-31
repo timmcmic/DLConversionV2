@@ -581,7 +581,6 @@ Function Start-MultipleDistributionListMigration
                     start-sleepProgress -sleepString "Sleeping after job creation." -sleepSeconds 30
 
                 }
-    
             }
 
             #We cannot allow the next batch to be processed - until the current batch has no running threads.
