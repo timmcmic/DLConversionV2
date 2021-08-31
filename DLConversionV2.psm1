@@ -3363,7 +3363,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+            $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
             out-logfile -string $tempOU
             $tempName=$originalDLConfiguration.cn
             out-logfile -string $tempName
