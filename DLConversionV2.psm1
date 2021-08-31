@@ -3306,7 +3306,7 @@ Function Start-DistributionListMigration
 
         do {
             try {
-                $tempOU=$originalDLConfiguration.distinguishedName.substring($originalDLConfiguration.distinguishedName.indexof("OU"))
+                $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
                 $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
                 $tempDN=$tempNameArray[0]+","+$tempOU
                 $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
