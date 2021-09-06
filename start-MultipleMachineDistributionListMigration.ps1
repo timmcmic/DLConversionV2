@@ -225,6 +225,8 @@ Function Start-MultipleDistributionListMigration
     [int]$totalAddressCount = $groupSMTPAddresses.Count
     [int]$maxThreadCount = 5
 
+    [string]$localHostName=$NULL
+
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
@@ -480,6 +482,12 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string $_
         }
     }
+
+    #At this time we need to record the FQDN of the local host.  This is used later to determine if jobs are local.
+
+    $localHostName = ([System.Net.Dns]::GetHostByName(($env:computerName))).hostname
+
+    out-logfile -string ("The local host name is = "+$localHostName)
 
     #Maximum thread count that can be supported at one time is 5 for now.
     #Performance degrades over time at greater intervals.
