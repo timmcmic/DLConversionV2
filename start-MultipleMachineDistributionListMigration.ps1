@@ -489,6 +489,43 @@ Function Start-MultipleDistributionListMigration
 
     out-logfile -string ("The local host name is = "+$localHostName)
 
+    #For each machine in the server name array - we need to validate that the DLConversionV2 commands are available.
+
+    foreach ($server in $serverNames)
+    {
+        out-logfile -string ("Testing server for presence of DLConversion V2 "+$server)
+
+        if ($server -eq $localHostName)
+        {
+            try{
+                $commands = invoke-command -scriptBlock {get-command -module DLConversionV2 -errorAction STOP}
+                
+                if ($commands.count -eq 0)
+                {
+                    out-logfile -string "Server "+$server+" does not have the DLConversionV2 module installed." -isError:$TRUE
+                }
+            }
+            catch{
+                out-logfile -string "Unable to obtain DLConversionV2 commands." -isError:$TRUE
+            }
+        }
+        else 
+        {
+            try
+            {
+                $commands = invoke-command -scriptBlock {get-command -module DLConversionV2 -errorAction STOP} -computerName $server
+                
+                if ($commands.count -eq 0)
+                {
+                    out-logfile -string "Server "+$server+" does not have the DLConversionV2 module installed." -isError:$TRUE
+                }
+            }    
+            catch{
+                out-logfile -string "Unable to obtain DLConversionV2 commands." -isError:$TRUE
+            }
+        }
+    }
+
     #Maximum thread count that can be supported at one time is 5 for now.
     #Performance degrades over time at greater intervals.
     #The code overall is set to take a max of 10 - but for now we're capping it at 5 concurrent / per batch.
