@@ -201,11 +201,7 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [int]$global:threadNumber=0,
-        [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
     )
 
     #Define global variables.
