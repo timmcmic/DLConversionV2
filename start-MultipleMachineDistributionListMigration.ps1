@@ -201,14 +201,16 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $TRUE)]
+        [array]$serverNames = $NULL
     )
 
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\Master\"
-    [string]$masterFileName="Master"
+    [string]$global:staticFolderName="\Controller\"
+    [string]$masterFileName="Controller"
 
     #Define parameters that are variables here (not available as parameters in this function.)
 
@@ -226,7 +228,7 @@ Function Start-MultipleDistributionListMigration
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN START-MULTIPLEDISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "BEGIN START-MULTIPLEMACHINEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
     #Output parameters to the log file for recording.
@@ -239,6 +241,11 @@ Function Start-MultipleDistributionListMigration
     foreach ($smtpAddress in $groupSMTPAddresses)
     {
         Out-LogFile -string $smtpAddress
+    }
+    out-logfile -string "Servers to Excute On:"
+    foreach ($server in $serverNames)
+    {
+        Out-LogFile -string $server
     }
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
@@ -433,6 +440,13 @@ Function Start-MultipleDistributionListMigration
     if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
     {
         out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
+    }
+
+    out-logfile "Check to ensure that no more than 5 servers were specified."
+
+    if ($serverNames.count -gt 5)
+    {
+        out-logfile -string "More than 5 servers were specified.  Use 5 or less servers." -isError:$TRUE
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
