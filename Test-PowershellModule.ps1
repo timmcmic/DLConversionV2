@@ -19,7 +19,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$powershellModuleName
+            [string]$powershellModuleName,
+            [Parameter(Mandatory = $false)]
+            [boolean]$powershellVersionTest=$FALSE
         )
 
         #Define variables that will be utilzed in the function.
@@ -53,6 +55,40 @@
         {
             Out-LogFile -string "The powershell module was found."
         }    
+
+        if ($powershellVersionTest -eq $TRUE)
+        {
+            if (get-PackageProvider nuget)
+            {
+                out-logfile -string "Proceed with version test NUGET package provider installed."
+
+                out-logfile -string "The powershell module is gallery installed - check versions and advise."
+
+                $galleryModule = Find-Module -name $powershellModuleName -ErrorAction Continue
+
+                if ($galleryModule.version -eq $commandsArray[0].version)
+                {
+                    out-logfile -string "The version of the installed module is current."
+                    out-logfile -string ("Gallery Module "+$galleryModule.version)
+                    out-logfile -string ("Installed Module "+$commandsArray[0].version)
+                }
+                else 
+                {
+                    out-logfile -string "*******************"
+                    out-logfile -string "*******************"   
+                    out-logfile -string "Current gallery module is not installed for module"+$powershellModuleName
+                    out-logfile -string ("Gallery Module "+$galleryModule.version)
+                    out-logfile -string ("Installed Module "+$commandsArray[0].version)
+                    out-logfile -string "RECOMMEND MODULE UPGRADE FOR FUTURE MIGRATIONS"   
+                    out-logfile -string "*******************"
+                    out-logfile -string "*******************"  
+                }
+            }
+            else 
+            {
+                out-logfile -string "NUGET package provier not available - version testing unavailable."    
+            }
+        }
 
         Out-LogFile -string "END TEST-POWERSHELLMODULE"
         Out-LogFile -string "********************************************************************************"

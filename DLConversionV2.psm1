@@ -239,6 +239,7 @@ Function Start-DistributionListMigration
     [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
     [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
     [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
+    [string]$dlConversionPowershellModule="DLConversionV2"
     [string]$globalCatalogPort=":3268"
     [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
 
@@ -814,11 +815,15 @@ Function Start-DistributionListMigration
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-   Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName
+   Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
    Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
+
+   out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
+
+   Test-PowershellModule -powershellModuleName $dlConversionPowershellModule -powershellVersionTest:$TRUE
 
    #Create the connection to exchange online.
 
