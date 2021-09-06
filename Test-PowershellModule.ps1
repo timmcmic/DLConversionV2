@@ -76,7 +76,7 @@
                 {
                     out-logfile -string "*******************"
                     out-logfile -string "*******************"   
-                    out-logfile -string "Current gallery module is not installed for module"+$powershellModuleName
+                    out-logfile -string ("Current gallery module is not installed for module"+$powershellModuleName)    
                     out-logfile -string ("Gallery Module "+$galleryModule.version)
                     out-logfile -string ("Installed Module "+$commandsArray[0].version)
                     out-logfile -string "RECOMMEND MODULE UPGRADE FOR FUTURE MIGRATIONS"   
