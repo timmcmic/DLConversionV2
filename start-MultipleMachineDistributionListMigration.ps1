@@ -465,6 +465,21 @@ Function Start-MultipleDistributionListMigration
         out-logfile -string $GroupSMTPAddress
     }
 
+    #The goal of this function is to provision remote jobs.
+    #Test to ensure each machine is configured for remote management.
+
+    foreach ($server in $serverNames)
+    {
+        try{
+            test-wsman -computerName $server -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Unable to validate remote management enabled on host."
+            out-logfile -string $server
+            out-logfile -string $_
+        }
+    }
+
     #Maximum thread count that can be supported at one time is 5 for now.
     #Performance degrades over time at greater intervals.
     #The code overall is set to take a max of 10 - but for now we're capping it at 5 concurrent / per batch.
