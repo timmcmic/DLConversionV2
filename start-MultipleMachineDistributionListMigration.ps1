@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Start-MultipleDistributionListMigration
+Function Start-MultipleMachineDistributionListMigration
 {
     <#
     .SYNOPSIS
