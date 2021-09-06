@@ -471,6 +471,7 @@ Function Start-MultipleDistributionListMigration
     foreach ($server in $serverNames)
     {
         try{
+            out-logfile -string ("Testing server: "+$server)
             test-wsman -computerName $server -errorAction STOP
         }
         catch{
