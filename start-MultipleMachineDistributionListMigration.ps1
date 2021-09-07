@@ -523,6 +523,8 @@ Function Start-MultipleMachineDistributionListMigration
 
     foreach ($server in $serverNames)
     {
+        [array]$commands = @()
+        
         out-logfile -string ("Testing server for presence of DLConversion V2 "+$server)
 
         if ($server -eq $localHostName)
