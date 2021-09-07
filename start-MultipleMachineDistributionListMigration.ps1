@@ -539,10 +539,10 @@ Function Start-MultipleMachineDistributionListMigration
                 
                 if ($commands.count -eq 0)
                 {
-                    out-logfile -string "Server "+$server+" does not have the DLConversionV2 module installed." -isError:$TRUE
+                    out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.") -isError:$TRUE
                 }
                 else {
-                    out-logfile -string "Server "+$server+" is ready."
+                    out-logfile -string ("Server "+$server+" is ready.")
                 }
             }    
             catch{
