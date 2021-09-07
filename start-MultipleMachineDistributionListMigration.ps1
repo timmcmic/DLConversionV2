@@ -662,7 +662,7 @@ Function Start-MultipleMachineDistributionListMigration
                 $addressNumber = $forCounter+$arrayLocation
                 out-logfile -string ("Processing address number: "+$addressNumber)
 
-                $doArray+=$groupSMTAddresses[$addressNumber]
+                $doArray+=$groupSMTPAddresses[$addressNumber]
             }
 
             foreach ($address in $doArray)
