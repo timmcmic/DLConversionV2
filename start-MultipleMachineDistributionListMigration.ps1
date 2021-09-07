@@ -473,10 +473,15 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string ("The local host name is = "+$localHostName)
 
+    foreach ($server in $serverNames)
+    {
+        out-logfile -string ("Server Specified: "+$server)
+    }
+
     #Servers must be specified in FQDN format.  Although no specific way to test - an easy method is to break the string at . and count.
     #If the count is not > 3 machine <dot> domain <dot> com then reasonably this is not an FQDN.
 
-    foreach ($server in $servername)
+    foreach ($server in $servernames)
     {
         $forTest = $server.split(".")
 
