@@ -609,6 +609,37 @@ Function Start-MultipleMachineDistributionListMigration
         $networkLoggingDirectory+=$forPath
     }
 
+    #The controller will split the addresses into groups for each machine to process.
+    #To do this we simply take the total number of addresses divided by the number of controllers.
+    #The we create an array of address arrays.
+
+    out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
+
+    [int]$maxAddressesPerMachines = $totalAddressCount / $servernames.count
+
+    out-logfile -string ("The number of addresses per machine = "+$maxAddressesPerMachines)
+
+    
+    [array]$groupSMTPAddressArray=@()
+
+    for ($forCounter = 0 ; $forcounter -lt $totalAddressCount ; $forCounter++)
+    {
+        [array]$doArray=@()
+
+        do {
+            $doArray+=$groupSMTPAddresses[$forCounter]
+        } until ($forCounter -lt $maxAddressesPerMachine)
+
+        out-logfile -string "Address Batch"
+
+        foreach ($address in $doArray)
+        {
+            out-logfile -string $address
+        }
+        
+        $groupSMTPAddressesArray+=$doArray
+    }
+
     exit
 
     #Maximum thread count that can be supported at one time is 5 for now.
@@ -617,11 +648,10 @@ Function Start-MultipleMachineDistributionListMigration
 
     #The goal of this operation will be to batch moves in groups of 5 - and do another group after that.
 
-    out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
+   
     
     [boolean]$allDone=$FALSE
     [int]$arrayLocation=0
-    [int]$maxArrayLocation = $totalAddressCount - 1
     [int]$remainingAddresses = 0
     [int]$loopThreadCount = 0
     $jobOutput=$NULL
