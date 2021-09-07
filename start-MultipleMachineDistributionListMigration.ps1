@@ -619,26 +619,63 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string ("The number of addresses per machine = "+$maxAddressesPerMachines)
 
-    
     [array]$groupSMTPAddressArray=@()
+    [array]$doArray=@()
+    [int]$arrayLocation=0
+    [int]$remainingAddresses = 0
 
-    for ($forCounter = 0 ; $forcounter -lt $totalAddressCount ; $forCounter++)
-    {
-        [array]$doArray=@()
+    do {
 
-        do {
-            $doArray+=$groupSMTPAddresses[$forCounter]
-        } until ($forCounter -lt $maxAddressesPerMachine)
+        out-logfile -string ("Current Array Location: "+$arrayLocation)
 
-        out-logfile -string "Address Batch"
+        $remainingAddresses = $totalAddressCount - $arrayLocation
 
-        foreach ($address in $doArray)
+        out-logfile -string ("Remianing addresses to process: "+$remainingAddresses)
+
+        if ($remainingAddress -gt $maxAddressesPerMachines)
         {
-            out-logfile -string $address
+            out-logfile -string "More addresses remain that the number of addresses per machine."
+
+            for ($forCounter = 0 ; $forCounter -lt $maxAddressesPerMachines ; $forCounter++)
+            {
+                $addressNumber = $forCounter+$arrayLocation
+                out-logfile -string ("Processing address number: "+$addressNumber)
+
+                $doArray+=$groupSMTPAddresses[$addressNumber]
+            }
+
+            foreach ($address in $doArray)
+            {
+                out-logfile -string ("Address in batch: "+$address)
+            }
+
+            $groupSMTPAddressArray+=$doArray
+
+            $arrayLocation=$arrayLocation+1
         }
-        
-        $groupSMTPAddressesArray+=$doArray
-    }
+        else 
+        {
+            out-logfile -string "Less addresses remain than number of addresses per machine."
+            
+            for ($forCounter = $arrayLocation ; $forCounter -lt $totalAddressCount ;$forCounter++)
+            {
+                $addressNumber = $forCounter+$arrayLocation
+                out-logfile -string ("Processing address number: "+$addressNumber)
+
+                $doArray+=$groupSMTAddresses[$addressNumber]
+            }
+
+            foreach ($address in $doArray)
+            {
+                out-logfile -string ("Address in batch: "+$address)
+            }
+
+            $groupSMTPAddressArray+=$doArray
+
+            $arrayLocation=$arrayLocation+1
+        }        
+    } until ($arrayLocation -eq $totalAddressCount)
+
 
     exit
 
@@ -652,7 +689,7 @@ Function Start-MultipleMachineDistributionListMigration
     
     [boolean]$allDone=$FALSE
     [int]$arrayLocation=0
-    [int]$remainingAddresses = 0
+    
     [int]$loopThreadCount = 0
     $jobOutput=$NULL
 
