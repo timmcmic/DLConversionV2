@@ -658,6 +658,18 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
+    out-logfile -string "Address array summary for logging..."
+
+    foreach ($addressSet in $groupSMTPAddressArray)
+    {
+        out-logfile -string "Writing out address set:"
+
+        foreach ($address in $addressSet)
+        {
+            out-logfile -string $address
+        }
+    }
+
     exit
 
     #Maximum thread count that can be supported at one time is 5 for now.
