@@ -220,7 +220,7 @@ Function Start-MultipleDistributionListMigration
 
     $jobOutput=$NULL
 
-    [int]$totalAddressCount = $groupSMTPAddresses.Count
+    [int]$totalAddressCount = 0
     [int]$maxThreadCount = 5
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
@@ -445,6 +445,10 @@ Function Start-MultipleDistributionListMigration
     out-logfile -string "Unique list of SMTP addresses included in the array."
 
     $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
+
+    #Setting total SMTP addresses to accoun for unique SMTP addresses.
+
+    $totalAddressCount = $groupSMTPAddresses.count
 
     foreach ($groupSMTPAddress in $groupSMTPAddresses)
     {

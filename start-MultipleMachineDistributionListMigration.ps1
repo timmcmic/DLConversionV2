@@ -222,7 +222,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     $jobOutput=$NULL
 
-    [int]$totalAddressCount = $groupSMTPAddresses.Count
+    [int]$totalAddressCount = 0
     [int]$maxThreadCount = 5
 
     [string]$dlConversionV2ModuleName = "DLConversionV2"
@@ -463,6 +463,10 @@ Function Start-MultipleMachineDistributionListMigration
     out-logfile -string "Unique list of SMTP addresses included in the array."
 
     $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
+
+    #Setting the total group count after adjusting for unique SMTP Addresses.
+
+    $totalAddressCount = $groupSMTPAddresses.count
 
     foreach ($groupSMTPAddress in $groupSMTPAddresses)
     {
