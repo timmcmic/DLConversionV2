@@ -625,55 +625,38 @@ Function Start-MultipleMachineDistributionListMigration
     [int]$remainingAddresses = 0
 
     do {
-
-        out-logfile -string ("Current Array Location: "+$arrayLocation)
-
         $remainingAddresses = $totalAddressCount - $arrayLocation
 
-        out-logfile -string ("Remianing addresses to process: "+$remainingAddresses)
-
-        if ($remainingAddress -gt $maxAddressesPerMachines)
+        if ($remainingAddresses -gt $maxAddressesPerMachines)
         {
-            out-logfile -string "More addresses remain that the number of addresses per machine."
-
-            for ($forCounter = 0 ; $forCounter -lt $maxAddressesPerMachines ; $forCounter++)
+            for ($forCounter = 0 ; $forCounter -lt $maxAddressesPerMachine ; $forCounter++)
             {
-                $addressNumber = $forCounter+$arrayLocation
-                out-logfile -string ("Processing address number: "+$addressNumber)
-
-                $doArray+=$groupSMTPAddresses[$addressNumber]
+                $doArray+=$groupSMTPAddresses[$arrayLocation]
+                $arrayLocation=$arrayLocation+1
             }
+
+            out-logfile -string "Batch Addresses:"
 
             foreach ($address in $doArray)
             {
-                out-logfile -string ("Address in batch: "+$address)
+                out-logfile $address
             }
-
-            $groupSMTPAddressArray+=$doArray
-
-            $arrayLocation=$arrayLocation+1
         }
         else 
         {
-            out-logfile -string "Less addresses remain than number of addresses per machine."
-            
-            for ($forCounter = $arrayLocation ; $forCounter -lt $totalAddressCount ;$forCounter++)
+            for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter++)
             {
-                $addressNumber = $forCounter+$arrayLocation
-                out-logfile -string ("Processing address number: "+$addressNumber)
-
-                $doArray+=$groupSMTPAddresses[$addressNumber]
-            }
+                $doArray+=$groupSMTPAddresses[$arrayLocation]
+                $arrayLocation=$arrayLocation+1
+            }   
+            
+            out-logfile -string "Batch Addresses:"
 
             foreach ($address in $doArray)
             {
-                out-logfile -string ("Address in batch: "+$address)
+                out-logfile $address
             }
-
-            $groupSMTPAddressArray+=$doArray
-
-            $arrayLocation=$arrayLocation+1
-        }        
+        }
     } until ($arrayLocation -eq $totalAddressCount)
 
 
