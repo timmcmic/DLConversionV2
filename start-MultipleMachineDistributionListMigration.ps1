@@ -590,6 +590,24 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "Please create the DLConversionV2 file share at the same path as the log directory." -isError:$TRUE    
     }
 
+    #The share path has been validated.  The custom logging directories need to be built.
+
+    out-logfile -string "Build each servers network logging directory."
+
+    [array]$networkLoggingDirectory=@()
+
+    foreach ($server in $servers)
+    {
+        $forServerName=$server.split(".")
+        $forPath = "\\"+$localHostName+"\"
+        out-logfile -string $forPath
+        $forPath = $forPath+$forServerName
+        out-logfile -string $forPath
+        $networkLoggingDirectory+=$forPath
+    }
+
+    exit
+
     #Maximum thread count that can be supported at one time is 5 for now.
     #Performance degrades over time at greater intervals.
     #The code overall is set to take a max of 10 - but for now we're capping it at 5 concurrent / per batch.
