@@ -479,7 +479,7 @@ Function Start-MultipleMachineDistributionListMigration
         catch{
             out-logfile -string "Unable to validate remote management enabled on host."
             out-logfile -string $server
-            out-logfile -string $_
+            out-logfile -string $_ -isError:$TRUE
         }
     }
 
