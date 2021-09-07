@@ -653,7 +653,7 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string ("Address in Do Array = "+$address)
         }
 
-        $groupSMTPAddressArray[$serverCounter]=$doArray
+        $groupSMTPAddressArray+=,(@($doArray))
         $doArray=@()
 
         foreach ($address in $groupSMTPAddressArray[$serverCounter])
