@@ -524,26 +524,12 @@ Function Start-MultipleMachineDistributionListMigration
     foreach ($server in $serverNames)
     {
         [array]$commands = @()
-        
+
         out-logfile -string ("Testing server for presence of DLConversion V2 "+$server)
 
         if ($server -eq $localHostName)
         {
-            try{
-                $commands = get-command -module DLConversionV2 -errorAction STOP
-                
-                if ($commands.count -eq 0)
-                {
-                    out-logfile -string "Server "+$server+" does not have the DLConversionV2 module installed." -isError:$TRUE
-                }
-                else {
-                    out-logfile -string "Server "+$server+" is ready."
-                }
-            }
-            catch{
-                out-logfile -string "Unable to obtain DLConversionV2 commands." 
-                out-logfile -string ?_ -isError:$TRUE
-            }
+            out-logfile -string "Skipping test - this is the machine running the controller."
         }
         else 
         {
