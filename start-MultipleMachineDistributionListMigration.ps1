@@ -620,45 +620,16 @@ Function Start-MultipleMachineDistributionListMigration
     out-logfile -string ("The number of addresses per machine = "+$maxAddressesPerMachines)
 
     [array]$groupSMTPAddressArray=@()
-    [array]$doArray=@()
-    [int]$arrayLocation=0
-    [int]$remainingAddresses = 0
+    [int]$forCounter = 0
 
-    do {
-        $remainingAddresses = $totalAddressCount - $arrayLocation
-
-        if ($remainingAddresses -gt $maxAddressesPerMachines)
+    for ($serverCounter = 0 ; $serverCounter -lt $servernames.count ; $serverCounter++)
+    {
+        if ($forCounter -lt $totalAddressCount)
         {
-            for ($forCounter = 0 ; $forCounter -lt $maxAddressesPerMachine ; $forCounter++)
-            {
-                $doArray+=$groupSMTPAddresses[$arrayLocation]
-                $arrayLocation=$arrayLocation+1
-            }
-
-            out-logfile -string "Batch Addresses:"
-
-            foreach ($address in $doArray)
-            {
-                out-logfile $address
-            }
+            $groupSMTPAddressArray[$serverCounter]+=$groupSMTPAddresses[$forCounter]
+            $forCounter=$forCounter+1
         }
-        else 
-        {
-            for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter++)
-            {
-                $doArray+=$groupSMTPAddresses[$arrayLocation]
-                $arrayLocation=$arrayLocation+1
-            }   
-            
-            out-logfile -string "Batch Addresses:"
-
-            foreach ($address in $doArray)
-            {
-                out-logfile $address
-            }
-        }
-    } until ($arrayLocation -eq $totalAddressCount)
-
+    }
 
     exit
 
