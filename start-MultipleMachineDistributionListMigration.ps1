@@ -601,7 +601,7 @@ Function Start-MultipleMachineDistributionListMigration
         $forServerName=$server.split(".")
         $forPath = "\\"+$localHostName+"\"
         out-logfile -string $forPath
-        $forPath = $forPath+$forServerName
+        $forPath = $forPath+$forServerName[0]
         out-logfile -string $forPath
         $networkLoggingDirectory+=$forPath
     }
