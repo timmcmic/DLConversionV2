@@ -473,19 +473,40 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string ("The local host name is = "+$localHostName)
 
+    #Servers must be specified in FQDN format.  Although no specific way to test - an easy method is to break the string at . and count.
+    #If the count is not > 3 machine <dot> domain <dot> com then reasonably this is not an FQDN.
+
+    foreach ($server in $servername)
+    {
+        $forTest = $server.split(".")
+
+        if ($forTest.count -lt 3)
+        {
+            out-logfile -string ("The servername specified does not appear in FQDN format - "+$server)
+            out-logfile -string ("The servername must be in format machine.domain.com etc to proceed.") -isError:$TRUE
+        }
+        else 
+        {
+            out-logfile -string ("The servername appears in FQDN format - proceed - "+$server)    
+        }
+    }
+
     #The goal of this function is to provision remote jobs.
     #Test to ensure each machine is configured for remote management.
 
     foreach ($server in $serverNames)
     {
-        try{
-            out-logfile -string ("Testing server: "+$server)
-            $testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential -errorAction STOP
-        }
-        catch{
-            out-logfile -string "Unable to validate remote management enabled on host."
-            out-logfile -string $server
-            out-logfile -string $_ -isError:$TRUE
+        if ($server -ne $localHostName)
+        {
+            try{
+                out-logfile -string ("Testing server: "+$server)
+                $testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential -errorAction STOP
+            }
+            catch{
+                out-logfile -string "Unable to validate remote management enabled on host."
+                out-logfile -string $server
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
     }
 
