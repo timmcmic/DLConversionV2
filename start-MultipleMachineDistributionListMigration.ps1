@@ -624,10 +624,23 @@ Function Start-MultipleMachineDistributionListMigration
 
     for ($serverCounter = 0 ; $serverCounter -lt $servernames.count ; $serverCounter++)
     {
-        if ($forCounter -lt $totalAddressCount)
+        for ($maxCounter = 0 ; $maxCounter -lt $maxAddressesPerMachines ; $maxCounter++)
         {
-            $groupSMTPAddressArray[$serverCounter]+=$groupSMTPAddresses[$forCounter]
-            $forCounter=$forCounter+1
+            if ($forCounter -lt $totalAddressCount)
+            {
+                $groupSMTPAddressArray[$serverCounter]=$groupSMTPAddressArray[$serverCounter]+$groupSMTPAddresses[$forCounter]
+
+                $forCounter = $forCounter + 1
+            }
+            else 
+            {
+                $maxCounter = $maxAddressesPerMachines
+            }
+        }
+
+        foreach ($address in $groupSMTPAddresses[$serverCounter])
+        {
+            out-logfile -string ("Address in group: "+$address)
         }
     }
 
