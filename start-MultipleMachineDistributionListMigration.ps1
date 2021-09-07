@@ -625,35 +625,36 @@ Function Start-MultipleMachineDistributionListMigration
 
     for ($serverCounter = 0 ; $serverCounter -lt $servernames.count ; $serverCounter++)
     {
-        out-logfile "Entering server for loop..."
-
         for ($maxCounter = 0 ; $maxCounter -lt $maxAddressesPerMachines ; $maxCounter++)
         {
-            out-logfile -string "Entering max counter for loop..."
-
             if ($forCounter -lt $totalAddressCount)
             {
-                out-logfile -string "For counter less that total addresses..."
-                out-logfile -string $groupSMTPAddresses[$forCounter]
+                out-logfile -string ("For Counter = "+$forCounter)
+                out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$forCounter])
                 $doArray+=$groupSMTPAddresses[$forCounter]
 
                 $forCounter = $forCounter + 1
             }
             else 
             {
-                out-logfile -string "For counter not less that total addresses."
+                out-logfile -string ("For Counster = "+$forCounter)
                 $maxCounter = $maxAddressesPerMachines
             }
         }
 
         out-logfile -string "Processed server and array batch."
 
+        foreach ($address in $doArray)
+        {
+            out-logfile -string ("Address in Do Array = "+$address)
+        }
+
         $groupSMTPAddressArray[$serverCounter]=$doArray
         $doArray=@()
 
-        foreach ($address in $groupSMTPAddressesArray[$serverCounter])
+        foreach ($address in $groupSMTPAddressArray[$serverCounter])
         {
-            out-logfile -string ("Address in group: "+$address)
+            out-logfile -string ("Address in group array: "+$address)
         }
     }
 
