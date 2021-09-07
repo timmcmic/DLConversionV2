@@ -467,6 +467,12 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string $GroupSMTPAddress
     }
 
+    #At this time we need to record the FQDN of the local host.  This is used later to determine if jobs are local.
+
+    $localHostName = ([System.Net.Dns]::GetHostByName(($env:computerName))).hostname
+
+    out-logfile -string ("The local host name is = "+$localHostName)
+
     #The goal of this function is to provision remote jobs.
     #Test to ensure each machine is configured for remote management.
 
@@ -483,12 +489,6 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    #At this time we need to record the FQDN of the local host.  This is used later to determine if jobs are local.
-
-    $localHostName = ([System.Net.Dns]::GetHostByName(($env:computerName))).hostname
-
-    out-logfile -string ("The local host name is = "+$localHostName)
-
     #For each machine in the server name array - we need to validate that the DLConversionV2 commands are available.
 
     foreach ($server in $serverNames)
@@ -498,7 +498,7 @@ Function Start-MultipleMachineDistributionListMigration
         if ($server -eq $localHostName)
         {
             try{
-                $commands = invoke-command -scriptBlock {get-command -module DLConversionV2 -errorAction STOP}
+                $commands = get-command -module DLConversionV2 -errorAction STOP
                 
                 if ($commands.count -eq 0)
                 {
