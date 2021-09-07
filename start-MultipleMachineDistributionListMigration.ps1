@@ -521,6 +521,8 @@ Function Start-MultipleMachineDistributionListMigration
 
     #For each machine in the server name array - we need to validate that the DLConversionV2 commands are available.
 
+    [array]$invalidServers=@()
+
     foreach ($server in $serverNames)
     {
         [array]$commands = @()
@@ -539,7 +541,8 @@ Function Start-MultipleMachineDistributionListMigration
                 
                 if ($commands.count -eq 0)
                 {
-                    out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.") -isError:$TRUE
+                    out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.")
+                    $invalidServers+=$server
                 }
                 else {
                     out-logfile -string ("Server "+$server+" is ready.")
@@ -550,6 +553,15 @@ Function Start-MultipleMachineDistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+    }
+
+    if ($invalidServers.count -gt 0)
+    {
+        foreach ($server in $invalidServers)
+        {
+            out-logfile -string ("Server does not have DLConversionV2 installed: "+$server)
+        }
+        out-logfile -string "Correct servers with missing modules." -isError:$TRUE
     }
 
     #Maximum thread count that can be supported at one time is 5 for now.
