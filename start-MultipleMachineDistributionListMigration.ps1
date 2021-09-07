@@ -564,6 +564,32 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "Correct servers with missing modules." -isError:$TRUE
     }
 
+    #At this point we have validated that each server has WinRM enabled, each server is accessible, and each server has the module installed.
+
+    #The goal on the controller is to store all of the log files - centralized.
+    #This requires a network share.
+    #The share should be pre-created.
+
+    if (get-SMBShare -name "DLConversionV2")
+    {
+        out-logfile -string "The DLConversionV2 share was found."
+
+        if ((get-smbShare -name "DlconversionV2").path -eq $logFolderPath)
+        {
+            out-logfile -string "The DLConversionV2 share was found and the path matches the logging path."
+        }
+        else 
+        {
+            out-logfile -string "The DLConversionV2 share was found but the path does not match the logging path."
+            out-logfile -string ((get-smbShare -name "DLConversionV2").path) -isError:$TRUE
+        }
+    }
+    else 
+    {
+        out-logfile -string "The DLConversionV2 share was not found and is necessary to proceed."
+        out-logfile -string "Please create the DLConversionV2 file share at the same path as the log directory." -isError:$TRUE    
+    }
+
     #Maximum thread count that can be supported at one time is 5 for now.
     #Performance degrades over time at greater intervals.
     #The code overall is set to take a max of 10 - but for now we're capping it at 5 concurrent / per batch.
