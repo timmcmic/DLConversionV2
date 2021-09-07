@@ -225,6 +225,8 @@ Function Start-MultipleMachineDistributionListMigration
     [int]$totalAddressCount = $groupSMTPAddresses.Count
     [int]$maxThreadCount = 5
 
+    [string]$dlConversionV2ModuleName = "DLConversionV2"
+
     [string]$localHostName=$NULL
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
@@ -537,7 +539,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $commands = invoke-command -scriptBlock {get-command -module DLConversionV2 -errorAction STOP} -computerName $server -credential $activeDirectoryCredential -errorAction STOP
+                $commands = invoke-command -scriptBlock {get-command -module $dlConversionV2ModuleName -errorAction STOP} -computerName $server -credential $activeDirectoryCredential -errorAction STOP
                 
                 if ($commands.count -eq 0)
                 {
@@ -570,18 +572,18 @@ Function Start-MultipleMachineDistributionListMigration
     #This requires a network share.
     #The share should be pre-created.
 
-    if (get-SMBShare -name "DLConversionV2")
+    if (get-SMBShare -name $dlConversionV2ModuleName)
     {
         out-logfile -string "The DLConversionV2 share was found."
 
-        if ((get-smbShare -name "DlconversionV2").path -eq $logFolderPath)
+        if ((get-smbShare -name $dlConversionV2ModuleName).path -eq $logFolderPath)
         {
             out-logfile -string "The DLConversionV2 share was found and the path matches the logging path."
         }
         else 
         {
             out-logfile -string "The DLConversionV2 share was found but the path does not match the logging path."
-            out-logfile -string ((get-smbShare -name "DLConversionV2").path) -isError:$TRUE
+            out-logfile -string ((get-smbShare -name $dlConversionV2ModuleName).path) -isError:$TRUE
         }
     }
     else 
@@ -601,6 +603,7 @@ Function Start-MultipleMachineDistributionListMigration
         $forServerName=$server.split(".")
         $forPath = "\\"+$localHostName+"\"
         out-logfile -string $forPath
+        $forPath=$forPath+$dlConversionV2ModuleName+"\"
         $forPath = $forPath+$forServerName[0]
         out-logfile -string $forPath
         $networkLoggingDirectory+=$forPath
