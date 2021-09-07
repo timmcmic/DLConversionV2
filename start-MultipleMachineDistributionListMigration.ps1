@@ -546,7 +546,8 @@ Function Start-MultipleMachineDistributionListMigration
                 }
             }    
             catch{
-                out-logfile -string "Unable to obtain DLConversionV2 commands." -isError:$TRUE
+                out-logfile -string "Unable to obtain DLConversionV2 commands." 
+                out-logfile -string $_ -isError:$TRUE
             }
         }
     }
