@@ -596,7 +596,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     [array]$networkLoggingDirectory=@()
 
-    foreach ($server in $servers)
+    foreach ($server in $servernames)
     {
         $forServerName=$server.split(".")
         $forPath = "\\"+$localHostName+"\"
