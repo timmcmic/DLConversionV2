@@ -513,6 +513,10 @@ Function Start-MultipleMachineDistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+        else 
+        {
+            out-logfile -string ("Skipping testing of host running controoler: "+$server)    
+        }
     }
 
     #For each machine in the server name array - we need to validate that the DLConversionV2 commands are available.
