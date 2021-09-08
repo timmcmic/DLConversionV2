@@ -533,7 +533,7 @@ Function Start-MultipleDistributionListMigration
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until (get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}) 
+            } until (get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))} -eq 0) 
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -598,7 +598,7 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
 
-            } until ((get-job -State Running | where {$_.PSJobTypeName -eq "BackgroundJob"}).count -eq 0)
+            } until (get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))} -eq 0) 
 
             out-logfile -string ("The array location is = "+$arrayLocation)
 
