@@ -627,7 +627,13 @@ Function Start-MultipleMachineDistributionListMigration
         {
             out-logfile -string "Directory does not exist -> create."
 
-            New-Item -ItemType Directory -Force -Path $directory -credential $activeDirectoryCredential
+            try{
+                New-Item -ItemType Directory -Force -Path $directory -credential $activeDirectoryCredential -errorAction STOP
+            }
+            catch{
+                out-logfile -string "Uanble to create the network directory."
+                out-logfile -string $_ -isError:$TRUE
+            }
 
             out-logfile -string "Testing creation of path..."
 
