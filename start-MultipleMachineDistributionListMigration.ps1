@@ -692,7 +692,7 @@ Function Start-MultipleMachineDistributionListMigration
     #This is necessary since the jobs provisioned utilze folders per machine and not the centralized folder.
 
     $forDirectory = $logFolderPath+"\AuditData"
-    [boolean]$forTest=test-path -directory $forDirectory
+    [boolean]$forTest=test-path -path $forDirectory
 
     out-logfile -string "Testing for local audit data directory."
     out-logfile -string ("Local Audit Data Directory: "+$forDirectory)
