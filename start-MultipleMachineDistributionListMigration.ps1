@@ -613,6 +613,36 @@ Function Start-MultipleMachineDistributionListMigration
         $networkLoggingDirectory+=$forPath
     }
 
+    #At this time test for the paths and create them if not already there.
+
+    foreach ($directory in $networkLoggingDirectory)
+    {
+        out-logFile -string "Testing to see if network path already exists."
+
+        $forTest = test-path -path $directory 
+
+        out-logfile -string ("Test Path Results: "+$forTest)
+
+        if ($forTest -eq $FALSE)
+        {
+            out-logfile -string "Directory does not exist -> create."
+
+            New-Item -ItemType Directory -Force -Path $directory
+
+            out-logfile -string "Testing creation of path..."
+
+            $forTest = test-path -path $directory 
+
+            out-logfile -string ("Test Path Results: "+$forTest)
+        }
+        else 
+        {
+            out-logfile -string "Network directory exists."    
+        }
+    }
+
+    exit
+
     #The controller will split the addresses into groups for each machine to process.
     #To do this we simply take the total number of addresses divided by the number of controllers.
     #The we create an array of address arrays.
