@@ -663,19 +663,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    $tempPath = $logFolderPath+"\AuditData"
-    $tempPathTest = test-path -directory $logFolderPath
-
-    if ($tempPathTest = $tempPath)
-    {
-        foreach ($directory in $networkLoggingDirectory)
-        {
-            $forDirectory = $logFolderPath+"\AuditData"
-            $forNetworkDirectory = $directory+"\AuditData"
-
-            copy-item $forDirectory -destination $forNetworkDirectory -force
-        }
-    }
+    
 
     exit
 
