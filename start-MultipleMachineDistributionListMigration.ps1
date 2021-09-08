@@ -714,8 +714,6 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    exit
-
     #The controller will split the addresses into groups for each machine to process.
     #To do this we simply take the total number of addresses divided by the number of controllers.
     #The we create an array of address arrays.
@@ -776,6 +774,8 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string $address
         }
     }
+
+    exit
 
     #At this time we have a multi-dimensional array of addresses, log file strings, and are ready to invoke jobs.
     #If the controller is specified as a machine - the job will be provisioend locally.
