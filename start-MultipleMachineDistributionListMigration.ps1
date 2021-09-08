@@ -620,7 +620,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logFile -string "Testing to see if network path already exists."
         out-logfile -string $directory
 
-        [boolean]$forTest = test-path -path $directory -credential $activeDirectoryCredential
+        [boolean]$forTest = test-path -path $directory
 
         out-logfile -string ("Test Path Results: "+$forTest)
 
@@ -629,7 +629,7 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string "Directory does not exist -> create."
 
             try{
-                New-Item -ItemType Directory -Force -Path $directory -credential $activeDirectoryCredential -errorAction STOP
+                New-Item -ItemType Directory -Force -Path $directory -errorAction STOP
             }
             catch{
                 out-logfile -string "Uanble to create the network directory."
