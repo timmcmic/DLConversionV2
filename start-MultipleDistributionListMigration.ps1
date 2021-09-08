@@ -521,7 +521,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running | where {$_.PSJobTypeName -eq "BackgroundJob"}
+                $loopJobs = get-job -state Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -533,7 +533,7 @@ Function Start-MultipleDistributionListMigration
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until ((get-job -State Running | where {$_.PSJobTypeName -eq "BackgroundJob"} ).count -eq 0)
+            } until ((get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -543,7 +543,7 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job | where {$_.PSJobTypeName -eq "BackgroundJob"}
+            $loopJobs = get-job | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
             foreach ($job in $loopJobs)
             {
@@ -587,7 +587,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running | where {$_.PSJobTypeName -eq "BackgroundJob"}
+                $loopJobs = get-job -state Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -604,7 +604,7 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -state Completed | where {$_.PSJobTypeName -eq "BackgroundJob"}
+            $loopJobs = get-job -state Completed | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
             foreach ($job in $loopJobs)
             {
