@@ -648,7 +648,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    foreach ($diretory in $networkLoggingDirectory)
+    foreach ($directory in $networkLoggingDirectory)
     {
         $forDirectory = $directory+"\AuditData"
 
