@@ -720,11 +720,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
 
-    #Powershell users interger bankers math
-    #In this instance we always want to round up.
-    #This may front load some of the first servers in the array with extra lists - but it allos the list distribution to work when the groups are odd.
-
-    [int]$maxAddressesPerMachines = ($totalAddressCount / $servernames.count)+1
+    [int]$maxAddressesPerMachines = ($totalAddressCount / $servernames.count)
 
     out-logfile -string ("The number of addresses per machine = "+$maxAddressesPerMachines)
 
@@ -746,9 +742,11 @@ Function Start-MultipleMachineDistributionListMigration
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
     {
-        for ($maxCounter = 0 ; $maxCounter -lt $maxAddressesPerMachines ; $maxCounter++)
+        if ($serverCounter -eq $serverCounter - 1)
         {
-            if ($forCounter -lt $totalAddressCount)
+            #This is the last array to be built - take all addresses that are left.
+
+            for ($maxCounter = $forCounter ; $maxCounter -lt $totalAddressCount ; $maxCounter++)
             {
                 out-logfile -string ("For Counter = "+$forCounter)
                 out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$forCounter])
@@ -756,13 +754,29 @@ Function Start-MultipleMachineDistributionListMigration
 
                 $forCounter = $forCounter + 1
             }
-            else 
+        }
+        else 
+        {
+            #This is not the last array - build the array up to the max per run.
+
+            for ($maxCounter = 0 ; $maxCounter -lt $maxAddressesPerMachines ; $maxCounter++)
             {
-                out-logfile -string ("For Counster = "+$forCounter)
-                $maxCounter = $maxAddressesPerMachines
+                if ($forCounter -lt $totalAddressCount)
+                {
+                    out-logfile -string ("For Counter = "+$forCounter)
+                    out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$forCounter])
+                    $doArray+=$groupSMTPAddresses[$forCounter]
+    
+                    $forCounter = $forCounter + 1
+                }
+                else 
+                {
+                    out-logfile -string ("For Counster = "+$forCounter)
+                    $maxCounter = $maxAddressesPerMachines
+                }
             }
         }
-
+        
         out-logfile -string "Processed server and array batch."
 
         foreach ($address in $doArray)
@@ -778,10 +792,6 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string ("Address in group array: "+$address)
         }
     }
-
-    #>
-
-
 
     out-logfile -string "Address array summary for logging..."
 
