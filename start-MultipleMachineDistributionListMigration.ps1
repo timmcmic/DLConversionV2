@@ -650,16 +650,36 @@ Function Start-MultipleMachineDistributionListMigration
 
     foreach ($directory in $networkLoggingDirectory)
     {
+        out-logFile -string "Testing to see if network path already exists."
+        out-logfile -string $directory
+
         $forDirectory = $directory+"\AuditData"
 
-        out-logfile -string "Creating audit directory."
+        [boolean]$forTest = test-path -path $forDirectory
 
-        try{
-            New-Item -ItemType Directory -Force -Path $forDirectory -errorAction STOP
+        out-logfile -string ("Test Path Results: "+$forTest)
+
+        if ($forTest -eq $FALSE)
+        {
+            out-logfile -string "Directory does not exist -> create."
+
+            try{
+                New-Item -ItemType Directory -Force -Path $forDirectory -errorAction STOP
+            }
+            catch{
+                out-logfile -string "Uanble to create the network directory."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            out-logfile -string "Testing creation of path..."
+
+            $forTest = test-path -path $forDirectory
+
+            out-logfile -string ("Test Path Results: "+$forTest)
         }
-        catch{
-            out-logfile -string "Uanble to create the network directory."
-            out-logfile -string $_ -isError:$TRUE
+        else 
+        {
+            out-logfile -string "Network directory exists."    
         }
     }
 
