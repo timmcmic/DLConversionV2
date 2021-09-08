@@ -523,7 +523,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running -name $jobName
+                $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -535,7 +535,7 @@ Function Start-MultipleDistributionListMigration
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until ((get-job -State Running -Name $jobName).count -eq 0)
+            } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -617,6 +617,8 @@ Function Start-MultipleDistributionListMigration
             $arrayLocation=$arrayLocation+$remainingAddresses
         }
     } until ($arrayLocation -eq $totalAddressCount)
+
+    out-logfile -string $jobOutput
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
