@@ -543,7 +543,7 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
+            $loopJobs = get-job | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
 
             foreach ($job in $loopJobs)
             {
