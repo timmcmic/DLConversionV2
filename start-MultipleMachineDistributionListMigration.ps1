@@ -720,7 +720,11 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
 
-    [int]$maxAddressesPerMachines = $totalAddressCount / $servernames.count
+    #Powershell users interger bankers math
+    #In this instance we always want to round up.
+    #This may front load some of the first servers in the array with extra lists - but it allos the list distribution to work when the groups are odd.
+
+    [int]$maxAddressesPerMachines = ($totalAddressCount / $servernames.count)+1
 
     out-logfile -string ("The number of addresses per machine = "+$maxAddressesPerMachines)
 
@@ -774,6 +778,10 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string ("Address in group array: "+$address)
         }
     }
+
+    #>
+
+
 
     out-logfile -string "Address array summary for logging..."
 
