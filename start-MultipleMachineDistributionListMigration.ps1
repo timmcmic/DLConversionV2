@@ -638,7 +638,7 @@ Function Start-MultipleMachineDistributionListMigration
 
             out-logfile -string "Testing creation of path..."
 
-            $forTest = test-path -path $directory -credential $activeDirectoryCredential
+            $forTest = test-path -path $directory
 
             out-logfile -string ("Test Path Results: "+$forTest)
         }
