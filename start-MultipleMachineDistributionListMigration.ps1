@@ -685,7 +685,34 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    
+    #At this time we have validated the network directories exist.
+    #We have also pre-staged the audit data files.
+    #We will test now to see if the audit data folder exists in the directory for the controller specified.
+    #If so the items will be copied to the folder in the network share.
+    #This is necessary since the jobs provisioned utilze folders per machine and not the centralized folder.
+
+    $forDirectory = $logFolderPath+"\AuditData"
+    [boolean]$forTest=test-path -directory $forDirectory
+
+    out-logfile -string "Testing for local audit data directory."
+    out-logfile -string ("Local Audit Data Directory: "+$forDirectory)
+    out-logfile -string ("Is directory present: "+$forTest)
+
+    if ($forTest -eq $TRUE)
+    {
+        out-logfile -string "Local audit data directory is present."
+
+        foreach ($directory in $networkLoggingDirectory)
+        {
+            $forDirectory=$logFolderPath+"\AuditData\*"
+            $forNetworkDirectory=$directory+"\AuditData\"
+
+            out-logfile -string ("Source Directory: "+$forDirectory)
+            out-logfile -string ("Target Directory: "+$forNetworkDirectory)
+
+            copy-item $forDirectory -destination $forNetworkDirectory -force
+        }
+    }
 
     exit
 
