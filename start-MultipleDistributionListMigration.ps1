@@ -527,7 +527,7 @@ Function Start-MultipleDistributionListMigration
 
                 foreach ($job in $loopJobs)
                 {
-                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 }
 
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
@@ -547,7 +547,7 @@ Function Start-MultipleDistributionListMigration
 
             foreach ($job in $loopJobs)
             {
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
             }
 
             out-logfile -string "Removing all completed jobs."
@@ -595,7 +595,7 @@ Function Start-MultipleDistributionListMigration
 
                 foreach ($job in $loopJobs)
                 {
-                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 }
 
                 start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
@@ -611,7 +611,7 @@ Function Start-MultipleDistributionListMigration
             foreach ($job in $loopJobs)
             {
                 $jobOutput+=(get-job -id $job.id).childjobs.output
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
             }
 
             out-logfile -string "Removing all completed jobs."
