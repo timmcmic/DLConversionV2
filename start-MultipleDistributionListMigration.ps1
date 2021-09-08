@@ -186,7 +186,7 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution","None")]
+        [ValidateSet("Security","Distribution")]
         [string]$groupTypeOverride="None",
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
@@ -506,7 +506,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread = $forCounter+1
 
-                Start-Job -InitializationScript {Import-Module c:\test\DLConversionV2.psd1} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
+                Start-Job -InitializationScript {Import-Module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
 
                 if ($forCounter -eq 0)
                 {
@@ -521,7 +521,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}
+                $loopJobs = get-job -state Running
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -533,7 +533,7 @@ Function Start-MultipleDistributionListMigration
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until ((get-job -State Running | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}).count -eq 0)
+            } until ((get-job -State Running).count -eq 0)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -543,17 +543,16 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}
+            $loopJobs = get-job
 
             foreach ($job in $loopJobs)
             {
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-                remove-job -id $job.id
             }
 
-            #out-logfile -string "Removing all completed jobs."
+            out-logfile -string "Removing all completed jobs."
 
-            #get-job | remove-job    
+            get-job | remove-job    
         }
 
         #In this instance we have reached a batch of less than 5.
@@ -575,7 +574,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread=$forCounter+1
 
-                Start-Job -InitializationScript {Import-Module c:\test\DLConversionV2.psd1} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
+                Start-Job -InitializationScript {DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
 
                 if ($forCounter -eq 0)
                 {
@@ -590,7 +589,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}
+                $loopJobs = get-job -state Running
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -601,24 +600,23 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
 
-            } until ((get-job -State Running | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}).count -eq 0)
+            } until ((get-job -State Running).count -eq 0)
 
             out-logfile -string ("The array location is = "+$arrayLocation)
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -state Completed | where {($_.name -ne "ControllerJob") -and ($_.psJobNameType -eq "BackGroundJob")}
+            $loopJobs = get-job -state Completed
 
             foreach ($job in $loopJobs)
             {
                 $jobOutput+=(get-job -id $job.id).childjobs.output
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-                remove-job -id $job.id
             }
 
-            #out-logfile -string "Removing all completed jobs."
+            out-logfile -string "Removing all completed jobs."
 
-            #get-job | remove-job    
+            get-job | remove-job    
 
             $arrayLocation=$arrayLocation+$remainingAddresses
         }
