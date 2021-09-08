@@ -742,7 +742,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
     {
-        if ($serverCounter -eq $serverCounter - 1)
+        if ($serverCounter -eq ($forEnd - 1))
         {
             #This is the last array to be built - take all addresses that are left.
 
@@ -750,9 +750,7 @@ Function Start-MultipleMachineDistributionListMigration
             {
                 out-logfile -string ("For Counter = "+$forCounter)
                 out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$forCounter])
-                $doArray+=$groupSMTPAddresses[$forCounter]
-
-                $forCounter = $forCounter + 1
+                $doArray+=$groupSMTPAddresses[$maxCounter]
             }
         }
         else 
