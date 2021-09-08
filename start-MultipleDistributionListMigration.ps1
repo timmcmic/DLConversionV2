@@ -201,7 +201,11 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [int]$global:threadNumber=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0
     )
 
     #Define global variables.
@@ -220,7 +224,7 @@ Function Start-MultipleDistributionListMigration
 
     $jobOutput=$NULL
 
-    [int]$totalAddressCount = 0
+    [int]$totalAddressCount = $groupSMTPAddresses.Count
     [int]$maxThreadCount = 5
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
@@ -446,10 +450,6 @@ Function Start-MultipleDistributionListMigration
 
     $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
 
-    #Setting total SMTP addresses to accoun for unique SMTP addresses.
-
-    $totalAddressCount = $groupSMTPAddresses.count
-
     foreach ($groupSMTPAddress in $groupSMTPAddresses)
     {
         out-logfile -string $GroupSMTPAddress
@@ -521,7 +521,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
+                $loopJobs = get-job -state Running
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -533,7 +533,7 @@ Function Start-MultipleDistributionListMigration
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until (get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))} -eq 0) 
+            } until ((get-job -State Running).count -eq 0)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -543,14 +543,16 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
+            $loopJobs = get-job
 
             foreach ($job in $loopJobs)
             {
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-                out-logfile -string "Removing job..."
-                remove-job -id $job.id
-            } 
+            }
+
+            out-logfile -string "Removing all completed jobs."
+
+            get-job | remove-job    
         }
 
         #In this instance we have reached a batch of less than 5.
@@ -587,7 +589,7 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
+                $loopJobs = get-job -state Running
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
@@ -598,21 +600,23 @@ Function Start-MultipleDistributionListMigration
 
                 start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
 
-            } until (get-job -State Running | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))} -eq 0) 
+            } until ((get-job -State Running).count -eq 0)
 
             out-logfile -string ("The array location is = "+$arrayLocation)
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -state Completed | where {(($_.PSJobTypeName -eq "BackgroundJob") -and ($_.name -ne "ControllerJob"))}
+            $loopJobs = get-job -state Completed
 
             foreach ($job in $loopJobs)
             {
                 $jobOutput+=(get-job -id $job.id).childjobs.output
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-                out-logfile -string "Removing job..."
-                remove-job -id $job.id
             }
+
+            out-logfile -string "Removing all completed jobs."
+
+            get-job | remove-job    
 
             $arrayLocation=$arrayLocation+$remainingAddresses
         }
