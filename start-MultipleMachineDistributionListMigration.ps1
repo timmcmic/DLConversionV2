@@ -620,7 +620,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logFile -string "Testing to see if network path already exists."
         out-logfile -string $directory
 
-        $forTest = test-path -path $directory -credential $activeDirectoryCredential
+        [boolean]$forTest = test-path -path $directory -credential $activeDirectoryCredential
 
         out-logfile -string ("Test Path Results: "+$forTest)
 
