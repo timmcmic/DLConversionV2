@@ -673,7 +673,7 @@ Function Start-MultipleMachineDistributionListMigration
             $forDirectory = $logFolderPath+"\AuditData"
             $forNetworkDirectory = $directory+"\AuditData"
 
-            copy-item $forDirectory -destination $forNetworkDirectory
+            copy-item $forDirectory -destination $forNetworkDirectory -force
         }
     }
 
