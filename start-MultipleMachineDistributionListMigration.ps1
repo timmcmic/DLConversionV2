@@ -737,7 +737,7 @@ Function Start-MultipleMachineDistributionListMigration
     }
     else 
     {
-        $forEnd = $serverName.count    
+        $forEnd = $serverNames.count 
     }
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
