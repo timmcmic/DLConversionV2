@@ -851,7 +851,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Removing all completed jobs."
 
-    get-job | remove-job    
+    #get-job | remove-job    
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END start-MultipleMachineDistributionListMigration"
