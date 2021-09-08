@@ -728,7 +728,19 @@ Function Start-MultipleMachineDistributionListMigration
     [array]$doArray=@()
     [int]$forCounter = 0
 
-    for ($serverCounter = 0 ; $serverCounter -lt $servernames.count ; $serverCounter++)
+    #On the off chance someone tries do do a multi machine migration where the group count is less than the server count.
+    #End the for loop when we've reached the count of groups.
+
+    if ($totalAddressCount -lt $serverNames.count )
+    {
+        $forEnd = $totalAddressCount
+    }
+    else 
+    {
+        $forEnd = $serverName.count    
+    }
+
+    for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
     {
         for ($maxCounter = 0 ; $maxCounter -lt $maxAddressesPerMachines ; $maxCounter++)
         {
