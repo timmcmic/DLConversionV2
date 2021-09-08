@@ -618,6 +618,7 @@ Function Start-MultipleMachineDistributionListMigration
     foreach ($directory in $networkLoggingDirectory)
     {
         out-logFile -string "Testing to see if network path already exists."
+        out-logfile -string $directory
 
         $forTest = test-path -path $directory -credential $activeDirectoryCredential
 
