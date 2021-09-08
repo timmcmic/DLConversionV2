@@ -648,6 +648,21 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
+    foreach ($diretory in $networkLoggingDirectory)
+    {
+        $forDirectory = $directory+"\AuditData"
+
+        out-logfile -string "Creating audit directory."
+
+        try{
+            New-Item -ItemType Directory -Force -Path $forDirectory -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Uanble to create the network directory."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
     exit
 
     #The controller will split the addresses into groups for each machine to process.
