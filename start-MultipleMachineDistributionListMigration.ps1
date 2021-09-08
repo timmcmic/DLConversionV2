@@ -803,6 +803,8 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
+    out-logfile -string ("Number of array members = "+$groupSMTPAddressArray.count)
+
     exit
 
     #At this time we have a multi-dimensional array of addresses, log file strings, and are ready to invoke jobs.
