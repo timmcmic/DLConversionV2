@@ -748,8 +748,8 @@ Function Start-MultipleMachineDistributionListMigration
 
             for ($maxCounter = $forCounter ; $maxCounter -lt $totalAddressCount ; $maxCounter++)
             {
-                out-logfile -string ("For Counter = "+$forCounter)
-                out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$forCounter])
+                out-logfile -string ("For Counter = "+$maxCounter)
+                out-logfile -string ("SMTP Address Processed = "+$groupSMTPAddresses[$maxCounter])
                 $doArray+=$groupSMTPAddresses[$maxCounter]
             }
         }
