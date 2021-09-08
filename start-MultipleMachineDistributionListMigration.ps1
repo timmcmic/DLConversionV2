@@ -699,7 +699,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     do {
         #Gather the controller job if created
-        $loopJobs = get-job | where {($_.name eq "ControllerJob") -or ($_.PSJobTypeName -eq "RemoteJob"))}
+        $loopJobs = get-job | where {(($_.name -eq "ControllerJob") -or ($_.PSJobTypeName -eq "RemoteJob"))}
 
         out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
