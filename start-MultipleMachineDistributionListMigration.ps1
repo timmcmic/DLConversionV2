@@ -655,6 +655,8 @@ Function Start-MultipleMachineDistributionListMigration
 
         $forDirectory = $directory+"\AuditData"
 
+        out-logfile -string $forDirectory
+
         [boolean]$forTest = test-path -path $forDirectory
 
         out-logfile -string ("Test Path Results: "+$forTest)
