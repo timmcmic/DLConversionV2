@@ -596,7 +596,7 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
 
-            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential -errorAction STOP
+            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential.userName -errorAction STOP
         }
         catch{
             out-logfile -string "Uanble to create the DLConversionV2 share."
@@ -606,7 +606,7 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             $acl = Get-Acl $logFolderPath
 
-            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential,"FullControl","Allow")$acl.SetAccessRule($AccessRule)
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential.userName,"FullControl","Allow")$acl.SetAccessRule($AccessRule)
 
             $acl.SetAccessRule($AccessRule)
 
