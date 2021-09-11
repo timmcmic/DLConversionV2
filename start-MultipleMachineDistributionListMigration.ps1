@@ -576,7 +576,7 @@ Function Start-MultipleMachineDistributionListMigration
     #This requires a network share.
     #The share should be pre-created.
 
-    <#
+    
     if (get-SMBShare -name $dlConversionV2ModuleName)
     {
         out-logfile -string "The DLConversionV2 share was found."
@@ -593,9 +593,34 @@ Function Start-MultipleMachineDistributionListMigration
     }
     else 
     {
-        out-logfile -string "The DLConversionV2 share was not found and is necessary to proceed."
-        out-logfile -string "Please create the DLConversionV2 file share at the same path as the log directory." -isError:$TRUE    
+        try{
+            out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
+
+            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential -errorAction STOP
+        }
+        catch{
+            out-logfile -string "Uanble to create the DLConversionV2 share."
+            out-logfile $_ -isError:$TRUE
+        }
+
+        try{
+            $acl = Get-Acl $logFolderPath
+
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential,"FullControl","Allow")$acl.SetAccessRule($AccessRule)
+
+            $acl.SetAccessRule($AccessRule)
+
+            $acl | Set-Acl $logFolderPath -errorAction STOP
+
+        }
+        Catch{
+            out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
+
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
+
+    <#
 
     #The share path has been validated.  The custom logging directories need to be built.
 
