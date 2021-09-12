@@ -616,7 +616,7 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             $acl = Get-Acl $logFolderPath
 
-            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential.userName,"FullControl","Allow")$acl.SetAccessRule($AccessRule)
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential.userName,"FullControl","Allow")
 
             $acl.SetAccessRule($AccessRule)
 
@@ -629,6 +629,8 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string $_ -isError:$TRUE
         }
     }
+
+    exit
 
     <#
 
