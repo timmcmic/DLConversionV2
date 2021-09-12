@@ -216,8 +216,27 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0
+        [int]$totalThreadCount=0,
+        [Parameter(Mandatory = $FALSE)]
+        [boolean]$isMultiMachine=$FALSE
     )
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{
+            [string]$networkName="S"
+            [string]$networkRootPath=$logFolderPath
+            [string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
+            [string]$networkPSProvider = "FileSystem"
+
+            new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
+
+            $logFolderPath = $networkName+":"
+        }
+        catch{
+            exit
+        }
+    }
 
     #Define global variables.
 
