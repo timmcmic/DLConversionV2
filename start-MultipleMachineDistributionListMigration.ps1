@@ -636,7 +636,7 @@ Function Start-MultipleMachineDistributionListMigration
 
         out-logfile -string $acl
 
-        $acl | Set-Acl $logFolderPath -errorAction STOP
+        $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
 
     }
     Catch{
