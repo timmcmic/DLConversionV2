@@ -235,6 +235,16 @@ Function Start-MultipleMachineDistributionListMigration
     Out-LogFile -string "BEGIN START-MULTIPLEMACHINEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    #Add immediate check to ensure controller is running as administrator.
+
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    [boolean]$adminTest = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if ($adminTest -eq $FALSE)
+    {
+        out-logfile -string "Please run powershell as administrator." -isError:$TRUE
+    }
+
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
 
