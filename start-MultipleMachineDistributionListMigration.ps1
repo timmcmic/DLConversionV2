@@ -458,9 +458,9 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile "Check to ensure that no more than 5 servers were specified."
 
-    if ($serverNames.count -gt 5)
+    if ($serverNames.count -gt 4)
     {
-        out-logfile -string "More than 5 servers were specified.  Use 5 or less servers." -isError:$TRUE
+        out-logfile -string "More than 4 servers were specified.  Use 4 or less servers." -isError:$TRUE
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
@@ -587,7 +587,7 @@ Function Start-MultipleMachineDistributionListMigration
     #The share should be pre-created.
 
     
-    if (get-SMBShare -name $dlConversionV2ModuleName)
+    if (get-SMBShare -name $dlConversionV2ModuleName -errorAction SilentlyContinue)
     {
         out-logfile -string "The DLConversionV2 share was found."
 
