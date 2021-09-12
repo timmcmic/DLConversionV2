@@ -648,11 +648,15 @@ Function Start-MultipleMachineDistributionListMigration
     #Do not assume the share was established with permissions for the active directory credentials.
 
     try{
-        Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $activeDirectoryCredential.UserName -AccessRight FullControl -errorACTION STOP
+        Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $activeDirectoryCredential.UserName -AccessRight Full -errorACTION STOP
+
+        $shareAccess = get-SMBShareAccess -name $dlConversionV2ModuleName
+
+        out-logfile -string $shareAccess
     }
     catch{
         out-logfile -string "Error granting active directory administrator share access."
-        out-logfile -sting $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     exit
