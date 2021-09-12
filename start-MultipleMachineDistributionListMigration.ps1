@@ -614,13 +614,23 @@ Function Start-MultipleMachineDistributionListMigration
         }
 
         try{
+            out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
+
             $acl = Get-Acl $logFolderPath
+
+            out-logfile -string $acl
 
             $permission = $activeDirectoryCredential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
 
+            out-logfile -string $permission
+
             $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
 
+            out-logfile -string $AccessRule
+
             $acl.SetAccessRule($AccessRule)
+
+            out-logfile -string $acl
 
             $acl | Set-Acl $logFolderPath -errorAction STOP
 
