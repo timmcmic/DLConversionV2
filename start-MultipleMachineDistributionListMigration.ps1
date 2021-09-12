@@ -612,34 +612,47 @@ Function Start-MultipleMachineDistributionListMigration
             out-logfile -string "Uanble to create the DLConversionV2 share."
             out-logfile $_ -isError:$TRUE
         }
+    }
 
-        try{
-            out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
+    #Ensure the ACL is set on the folder for the active directory admin account.
+    #Do not assume that just becuase the share existed the folder permissions are ok.
 
-            $acl = Get-Acl $logFolderPath
+    try{
+        out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
 
-            out-logfile -string $acl
+        $acl = Get-Acl $logFolderPath
 
-            $permission = $activeDirectoryCredential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+        out-logfile -string $acl
 
-            out-logfile -string $permission
+        $permission = $activeDirectoryCredential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
 
-            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
+        out-logfile -string $permission
 
-            out-logfile -string $AccessRule
+        $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
 
-            $acl.SetAccessRule($AccessRule)
+        out-logfile -string $AccessRule
 
-            out-logfile -string $acl
+        $acl.SetAccessRule($AccessRule)
 
-            $acl | Set-Acl $logFolderPath -errorAction STOP
+        out-logfile -string $acl
 
-        }
-        Catch{
-            out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
+        $acl | Set-Acl $logFolderPath -errorAction STOP
 
-            out-logfile -string $_ -isError:$TRUE
-        }
+    }
+    Catch{
+        out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
+
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    #Do not assume the share was established with permissions for the active directory credentials.
+
+    try{
+        Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $activeDirectoryCredential.UserName -AccessRight FullControl -errorACTION STOP
+    }
+    catch{
+        out-logfile -string "Error granting active directory administrator share access."
+        out-logfile -sting $_ -isError:$TRUE
     }
 
     exit
