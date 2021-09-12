@@ -616,7 +616,9 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             $acl = Get-Acl $logFolderPath
 
-            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($activeDirectoryCredential.userName,"FullControl","Allow")
+            $permission = $activeDirectoryCredential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
 
             $acl.SetAccessRule($AccessRule)
 
