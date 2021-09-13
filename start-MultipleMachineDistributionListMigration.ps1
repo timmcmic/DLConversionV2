@@ -158,11 +158,11 @@ Function Start-MultipleMachineDistributionListMigration
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
-        [pscredential]$aadConnectCredential=$NULL,
+        [array]$aadConnectCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [string]$exchangeServer=$NULL,
         [Parameter(Mandatory = $false)]
-        [PSCredential]$exchangeCredential=$NULL,
+        [array]$exchangeCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [array]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
@@ -484,6 +484,30 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
+    foreach ($credential in $exchangecredential)
+    {
+        if ($credential.gettype().name -eq "PSCredential")
+        {
+            out-logfile -string ("Tested credential: "+$credential.userName)
+        }
+        else 
+        {
+            out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+        }
+    }
+
+    foreach ($credential in $aadConnectCredential)
+    {
+        if ($credential.gettype().name -eq "PSCredential")
+        {
+            out-logfile -string ("Tested credential: "+$credential.userName)
+        }
+        else 
+        {
+            out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+        }
+    }
+
     if ($serverNames.count -gt 5)
     {
         out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
@@ -504,8 +528,27 @@ Function Start-MultipleMachineDistributionListMigration
     }
     else 
     {
-        out-logfile -string "The number of exchagne online credetnaisl matches the server count."    
+        out-logfile -string "The number of exchange online credentials matches the server count."    
     }
+
+    if ($exchangeCredential.count -ne $serverNames.count)
+    {
+        out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The number of exchange credentials matches the server count."    
+    }
+
+    if ($aadConnectCredential.count -ne $serverNames.count)
+    {
+        out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The number of ad connect credentials matches the server count."    
+    }
+
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
@@ -932,13 +975,13 @@ Function Start-MultipleMachineDistributionListMigration
         {
             out-logfile -string "THe controller is also a migration host.  Use local job."
 
-            Start-Job -name "ControllerJob" -InitializationScript {Import-Module DLConversionV2} -ScriptBlock { start-MultipleDistributionListMigration -groupSMTPAddresses $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -isMultiMachine $args[31] } -ArgumentList $groupSMTPAddressArray[$serverCounter],$globalCatalogServer,$activeDirectoryCredential[$serverCounter],$networkLoggingDirectory[$serverCounter],$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential[$serverCounter],$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$TRUE 
+            Start-Job -name "ControllerJob" -InitializationScript {Import-Module DLConversionV2} -ScriptBlock { start-MultipleDistributionListMigration -groupSMTPAddresses $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -isMultiMachine $args[31] } -ArgumentList $groupSMTPAddressArray[$serverCounter],$globalCatalogServer,$activeDirectoryCredential[$serverCounter],$networkLoggingDirectory[$serverCounter],$aadConnectServer,$aadConnectCredential[$serverCounter],$exchangeServer,$exchangecredential[$serverCounter],$exchangeOnlineCredential[$serverCounter],$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$TRUE 
         }
         else 
         {
             out-logfile -string "The job is not the migration host.  Use remote job."  
             
-            Invoke-Command -computerName $servernames[$serverCounter] -ScriptBlock { start-MultipleDistributionListMigration -groupSMTPAddresses $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -isMultiMachine $args[31] } -ArgumentList $groupSMTPAddressArray[$serverCounter],$globalCatalogServer,$activeDirectoryCredential[$serverCounter],$networkLoggingDirectory[$serverCounter],$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential[$serverCounter],$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$TRUE -asJob -credential $activeDirectoryCredential[$serverCounter]
+            Invoke-Command -computerName $servernames[$serverCounter] -ScriptBlock { start-MultipleDistributionListMigration -groupSMTPAddresses $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -isMultiMachine $args[31] } -ArgumentList $groupSMTPAddressArray[$serverCounter],$globalCatalogServer,$activeDirectoryCredential[$serverCounter],$networkLoggingDirectory[$serverCounter],$aadConnectServer,$aadConnectCredential[$serverCounter],$exchangeServer,$exchangecredential[$serverCounter],$exchangeOnlineCredential[$serverCounter],$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$TRUE -asJob -credential $activeDirectoryCredential[$serverCounter]
         }
     }
 
