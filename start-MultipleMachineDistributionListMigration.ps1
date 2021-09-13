@@ -787,13 +787,28 @@ Function Start-MultipleMachineDistributionListMigration
         {
             out-logfile -string "Directory does not exist -> create."
 
-            try{
-                New-Item -ItemType Directory -Force -Path $directory -errorAction STOP
-            }
-            catch{
-                out-logfile -string "Uanble to create the network directory."
-                out-logfile -string $_ -isError:$TRUE
-            }
+            $loopCounter = 0
+            $stopLoop = $FALSE
+
+            do {
+                try{
+                    New-Item -ItemType Directory -Force -Path $directory -errorAction STOP
+                    $stopLoop = $TRUE
+                }
+                catch{
+                    if ($loopCounter -gt 4)
+                    {
+                        out-logfile -string "Uanble to create the network directory."
+                        out-logfile -string $_ -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "Initial issue creating folder - sleep -> retry."
+                        start-sleepProgress -sleepString "Initial issue creating folder - sleep -> retry." -sleepSeconds 5
+                        $loopCounter = $loopCounter+1
+                    }
+                } 
+            } until ($stopLoop -eq $TRUE)
 
             out-logfile -string "Testing creation of path..."
 
