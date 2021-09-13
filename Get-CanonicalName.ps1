@@ -57,18 +57,40 @@
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Get the specific user using ad providers.
+
+        $stopLoop = $FALSE
+        [int]$loopCounter = 0
+
+        do {
+            try 
+            {
+                Out-LogFile -string "Gathering the AD object based on distinguished name."
+    
+                $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
+
+                $stopLoop = $TRUE
+            }
+            catch 
+            {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Error getting AD object - sleep and retry."
+                    
+                    $loopCounter = $loopCounter +1
+
+                    start-sleepProgress -sleepString "Error with get-adobject -> sleep and try again." -sleepSeconds 5
+
+                }
+                
+            }
+    
+        } until ($stopLoop -eq $TRUE)
         
-        try 
-        {
-            Out-LogFile -string "Gathering the AD object based on distinguished name."
-
-            $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -errorAction STOP
-        }
-        catch 
-        {
-            out-logfile -string $_ -isError:$TRUE
-        }
-
+       
         try
         {
             #Now that we have the canonicalName - record it and build just the domain name portion of it for reference.

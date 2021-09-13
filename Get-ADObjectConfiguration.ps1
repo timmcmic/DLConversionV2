@@ -73,6 +73,9 @@
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
 
         #Get the group using LDAP / AD providers.
+
+        $stopLoop = $FALSE
+        [int]$loopCounter = 0
         
         try 
         {
@@ -80,22 +83,30 @@
 
             if ($groupSMTPAddress -ne "None")
             {
-                out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
+                do {
+                    out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
 
-                $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                    $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+
+                    $stopLoop = $TRUE
+
+                } until ($stopLoop -eq $TRUE)
             }
             elseif ($DN -ne "None")
             {
-                out-logfile -string ("Searching by distinguished name "+$dn)
+                do {
+                    out-logfile -string ("Searching by distinguished name "+$dn)
 
-                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+                    $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+
+                    $stopLoop = $TRUE
+                } until ($stopLoop -eq $TRUE)
             }
             else 
             {
-                out-logfile -string "No value query found for local object." -isError:$TRUE    
+                out-logfile -string "No value query found for local object."
             }
             
-
             #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
             if ($functionDLConfiguration -eq $NULL)
@@ -107,7 +118,16 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            if ($loopCounter -gt 4)
+            {
+                Out-LogFile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "Error using get-adobject -> sleep and retry."  
+                $loopCounter=$loopCounter+1
+                start-sleepProgress -sleepString "Error using get-adobject -> sleep and retry." -sleepSeconds 5
+            }
         }
 
         Out-LogFile -string "END Get-ADObjectConfiguration"
