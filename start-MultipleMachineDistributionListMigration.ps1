@@ -315,34 +315,6 @@ Function Start-MultipleMachineDistributionListMigration
     out-logfile -string ("Use collected mailbox folder permissions Office 365 = "+$useCollectedFolderPermissionsOffice365)
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string "Validating the active directory credential array contains all PSCredentials."
-
-    foreach ($credential in $activeDirectoryCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
-    out-logfile -string "Validating the exchange online credential array"
-
-    foreach ($credential in $exchangeOnlineCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
     #Perform paramter validation manually.
 
     Out-LogFile -string "********************************************************************************"
@@ -484,11 +456,55 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
     }
 
-    out-logfile "Check to ensure that no more than 5 servers were specified."
+       out-logfile -string "Validating the active directory credential array contains all PSCredentials."
 
-    if ($serverNames.count -gt 4)
+    foreach ($credential in $activeDirectoryCredential)
     {
-        out-logfile -string "More than 4 servers were specified.  Use 4 or less servers." -isError:$TRUE
+        if ($credential.gettype().name -eq "PSCredential")
+        {
+            out-logfile -string ("Tested credential: "+$credential.userName)
+        }
+        else 
+        {
+            out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
+        }
+    }
+
+    out-logfile -string "Validating the exchange online credential array"
+
+    foreach ($credential in $exchangeOnlineCredential)
+    {
+        if ($credential.gettype().name -eq "PSCredential")
+        {
+            out-logfile -string ("Tested credential: "+$credential.userName)
+        }
+        else 
+        {
+            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+        }
+    }
+
+    if ($serverNames.count -gt 5)
+    {
+        out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
+    }
+
+    if ($activeDirectoryCredential.count -ne $serverNames.count)
+    {
+        out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
+    }
+    else
+    {
+        out-logfile -string "The number of active directory credentials matches the server count."
+    }
+
+    if ($exchangeOnlineCredential.count -ne $serverNames.count)
+    {
+        out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The number of exchagne online credetnaisl matches the server count."    
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
