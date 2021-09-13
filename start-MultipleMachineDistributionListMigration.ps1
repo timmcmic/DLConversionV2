@@ -262,7 +262,7 @@ Function Start-MultipleMachineDistributionListMigration
         Out-LogFile -string $server
     }
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-    Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
+    #Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
 
     if ($aadConnectServer -ne "")
@@ -565,7 +565,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try{
                 out-logfile -string ("Testing server: "+$server)
-                $testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential -errorAction STOP
+                $testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential[0] -errorAction STOP
             }
             catch{
                 out-logfile -string "Unable to validate remote management enabled on host."
@@ -597,7 +597,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $commands = invoke-command -scriptBlock {get-command -module $dlConversionV2ModuleName -errorAction STOP} -computerName $server -credential $activeDirectoryCredential -errorAction STOP
+                $commands = invoke-command -scriptBlock {get-command -module $dlConversionV2ModuleName -errorAction STOP} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
                 
                 if ($commands.count -eq 0)
                 {
@@ -650,7 +650,7 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
 
-            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential.userName -errorAction STOP
+            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential[0].userName -errorAction STOP
         }
         catch{
             out-logfile -string "Uanble to create the DLConversionV2 share."
@@ -662,26 +662,29 @@ Function Start-MultipleMachineDistributionListMigration
     #Do not assume that just becuase the share existed the folder permissions are ok.
 
     try{
-        out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
 
-        $acl = Get-Acl $logFolderPath
+        foreach ($credential in $activeDirectoryCredential)
+        {
+            out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
 
-        out-logfile -string $acl
+            $acl = Get-Acl $logFolderPath
 
-        $permission = $activeDirectoryCredential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+            out-logfile -string $acl
 
-        out-logfile -string $permission
+            $permission = $credential.userName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
 
-        $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
+            out-logfile -string $permission
 
-        out-logfile -string $AccessRule
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
 
-        $acl.SetAccessRule($AccessRule)
+            out-logfile -string $AccessRule
 
-        out-logfile -string $acl
+            $acl.SetAccessRule($AccessRule)
 
-        $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
+            out-logfile -string $acl
 
+            $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
+        }
     }
     Catch{
         out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
@@ -692,11 +695,15 @@ Function Start-MultipleMachineDistributionListMigration
     #Do not assume the share was established with permissions for the active directory credentials.
 
     try{
-        Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $activeDirectoryCredential.UserName -AccessRight Full -errorACTION STOP -force
 
-        $shareAccess = get-SMBShareAccess -name $dlConversionV2ModuleName
+        foreach ($credential in $activeDirectoryCredential)
+        {
+            Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $credential.UserName -AccessRight Full -errorACTION STOP -force
 
-        out-logfile -string $shareAccess
+            $shareAccess = get-SMBShareAccess -name $dlConversionV2ModuleName
+
+            out-logfile -string $shareAccess
+        }
     }
     catch{
         out-logfile -string "Error granting active directory administrator share access."
