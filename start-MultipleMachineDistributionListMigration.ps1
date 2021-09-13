@@ -695,7 +695,7 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
 
-            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $activeDirectoryCredential[0].userName -errorAction STOP
+            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess [System.Security.Principal.WindowsIdentity]::GetCurrent().Name -errorAction STOP
         }
         catch{
             out-logfile -string "Uanble to create the DLConversionV2 share."
@@ -730,6 +730,33 @@ Function Start-MultipleMachineDistributionListMigration
 
             $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
         }
+    }
+    Catch{
+        out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
+
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    try{
+        out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
+
+        $acl = Get-Acl $logFolderPath
+
+        out-logfile -string $acl
+
+        $permission = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+
+        out-logfile -string $permission
+
+        $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
+
+        out-logfile -string $AccessRule
+
+        $acl.SetAccessRule($AccessRule)
+
+        out-logfile -string $acl
+
+        $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
     }
     Catch{
         out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
