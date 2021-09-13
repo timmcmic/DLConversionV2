@@ -566,6 +566,7 @@ Function Start-MultipleMachineDistributionListMigration
             try{
                 out-logfile -string ("Testing server: "+$server)
                 #$testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential[0] -errorAction STOP
+                #Removed the credential - if the user has not logged in and has no user profile the credential fails.
                 $testResults = test-wsman -computerName $server -errorAction STOP
             }
             catch{
