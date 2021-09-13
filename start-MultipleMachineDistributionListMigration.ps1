@@ -675,7 +675,8 @@ Function Start-MultipleMachineDistributionListMigration
     #This requires a network share.
     #The share should be pre-created.
 
-    
+    $account = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+
     if (get-SMBShare -name $dlConversionV2ModuleName -errorAction SilentlyContinue)
     {
         out-logfile -string "The DLConversionV2 share was found."
@@ -695,7 +696,6 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
 
-            $account = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
             new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $account -errorAction STOP
         }
         catch{
