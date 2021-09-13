@@ -565,7 +565,8 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try{
                 out-logfile -string ("Testing server: "+$server)
-                $testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential[0] -errorAction STOP
+                #$testResults = test-wsman -computerName $server -authentication Default -credential $activeDirectoryCredential[0] -errorAction STOP
+                $testResults = test-wsman -computerName $server -errorAction STOP
             }
             catch{
                 out-logfile -string "Unable to validate remote management enabled on host."
