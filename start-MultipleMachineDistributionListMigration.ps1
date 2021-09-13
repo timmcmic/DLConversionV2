@@ -695,7 +695,8 @@ Function Start-MultipleMachineDistributionListMigration
         try{
             out-logfile -string "Creating DLConversionV2 to share to support centralized logging."
 
-            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess [System.Security.Principal.WindowsIdentity]::GetCurrent().Name -errorAction STOP
+            $account = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+            new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $account -errorAction STOP
         }
         catch{
             out-logfile -string "Uanble to create the DLConversionV2 share."
@@ -744,7 +745,7 @@ Function Start-MultipleMachineDistributionListMigration
 
         out-logfile -string $acl
 
-        $permission = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+        $permission = $account, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
 
         out-logfile -string $permission
 
