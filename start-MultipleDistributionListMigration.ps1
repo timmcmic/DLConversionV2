@@ -620,7 +620,7 @@ Function Start-MultipleDistributionListMigration
                     out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 }
 
-                start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
+                start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 30
 
             } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
 
