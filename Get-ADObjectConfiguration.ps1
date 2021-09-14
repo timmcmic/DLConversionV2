@@ -88,17 +88,13 @@
                     out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
 
                     $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
-
-                    $stopLoop = $TRUE
                 }
                 elseif ($DN -ne "None")
                 {
                 
                     out-logfile -string ("Searching by distinguished name "+$dn)
 
-                    $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
-
-                    $stopLoop = $TRUE
+                    $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
                 }
                 else 
                 {
@@ -113,6 +109,8 @@
                 }
 
                 Out-LogFile -string "Original DL configuration found and recorded."
+
+                $stopLoop = $TRUE
             }
             catch 
             {
