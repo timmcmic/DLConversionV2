@@ -40,7 +40,7 @@
         Out-LogFile -string "BEGIN GET-MIGRATIONSUMMARY"
         Out-LogFile -string "********************************************************************************"
 
-        $workingDirectories = get-childItems -path $logFolderPath -recurse -directory
+        $workingDirectories = get-childItem -path $logFolderPath -recurse -directory
 
         foreach ($directory in $workingDirectories)
         {
