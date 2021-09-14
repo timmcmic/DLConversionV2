@@ -72,7 +72,7 @@
         foreach ($job in $failedJobs)
         {
             $temp = $job.name.split("-")
-            out-logfile -string ("Group: "+$temp[1]+ "Status: "+$temp[2])
+            out-logfile -string ("Group: "+$temp[1]+ " Status: "+$temp[2])
         }
 
         out-logfile -string ""
@@ -82,7 +82,7 @@
         foreach ($job in $successJobs)
         {
             $temp = $job.name.split("-")
-            out-logfile -string ("Group: "+$temp[1]+ "Status: "+$temp[2])
+            out-logfile -string ("Group: "+$temp[1]+ " Status: "+$temp[2])
         }
 
         out-logfile -string "================================================================================"
