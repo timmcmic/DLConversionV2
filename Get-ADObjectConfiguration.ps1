@@ -76,59 +76,58 @@
 
         $stopLoop = $FALSE
         [int]$loopCounter = 0
-        
-        try 
-        {
-            Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
 
-            if ($groupSMTPAddress -ne "None")
+        do {
+            try 
             {
-                do {
+                Out-LogFile -string "Using AD / LDAP provider to get original DL configuration"
+
+                if ($groupSMTPAddress -ne "None")
+                {
+                    
                     out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
 
                     $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
 
                     $stopLoop = $TRUE
-
-                } until ($stopLoop -eq $TRUE)
-            }
-            elseif ($DN -ne "None")
-            {
-                do {
+                }
+                elseif ($DN -ne "None")
+                {
+                
                     out-logfile -string ("Searching by distinguished name "+$dn)
 
                     $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
 
                     $stopLoop = $TRUE
-                } until ($stopLoop -eq $TRUE)
-            }
-            else 
-            {
-                out-logfile -string "No value query found for local object."
-            }
-            
-            #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
+                }
+                else 
+                {
+                    out-logfile -string "No value query found for local object." -isError:$TRUE
+                }
+                
+                #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
-            if ($functionDLConfiguration -eq $NULL)
-            {
-                throw "The group cannot be found in Active Directory by email address."
-            }
+                if ($functionDLConfiguration -eq $NULL)
+                {
+                    throw "The group cannot be found in Active Directory by email address."
+                }
 
-            Out-LogFile -string "Original DL configuration found and recorded."
-        }
-        catch 
-        {
-            if ($loopCounter -gt 4)
-            {
-                Out-LogFile -string $_ -isError:$TRUE
+                Out-LogFile -string "Original DL configuration found and recorded."
             }
-            else 
+            catch 
             {
-                out-logfile -string "Error using get-adobject -> sleep and retry."  
-                $loopCounter=$loopCounter+1
-                start-sleepProgress -sleepString "Error using get-adobject -> sleep and retry." -sleepSeconds 5
+                if ($loopCounter -gt 4)
+                {
+                    Out-LogFile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Error using get-adobject -> sleep and retry."  
+                    $loopCounter=$loopCounter+1
+                    start-sleepProgress -sleepString "Error using get-adobject -> sleep and retry." -sleepSeconds 5
+                }
             }
-        }
+        } until ($stopLoop -eq $TRUE)
 
         Out-LogFile -string "END Get-ADObjectConfiguration"
         Out-LogFile -string "********************************************************************************"
