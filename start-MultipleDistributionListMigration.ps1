@@ -643,6 +643,8 @@ Function Start-MultipleDistributionListMigration
 
     out-logfile -string $jobOutput
 
+    get-migrationSummary -logFolderPath $logFolderPath
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
