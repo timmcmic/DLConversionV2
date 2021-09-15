@@ -85,7 +85,6 @@
 
                 #Ensure that there are no spaces contained in the string (account for import errors.)
 
-                $groupSMTPAddress = $groupSMTPAddress -replace '\s',''
                 out-logfile -string ("Spaces Removed Address Length: "+$groupsmtpAddress.length.toString())
 
                 $functionDLConfiguration=Get-ADObject -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP

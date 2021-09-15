@@ -497,6 +497,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "PARAMETERS"
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.tostring())
+    $groupSMTPAddress = $groupSMTPAddress -replace '\s',''
+    out-logfile -string ("Spaces Removed Group SMTP Address: "+$groupSMTPAddress)
+    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.toString())
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
