@@ -16,7 +16,7 @@
     remove-statusFiles
 
     #>
-    Function remove-StringSpaces
+    Function remove-StringSpace
     {
         [cmdletbinding()]
 
@@ -42,6 +42,6 @@
         return $workingString
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "END remove-StatusFile"
+        Out-LogFile -string "END remove-StringSpace"
         Out-LogFile -string "********************************************************************************"
     }

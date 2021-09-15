@@ -515,7 +515,7 @@ Function Start-DistributionListMigration
 
     $exchangeOnlineEnvironmentName=remove-stringSpace -stringToFix $exchangeOnlineEnvironmentName
 
-    if ($exchangeOnlineOrganizationName = ne "")
+    if ($exchangeOnlineOrganizationName -ne "")
     {
         $exchangeOnlineOrganizationName=remove-stringSpace -stringToFix $exchangeOnlineOrganizationName
     }
