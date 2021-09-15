@@ -490,6 +490,47 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    out-logfile -string "Ensure that all strings specified have no leading or trailing spaces."
+
+    #Perform cleanup of any strings so that no spaces existin trailing or leading.
+
+    $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
+    $globalCatalogServer = remove-stringSpace -stringToFix $groupSMTPAddress
+    $logFolderPath = remove-stringSpace -stringToFix $groupSMTPAddress
+
+    if ($aadConnectServer -ne $NULL)
+    {
+        $aadConnectServer = remove-stringSpace -stringToFix $groupSMTPAddress
+    }
+
+    if ($exchangeServer -ne $NULL)
+    {
+        $exchangeServer=remove-stringSpace -stringToFix $exchangeServer
+    }
+    
+    if ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+        $exchangeOnlineCertificateThumbPrint=remove-stringSpace -stringToFix $exchangeOnlineCertificateThumbPrint
+    }
+
+    $exchangeOnlineEnvironmentName=remove-stringSpace -stringToFix $exchangeOnlineEnvironmentName
+
+    if ($exchangeOnlineOrganizationName = ne "")
+    {
+        $exchangeOnlineOrganizationName=remove-stringSpace -stringToFix $exchangeOnlineOrganizationName
+    }
+
+    if ($exchangeOnlineAppID -ne "")
+    {
+        $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
+    }
+
+    $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
+    
+    $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
+    
+    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride   
+
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
 
@@ -498,7 +539,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
     out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.tostring())
-    $groupSMTPAddress = $groupSMTPAddress -replace '\s',''
     out-logfile -string ("Spaces Removed Group SMTP Address: "+$groupSMTPAddress)
     out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.toString())
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
@@ -507,6 +547,7 @@ Function Start-DistributionListMigration
 
     if ($aadConnectServer -ne "")
     {
+        $aadConnectServer = $aadConnectServer -replace '\s',''
         Out-LogFile -string ("AADConnectServer = "+$aadConnectServer)
     }
 
