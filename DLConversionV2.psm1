@@ -495,12 +495,12 @@ Function Start-DistributionListMigration
     #Perform cleanup of any strings so that no spaces existin trailing or leading.
 
     $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
-    $globalCatalogServer = remove-stringSpace -stringToFix $groupSMTPAddress
-    $logFolderPath = remove-stringSpace -stringToFix $groupSMTPAddress
+    $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
+    $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
 
     if ($aadConnectServer -ne $NULL)
     {
-        $aadConnectServer = remove-stringSpace -stringToFix $groupSMTPAddress
+        $aadConnectServer = remove-stringSpace -stringToFix $aadConnectServer
     }
 
     if ($exchangeServer -ne $NULL)
