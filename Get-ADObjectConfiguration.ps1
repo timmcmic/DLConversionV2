@@ -82,7 +82,7 @@
             {
                 out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
 
-                $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                $functionDLConfiguration=Get-ADObject -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             elseif ($DN -ne "None")
             {
