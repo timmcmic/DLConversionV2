@@ -38,7 +38,8 @@
         )
 
         #Define the string separator and then separate the string.
-
+        
+        $groupsSMTPAddress = $groupSMTPAddress.trim()
         [string]$separator="@"
         [array]$fileNameSplit = $groupSMTPAddress.Split($separator)
 
