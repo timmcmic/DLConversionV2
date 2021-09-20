@@ -258,6 +258,10 @@ Function Start-MultipleDistributionListMigration
     Out-LogFile -string "BEGIN START-MULTIPLEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    #Call garbage collection at the beginning to help with array management.
+
+    [system.gc]::Collect()
+
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
 
@@ -644,6 +648,10 @@ Function Start-MultipleDistributionListMigration
     out-logfile -string $jobOutput
 
     get-migrationSummary -logFolderPath $logFolderPath
+
+    #Call .net garbage collection due to bulk arrays.
+
+    [system.gc]::Collect()
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
