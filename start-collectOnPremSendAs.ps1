@@ -276,7 +276,7 @@ function start-collectOnPremSendAs
         $exportFile=Join-path $logFolderPath $fileName
 
         $recipientCounter | export-clixml -path $exportFile
-
-        disable-allPowerShellSessions
     }
+    
+    disable-allPowerShellSessions
 }

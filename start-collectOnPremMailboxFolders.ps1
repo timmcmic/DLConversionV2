@@ -392,7 +392,7 @@ function start-collectOnPremMailboxFolders
 
         $auditFolderNames=@()
         $auditFolders=@()
-
-        disable-allPowerShellSessions
     }
+
+    disable-allPowerShellSessions
 }
