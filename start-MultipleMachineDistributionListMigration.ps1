@@ -731,33 +731,30 @@ Function Start-MultipleMachineDistributionListMigration
 
             $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
         }
-    }
-    Catch{
-        out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
+        foreach ($server in $servernames)
+        {
+            out-logfile -string "Setting the ACL on the folder for full control for machine accounts to the active directory credential and enabling inheritance."
 
-        out-logfile -string $_ -isError:$TRUE
-    }
+            $forSamAccountName = get-adComputer -identity $server -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
 
-    try{
-        out-logfile -string "Setting the ACL on the folder for full control to the active directory credential and enabling inheritance."
+            $acl = Get-Acl $logFolderPath
 
-        $acl = Get-Acl $logFolderPath
+            out-logfile -string $acl
 
-        out-logfile -string $acl
+            $permission = $forSamAccountName.SAMAccountName, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
 
-        $permission = $account, "FullControl", 'ContainerInherit, ObjectInherit', 'None', 'Allow' 
+            out-logfile -string $permission
 
-        out-logfile -string $permission
+            $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
 
-        $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule -argumentList $permission
+            out-logfile -string $AccessRule
 
-        out-logfile -string $AccessRule
+            $acl.SetAccessRule($AccessRule)
 
-        $acl.SetAccessRule($AccessRule)
+            out-logfile -string $acl
 
-        out-logfile -string $acl
-
-        $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
+            $acl | Set-Acl $logFolderPath -errorAction STOP -confirm:$FALSE
+        }
     }
     Catch{
         out-logfile -string "Unable to set the ACL on the folder for the active directory credential."
@@ -772,6 +769,17 @@ Function Start-MultipleMachineDistributionListMigration
         foreach ($credential in $activeDirectoryCredential)
         {
             Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $credential.UserName -AccessRight Full -errorACTION STOP -force
+
+            $shareAccess = get-SMBShareAccess -name $dlConversionV2ModuleName
+
+            out-logfile -string $shareAccess
+        }
+
+        foreach ($server in $serverNames)
+        {
+            $forSamAccountName = get-adComputer -identity $server -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
+
+            Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $forSAMAccountName.SAMAccountName -AccessRight Full -errorACTION STOP -force
 
             $shareAccess = get-SMBShareAccess -name $dlConversionV2ModuleName
 
