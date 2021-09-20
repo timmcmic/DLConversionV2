@@ -735,7 +735,8 @@ Function Start-MultipleMachineDistributionListMigration
         {
             out-logfile -string "Setting the ACL on the folder for full control for machine accounts to the active directory credential and enabling inheritance."
 
-            $forSamAccountName = get-adComputer -identity $server -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
+            $forServerName = $server.split(".")
+            $forSamAccountName = get-adComputer -identity $forServerName[0] -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
 
             $acl = Get-Acl $logFolderPath
 
@@ -777,7 +778,8 @@ Function Start-MultipleMachineDistributionListMigration
 
         foreach ($server in $serverNames)
         {
-            $forSamAccountName = get-adComputer -identity $server -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
+            $forServerName = $server.split(".")
+            $forSamAccountName = get-adComputer -identity $forServerName[0] -server $globalCatalogServer -Credential $activeDirectoryCredential[0]
 
             Grant-SmbShareAccess -Name $dlConversionV2ModuleName -AccountName $forSAMAccountName.SAMAccountName -AccessRight Full -errorACTION STOP -force
 
