@@ -342,6 +342,27 @@ Function Start-MultipleMachineDistributionListMigration
         #The server name and credential were specified for AADConnect.
 
         Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
+
+        foreach ($credential in $aadConnectCredential)
+        {
+            if ($credential.gettype().name -eq "PSCredential")
+            {
+                out-logfile -string ("Tested credential: "+$credential.userName)
+            }
+            else 
+            {
+                out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+            }
+        }
+
+        if ($aadConnectCredential.count -ne $serverNames.count)
+        {
+            out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
+        }
+        else 
+        {
+            out-logfile -string "The number of ad connect credentials matches the server count."    
+        }
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -365,6 +386,28 @@ Function Start-MultipleMachineDistributionListMigration
         #The server name and credential were specified for Exchange.
 
         Out-LogFile -string "The server name and credential were specified for Exchange."
+
+        foreach ($credential in $exchangecredential)
+        {
+            if ($credential.gettype().name -eq "PSCredential")
+            {
+                out-logfile -string ("Tested credential: "+$credential.userName)
+            }
+            else 
+            {
+                out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+            }
+        }
+        
+        if ($exchangeCredential.count -ne $serverNames.count)
+        {
+            out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
+        }
+        else 
+        {
+            out-logfile -string "The number of exchange credentials matches the server count."    
+        }
+    
     }
     else
     {
@@ -484,30 +527,6 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    foreach ($credential in $exchangecredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
-    foreach ($credential in $aadConnectCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
     if ($serverNames.count -gt 5)
     {
         out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
@@ -530,25 +549,6 @@ Function Start-MultipleMachineDistributionListMigration
     {
         out-logfile -string "The number of exchange online credentials matches the server count."    
     }
-
-    if ($exchangeCredential.count -ne $serverNames.count)
-    {
-        out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "The number of exchange credentials matches the server count."    
-    }
-
-    if ($aadConnectCredential.count -ne $serverNames.count)
-    {
-        out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "The number of ad connect credentials matches the server count."    
-    }
-
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
