@@ -355,7 +355,7 @@ Function Start-MultipleMachineDistributionListMigration
             }
         }
 
-        if ($aadConnectCredential.count -ne $serverNames.count)
+        if ($aadConnectCredential.count -lt $serverNames.count)
         {
             out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
         }
@@ -399,7 +399,7 @@ Function Start-MultipleMachineDistributionListMigration
             }
         }
         
-        if ($exchangeCredential.count -ge $serverNames.count)
+        if ($exchangeCredential.count -lt $serverNames.count)
         {
             out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
         }
@@ -532,7 +532,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
     }
 
-    if ($activeDirectoryCredential.count -ge $serverNames.count)
+    if ($activeDirectoryCredential.count -lt $serverNames.count)
     {
         out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
     }
@@ -541,7 +541,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "The number of active directory credentials matches the server count."
     }
 
-    if ($exchangeOnlineCredential.count -ge $serverNames.count)
+    if ($exchangeOnlineCredential.count -lt $serverNames.count)
     {
         out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
     }
