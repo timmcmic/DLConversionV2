@@ -226,12 +226,15 @@ Function Start-DistributionListMigration
         try{
             [string]$networkName="S"
             [string]$networkRootPath=$logFolderPath
-            [string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
-            [string]$networkPSProvider = "FileSystem"
-
-            new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
-
             $logFolderPath = $networkName+":"
+            #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
+            #[string]$networkPSProvider = "FileSystem"
+
+            New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.password
+
+            #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
+
+            #$logFolderPath = $networkName+":"
         }
         catch{
             exit
@@ -4551,7 +4554,9 @@ Function Start-DistributionListMigration
     if ($isMultiMachine -eq $TRUE)
     {
         try{            
-            remove-PSDrive $networkName -Force
+            #remove-PSDrive $networkName -Force
+            
+            remove-SMBMapping -LocalPath $logFolderPath -Force
         }
         catch{
             exit
