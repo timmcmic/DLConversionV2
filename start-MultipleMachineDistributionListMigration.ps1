@@ -327,23 +327,31 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Validating that the remote network drive passed is a single valid drive letter"
 
-    if ($remoteDriveLetter.count -gt 1)
+    if ($remoteDriveLetter -eq $NULL)
     {
-        out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
+        out-logfile -string "A remote drive letter is required - specify S for example." -isError:$TRUE
     }
     else 
     {
-        out-logfile string "Drive letter specified is a single character."
-        
-        if ($remoteDriveLetter.StartsWith("[a-z]^[A-Z]"))
+        if ($remoteDriveLetter.count -gt 1)
         {
-            out-logfile -string "Drive letter specified is single and is a valid drive character."
+            out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
         }
         else 
         {
-            out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
+            out-logfile string "Drive letter specified is a single character."
+            
+            if ($remoteDriveLetter.StartsWith("[a-z]^[A-Z]"))
+            {
+                out-logfile -string "Drive letter specified is single and is a valid drive character."
+            }
+            else 
+            {
+                out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
+            }
         }
     }
+    
 
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
    
