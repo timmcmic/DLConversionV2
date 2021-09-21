@@ -339,7 +339,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
         else 
         {
-            out-logfile string "Drive letter specified is a single character."
+            out-logfile -string "Drive letter specified is a single character."
             
             if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
             {
