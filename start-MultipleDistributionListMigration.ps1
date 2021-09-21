@@ -248,6 +248,8 @@ Function Start-MultipleDistributionListMigration
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
             #[string]$networkPSProvider = "FileSystem"
 
+            remove-smbMapping -LocalPath $logFolderPath -Force
+
             New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password
 
             #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
