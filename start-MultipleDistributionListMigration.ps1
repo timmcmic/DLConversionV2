@@ -241,14 +241,14 @@ Function Start-MultipleDistributionListMigration
             #In this case a multi machine migration was specified.
             #The wrapper here will go ahead and make the Z drive connection that the rest of the scripts will use.
             #Z maps directly to the server instance on the migration host.
-            
+
             [string]$networkName="Z"
             [string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
             #[string]$networkPSProvider = "FileSystem"
 
-            New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.password
+            New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password
 
             #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
 
