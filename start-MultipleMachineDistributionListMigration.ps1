@@ -341,7 +341,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             out-logfile string "Drive letter specified is a single character."
             
-            if ($remoteDriveLetter.StartsWith("[a-z]^[A-Z]"))
+            if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
             {
                 out-logfile -string "Drive letter specified is single and is a valid drive character."
             }
