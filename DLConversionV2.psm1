@@ -4547,4 +4547,14 @@ Function Start-DistributionListMigration
     #Archive the files into a date time success folder.
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{            
+            remove-PSDrive $networkName -Force
+        }
+        catch{
+            exit
+        }
+    }
 }

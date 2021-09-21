@@ -656,4 +656,14 @@ Function Start-MultipleDistributionListMigration
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{            
+            remove-PSDrive $networkName -Force
+        }
+        catch{
+            exit
+        }
+    }
 }
