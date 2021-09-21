@@ -238,6 +238,10 @@ Function Start-MultipleDistributionListMigration
     if ($isMultiMachine -eq $TRUE)
     {
         try{
+            #In this case a multi machine migration was specified.
+            #The wrapper here will go ahead and make the Z drive connection that the rest of the scripts will use.
+            #Z maps directly to the server instance on the migration host.
+            
             [string]$networkName="Z"
             [string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"

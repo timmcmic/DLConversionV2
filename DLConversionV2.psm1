@@ -224,6 +224,10 @@ Function Start-DistributionListMigration
     if ($isMultiMachine -eq $TRUE)
     {
         try{
+            #At this point we know that multiple machines was in use.
+            #For multiple machines - the local controller instance mapped the drive Z for us in windows.
+            #Therefore we override the original log folder path passed in and just use Z.
+
             [string]$networkName="Z"
             #[string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"
