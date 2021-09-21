@@ -238,7 +238,7 @@ Function Start-MultipleDistributionListMigration
     if ($isMultiMachine -eq $TRUE)
     {
         try{
-            [string]$networkName="S"
+            [string]$networkName="Z"
             [string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
