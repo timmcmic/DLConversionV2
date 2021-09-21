@@ -218,7 +218,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [int]$totalThreadCount=0,
         [Parameter(Mandatory = $FALSE)]
-        [boolean]$isMultiMachine=$FALSE
+        [boolean]$isMultiMachine=$FALSE,
+        [Parameter(Mandatory = $FALSE)]
+        [string]$remoteDriveLetter=$NULL
     )
 
     if ($isMultiMachine -eq $TRUE)
@@ -228,7 +230,7 @@ Function Start-DistributionListMigration
             #For multiple machines - the local controller instance mapped the drive Z for us in windows.
             #Therefore we override the original log folder path passed in and just use Z.
 
-            [string]$networkName="Z"
+            [string]$networkName=$remoteDriveLetter
             #[string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
