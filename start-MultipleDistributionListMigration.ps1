@@ -252,9 +252,12 @@ Function Start-MultipleDistributionListMigration
 
             if (get-smbMapping -LocalPath $logFolderPath)
             {
+                write-host "The network drive was found present.  Remove to satisfy migration."
+
                 try
                 {
                     write-host "Removing network drive with net use."
+                    
                     invoke-command -scriptBlock {net use $args /delete /yes} -ArgumentList $logFolderPath -errorAction Stop
                 }
                 catch

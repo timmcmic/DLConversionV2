@@ -164,7 +164,7 @@ Function Start-DistributionListMigration
         [string]$exchangeServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeCredential=$NULL,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
         [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineCertificateThumbPrint="",
