@@ -250,9 +250,24 @@ Function Start-MultipleDistributionListMigration
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
             #[string]$networkPSProvider = "FileSystem"
 
-            remove-smbMapping -LocalPath $logFolderPath -Force
+            try
+            {
+                remove-smbMapping -LocalPath $logFolderPath -Force -errorAction STOP
+            }
+            catch
+            {
+                write-error "Unable to remove existing network drive."
+                EXIT
+            }
 
-            New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password
+            try 
+            {
+                New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password -errorAction Stop
+            }
+            catch 
+            {
+                write-error "Unable to create network drive for storage."
+            }
 
             #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
 
