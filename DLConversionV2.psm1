@@ -3458,7 +3458,7 @@ Function Start-DistributionListMigration
 
             $tempMailArray = $originalDLConfiguration.mail.split("@")
 
-            forreach ($member in $tempMailArray)
+            foreach ($member in $tempMailArray)
             {
                 out-logfile -string "Temp Mail Address Member: "+$member
             }
