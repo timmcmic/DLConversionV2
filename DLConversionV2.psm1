@@ -352,6 +352,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
+    [string]$allGroupsCoManagedByXML="allGroupsCoManagedByXML"
 
     #Define the retention files.
 
@@ -373,6 +374,7 @@ Function Start-DistributionListMigration
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
     [array]$allMailboxesFolderPermissions=@()
+    [array]$allGroupsCoManagedByBL=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -429,6 +431,7 @@ Function Start-DistributionListMigration
 
     [string]$onPremUnAuthOrig="unauthorig"
     [string]$onPremAuthOrig="authOrig"
+    [string]$onPremCoManagedObjectsBL="msExchCoManagedObjectsBL"
     [string]$onPremManagedBy="managedBy"
     [string]$onPremMSExchCoManagedByLink="msExchCoManagedByLink"
     [string]$onPremPublicDelegate="publicDelegates"
@@ -645,6 +648,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
     Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
     Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
+    Out-Logfile -string ("All Co Managed By BL XML - "+$allGroupsCoManagedByXML)
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
     out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
@@ -2080,6 +2084,37 @@ Function Start-DistributionListMigration
         out-logfile -string "The group does not have accept permissions on any groups."
     }
 
+    if ($originalDlConfiguration.msExchCoManagedObjectsBL -ne $NULL)
+    {
+        out-logfile -string "Calling ge canonical name."
+
+        foreach ($dn in $originalDLConfiguration.msExchCoManagedObjectsBL)
+        {
+            try 
+            {
+                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "The group is not a co manager on any other groups."    
+    }
+
+    if ($allGroupsCoManagedByBL -ne $NULL)
+    {
+        out-logFile -string "The group is a co-manager on the following objects:"
+        out-logfile -string $allGroupsCoManagedByBL
+    }
+    else 
+    {
+        out-logfile -string "The group is not a co manager on any other objects."
+    }
+
     #Handle all groups this object has bypass moderation permissions on.
 
     if ($originalDLConfiguration.msExchBypassModerationFromDLMembersBL -ne $NULL)
@@ -2176,6 +2211,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
@@ -2282,6 +2318,15 @@ Function Start-DistributionListMigration
     else 
     {
         $allGroupsAccept=@()
+    }
+
+    if ($allGroupsCoManagedByBL -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $allGroupsCoManagedByXML
+    }
+    else 
+    {
+        $allGroupsCoManagedByBL=@()    
     }
 
     if ($allGroupsBypassModeration -ne $NULL)
@@ -3647,6 +3692,51 @@ Function Start-DistributionListMigration
     $global:unDoStatus=$global:unDoStatus+1
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+    out-logfile -string ("Starting on premises co managed by BL.")
+
+    if ($allGroupsCoManagedByBL.Count -gt 0)
+    {
+        foreach ($member in $allGroupsCoManagedByBL)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremCoManagedObjectsBL)
+
+            if ($forLoopCounter -eq 1000)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremCoManagedObjectsBL -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "The original group was a co-manager of itself."
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premsies accept permissions to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
 
     out-logfile -string ("Starting on premises bypass moderation.")
 
