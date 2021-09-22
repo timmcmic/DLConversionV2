@@ -252,33 +252,37 @@ Function Start-MultipleDistributionListMigration
 
             if (get-smbMapping -LocalPath $logFolderPath)
             {
-                
-            }
-
-            try
-            {
-                remove-smbMapping -LocalPath $logFolderPath -Force -errorAction STOP
-            }
-            catch
-            {
-                write-error "Unable to use remote-SMBMapping to remove the try.  Drive agian."
-
                 try
                 {
-                    remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
+                    write-host "Removing network drive with net use."
+                    invoke-command -scriptBlock {net use $args /delete /yes} -ArgumentList $logFolderPath -errorAction Stop
                 }
                 catch
                 {
-                    write-error "Unable to use remove-SMBGlobalMapping."
+                    write-error "Attempting to use net use to remove the drive."
 
                     try
                     {
-                        invoke-command -scriptBlock {net use $args /delete /yes} -ArgumentList $logFolderPath -errorAction Stop
+                        write-host "Removing network drive with remove-smbMapping."
+
+                        remove-smbMapping -LocalPath $logFolderPath -Force -errorAction STOP
                     }
                     catch
                     {
-                        write-error "Final try - net use unable to remove network path."
-                    }
+                        write-error "Unable to use remote-SMBMapping to remove the try.  Drive agian."
+
+                        try
+                        {
+                            write-host "Remove network drive using remove-SMBGlobalMapping."
+
+                            remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
+                        }
+                        catch
+                        {
+                            write-error "Unable to use remove-SMBGlobalMapping. Final attempt - fail."
+                            EXIT
+                        }
+                    }  
                 }
             }
 
