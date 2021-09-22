@@ -69,6 +69,12 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
+        #Establisha a retry counter.
+        #The script will try to trigger ad connect 10 times - if not successful move on.
+        #Eventually AD connect will run on it's own or potentially there is an issue with the remote powershell session <or> the server itself.
+
+        $doCounter=0
+
         do 
         {
             if ($invokeSleep -eq $TRUE)
@@ -89,8 +95,18 @@
                 out-logFile -string "An error has occured - this is not necessarily uncommon."
                 out-logFile -string $invokeTest.exception.toString()
             }
+
+            $doCounter=$doCounter+1
+
+            out-logfile ("Retry counter incremented:  "+$doCounter.tostring())
             
-        } until ($invokeTest.result -eq "Success")
+        } until (($invokeTest.result -eq "Success") -or ($doCounter -eq 10))
+
+        if ($doCounter -eq 10)
+        {
+            out-logfile -string "AD Connect was not triggered due to retry limit reached."
+            out-logfile -string "Consider reviewing the AD Connect server for any potential issues."
+        }
 
         out-logfile -string "The results of the AD Sync."
         out-logfile -string $invokeTest.result
