@@ -48,8 +48,8 @@
         #Using regex and a pattern to replace invalid file name characters with a -
 
         [string]$fileName=$fileNameSplit[0]+".log"
-        $pattern = '[' + ([System.IO.Path]::GetInvalidFileNameChars() -join '').Replace('\','\\')
-        $fileName=[regex]::Replace($fileName, $pattern, "-")
+        $pattern = $pattern = '[' + ([System.IO.Path]::GetInvalidFileNameChars() -join '').Replace('\','\\') + ']+'
+        $fileName=[regex]::Replace($fileName, $pattern,"-")
    
         # Get our log file path
 
