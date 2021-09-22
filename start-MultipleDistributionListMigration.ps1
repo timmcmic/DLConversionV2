@@ -250,24 +250,36 @@ Function Start-MultipleDistributionListMigration
             #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
             #[string]$networkPSProvider = "FileSystem"
 
+            if (get-smbMapping -LocalPath $logFolderPath)
+            {
+                
+            }
+
             try
             {
                 remove-smbMapping -LocalPath $logFolderPath -Force -errorAction STOP
             }
             catch
             {
-                write-error "Unable to remove existing network drive."
-                EXIT
-            }
+                write-error "Unable to use remote-SMBMapping to remove the try.  Drive agian."
 
-            try
-            {
-                remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
-            }
-            catch
-            {
-                write-error "Unable to remove existing network drive."
-                EXIT
+                try
+                {
+                    remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
+                }
+                catch
+                {
+                    write-error "Unable to use remove-SMBGlobalMapping."
+
+                    try
+                    {
+                        invoke-command -scriptBlock {net use $args /delete /yes} -ArgumentList $logFolderPath -errorAction Stop
+                    }
+                    catch
+                    {
+                        write-error "Final try - net use unable to remove network path."
+                    }
+                }
             }
 
             try 
