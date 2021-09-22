@@ -3441,6 +3441,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
+            <#
             $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
             out-logfile -string $tempOU
             $tempName=$originalDLConfiguration.cn
@@ -3453,7 +3454,20 @@ Function Start-DistributionListMigration
             out-logfile -string $tempName
             $tempDN=$tempName+","+$tempOU
             out-logfile -string $tempDN
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            #>
+
+            $tempMailArray = $originalDLConfiguration.mail.split("@")
+
+            forreach ($member in $tempMailArray)
+            {
+                out-logfile -string "Temp Mail Address Member: "+$member
+            }
+
+            $tempMailAddress = $tempMailArray[0]+"-MigratedByScript"
+
+            out-logfile -string "Temp routing contact address: "+$tempMailAddress
+
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
             $stopLoop=$TRUE
         }
