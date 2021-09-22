@@ -260,6 +260,16 @@ Function Start-MultipleDistributionListMigration
                 EXIT
             }
 
+            try
+            {
+                remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
+            }
+            catch
+            {
+                write-error "Unable to remove existing network drive."
+                EXIT
+            }
+
             try 
             {
                 New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password -errorAction Stop
@@ -267,6 +277,7 @@ Function Start-MultipleDistributionListMigration
             catch 
             {
                 write-error "Unable to create network drive for storage."
+                EXIT
             }
 
             #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
