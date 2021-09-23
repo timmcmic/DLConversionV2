@@ -431,7 +431,6 @@ Function Start-DistributionListMigration
 
     [string]$onPremUnAuthOrig="unauthorig"
     [string]$onPremAuthOrig="authOrig"
-    [string]$onPremCoManagedObjectsBL="msExchCoManagedObjectsBL"
     [string]$onPremManagedBy="managedBy"
     [string]$onPremMSExchCoManagedByLink="msExchCoManagedByLink"
     [string]$onPremPublicDelegate="publicDelegates"
@@ -3701,7 +3700,7 @@ Function Start-DistributionListMigration
         {  
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremCoManagedObjectsBL)
+            out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
             if ($forLoopCounter -eq 1000)
             {
@@ -3716,7 +3715,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremCoManagedObjectsBL -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
