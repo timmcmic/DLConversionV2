@@ -256,9 +256,9 @@
         }
         else 
         {
-            out-logfile -string ("Require auth to send to is set - retaining value. "+ $originalDLConfguration.msExchRequireAuthToSendTo)
+            out-logfile -string ("Require auth to send to is set - retaining value. "+ $originalDLConfiguration.msExchRequireAuthToSendTo)
             
-            $functionRequireAuthToSendTo = $originalDLConfguration.msExchRequireAuthToSendTo
+            $functionRequireAuthToSendTo = $originalDLConfiguration.msExchRequireAuthToSendTo
         }
 
         try 
