@@ -15,7 +15,7 @@ https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migration
 https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-4/
 
 *Gathering Advanced Dependencies for a Group to be Migrated
-https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-4/
+https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-5/
 
 *How Does the Module Track Distribution Lists that have been Migrated
 https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-6/
