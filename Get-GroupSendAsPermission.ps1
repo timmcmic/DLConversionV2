@@ -118,7 +118,11 @@
         {
             out-logfile -string ("Obtaining the ACLS on DN = "+$dn)
 
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {(get-ACL $args).access} -ArgumentList $dn
+            $objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
+
+            out-logfile -string $objectPath
+
+            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {(get-ACL $args).access} -ArgumentList $objectPath
         }
         catch 
         {
@@ -163,15 +167,33 @@
             {
                 out-logfile -string ("Processing identity = "+$sendAsName)
 
-                try 
+                $stopLoop = $FALSE
+                [int]$loopCounter = 0
+
+                do 
                 {
-                    $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
-                }
-                catch 
-                {
-                    out-logfile -string "Unablet to retrive the object by name."
-                    out-logfile -string $_ -isError:$TRUE
-                }
+                    try 
+                    {
+                        $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
+
+                        $stopLoop = $TRUE
+                    }
+                    catch 
+                    {
+                        if ($loopCounter -gt 4)
+                        {
+                            out-logfile -string "Unablet to retrive the object by name."
+                            out-logfile -string $_ -isError:$TRUE
+                        }
+                        else 
+                        {
+                            out-logfile -string "Error with get-adObject -> sleep and retry."
+                            $loopCounter=$loopCounter+1
+                            start-sleepProgress -sleepString "Error with get-adobject -> sleep and retry." -sleepSeconds 5
+
+                        }
+                    }    
+                } until ($stopLoop -eq $TRUE)
             }
         }
         else 

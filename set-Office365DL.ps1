@@ -246,7 +246,7 @@
 
         #Evaluate require auth to send to DL.  If the DL is open to everyone - the value may not be present.
 
-        if ($originalDLConfguration.msExchRequireAuthToSendTo -eq $NULL)
+        if ($originalDLConfiguration.msExchRequireAuthToSendTo -eq $NULL)
         {
             out-logfile -string ("Require auth to send to is not set.")
 
@@ -256,9 +256,9 @@
         }
         else 
         {
-            out-logfile -string ("Require auth to send to is set - retaining value. "+ $originalDLConfguration.msExchRequireAuthToSendTo)
+            out-logfile -string ("Require auth to send to is set - retaining value. "+ $originalDLConfiguration.msExchRequireAuthToSendTo)
             
-            $functionRequireAuthToSendTo = $originalDLConfguration.msExchRequireAuthToSendTo
+            $functionRequireAuthToSendTo = $originalDLConfiguration.msExchRequireAuthToSendTo
         }
 
         try 

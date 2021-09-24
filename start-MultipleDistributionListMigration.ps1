@@ -186,7 +186,7 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution")]
+        [ValidateSet("Security","Distribution","None")]
         [string]$groupTypeOverride="None",
         [Parameter(Mandatory = $false)]
         [boolean]$triggerUpgradeToOffice365Group=$FALSE,
@@ -205,7 +205,11 @@ Function Start-MultipleDistributionListMigration
         [Parameter(Mandatory = $false)]
         [int]$global:threadNumber=0,
         [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0
+        [int]$totalThreadCount=0,
+        [Parameter(Mandatory = $FALSE)]
+        [boolean]$isMultiMachine=$FALSE,
+        [Parameter(Mandatory = $FALSE)]
+        [string]$remoteDriveLetter=$NULL
     )
 
     #Define global variables.
@@ -215,7 +219,7 @@ Function Start-MultipleDistributionListMigration
     [string]$masterFileName="Master"
 
     #Define parameters that are variables here (not available as parameters in this function.)
-
+  
     [boolean]$retainSendAsOnPrem=$FALSE
     [boolean]$retainFullMailboxAccessOnPrem=$FALSE
     [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
@@ -227,11 +231,92 @@ Function Start-MultipleDistributionListMigration
     [int]$totalAddressCount = $groupSMTPAddresses.Count
     [int]$maxThreadCount = 5
 
+    [string]$jobName="MultipleMigration"
+
+    [string]$originalLogFolderPath=$logFolderPath #Store the original in case the calculated is a network drive.
+
+    #The log folder path needs to be dynamic to support network storage.
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{
+            #In this case a multi machine migration was specified.
+            #The wrapper here will go ahead and make the Z drive connection that the rest of the scripts will use.
+            #Z maps directly to the server instance on the migration host.
+
+            [string]$networkName=$remoteDriveLetter
+            [string]$networkRootPath=$logFolderPath
+            $logFolderPath = $networkName+":"
+            #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
+            #[string]$networkPSProvider = "FileSystem"
+
+            if (get-smbMapping -LocalPath $logFolderPath)
+            {
+                write-host "The network drive was found present.  Remove to satisfy migration."
+
+                try
+                {
+                    write-host "Removing network drive with net use."
+                    
+                    invoke-command -scriptBlock {net use $args /delete /yes} -ArgumentList $logFolderPath -errorAction Stop
+                }
+                catch
+                {
+                    write-error "Attempting to use net use to remove the drive."
+
+                    try
+                    {
+                        write-host "Removing network drive with remove-smbMapping."
+
+                        remove-smbMapping -LocalPath $logFolderPath -Force -errorAction STOP
+                    }
+                    catch
+                    {
+                        write-error "Unable to use remote-SMBMapping to remove the try.  Drive agian."
+
+                        try
+                        {
+                            write-host "Remove network drive using remove-SMBGlobalMapping."
+
+                            remove-smbGlobalMapping -LocalPath $logFolderPath -Force -errorAction STOP
+                        }
+                        catch
+                        {
+                            write-error "Unable to use remove-SMBGlobalMapping. Final attempt - fail."
+                            EXIT
+                        }
+                    }  
+                }
+            }
+
+            try 
+            {
+                New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.GetNetworkCredential().password -errorAction Stop
+            }
+            catch 
+            {
+                write-error "Unable to create network drive for storage."
+                EXIT
+            }
+
+            #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
+
+            #$logFolderPath = $networkName+":"
+        }
+        catch{
+            exit
+        }
+    }
+
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-MULTIPLEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    #Call garbage collection at the beginning to help with array management.
+
+    [system.gc]::Collect()
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -506,7 +591,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread = $forCounter+1
 
-                Start-Job -InitializationScript {Import-Module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
+                Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter
 
                 if ($forCounter -eq 0)
                 {
@@ -521,19 +606,19 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running
+                $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
                 foreach ($job in $loopJobs)
                 {
-                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 }
 
                 start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
 
 
-            } until ((get-job -State Running).count -eq 0)
+            } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
 
             #Increment the array location +5 since this loop processed 5 jobs.
 
@@ -543,16 +628,13 @@ Function Start-MultipleDistributionListMigration
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job
+            $loopJobs = get-job -name $jobName
 
             foreach ($job in $loopJobs)
             {
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-            }
-
-            out-logfile -string "Removing all completed jobs."
-
-            get-job | remove-job    
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
+                remove-job -id $job.id
+            }  
         }
 
         #In this instance we have reached a batch of less than 5.
@@ -574,7 +656,7 @@ Function Start-MultipleDistributionListMigration
 
                 $forThread=$forCounter+1
 
-                Start-Job -InitializationScript {DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$logFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount
+                Start-Job -name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -retainOffice365Settings $args[14] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -retainFullMailboxAccessOnPrem $args[20] -retainSendAsOnPrem $args[21] -retainMailboxFolderPermsOnPrem $args[22] -retainFullMailboxAccessOffice365 $args[23] -retainSendAsOffice365 $args[24] -retainMailboxFolderPermsOffice365 $args[25] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter
 
                 if ($forCounter -eq 0)
                 {
@@ -589,40 +671,56 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running
+                $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
 
                 out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
 
                 foreach ($job in $loopJobs)
                 {
-                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
+                    out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 }
 
-                start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 5
+                start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 30
 
-            } until ((get-job -State Running).count -eq 0)
+            } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
 
             out-logfile -string ("The array location is = "+$arrayLocation)
 
             #Remove all completed jobs at this time.
 
-            $loopJobs = get-job -state Completed
+            $loopJobs = get-job -name $jobName
 
             foreach ($job in $loopJobs)
             {
                 $jobOutput+=(get-job -id $job.id).childjobs.output
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state+" Job Command: "+$job.command)
-            }
-
-            out-logfile -string "Removing all completed jobs."
-
-            get-job | remove-job    
+                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
+                remove-job -id $job.id
+            }  
 
             $arrayLocation=$arrayLocation+$remainingAddresses
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
+    out-logfile -string $jobOutput
+
+    get-migrationSummary -logFolderPath $logFolderPath
+
+    #Call .net garbage collection due to bulk arrays.
+
+    [system.gc]::Collect()
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{            
+            #remove-PSDrive $networkName -Force
+            remove-smbMapping $logFolderPath -Force
+        }
+        catch{
+            exit
+        }
+    }
 }

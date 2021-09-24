@@ -81,8 +81,13 @@
             if ($groupSMTPAddress -ne "None")
             {
                 out-logfile -string ("Searching by mail address "+$groupSMTPAddress)
+                out-logfile -string ("Imported Address Length: "+$groupsmtpAddress.length.toString())
 
-                $functionDLConfiguration=Get-ADObject -filter {mail -eq $groupSMTPAddress} -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                #Ensure that there are no spaces contained in the string (account for import errors.)
+
+                out-logfile -string ("Spaces Removed Address Length: "+$groupsmtpAddress.length.toString())
+
+                $functionDLConfiguration=Get-ADObject -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             elseif ($DN -ne "None")
             {

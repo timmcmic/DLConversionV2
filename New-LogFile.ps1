@@ -38,13 +38,18 @@
         )
 
         #Define the string separator and then separate the string.
-
+        
+        $groupsSMTPAddress = $groupSMTPAddress.trim()
         [string]$separator="@"
         [array]$fileNameSplit = $groupSMTPAddress.Split($separator)
 
         #First entry in split array is the prefix of the group - use that for log file name.
+        #The SMTP address may contain letters that are not permitted in a file name - for example ?.
+        #Using regex and a pattern to replace invalid file name characters with a -
 
         [string]$fileName=$fileNameSplit[0]+".log"
+        $pattern = $pattern = '[' + ([System.IO.Path]::GetInvalidFileNameChars() -join '').Replace('\','\\') + ']+'
+        $fileName=[regex]::Replace($fileName, $pattern,"-")
    
         # Get our log file path
 

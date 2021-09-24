@@ -216,8 +216,36 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0
+        [int]$totalThreadCount=0,
+        [Parameter(Mandatory = $FALSE)]
+        [boolean]$isMultiMachine=$FALSE,
+        [Parameter(Mandatory = $FALSE)]
+        [string]$remoteDriveLetter=$NULL
     )
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{
+            #At this point we know that multiple machines was in use.
+            #For multiple machines - the local controller instance mapped the drive Z for us in windows.
+            #Therefore we override the original log folder path passed in and just use Z.
+
+            [string]$networkName=$remoteDriveLetter
+            #[string]$networkRootPath=$logFolderPath
+            $logFolderPath = $networkName+":"
+            #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
+            #[string]$networkPSProvider = "FileSystem"
+
+            #New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.password
+
+            #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
+
+            #$logFolderPath = $networkName+":"
+        }
+        catch{
+            exit
+        }
+    }
 
     #Define global variables.
 
@@ -324,6 +352,7 @@ Function Start-DistributionListMigration
     [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
+    [string]$allGroupsCoManagedByXML="allGroupsCoManagedByXML"
 
     #Define the retention files.
 
@@ -345,6 +374,7 @@ Function Start-DistributionListMigration
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
     [array]$allMailboxesFolderPermissions=@()
+    [array]$allGroupsCoManagedByBL=$NULL
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -465,11 +495,52 @@ Function Start-DistributionListMigration
 
     #Log start of DL migration to the log file.
 
-    new-LogFile -groupSMTPAddress $groupSMTPAddress -logFolderPath $logFolderPath
+    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    out-logfile -string "Ensure that all strings specified have no leading or trailing spaces."
+
+    #Perform cleanup of any strings so that no spaces existin trailing or leading.
+
+    $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
+    $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
+    $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
+
+    if ($aadConnectServer -ne $NULL)
+    {
+        $aadConnectServer = remove-stringSpace -stringToFix $aadConnectServer
+    }
+
+    if ($exchangeServer -ne $NULL)
+    {
+        $exchangeServer=remove-stringSpace -stringToFix $exchangeServer
+    }
+    
+    if ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+        $exchangeOnlineCertificateThumbPrint=remove-stringSpace -stringToFix $exchangeOnlineCertificateThumbPrint
+    }
+
+    $exchangeOnlineEnvironmentName=remove-stringSpace -stringToFix $exchangeOnlineEnvironmentName
+
+    if ($exchangeOnlineOrganizationName -ne "")
+    {
+        $exchangeOnlineOrganizationName=remove-stringSpace -stringToFix $exchangeOnlineOrganizationName
+    }
+
+    if ($exchangeOnlineAppID -ne "")
+    {
+        $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
+    }
+
+    $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
+    
+    $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
+    
+    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride   
 
     #Output parameters to the log file for recording.
     #For parameters that are optional if statements determine if they are populated for recording.
@@ -478,12 +549,16 @@ Function Start-DistributionListMigration
     Out-LogFile -string "PARAMETERS"
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.tostring())
+    out-logfile -string ("Spaces Removed Group SMTP Address: "+$groupSMTPAddress)
+    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.toString())
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
 
     if ($aadConnectServer -ne "")
     {
+        $aadConnectServer = $aadConnectServer -replace '\s',''
         Out-LogFile -string ("AADConnectServer = "+$aadConnectServer)
     }
 
@@ -572,6 +647,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
     Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
     Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
+    Out-Logfile -string ("All Co Managed By BL XML - "+$allGroupsCoManagedByXML)
     Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
     out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
@@ -2007,6 +2083,37 @@ Function Start-DistributionListMigration
         out-logfile -string "The group does not have accept permissions on any groups."
     }
 
+    if ($originalDlConfiguration.msExchCoManagedObjectsBL -ne $NULL)
+    {
+        out-logfile -string "Calling ge canonical name."
+
+        foreach ($dn in $originalDLConfiguration.msExchCoManagedObjectsBL)
+        {
+            try 
+            {
+                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+
+            }
+            catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "The group is not a co manager on any other groups."    
+    }
+
+    if ($allGroupsCoManagedByBL -ne $NULL)
+    {
+        out-logFile -string "The group is a co-manager on the following objects:"
+        out-logfile -string $allGroupsCoManagedByBL
+    }
+    else 
+    {
+        out-logfile -string "The group is not a co manager on any other objects."
+    }
+
     #Handle all groups this object has bypass moderation permissions on.
 
     if ($originalDLConfiguration.msExchBypassModerationFromDLMembersBL -ne $NULL)
@@ -2103,6 +2210,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
@@ -2209,6 +2317,15 @@ Function Start-DistributionListMigration
     else 
     {
         $allGroupsAccept=@()
+    }
+
+    if ($allGroupsCoManagedByBL -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $allGroupsCoManagedByXML
+    }
+    else 
+    {
+        $allGroupsCoManagedByBL=@()    
     }
 
     if ($allGroupsBypassModeration -ne $NULL)
@@ -2760,7 +2877,6 @@ Function Start-DistributionListMigration
         }
 
         start-sleepProgress -sleepString "Starting sleep after removing individual status files.." -sleepSeconds 5
-
     }
 
     #$Capture the moved DL configuration (since attibutes change upon move.)
@@ -2878,6 +2994,7 @@ Function Start-DistributionListMigration
     if ($global:threadNumber -eq 1)
     {
         out-statusFile -threadNumber $global:threadNumber
+        start-sleepProgress -sleepString "Starting sleep after writing file..." -sleepSeconds 3
     }
 
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
@@ -2897,7 +3014,6 @@ Function Start-DistributionListMigration
         }
 
         start-sleepProgress -sleepString "Starting sleep after removing individual status files.." -sleepSeconds 5
-
     }
     
     #At this time we have processed the deletion to azure.
@@ -3368,6 +3484,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
+            <#
             $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
             out-logfile -string $tempOU
             $tempName=$originalDLConfiguration.cn
@@ -3380,7 +3497,24 @@ Function Start-DistributionListMigration
             out-logfile -string $tempName
             $tempDN=$tempName+","+$tempOU
             out-logfile -string $tempDN
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            #>
+
+            $tempMailArray = $originalDLConfiguration.mail.split("@")
+
+            foreach ($member in $tempMailArray)
+            {
+                out-logfile -string ("Temp Mail Address Member: "+$member)
+            }
+
+            $tempMailAddress = $tempMailArray[0]+"-MigratedByScript"
+
+            out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+            $tempMailAddress = $tempMailAddress+"@"+$tempMailArray[1]
+
+            out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
             $stopLoop=$TRUE
         }
@@ -3557,6 +3691,51 @@ Function Start-DistributionListMigration
 
     out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
+    out-logfile -string ("Starting on premises co managed by BL.")
+
+    if ($allGroupsCoManagedByBL.Count -gt 0)
+    {
+        foreach ($member in $allGroupsCoManagedByBL)
+        {  
+            out-logfile -string ("Processing member = "+$member.canonicalName)
+            out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
+            out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
+
+            if ($forLoopCounter -eq 1000)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
+            {
+                try{
+                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "The original group was a co-manager of itself."
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "No on premsies accept permissions to evaluate."    
+    }
+
+    $global:unDoStatus=$global:unDoStatus+1
+
+    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+
+
     out-logfile -string ("Starting on premises bypass moderation.")
 
     if ($allGroupsBypassModeration.Count -gt 0)
@@ -3672,11 +3851,28 @@ Function Start-DistributionListMigration
 
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
-                try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                #More than groups can have managed by set.
+                #If the object is NOT a group - then we should skip it.
+
+                if ($member.objectClass -eq "Group")
+                {
+                    out-logfile -string "Object class is group - proceed."          
+
+                    try{
+                        start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    }
+                    catch{
+                        out-logfile -string $_ -isError:$TRUE
+                    }
                 }
-                catch{
-                    out-logfile -string $_ -isError:$TRUE
+                else 
+                {
+                    out-logfile -string "Other objects than groups have this group as a manager.  Not processing the routing contact change as manager."
+                    out-logfile -string "Automatically setting preserve group as to not break permissions on objects."    
+
+                    $retainOriginalGroup = $TRUE
+
+                    out-logfile -string ("Retain Original Group: "+$retainOriginalGroup)
                 }
             }
             else 
@@ -4352,7 +4548,7 @@ Function Start-DistributionListMigration
 
     $global:unDoStatus=$global:unDoStatus+1
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+   out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
 
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
@@ -4483,4 +4679,16 @@ Function Start-DistributionListMigration
     #Archive the files into a date time success folder.
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{            
+            #remove-PSDrive $networkName -Force
+            
+            #remove-SMBMapping -LocalPath $logFolderPath -Force
+        }
+        catch{
+            exit
+        }
+    }
 }

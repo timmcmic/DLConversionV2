@@ -63,24 +63,43 @@
         out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
         #Get the specific user using ad providers.
-        
-        try 
-        {
-            Out-LogFile -string "Attempting to find the AD object associated with the member."
 
-            $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
+        $stopLoop = $FALSE
+        [int]$loopCounter = 0
 
-            if ($functionTest -eq $NULL)
+        do {
+            try 
             {
-                throw "The array member cannot be found by DN in Active Directory."
-            }
+                Out-LogFile -string "Attempting to find the AD object associated with the member."
+    
+                $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
+    
+                if ($functionTest -eq $NULL)
+                {
+                    throw "The array member cannot be found by DN in Active Directory."
+                }
+    
+                Out-LogFile -string "The array member was found by DN."
 
-            Out-LogFile -string "The array member was found by DN."
-        }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
+                $stopLoop=$TRUE
+            }
+            catch 
+            {
+                if ($loopCounter -gt 4)
+                {
+                    Out-LogFile -string $_ -isError:$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Error getting AD object.  Sleep and try again."
+                    $loopcounter = $loopCounter+1
+                    start-sleepProgress -sleepString "Sleeping for 5 seconds get-adobjectError" -sleepSeconds 5
+                }
+                
+            }
+        } until ($stopLoop -eq $TRUE)
+        
+       
 
         try
         {
