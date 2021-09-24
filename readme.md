@@ -6,7 +6,7 @@ Information regarding the usage of the DLConversionV2 module can be found in the
 https://timmcmic.wordpress.com/2021/04/25/4116/
 
 *Preparing to use the Distrbution List Migration Module v2
-https://timmcmic.wordpress.com/?s=part+2
+https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-2/
 
 *Using the Distribution List Migration Module v2 for Sample Migrations
 https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-3-2/
