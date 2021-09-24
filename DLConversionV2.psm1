@@ -1680,6 +1680,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string "Begin accepted domain validation."
+
+    test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+
     out-logfile -string "Being validating all distribution list members."
     
     if ($exchangeDLMembershipSMTP.count -gt 0)

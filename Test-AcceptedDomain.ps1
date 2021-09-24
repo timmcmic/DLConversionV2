@@ -1,0 +1,78 @@
+<#
+    .SYNOPSIS
+
+    This function tests each accepted domain on the group to ensure it appears in Office 365.
+
+    .DESCRIPTION
+
+    This function tests each accepted domain on the group to ensure it appears in Office 365.
+
+    .EXAMPLE
+
+    Test-AcceptedDomain -originalDLConfiguration $originalDLConfiguration
+
+    #>
+    Function Test-AcceptedDomain
+     {
+        [cmdletbinding()]
+
+        Param
+        (
+            [Parameter(Mandatory = $true)]
+            $originalDLConfiguration
+        )
+
+        #Define variables that will be utilzed in the function.
+
+        [array]$originalDLAddresses=@()
+        [array]$originalDLDomainNames=@()
+
+        #Initiate the test.
+        
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "BEGIN Test-AcceptedDomain"
+        Out-LogFile -string "********************************************************************************"
+
+        foreach ($address in $originalDLConfiguration.proxyAddresses)
+        {
+            Out-logfile -string "Testing proxy address for SMTP"
+            out-logfile -string $address
+
+            if ($address -like "smtp*")
+            {
+                out-logfile -string ("Address is smtp address: "+$address)
+
+                $tempAddress=$address.split("@")
+
+                $originalDLDomainNames+=$tempAddress[1]
+            }
+            else 
+            {
+                out-logfile -string ("Address is not an SMTP Address - skip.")
+            }
+        }
+
+        $originalDLDomainNames=$originalDLDomainNames | select-object -Unique
+
+        out-logfile -string "Unique domain names on the group."
+        out-logfile -string $originalDLDomainNames
+
+        foreach ($domain in $originalDLDomainNames)
+        {
+            out-logfile -string "Testing Office 365 for Domain Name."
+
+            if (get-acceptedDomain -dominName $domain)
+            {
+                out-logfile -string ("Domain exists in Office 365. "+$domain)
+            }
+            else 
+            {
+                out-logfile -string $domain
+                out-logfile -string "Group cannot be migrated until the domain is an accepted domain in Office 365 or removed from the group."    
+                out-logfile -string "Email address exists on group that is not in Office 365." -isError:$TRUE
+            }
+        }
+
+        Out-LogFile -string "END Test-AcceptedDomain"
+        Out-LogFile -string "********************************************************************************"
+    }
