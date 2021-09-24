@@ -61,7 +61,7 @@
         {
             out-logfile -string "Testing Office 365 for Domain Name."
 
-            if (get-acceptedDomain -dominName $domain)
+            if (get-acceptedDomain -identity $domain)
             {
                 out-logfile -string ("Domain exists in Office 365. "+$domain)
             }
