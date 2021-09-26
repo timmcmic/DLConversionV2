@@ -187,6 +187,7 @@
         {
             #All of the members were previously verified as present - so no member should be gone by now unless removed.
             #This adds all members as a single operation.  Errors we silently continue.
+            #Shout out to AlbertoL for making this more efficient - saves several minutes of original array processing.
 
             #Ensureing all addresses in the array are unique.
             foreach ($member in $exchangeDLMembershipSMTP)
