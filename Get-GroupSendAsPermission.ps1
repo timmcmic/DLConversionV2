@@ -145,10 +145,18 @@
 
             foreach ($sendAsRight in $functionSendAsRight)
             {
-                out-logfile -string "Processing ACL"
-                out-logfile -string $sendAsRight
+                if ($sendAsRight.identityReference.toString() -notlike "S-1-5*")
+                {
+                    out-logfile -string "Processing ACL"
+                    out-logfile -string $sendAsRight
 
-                $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                    $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                }
+                else 
+                {
+                    out-logfile -string "ACL skipped - SID found - orphaned ACL."    
+                    out-logfile -string $sendAsRight
+                }
             }
         }
         else 
