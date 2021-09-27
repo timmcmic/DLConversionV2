@@ -3887,7 +3887,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "No on premsies grant send on behalf to evaluate."    
+        out-logfile -string "No on premsies managed by to evaluate."    
     }
 
     $global:unDoStatus=$global:unDoStatus+1
