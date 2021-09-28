@@ -31,4 +31,3 @@ https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration
 
 *Updates and bug fixes in version 2.4.
 https://timmcmic.wordpress.com/2021/09/27/office-365-distribution-list-migration-version-2-0-part-10/
-
