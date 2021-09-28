@@ -79,7 +79,7 @@
                 out-statusFile -threadNumber $global:ThreadNumber
             }
 
-            write-error $logString
+            write-host $logString -ForegroundColor Red -BackgroundColor Yellow
             disable-allPowerShellSessions
 
             if ($isAudit -eq $FALSE)
