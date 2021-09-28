@@ -700,11 +700,6 @@ Function Start-MultipleDistributionListMigration
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
-    foreach ($output in $jobOutput)
-    {
-        out-logfile -string $output
-    }
-
     get-migrationSummary -logFolderPath $logFolderPath
 
     #Call .net garbage collection due to bulk arrays.
