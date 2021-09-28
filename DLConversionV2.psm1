@@ -501,6 +501,19 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
+
+    if ($errorActionPreference -ne "Continue")
+    {
+        out-logfile -string ("Current Error Action Preference: "+$errorActionPreference)
+        $errorActionPreference = "Continue"
+        out-logfile -string ("New Error Action Preference: "+$errorActionPreference)
+    }
+    else
+    {
+        out-logfile -string ("Current Error Action Preference is CONTINUE: "+$errorActionPreference)
+    }
+
     out-logfile -string "Ensure that all strings specified have no leading or trailing spaces."
 
     #Perform cleanup of any strings so that no spaces existin trailing or leading.
