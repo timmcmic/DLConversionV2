@@ -90,7 +90,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string $_
         }
 
         #Now that the DL is disabled - use this oppurtunity to write the custom attributes to show it's been migrated.
@@ -101,7 +101,7 @@
             set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer -credential $adCredential
         }
         catch {
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
         }
 
         Out-LogFile -string "END Disable-OriginalDLConfiguration"

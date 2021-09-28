@@ -105,7 +105,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string $_
         }
 
         Out-LogFile -string "END New-Office365DL"
