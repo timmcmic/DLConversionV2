@@ -74,13 +74,22 @@
 
         if ($isError -eq $TRUE)
         {
+            #Ok - so here's the deal.
+            #By default error action is continue.  IN all my function calls I use STOP for the most part.
+            #In this case if we hit this error code - one of two things happen.
+            #If the call is from another function that is not in a do while - the error is logged and we continue with exiting.
+            #If the call is from a function in a do while - write-error rethrows the exception.  The exception is caught by the caller where a retry occurs.
+            #This is how we end up logging an error then looping back around.
+
             write-error $logString
+
+            #Now if we're not in a do while we end up here -> go ahead and create the status file this was not a retryable operation and is a hard failure.
 
             if ($global:ThreadNumber -gt 0)
             {
                 out-statusFile -threadNumber $global:ThreadNumber
             }
-            
+
             disable-allPowerShellSessions
 
             if ($isAudit -eq $FALSE)
