@@ -153,7 +153,7 @@
             Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch {
-            out-logfile -string $_
+            out-logfile -string $_ -isError:$TRUE
         }
 
         $global:unDoStatus=$global:unDoStatus+1
@@ -173,7 +173,7 @@
                 Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
-                out-logfile -string $_
+                out-logfile -string $_ -isError:$TRUE
             }
         }
 
@@ -187,7 +187,6 @@
         {
             #All of the members were previously verified as present - so no member should be gone by now unless removed.
             #This adds all members as a single operation.  Errors we silently continue.
-            #Shout out to AlbertoL for making this more efficient - saves several minutes of original array processing.
 
             #Ensureing all addresses in the array are unique.
             foreach ($member in $exchangeDLMembershipSMTP)
@@ -547,7 +546,7 @@
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID 
+                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
                     }
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
@@ -559,7 +558,7 @@
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN
+                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
                     }
                 }
                 else 

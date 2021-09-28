@@ -56,7 +56,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_
+            Out-LogFile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END GET-O365DLCONFIGURATION"

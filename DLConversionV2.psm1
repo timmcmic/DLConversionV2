@@ -3029,7 +3029,7 @@ Function Start-DistributionListMigration
         test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
     }
     catch {
-        out-logfile -string $_ 
+        out-logfile -string $_ -isError:$TRUE
     }
 
     #At this point we have validated that the group is gone from office 365.
