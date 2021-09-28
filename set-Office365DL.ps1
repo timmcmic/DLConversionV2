@@ -269,7 +269,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string $_ 
         }
 
         Out-LogFile -string "END SET-Office365DL"

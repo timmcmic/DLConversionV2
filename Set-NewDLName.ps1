@@ -86,7 +86,7 @@
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string $_ 
         }
 
         try
@@ -97,7 +97,7 @@
         }
         catch
         {
-            Out-LogFile -string $_ -isError:$true  
+            Out-LogFile -string $_  
         }
 
         Out-LogFile -string "END Set-NewDLName"
