@@ -74,12 +74,13 @@
 
         if ($isError -eq $TRUE)
         {
+            write-error $logString
+
             if ($global:ThreadNumber -gt 0)
             {
                 out-statusFile -threadNumber $global:ThreadNumber
             }
-
-            write-error $logString
+            
             disable-allPowerShellSessions
 
             if ($isAudit -eq $FALSE)

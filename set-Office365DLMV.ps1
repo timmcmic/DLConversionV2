@@ -153,7 +153,7 @@
             Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch {
-            out-logfile -string $_ 
+            out-logfile -string $_ -isError:$TRUE
         }
 
         $global:unDoStatus=$global:unDoStatus+1
@@ -173,7 +173,7 @@
                 Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
-                out-logfile -string $_ 
+                out-logfile -string $_ -isError:$TRUE
             }
         }
 
@@ -546,7 +546,7 @@
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.externalDirectoryObjectID 
+                        out-logfile -string $member.externalDirectoryObjectID -isError:$TRUE
                     }
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
@@ -558,12 +558,12 @@
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
-                        out-logfile -string $member.primarySMTPAddressOrUPN 
+                        out-logfile -string $member.primarySMTPAddressOrUPN -isError:$TRUE
                     }
                 }
                 else 
                 {
-                    out-logfile -string "Invalid function object for recipient." 
+                    out-logfile -string "Invalid function object for recipient." -isError:$TRUE
                 } 
             }
         }

@@ -101,7 +101,7 @@
             set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer -credential $adCredential
         }
         catch {
-            out-logfile -string $_ 
+            out-logfile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END Disable-OriginalDLConfiguration"
