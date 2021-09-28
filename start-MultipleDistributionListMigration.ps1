@@ -226,7 +226,7 @@ Function Start-MultipleDistributionListMigration
     [boolean]$retainFullMailboxAccessOffice365=$FALSE
     [boolean]$retainMailboxFolderPermsOffice365=$FALSE
 
-    $jobOutput=$NULL
+    [array]$jobOutput=@()
 
     [int]$totalAddressCount = $groupSMTPAddresses.Count
     [int]$maxThreadCount = 5
@@ -553,7 +553,6 @@ Function Start-MultipleDistributionListMigration
     [int]$maxArrayLocation = $totalAddressCount - 1
     [int]$remainingAddresses = 0
     [int]$loopThreadCount = 0
-    $jobOutput=$NULL
 
     #Begin processing batches of members in the SMTP array.
     #Current max jobs recommended 5 per batch.
@@ -692,7 +691,7 @@ Function Start-MultipleDistributionListMigration
 
             foreach ($job in $loopJobs)
             {
-                $jobOutput+=(get-job -id $job.id).childjobs.output
+                $jobOutput+=(get-job -id $job.id).childjobs.output 
                 out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
                 remove-job -id $job.id
             }  
@@ -701,7 +700,10 @@ Function Start-MultipleDistributionListMigration
         }
     } until ($arrayLocation -eq $totalAddressCount)
 
-    out-logfile -string $jobOutput
+    foreach ($output in $jobOutput)
+    {
+        out-logfile -string $output
+    }
 
     get-migrationSummary -logFolderPath $logFolderPath
 
