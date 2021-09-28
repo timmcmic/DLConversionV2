@@ -74,9 +74,14 @@
 
         if ($isError -eq $TRUE)
         {
-            if ($global:ThreadNumber -gt 0)
+            if ($global:ThreadNumber -gt 1)
             {
                 out-statusFile -threadNumber $global:ThreadNumber
+            }
+            elseif ($global:ThreadNumber -eq 1) 
+            {
+                #If the thread is one - set the global 
+                $global:controllerThreadError=$TRUE    
             }
 
             write-error $logString

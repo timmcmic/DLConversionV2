@@ -472,9 +472,10 @@ Function Start-DistributionListMigration
     [string]$global:fullStatusPath=$NULL
     [int]$statusFileCount=0
 
-
     #If multi threaded - the log directory needs to be created for each thread.
     #Create the log folder path for status before changing the log folder path.
+
+    [boolean]$global:controllerThreadError=$FALSE
 
     if ($totalThreadCount -gt 0)
     {
@@ -2854,7 +2855,7 @@ Function Start-DistributionListMigration
         do 
         {
             out-logfile -string "All threads are not ready - sleeping."
-        } until ((get-statusFileCount) -eq  $totalThreadCount)
+        } until (((get-statusFileCount) -eq  $totalThreadCount) -or ((get-StatusFileCount) -eq ($totalThreadCount-1)) -and ($global:ControllerThreadError -eq $TRUE))
     }
 
     try {
