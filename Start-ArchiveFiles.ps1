@@ -83,6 +83,7 @@
                     }
                     else 
                     {
+                        start-sleep -s 5
                         $doCounter=$doCounter+1
                     }
                 }
