@@ -27,5 +27,10 @@ https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migration
 https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration-version-2-0-part-8/
 
 *How to perform single host batch migrations.
-https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration-version-2-0-part-8/
+https://timmcmic.wordpress.com/2021/09/02/office-365-distribution-list-migrations-version-2-0-part-9/
+
+*Improvements and code fixes in version 2.4.x
+https://timmcmic.wordpress.com/2021/09/27/office-365-distribution-list-migration-version-2-0-part-10/
+
+
 
