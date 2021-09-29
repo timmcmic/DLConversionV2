@@ -67,6 +67,28 @@
             out-logfile -string $functionFolderName
             out-logfile -string $functionOriginalPath
 
-            rename-item -path $functionOriginalPath -newName $functionFolderName
+            $doCounter=0
+            $stopLoop=$FALSE
+
+            do {
+                try {
+                    rename-item -path $functionOriginalPath -newName $functionFolderName -errorAction Stop
+
+                    $stopLoop=$true
+                }
+                catch {
+                    if ($doCounter -gt 5)
+                    {
+                        $stopLoop-$TRUE
+                    }
+                    else 
+                    {
+                        $doCounter=$doCounter+1
+                    }
+                }
+            } until ($stopLoop -eq $TRUE)
+            
+           
+            
         }
     }
