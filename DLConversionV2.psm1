@@ -1509,7 +1509,7 @@ Function Start-DistributionListMigration
 
                 #Group type is not NULL / Group type is security value.
 
-                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644")))
+                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
                     out-logfile -string "A security group has managed by rights on the distribution list."
                     out-logfile -string "The administrator has specified to override the group type."
