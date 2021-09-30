@@ -1484,6 +1484,41 @@ Function Start-DistributionListMigration
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
+        #First scan is to ensure that any of the groups listed on the managed by objects are still security.
+        #It is possible someone added it to managed by and changed the group type after.
+
+        foreach ($object in $exchangeManagedBySMTP)
+        {
+            #If the objec thas a non-null group type (is a group) and the value of the group type matches none of the secuity group types.
+            #The object is a distribution list - no good.
+
+            if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
+            {
+                out-logfile -string "A distribution list (not security enabled) was found on managed by."
+                out-logfile -string "The group must be converted to security or removed from managed by."
+                out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+            }
+
+            #The group is not a distribution list.
+            #If the SMTP object of the managedBy object equals the original group - check to see if an override is found.
+            #If an override of distribution is found - this is not OK since security is required.
+
+            elseif (($object.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution")) 
+            {
+                out-logfile -string "Group type override detected - group has managed by permissions."
+
+                #Group type is not NULL / Group type is security value.
+
+                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644")))
+                {
+                    out-logfile -string "A security group has managed by rights on the distribution list."
+                    out-logfile -string "The administrator has specified to override the group type."
+                    out-logfile -string "The group override must be removed or the object removed from managedBY."
+                    out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+                }
+            }
+        }
+
         Out-LogFile -string "The following objects are members of the managedBY:"
         
         out-logfile -string $exchangeManagedBySMTP
