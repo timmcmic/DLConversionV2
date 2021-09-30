@@ -243,6 +243,7 @@
                         PrimarySMTPAddressOrUPN = $functionTest.extensionAttribute2
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
@@ -270,6 +271,7 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
