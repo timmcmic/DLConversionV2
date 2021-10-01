@@ -2411,7 +2411,7 @@ Function Start-DistributionListMigration
             out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
             out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
             out-logfile -string ("Name: "+$preReq.name)
-            out-logfile -string ("Alias: "$preReq.Alias)
+            out-logfile -string ("Alias: "+$preReq.Alias)
             out-logfile -string ("Attribute in Error: "+$preReq.attribute)
             out-logfile -string ("Error Message Details: "+$preReq.errorMessage)
             out-logfile -string "====="
