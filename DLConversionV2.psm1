@@ -2369,6 +2369,29 @@ Function Start-DistributionListMigration
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
 
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if ($preCreateErrors.count -gt 0)
+    {
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        foreach ($preReq in $preCreateErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
+            out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
+            out-logfile -string ("Attribute in Error: "+$preReq.attribute)
+            out-logfile -string ("Error Message Details: "+$preReq.errorMessage)
+            out-logfile -string "====="
+        }
+
+        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+    }
+
     #Exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
