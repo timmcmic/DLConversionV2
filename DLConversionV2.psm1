@@ -1280,10 +1280,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "Distribution List Membership (ADAttribute: Members"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Distribution List Membership (ADAttribute: Members"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1338,10 +1340,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1382,10 +1386,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1437,10 +1443,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1480,10 +1488,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1537,10 +1547,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "Owners (ADAttribute: ManagedBy)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Owners (ADAttribute: ManagedBy)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1581,10 +1593,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "Owners (ADAttribute: msExchCoManagedByLink"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Owners (ADAttribute: msExchCoManagedByLink"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1615,10 +1629,12 @@ Function Start-DistributionListMigration
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
                 $isErrorObject = new-Object psObject -property @{
-                    $primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
-                    $externalDirectoryObjectID = $object.externalDirectoryObjectID
-                    $attribute = "Test ManagedBy For Security Flag"
-                    $errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                    primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                    externalDirectoryObjectID = $object.externalDirectoryObjectID
+                    alias=$normalizedTest.alias
+                    name=$normalizedTest.name
+                    attribute = "Test ManagedBy For Security Flag"
+                    errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
                 }
 
                 $preCreateErrors+=$isErrorObject
@@ -1641,10 +1657,12 @@ Function Start-DistributionListMigration
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
-                        $externalDirectoryObjectID = $object.externalDirectoryObjectID
-                        $attribute = "Test ManagedBy For Group Override"
-                        $errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                        primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                        externalDirectoryObjectID = $object.externalDirectoryObjectID
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Test ManagedBy For Group Override"
+                        errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
                     }
     
                     $preCreateErrors+=$isErrorObject
@@ -1692,10 +1710,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1749,10 +1769,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1795,10 +1817,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -1848,10 +1872,12 @@ Function Start-DistributionListMigration
                 if ($normalizedTest.isError -eq $TRUE)
                 {
                     $isErrorObject = new-Object psObject -property @{
-                        $primarySMTPAddressOrUPN = $normalizedTest.name
-                        $externalDirectoryObjectID = $NULL
-                        $attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
-                        $errorMessage = $normlaizedTest.isErrorMessage
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
+                        errorMessage = $normlaizedTest.isErrorMessage
                     }
 
                     $preCreateErrors+=$isErrorObject
@@ -2384,6 +2410,8 @@ Function Start-DistributionListMigration
             out-logfile -string "====="
             out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
             out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
+            out-logfile -string ("Name: "+$preReq.name)
+            out-logfile -string ("Alias: +"+$preReq.Alias)
             out-logfile -string ("Attribute in Error: "+$preReq.attribute)
             out-logfile -string ("Error Message Details: "+$preReq.errorMessage)
             out-logfile -string "====="
