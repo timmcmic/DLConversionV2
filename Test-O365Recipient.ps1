@@ -38,7 +38,7 @@
         #Declare local variables.
 
         [array]$functionDirectoryObjectID=@()
-        [bool]$isTestError=0
+        [int]$isTestError=0
 
         #Start function processing.
 
