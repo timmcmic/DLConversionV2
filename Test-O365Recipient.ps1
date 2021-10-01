@@ -38,7 +38,7 @@
         #Declare local variables.
 
         [array]$functionDirectoryObjectID=@()
-        [boolean]$isTestError=$FALSE
+        [bool]$isTestError=0
 
         #Start function processing.
 
@@ -62,12 +62,12 @@
 
             try {
                 get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
-                $isTestError=$FALSE
+                $isTestError=0
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
                 out-logFile -string $_
-                $isTestError=$TRUE
+                $isTestError=1
             }
         }
         elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
@@ -78,12 +78,12 @@
 
             try {
                 get-exoRecipient -identity $member.PrimarySMTPAddressOrUPN -errorAction Stop
-                $isTestError=$FALSE
+                $isTestError=0
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
                 out-logfile -string $_
-                $isTestError = $TRUE
+                $isTestError = 1
             }
         }
         elseif (($member.ExternalDirectoryObjectID -ne $NULL) -and ($member.recipientoruser -eq "User"))
@@ -100,12 +100,12 @@
 
             try {
                 get-o365User -identity $functionDirectoryObjectID[1] -errorAction STOP
-                $isTestError=$FALSE
+                $isTestError=0
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
                 out-logFile -string $_
-                $isTestError=$TRUE
+                $isTestError=1
             }
         }
         elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
@@ -116,12 +116,12 @@
 
             try {
                 get-o365User -identity $member.primarySMTPAddressOrUPN -errorAction STOP
-                $isTestError=$FALSE
+                $isTestError=0
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
                 out-logfile -string $_
-                $isTestError=$TRUE
+                $isTestError=1
             }
         }
         else 
