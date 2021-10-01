@@ -465,7 +465,7 @@ Function Start-DistributionListMigration
     #Define new arrays to check for errors instead of failing.
 
     [array]$preCreateErrors=@()
-    [boolean]$isTestError=$FALSE
+    [string]$isTestError="No"
 
 
     [int]$forLoopTrigger=1000
@@ -1264,7 +1264,7 @@ Function Start-DistributionListMigration
         {
             #Resetting error variable.
 
-            $isTestError = $FALSE
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1974,7 +1974,7 @@ Function Start-DistributionListMigration
         {
             #Reset the failure.
 
-            $isTestError = $FALSE
+            $isTestError="No"
             out-logfile -string $isTestError
 
             if ($forLoopCounter -eq $forLoopTrigger)
@@ -2031,7 +2031,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$FALSE
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2085,7 +2085,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$FALSE
+            $isTestError="No"
             
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2247,7 +2247,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$FALSE
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2351,7 +2351,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$FALSE
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
