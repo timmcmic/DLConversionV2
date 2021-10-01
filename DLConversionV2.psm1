@@ -1995,7 +1995,7 @@ Function Start-DistributionListMigration
 
                 out-logfile -string $isTestError
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2049,7 +2049,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2103,7 +2103,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2157,7 +2157,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2211,7 +2211,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2265,7 +2265,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2315,7 +2315,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2369,7 +2369,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $TRUE)
+                if ($isTestError="Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
