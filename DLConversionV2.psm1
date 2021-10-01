@@ -1265,7 +1265,7 @@ Function Start-DistributionListMigration
             #Resetting error variable.
 
             $isTestError = $FALSE
-            
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
@@ -1975,6 +1975,7 @@ Function Start-DistributionListMigration
             #Reset the failure.
 
             $isTestError = $FALSE
+            out-logfile -string $isTestError
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1991,6 +1992,8 @@ Function Start-DistributionListMigration
 
             try{
                 $isTestError=test-O365Recipient -member $member
+
+                out-logfile -string $isTestError
 
                 if ($isTestError -eq $TRUE)
                 {

@@ -46,6 +46,8 @@
         Out-LogFile -string "BEGIN TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"
 
+        out-logfile -string $isTestError
+
         if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
         {
             out-LogFile -string "Testing based on External Directory Object ID"
@@ -127,6 +129,8 @@
             out-logfile -string "An invalid object was passed to test-o365recipient - failing." -isError:$TRUE
 
         }
+
+        out-logfile -string $isTestError
 
         Out-LogFile -string "END TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"    
