@@ -1262,6 +1262,10 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.member)
         {
+            #Resetting error variable.
+
+            $isTestError = $FALSE
+            
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5

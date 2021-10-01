@@ -309,7 +309,7 @@
                         ExternalDirectoryObjectID = $null
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage=("The following object"+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+                        isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
                     }
                 }
             }
@@ -328,7 +328,7 @@
                     ExternalDirectoryObjectID = $null
                     isAlreadyMigrated = $false
                     isError=$true
-                    isErrorMessage=("The following object"+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+                    isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
                 }
             }    
         }
