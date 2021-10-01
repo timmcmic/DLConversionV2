@@ -38,6 +38,7 @@
         #Declare local variables.
 
         [array]$functionDirectoryObjectID=@()
+        [boolean]$isTestError=$FALSE
 
         #Start function processing.
 
@@ -62,7 +63,8 @@
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
-                out-logFile -string $_ -isError:$TRUE
+                out-logFile -string $_
+                $isTestError=$TRUE
             }
         }
         elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "Recipient"))
@@ -76,7 +78,8 @@
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError = $TRUE
             }
         }
         elseif (($member.ExternalDirectoryObjectID -ne $NULL) -and ($member.recipientoruser -eq "User"))
@@ -96,7 +99,8 @@
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR --"+$functionDirectoryObjectID[1] )
-                out-logFile -string $_ -isError:$TRUE
+                out-logFile -string $_
+                $isTestError=$TRUE
             }
         }
         elseif (($member.PrimarySMTPAddressOrUPN -ne $NULL) -and ($member.recipientoruser -eq "User"))
@@ -110,7 +114,8 @@
             }
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError=$TRUE
             }
         }
         else 
@@ -121,4 +126,6 @@
 
         Out-LogFile -string "END TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"    
+
+        return $isTestError
     }

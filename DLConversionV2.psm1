@@ -462,6 +462,14 @@ Function Start-DistributionListMigration
     [int]$exchangeRangeUpper=$NULL
     [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
 
+    #Define new arrays to check for errors instead of failing.
+
+    [array]$preCreateErrors=@()
+    [boolean]$isTestError=$FALSE
+
+
+    [int]$forLoopTrigger=1000
+
     #Define the sub folders for multi-threading.
 
     [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
@@ -1254,9 +1262,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.member)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1267,7 +1275,24 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "Distribution List Membership (ADAttribute: Members"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeDLMembershipSMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1295,9 +1320,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1308,7 +1333,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1323,9 +1364,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1336,7 +1377,22 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1363,9 +1419,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.AuthOrig)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1376,7 +1432,22 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1391,9 +1462,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1404,7 +1475,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1432,9 +1519,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.managedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1445,7 +1532,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "Owners (ADAttribute: ManagedBy)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1460,9 +1563,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1473,7 +1576,24 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "Owners (ADAttribute: msExchCoManagedByLink"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1494,9 +1614,18 @@ Function Start-DistributionListMigration
 
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
+                $isErrorObject = new-Object psObject -property @{
+                    $primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                    $externalDirectoryObjectID = $object.externalDirectoryObjectID
+                    $attribute = "Test ManagedBy For Security Flag"
+                    $errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                }
+
+                $preCreateErrors+=$isErrorObject
+
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
                 out-logfile -string "The group must be converted to security or removed from managed by."
-                out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+                out-logfile -string $object.primarySMTPAddressOrUPN
             }
 
             #The group is not a distribution list.
@@ -1511,10 +1640,19 @@ Function Start-DistributionListMigration
 
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                        $externalDirectoryObjectID = $object.externalDirectoryObjectID
+                        $attribute = "Test ManagedBy For Group Override"
+                        $errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                    }
+    
+                    $preCreateErrors+=$isErrorObject
+        
                     out-logfile -string "A security group has managed by rights on the distribution list."
                     out-logfile -string "The administrator has specified to override the group type."
                     out-logfile -string "The group override must be removed or the object removed from managedBY."
-                    out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+                    out-logfile -string $object.primarySMTPAddressOrUPN
                 }
             }
         }
@@ -1536,9 +1674,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1549,7 +1687,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeModeratedBySMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1577,9 +1731,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1590,7 +1744,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedDN
+                }
             }
             catch 
             {
@@ -1607,9 +1777,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1620,8 +1790,23 @@ Function Start-DistributionListMigration
 
             try 
             {
-                out-logfile -string $activeDirectoryCredential.userName
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1645,9 +1830,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.publicDelegates)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1658,7 +1843,24 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        $primarySMTPAddressOrUPN = $normalizedTest.name
+                        $externalDirectoryObjectID = $NULL
+                        $attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
+                        $errorMessage = $normlaizedTest.isErrorMessage
+                    }
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1740,9 +1942,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeDLMembershipSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset the failure.
+
+            $isTestError = $FALSE
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1754,7 +1960,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Member (ADAttribute: Members)"
+                        ErrorMessage = "A member of the distribution list is not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1774,9 +1996,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeRejectMessagesSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isError=$FALSE
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1788,7 +2014,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers (ADAttributes: UnAuthOrig / DLMemRejectPerms)"
+                        ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1808,9 +2050,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeAcceptMessagesSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isError=$FALSE
+            
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1822,7 +2068,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers (ADAttributes: authOrig / DLMemSubmitPerms)"
+                        ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1842,9 +2104,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeManagedBySMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset Error Variable.
+
+            $isError = $FALSE
+            
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1856,7 +2122,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Owners (ADAttributes: ManagedBy,msExchCoManagedByLink)"
+                        ErrorMessage = "A member of owners was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1876,9 +2158,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeModeratedBySMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isErrorObject=$FALSE
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1890,7 +2176,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "ModeratedBy (ADAttributes: msExchModeratedByLink)"
+                        ErrorMessage = "A member of moderatedBy was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1910,9 +2212,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeBypassModerationSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isError=$FALSE
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1924,7 +2230,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "BypassModerationFromSendersorMembers (ADAttributes: msExchBypassModerationLink,msExchBypassModerationFromDLMembersLink)"
+                        ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1944,9 +2266,9 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1958,7 +2280,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "GrantSendOnBehalfTo (ADAttributes: publicDelegates)"
+                        ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1978,9 +2316,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeSendAsSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isError=$FALSE
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1992,7 +2334,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "SendAs"
+                        ErrorMessage = "A member with SendAs permissions was not found in Office 365."
+                    }
+
+                    out-logfile $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -3616,9 +3974,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsMemberOf)
         {  
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -3661,9 +4019,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsReject)
         {  
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3709,9 +4067,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3753,9 +4111,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3798,9 +4156,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3842,9 +4200,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3891,9 +4249,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3955,9 +4313,9 @@ Function Start-DistributionListMigration
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4011,9 +4369,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Accept)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4044,9 +4402,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Reject)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4077,9 +4435,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365BypassModeration)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4110,9 +4468,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365GrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4143,9 +4501,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365ManagedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4180,9 +4538,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicAccept)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4213,9 +4571,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicReject)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4246,9 +4604,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicBypassModeration)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4279,9 +4637,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicGrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4312,9 +4670,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicManagedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4347,9 +4705,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalAccept)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4380,9 +4738,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalReject)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4413,9 +4771,9 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4450,9 +4808,9 @@ Function Start-DistributionListMigration
 
         foreach ($member in $allOffice365MemberOf )
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 

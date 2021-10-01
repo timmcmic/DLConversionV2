@@ -131,6 +131,8 @@
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
                     isAlreadyMigrated = $false
+                    isError=$false
+                    isErrorMessage=$NUL
                 }
             }
             elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
@@ -154,6 +156,8 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
+                        isError=$false
+                        isErrorMessage=$NUL
                     }
                 }
 
@@ -173,6 +177,8 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=$NUL
                     }
                 }
             }
@@ -190,6 +196,8 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=$NUL
                     }
             }
             elseif ($functionTest.objectClass -eq "User")
@@ -203,8 +211,11 @@
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
                         GroupType = $NULL
-                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         RecipientOrUser = "User"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        isAlreadyMigrated = $FALSE
+                        isError=$false
+                        isErrorMessage=$NUL
                 }
             }
             elseif ($functionTest.objectClass -eq "Group")
@@ -227,6 +238,8 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=$NULL
                     }
                 }
 
@@ -247,6 +260,8 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
+                        isError=$false
+                        isErrorMessage=$NUL
                     }
                 }
                 
@@ -275,16 +290,46 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=$NULL
                     }
                 }
                 else 
                 {
-                    out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
+                    out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $null
+                        Name = $dn
+                        PrimarySMTPAddressOrUPN = $null
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        GroupType = $functionTest.GroupType
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $null
+                        isAlreadyMigrated = $false
+                        isError=$true
+                        isErrorMessage=("The following object"+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+                    }
                 }
             }
             else 
             {
-                out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.") -isError:$TRUE
+                out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $null
+                    Name = $dn
+                    PrimarySMTPAddressOrUPN = $null
+                    GUID = $NULL
+                    RecipientType = $functionTest.objectClass
+                    GroupType = $functionTest.GroupType
+                    RecipientOrUser = "Recipient"
+                    ExternalDirectoryObjectID = $null
+                    isAlreadyMigrated = $false
+                    isError=$true
+                    isErrorMessage=("The following object"+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
+                }
             }    
         }
         catch
