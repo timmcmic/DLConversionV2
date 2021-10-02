@@ -1288,8 +1288,8 @@ Function Start-DistributionListMigration
                         externalDirectoryObjectID = $NULL
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
-                        attribute = "Distribution List Membership (ADAttribute: Members"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        attribute = "Distribution List Membership (ADAttribute: Members)"
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1351,7 +1351,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1399,7 +1399,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1458,7 +1458,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1505,7 +1505,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1566,7 +1566,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: ManagedBy)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1614,7 +1614,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: msExchCoManagedByLink"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1737,7 +1737,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1798,7 +1798,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1848,7 +1848,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -1905,7 +1905,7 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
-                        errorMessage = $normlaizedTest.isErrorMessage
+                        errorMessage = $normalizedTest.isErrorMessage
                     }
 
                     out-logfile -string $isErrorObject
@@ -2017,8 +2017,6 @@ Function Start-DistributionListMigration
 
             try{
                 $isTestError=test-O365Recipient -member $member
-
-                
 
                 if ($isTestError -eq "Yes")
                 {
