@@ -1292,6 +1292,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else 
@@ -1352,6 +1354,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else 
@@ -1397,6 +1401,8 @@ Function Start-DistributionListMigration
                         attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
+
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -1455,6 +1461,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else {
@@ -1499,6 +1507,8 @@ Function Start-DistributionListMigration
                         attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
+
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -1559,6 +1569,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else 
@@ -1605,6 +1617,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else 
@@ -1641,6 +1655,8 @@ Function Start-DistributionListMigration
                     errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
                 }
 
+                out-logfile -string $isErrorObject
+
                 $preCreateErrors+=$isErrorObject
 
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
@@ -1668,6 +1684,8 @@ Function Start-DistributionListMigration
                         attribute = "Test ManagedBy For Group Override"
                         errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
                     }
+
+                    out-logfile -string $isErrorObject
     
                     $preCreateErrors+=$isErrorObject
         
@@ -1721,6 +1739,8 @@ Function Start-DistributionListMigration
                         attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
+
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -1781,6 +1801,8 @@ Function Start-DistributionListMigration
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
 
+                    out-logfile -string $isErrorObject
+
                     $preCreateErrors+=$isErrorObject
                 }
                 else 
@@ -1828,6 +1850,8 @@ Function Start-DistributionListMigration
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
+
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -1883,6 +1907,8 @@ Function Start-DistributionListMigration
                         attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
                         errorMessage = $normlaizedTest.isErrorMessage
                     }
+
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
