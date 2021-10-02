@@ -2029,7 +2029,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of the distribution list is not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2083,7 +2083,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2137,7 +2137,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2191,7 +2191,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of owners was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2245,7 +2245,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of moderatedBy was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2299,7 +2299,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2349,7 +2349,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
@@ -2403,7 +2403,7 @@ Function Start-DistributionListMigration
                         ErrorMessage = "A member with SendAs permissions was not found in Office 365."
                     }
 
-                    out-logfile $isErrorObject
+                    out-logfile -string $isErrorObject
 
                     $preCreateErrors+=$isErrorObject
                 }
