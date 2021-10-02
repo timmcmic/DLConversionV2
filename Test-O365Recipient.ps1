@@ -46,8 +46,6 @@
         Out-LogFile -string "BEGIN TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"
 
-        
-
         if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
         {
             out-LogFile -string "Testing based on External Directory Object ID"
@@ -83,7 +81,7 @@
             catch {
                 out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.primarySMTPAddressOrUPN)
                 out-logfile -string $_
-                $isTestError = 1
+                $isTestError="Yes"
             }
         }
         elseif (($member.ExternalDirectoryObjectID -ne $NULL) -and ($member.recipientoruser -eq "User"))
