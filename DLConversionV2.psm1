@@ -1975,7 +1975,6 @@ Function Start-DistributionListMigration
             #Reset the failure.
 
             $isTestError="No"
-            out-logfile -string $isTestError
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1993,7 +1992,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                out-logfile -string $isTestError
+                
 
                 if ($isTestError -eq "Yes")
                 {

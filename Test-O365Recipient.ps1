@@ -46,7 +46,7 @@
         Out-LogFile -string "BEGIN TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string $isTestError
+        
 
         if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.recipientOrUser -eq "Recipient"))
         {
@@ -130,7 +130,7 @@
 
         }
 
-        out-logfile -string $isTestError
+        
 
         Out-LogFile -string "END TEST-O365RECIPIENT"
         Out-LogFile -string "********************************************************************************"    
