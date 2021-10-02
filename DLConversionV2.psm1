@@ -2701,7 +2701,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
-    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL)
+    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
