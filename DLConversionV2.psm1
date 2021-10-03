@@ -1808,7 +1808,7 @@ Function Start-DistributionListMigration
                 }
                 else 
                 {
-                    $exchangeBypassModerationSMTP+=$normalizedDN
+                    $exchangeBypassModerationSMTP+=$normalizedTest
                 }
             }
             catch 
@@ -2324,7 +2324,7 @@ Function Start-DistributionListMigration
         foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
         {
             $isTestError = "No"
-            
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
