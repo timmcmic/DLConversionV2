@@ -110,7 +110,7 @@
         [array]$functionRecipients=@()
         [array]$functionEmailAddresses=@()
 
-        [string]$isError="NO"
+        [boolean]$isTestError=$false
         [array]$errors=@()
 
         #Start function processing.
@@ -144,7 +144,59 @@
         }
         catch {
             out-logfile -string "Error bulk updating email addresses on distribution group."
-            $isError="Yes"
+            $isTestError=$TRUE
+        }
+
+        if ($isTestError -eq $TRUE)
+        {
+            out-logfile -string "Attempting SMTP address updates per address."
+            
+            out-logfile -string "Establishing group primary SMTP Address."
+
+            try {
+                set-o365DistributionGroup -identity $originalDLConfiguration.mailnickname -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Error establishing new group primary SMTP Address."
+                
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                    Alias = $originalDLConfiguration.mailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Cloud Proxy Addresses"
+                    ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premsies mail address.")
+                }
+
+                out-logfile -string $isErrorObject
+
+                $errors+=$isErrorObject
+            }
+
+            foreach ($address in $functionEmailAddresses)
+            {
+                out-logfile -string ("Processing address: "+$address)
+
+                try{
+                    Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
+                }
+                catch{
+                    out-logfile -string ("Error processing address: "+$address)
+
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                        ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                        Alias = $originalDLConfiguration.mailNickName
+                        Name = $originalDLConfiguration.name
+                        Attribute = "Cloud Proxy Addresses"
+                        ErrorMessage = ("Address "+$address+" could not be added to new cloud distribution group.  Manual addition required.")
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $errors+=$isErrorObject
+                }
+            }
         }
         
 
