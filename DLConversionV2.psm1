@@ -466,7 +466,7 @@ Function Start-DistributionListMigration
 
     [array]$preCreateErrors=@()
     [array]$postCreateErrors=@()
-    [Boolean]$isTestError=$False
+    [string]$isTestError="No"
 
 
     [int]$forLoopTrigger=1000
@@ -1265,7 +1265,7 @@ Function Start-DistributionListMigration
         {
             #Resetting error variable.
 
-            $isTestError=$False
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2001,7 +2001,7 @@ Function Start-DistributionListMigration
         {
             #Reset the failure.
 
-            $isTestError=$False
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2019,7 +2019,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2055,7 +2055,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$False
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2073,7 +2073,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2109,7 +2109,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$False
+            $isTestError="No"
             
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2127,7 +2127,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2163,7 +2163,7 @@ Function Start-DistributionListMigration
         {
             #Reset Error Variable.
 
-            $isError = $FALSE
+            $isTestError="No"
             
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2181,7 +2181,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2217,7 +2217,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isErrorObject=$FALSE
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2235,7 +2235,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2271,7 +2271,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$False
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2289,7 +2289,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2323,6 +2323,8 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
         {
+            $isTestError = "No"
+            
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
@@ -2339,7 +2341,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
@@ -2375,7 +2377,7 @@ Function Start-DistributionListMigration
         {
             #Reset error variable.
 
-            $isTestError=$False
+            $isTestError="No"
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2393,7 +2395,7 @@ Function Start-DistributionListMigration
             try{
                 $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq $True)
+                if ($isTestError -eq "Yes")
                 {
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
