@@ -303,7 +303,7 @@
             #Alberto Larrinaga for the suggestion.
 
             try {
-                update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop -verbose
+                update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop
             }
             catch {
                 out-logfile -string "Unable to bulk update distribution group membership."
@@ -313,7 +313,7 @@
                 $isTestError=$TRUE
             }
             
-            if ($isTestError=$TRUE)
+            if ($isTestError -eq $TRUE)
             {
                 out-logfile -string "Attempting to update membership individually..."
 
