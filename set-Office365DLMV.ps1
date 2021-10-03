@@ -110,6 +110,9 @@
         [array]$functionRecipients=@()
         [array]$functionEmailAddresses=@()
 
+        [string]$isError="NO"
+        [array]$errors=@()
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -135,8 +138,15 @@
             out-logfile -string $address
             $functionEmailAddresses+=$address.tostring()
         }
+
+        try {
+            Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch {
+            out-logfile -string "Error bulk updating email addresses on distribution group."
+            $isError="Yes"
+        }
         
-        Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
 
         $global:unDoStatus=$global:unDoStatus+1
     
