@@ -269,6 +269,8 @@
             }
         }
 
+        $isTestError=$FALSE
+
         out-logFile -string "Evaluating exchangeDLMembershipSMTP"
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
