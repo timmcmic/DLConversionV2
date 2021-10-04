@@ -42,7 +42,7 @@
             [string]$groupSMTPAddress
         )
 
-        [string]isTestError="No"
+        [string]$isTestError="No"
 
         #Start function processing.
 
