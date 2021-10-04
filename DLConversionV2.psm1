@@ -4557,6 +4557,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestError="Yes"
             }
 
             if ($isTestError -eq "Yes")
@@ -4581,31 +4582,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
-
-    
-
-    
-
-    <#
-    out-logFile -string "Start replacing Office 365 permissions."
-
-    try 
-    {
-        set-OnPremDLPermissions -allOnPremSendAs $allObjectSendAsAccess -allOnPremFullMailboxAccess $allObjectsFullMailboxAccess -allOnPremFolderPermissions $allMailboxesFolderPermissions -groupSMTPAddress $groupSMTPAddress
-    }
-    catch 
-    {
-        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    
-
-    
-
-    #>
-
-    #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
 
     $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
 
