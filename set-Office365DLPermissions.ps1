@@ -76,9 +76,9 @@
             out-logfile -string "There are no send as permissions to process."    
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         if ($allFullMailboxAccess -ne $NULL)
         {
@@ -104,9 +104,9 @@
             out-logfile -string "There are no full mailbox access permissions to process."    
         }
         
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         if ($allFolderPermissions -ne $NULL)
         {
@@ -132,9 +132,9 @@
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"

@@ -3385,9 +3385,9 @@ Function Start-DistributionListMigration
     out-LogFile -string $originalDLConfigurationUpdated
     out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
@@ -3588,9 +3588,9 @@ Function Start-DistributionListMigration
         }   
     } while ($stopLoop -eq $false)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #EXIT #Debug Exit.
 
@@ -3662,9 +3662,9 @@ Function Start-DistributionListMigration
         
     } while ($stopLoop -eq $FALSE)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
@@ -3690,9 +3690,9 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logFile -string ("Capture the DL status post migration.")
 
@@ -3799,9 +3799,9 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop=$FALSE)
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -3855,9 +3855,9 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop -eq $false)
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -3944,9 +3944,9 @@ Function Start-DistributionListMigration
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
     }
 
     #Now it is time to create the routing contact.
@@ -4030,9 +4030,9 @@ Function Start-DistributionListMigration
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
@@ -4093,9 +4093,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premises group memberships to process."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises reject messages from.")
 
@@ -4137,9 +4137,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premises reject permission to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises accept messages from.")
 
@@ -4181,9 +4181,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises co managed by BL.")
 
@@ -4225,9 +4225,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
 
     out-logfile -string ("Starting on premises bypass moderation.")
@@ -4270,9 +4270,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
     
     out-logfile -string ("Starting on premises grant send on behalf to.")
 
@@ -4314,9 +4314,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Managed by is a unique animal.
     #Managed by is represented by the single valued AD attribute and the multi-evalued exchange attribute.
@@ -4380,9 +4380,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Forwarding address is a single value replacemet.
     #Created separate function for single values and have called that function here.
@@ -4420,9 +4420,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     <#
     out-logFile -string "Start replacing Office 365 permissions."
@@ -4437,9 +4437,9 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #>
 
@@ -4476,9 +4476,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with accept permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Reject Messages From"
 
@@ -4509,9 +4509,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with reject permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Bypass Moderation From Users"
 
@@ -4542,9 +4542,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Grant Send On Behalf To Users"
 
@@ -4575,9 +4575,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Managed By"
 
@@ -4608,9 +4608,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 managed by permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Start the process of updating any dynamic distribution groups.
 
@@ -4645,9 +4645,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with accept permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Reject Messages From"
 
@@ -4678,9 +4678,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with reject permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Bypass Moderation From Users"
 
@@ -4711,9 +4711,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with bypass moderation permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Grant Send On Behalf To Users"
 
@@ -4744,9 +4744,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Managed By"
 
@@ -4777,9 +4777,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Start the process of updating the unified group dependencies.
 
@@ -4812,9 +4812,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 accept from permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Unified Reject From"
 
@@ -4845,9 +4845,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 reject from permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Grant Send On Behalf To"
 
@@ -4878,9 +4878,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Process any group memberships to the service.
 
@@ -4916,9 +4916,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No cloud only groups had the migrated group as a member."
     }
     
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logFile -string "Start replacing Office 365 permissions."
 
@@ -4945,9 +4945,9 @@ Function Start-DistributionListMigration
             out-logfile -string $_ -isError:$TRUE
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
@@ -4973,9 +4973,9 @@ Function Start-DistributionListMigration
             out-logfile -string $_ -isError:$TRUE
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         [boolean]$stopLoop=$FALSE
         [int]$loopCounter=0
@@ -5027,9 +5027,9 @@ Function Start-DistributionListMigration
         }
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #If the administrator has selected to not retain the group - remove it.
 
@@ -5040,9 +5040,9 @@ Function Start-DistributionListMigration
         remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-   out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+   
 
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
