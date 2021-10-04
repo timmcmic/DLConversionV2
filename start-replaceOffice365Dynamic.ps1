@@ -87,7 +87,7 @@
             out-logfile -string ("The script block to execute is: "+$scriptBlock)
 
             try {
-                invoke-command -scriptBlock $scriptBlock -errorAction STOP
+                & $scriptBlock
             }
             catch {
                 out-logfile -string $_
