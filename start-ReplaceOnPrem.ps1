@@ -50,6 +50,8 @@
             [string]$globalCatalogServer
         )
 
+        [string]$isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -85,7 +87,8 @@
                 set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
             }
         }
         else 
@@ -122,6 +125,7 @@
         {
             out-logfile -string "ERROR adding member to group."
             out-logfile -string $canonicalObject.canonicalName
+            $isTestError="Yes"
         }
         else 
         {
@@ -131,4 +135,6 @@
 
         Out-LogFile -string "END start-replaceOnPrem"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

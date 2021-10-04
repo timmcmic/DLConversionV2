@@ -466,6 +466,7 @@ Function Start-DistributionListMigration
 
     [array]$preCreateErrors=@()
     [array]$postCreateErrors=@()
+    [array]$onPremReplaceErrors=@()
     [string]$isTestError="No"
 
 
@@ -3458,7 +3459,7 @@ Function Start-DistributionListMigration
             invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
         }
         catch {
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
         }
     }
 
@@ -4045,12 +4046,14 @@ Function Start-DistributionListMigration
         invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
     }
     catch {
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_
     }
 
     $forLoopCounter=0 #Restting loop counter for next series of operations.
 
     #At this time we are ready to begin resetting the on premises dependencies.
+
+    $isTestError = "No" #Reset error tracking.
 
     out-logfile -string ("Starting on premies DL members.")
 
@@ -4058,6 +4061,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsMemberOf)
         {  
+            $isTestError = "No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4076,10 +4081,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: Members)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -4103,6 +4126,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsReject)
         {  
+            $isTestError="No" #Reset error test.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4120,10 +4145,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: DLMemRejectPerms)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else
@@ -4147,6 +4190,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsAccept)
         {  
+            $isTestError="No" #Reset test 
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
@@ -4164,10 +4209,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: DLMemSubmitPerms)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -4191,6 +4254,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsCoManagedByBL)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
@@ -4208,10 +4273,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: MSExchCoManagedBy)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -4236,6 +4319,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsBypassModeration)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
@@ -4253,10 +4338,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: msExchBypassModerationFromDLMembers)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -4280,6 +4383,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsGrantSendOnBehalfTo)
         {  
+            $isTestError="No" #Reset error tracking
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
@@ -4297,10 +4402,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: PublicDelegates)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -4329,6 +4452,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsManagedBy)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
@@ -4353,10 +4478,28 @@ Function Start-DistributionListMigration
                     out-logfile -string "Object class is group - proceed."          
 
                     try{
-                        start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                        $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                     }
                     catch{
-                        out-logfile -string $_ -isError:$TRUE
+                        out-logfile -string $_
+                        $isTestError="Yes"
+                    }
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        out-logfile -string "Error adding routing contact to on premises resource."
+
+                        $isErrorObject = new-Object psObject -property @{
+                            distinguishedName = $member.distinguishedName
+                            canonicalDomainName = $member.canonicalDomainName
+                            canonicalName=$member.canonicalName
+                            attribute = "Distribution List Membership (ADAttribute: msExchCoManagedBy)"
+                            errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $onPremReplaceErrors+=$isErrorObject
                     }
                 }
                 else 
@@ -4392,7 +4535,9 @@ Function Start-DistributionListMigration
     if ($allUsersForwardingAddress.Count -gt 0)
     {
         foreach ($member in $allUsersForwardingAddress)
-        {  
+        { 
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
@@ -4408,10 +4553,27 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                $isTestError=start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to on premises resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    canonicalDomainName = $member.canonicalDomainName
+                    canonicalName=$member.canonicalName
+                    attribute = "Distribution List Membership (ADAttribute: forwardingAddress)"
+                    errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $onPremReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -5114,7 +5276,7 @@ Function Start-DistributionListMigration
            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
        }
        catch {
-           out-logfile -string $_ -isError:$TRUE
+           out-logfile -string $_
        }
    }
 
