@@ -64,8 +64,12 @@
         $functionCommand="set-o365UnifiedGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
+        $scriptBlock = [scriptBlock]::create($functionCommand)
+
+        out-logfile -string ("The script block to execute is: "+$scriptBlock)
+
         try {
-            invoke-command -ScriptBlock {$functionCommand} -errorAction Stop
+            invoke-command -ScriptBlock $scriptBlock -errorAction Stop
         }
         catch {
             out-logfile -string $_

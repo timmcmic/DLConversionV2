@@ -64,8 +64,12 @@
         $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
+        $scriptBlock = [scriptBlock]::create($functionCommand)
+
+        out-logfile -string ("The script block to execute: "+$scriptBlock)
+
         try {
-            invoke-command -scriptBlock $functionCommand -errorAction STOP
+            invoke-command -scriptBlock $scriptBlock -errorAction STOP
         }
         catch {
             out-logfile -string $_
