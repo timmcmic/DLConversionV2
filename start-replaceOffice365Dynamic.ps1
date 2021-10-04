@@ -65,12 +65,14 @@
         {
             out-logfile -string "Attribute is managedBy - this is single value on Dynamic DLs"
 
-            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP"
+
+            $scriptBlock = [scriptBlock]::create($functionCommand)
 
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
             try{
-                invoke-expression -Command $functionCommand -errorAction Stop
+                & $scriptBlock
             }
             catch{
                 out-logfile -string $_
