@@ -64,11 +64,13 @@
         $functionCommand="set-o365UnifiedGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
-        try{
-            invoke-expression -Command $functionCommand -errorAction STOP
-        }
-        catch{
-            out-logfile -string $_
+        $error.clear()
+
+        invoke-expression -Command $functionCommand
+
+        if ($error.count -gt 0)
+        {
+            out-logfile -string $error[0]
             $isTestError="Yes"
         }
 

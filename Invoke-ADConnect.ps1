@@ -62,11 +62,11 @@
     
         try 
         {
-            invoke-command -session $workingPowershellSession -ScriptBlock {Import-Module -Name 'AdSync'}
+            invoke-command -session $workingPowershellSession -ScriptBlock {Import-Module -Name 'AdSync'} *>&1
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            Out-LogFile -string
         }
 
         #Establisha a retry counter.

@@ -63,32 +63,39 @@
 
         if ($office365Attribute -eq "ManagedBy")
         {
+            $error.clear() #Using invoke expression need to clear the error first.
+
             out-logfile -string "Attribute is managedBy - this is single value on Dynamic DLs"
 
             $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'"
 
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
-            try{
-                invoke-expression -Command $functionCommand -errorAction Stop
-            }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
+            invoke-expression -Command $functionCommand
+
+            #Test to see if there is an error on the stack.
+
+            if ($error.count -gt 0)
+            {
+                out-logfile -string $error[0]
+                $isTestError=$TRUE
             }
         }
         else 
         {
+            $error.clear() #Clear error array to test for invoke expression.
+
             $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
-            try{
-                invoke-expression -Command $functionCommand -errorAction Stop
+            invoke-expression -Command $functionCommand -errorAction Stop 
+
+            if ($error.count -gt 0)
+            {
+                out-logfile -string $error[0]
+                $isTestError=$TRUE
             }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
-            }
+
         }
         
         Out-LogFile -string "END start-ReplaceOffice365Dynamic"
