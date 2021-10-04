@@ -42,6 +42,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]$isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -59,17 +61,23 @@
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365UnifiedGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
+        $functionCommand="set-o365UnifiedGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
-        try{
-            invoke-expression -Command $functionCommand -errorAction STOP
-        }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
-        }
+        $scriptBlock = [scriptBlock]::create($functionCommand)
 
+        out-logfile -string ("The script block to execute is: "+$scriptBlock)
+
+        try {
+            & $scriptBlock
+        }
+        catch {
+            out-logfile -string $_
+            $isTestError="Yes"
+        }
 
         Out-LogFile -string "END start-replaceOffice365Unified"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

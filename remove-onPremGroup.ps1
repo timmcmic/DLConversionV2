@@ -30,6 +30,8 @@
             $adCredential
         )
 
+        [string]$isTestError="No"
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN remove-onPremGroup"
         Out-LogFile -string "********************************************************************************"
@@ -42,9 +44,12 @@
         }
         catch
         {
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
         Out-LogFile -string "END remove-onPremGroup"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

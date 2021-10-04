@@ -77,9 +77,9 @@
             out-logfile -string "There are no send as permissions to process."    
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         if ($allOnPremFullMailboxAccess -ne $NULL)
         {
@@ -105,9 +105,9 @@
             out-logfile -string "There are no full mailbox access permissions to process."    
         }
         
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         if ($allOnPremFolderPermissions -ne $NULL)
         {
@@ -134,9 +134,9 @@
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
     
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         Out-LogFile -string "END set-OnPremDLPermissions"
         Out-LogFile -string "********************************************************************************"

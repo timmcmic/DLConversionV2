@@ -42,6 +42,8 @@
             $originalDLConfiguration
         )
 
+        [string]$isTestError="No"
+
         #Declare function variables.
 
         $functionEmailAddress=$NULL
@@ -67,7 +69,9 @@
             new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         #All of the email addresses that existed on the migrated group need to be stamped on the new group.
@@ -87,7 +91,9 @@
                     set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_ 
+                    $isTestError="Yes"
+                    return $isTestError
                 }
             }
             else 
@@ -107,7 +113,9 @@
             set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError        
         }
 
         #The script intentionally does not set any other restrictions on the DL.
@@ -124,7 +132,9 @@
                 set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $FALSE -domainController $globalCatalogServer
             }
             catch {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+                return $isTestError
             }
         }
         else
@@ -135,7 +145,9 @@
                 set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $originalDLConfiguration.msExchRequireAuthToSendTo -domainController $globalCatalogServer
             }
             catch {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+                return $isTestError
             }
         }
 
@@ -149,7 +161,9 @@
                 set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -HiddenFromAddressListsEnabled $originalDLConfiguration.msExchHideFromAddressLists -domainController $globalCatalogServer
             }
             catch {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+                return $isTestError
             }
         }
         else

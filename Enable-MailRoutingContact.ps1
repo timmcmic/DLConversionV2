@@ -36,6 +36,8 @@
             $routingContactConfig
         )
 
+        $isTestError="No"
+
         #Declare function variables.
 
         $functionGroup=$NULL
@@ -57,7 +59,9 @@
             update-recipient -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer -errorAction STOP
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         #Obtain the mail contact configuration into a temporary variable now that it's a full recipient.
@@ -68,7 +72,9 @@
             $functionGroup=get-mailContact -identity $routingContactConfig.mailNickName -domainController $globalCatalogServer -errorAction STOP
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         #The mail contact may need upgrade to the "latest version."
@@ -79,7 +85,9 @@
             set-mailcontact -identity $functionGroup.alias -domainController $globalCatalogServer -ForceUpgrade
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         #The mail contact may need upgrade to the "latest version."
@@ -90,7 +98,9 @@
             set-mailcontact -identity $functionGroup.alias -EmailAddressPolicyEnabled:$FALSE -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         try{
@@ -110,7 +120,9 @@
             set-mailContact -identity $routingContactConfig.mailNickName -emailaddresses @{remove=$routingContactConfig.targetAddress} -domainController $globalCatalogServer -forceUpgrade -confirm:$FALSE -errorAction STOP
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
+            return $isTestError
         }
 
         Out-LogFile -string "END enable-mailRoutingContact"

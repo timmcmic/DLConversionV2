@@ -462,6 +462,19 @@ Function Start-DistributionListMigration
     [int]$exchangeRangeUpper=$NULL
     [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
 
+    #Define new arrays to check for errors instead of failing.
+
+    [array]$preCreateErrors=@()
+    [array]$postCreateErrors=@()
+    [array]$onPremReplaceErrors=@()
+    [array]$office365ReplaceErrors=@()
+    [array]$office365ReplacePermissionsErrors=@()
+    [array]$generalErrors=@()
+    [string]$isTestError="No"
+
+
+    [int]$forLoopTrigger=1000
+
     #Define the sub folders for multi-threading.
 
     [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
@@ -1254,9 +1267,13 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.member)
         {
-            if ($forLoopCounter -eq 1000)
+            #Resetting error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1267,7 +1284,28 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeDLMembershipSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Distribution List Membership (ADAttribute: Members)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeDLMembershipSMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1295,9 +1333,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.unAuthOrig)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1308,7 +1346,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1323,9 +1381,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1336,7 +1394,26 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeRejectMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1363,9 +1440,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.AuthOrig)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1376,7 +1453,26 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1391,9 +1487,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1404,7 +1500,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeAcceptMessagesSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1432,9 +1548,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.managedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1445,7 +1561,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Owners (ADAttribute: ManagedBy)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1460,9 +1596,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1473,7 +1609,28 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeManagedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Owners (ADAttribute: msExchCoManagedByLink"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1494,9 +1651,22 @@ Function Start-DistributionListMigration
 
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
+                $isErrorObject = new-Object psObject -property @{
+                    primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                    externalDirectoryObjectID = $object.externalDirectoryObjectID
+                    alias=$normalizedTest.alias
+                    name=$normalizedTest.name
+                    attribute = "Test ManagedBy For Security Flag"
+                    errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $preCreateErrors+=$isErrorObject
+
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
                 out-logfile -string "The group must be converted to security or removed from managed by."
-                out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+                out-logfile -string $object.primarySMTPAddressOrUPN
             }
 
             #The group is not a distribution list.
@@ -1511,10 +1681,23 @@ Function Start-DistributionListMigration
 
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
+                        externalDirectoryObjectID = $object.externalDirectoryObjectID
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "Test ManagedBy For Group Override"
+                        errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                    }
+
+                    out-logfile -string $isErrorObject
+    
+                    $preCreateErrors+=$isErrorObject
+        
                     out-logfile -string "A security group has managed by rights on the distribution list."
                     out-logfile -string "The administrator has specified to override the group type."
                     out-logfile -string "The group override must be removed or the object removed from managedBY."
-                    out-logfile -string $object.primarySMTPAddressOrUPN -isError:$TRUE
+                    out-logfile -string $object.primarySMTPAddressOrUPN
                 }
             }
         }
@@ -1536,9 +1719,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1549,7 +1732,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeModeratedBySMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeModeratedBySMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1577,9 +1780,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1590,7 +1793,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1607,9 +1830,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1620,8 +1843,27 @@ Function Start-DistributionListMigration
 
             try 
             {
-                out-logfile -string $activeDirectoryCredential.userName
-                $exchangeBypassModerationSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
             }
             catch 
             {
@@ -1645,9 +1887,9 @@ Function Start-DistributionListMigration
     {
         foreach ($DN in $originalDLConfiguration.publicDelegates)
         {
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1658,7 +1900,28 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $exchangeGrantSendOnBehalfToSMTP+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
+                        errorMessage = $normalizedTest.isErrorMessage
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else 
+                {
+                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
+                }
+                
             }
             catch 
             {
@@ -1740,9 +2003,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeDLMembershipSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset the failure.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1754,7 +2021,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Member (ADAttribute: Members)"
+                        ErrorMessage = "A member of the distribution list is not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1774,9 +2057,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeRejectMessagesSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1788,7 +2075,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers (ADAttributes: UnAuthOrig / DLMemRejectPerms)"
+                        ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1808,9 +2111,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeAcceptMessagesSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isTestError="No"
+            
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1822,7 +2129,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers (ADAttributes: authOrig / DLMemSubmitPerms)"
+                        ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1842,9 +2165,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeManagedBySMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset Error Variable.
+
+            $isTestError="No"
+            
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1856,7 +2183,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Owners (ADAttributes: ManagedBy,msExchCoManagedByLink)"
+                        ErrorMessage = "A member of owners was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1876,9 +2219,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeModeratedBySMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1890,7 +2237,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "ModeratedBy (ADAttributes: msExchModeratedByLink)"
+                        ErrorMessage = "A member of moderatedBy was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1910,9 +2273,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeBypassModerationSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1924,7 +2291,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "BypassModerationFromSendersorMembers (ADAttributes: msExchBypassModerationLink,msExchBypassModerationFromDLMembersLink)"
+                        ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1944,9 +2327,11 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError = "No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1958,7 +2343,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "GrantSendOnBehalfTo (ADAttributes: publicDelegates)"
+                        ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -1978,9 +2379,13 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeSendAsSMTP)
         {
-            if ($forLoopCounter -eq 1000)
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations" -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -1992,7 +2397,23 @@ Function Start-DistributionListMigration
             out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
             try{
-                test-O365Recipient -member $member
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "SendAs"
+                        ErrorMessage = "A member with SendAs permissions was not found in Office 365."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -2010,6 +2431,31 @@ Function Start-DistributionListMigration
 
     #It is possible that this group was a member of - or other groups have a dependency on this group.
     #We will implement a function to track those dependen$ocies.
+
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if ($preCreateErrors.count -gt 0)
+    {
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        foreach ($preReq in $preCreateErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
+            out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
+            out-logfile -string ("Name: "+$preReq.name)
+            out-logfile -string ("Alias: "+$preReq.Alias)
+            out-logfile -string ("Attribute in Error: "+$preReq.attribute)
+            out-logfile -string ("Error Message Details: "+$preReq.errorMessage)
+            out-logfile -string "====="
+        }
+
+        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+    }
 
     #Exit #Debug Exit
 
@@ -2262,7 +2708,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
     out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
     out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
-    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL)
+    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
 
@@ -2852,13 +3298,18 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 groups that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
     out-logfile -string ("The number of office 365 groups that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
     out-logfile -string ("The number of office 365 groups with accept permissions = "+$allOffice365Accept.count)
-    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365Reject.count)
     out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
     out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
     out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
     out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
+    out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
+    out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
+    out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
+    out-logfile -string ("The number of office 365 dynamic groups that have this group as bypass moderation = "+$allOffice365DynamicBypassModeration.count)
+    out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #EXIT #Debug Exit
@@ -2943,9 +3394,9 @@ Function Start-DistributionListMigration
     out-LogFile -string $originalDLConfigurationUpdated
     out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
@@ -3016,7 +3467,7 @@ Function Start-DistributionListMigration
             invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
         }
         catch {
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
         }
     }
 
@@ -3146,9 +3597,9 @@ Function Start-DistributionListMigration
         }   
     } while ($stopLoop -eq $false)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #EXIT #Debug Exit.
 
@@ -3164,7 +3615,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            $postCreateErrors=set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
 
             $stopLoop = $TRUE
         }
@@ -3220,9 +3671,9 @@ Function Start-DistributionListMigration
         
     } while ($stopLoop -eq $FALSE)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
@@ -3231,7 +3682,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+            $postCreateErrors+= set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
             $stopLoop=$TRUE
         }
         catch {
@@ -3248,9 +3699,9 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logFile -string ("Capture the DL status post migration.")
 
@@ -3357,9 +3808,9 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop=$FALSE)
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -3413,9 +3864,9 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop -eq $false)
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -3502,9 +3953,9 @@ Function Start-DistributionListMigration
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
-        $global:unDoStatus=$global:unDoStatus+1
+        
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        
     }
 
     #Now it is time to create the routing contact.
@@ -3588,9 +4039,9 @@ Function Start-DistributionListMigration
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
@@ -3603,12 +4054,14 @@ Function Start-DistributionListMigration
         invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
     }
     catch {
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_
     }
 
     $forLoopCounter=0 #Restting loop counter for next series of operations.
 
     #At this time we are ready to begin resetting the on premises dependencies.
+
+    $isTestError = "No" #Reset error tracking.
 
     out-logfile -string ("Starting on premies DL members.")
 
@@ -3616,9 +4069,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsMemberOf)
         {  
-            if ($forLoopCounter -eq 1000)
+            $isTestError = "No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
 
                 $forLoopCounter = 0
             }
@@ -3634,10 +4089,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List Membership (ADAttribute: Members)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -3651,9 +4124,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premises group memberships to process."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises reject messages from.")
 
@@ -3661,9 +4134,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsReject)
         {  
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error test.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3678,10 +4153,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List RejectMessagesFromSendersOrMembers (ADAttribute: DLMemRejectPerms)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else
@@ -3695,9 +4188,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premises reject permission to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises accept messages from.")
 
@@ -3705,13 +4198,15 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsAccept)
         {  
+            $isTestError="No" #Reset test 
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3722,10 +4217,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List AcceptMessagesOnlyFromSendersorMembers (ADAttribute: DLMemSubmitPerms)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -3739,9 +4252,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string ("Starting on premises co managed by BL.")
 
@@ -3749,13 +4262,15 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsCoManagedByBL)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3766,10 +4281,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List ManagedBy (ADAttribute: MSExchCoManagedBy)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -3783,9 +4316,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
 
     out-logfile -string ("Starting on premises bypass moderation.")
@@ -3794,13 +4327,15 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsBypassModeration)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3811,10 +4346,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembers)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -3828,9 +4381,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
     
     out-logfile -string ("Starting on premises grant send on behalf to.")
 
@@ -3838,13 +4391,15 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsGrantSendOnBehalfTo)
         {  
+            $isTestError="No" #Reset error tracking
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3855,10 +4410,28 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to on premises resource."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        distinguishedName = $member.distinguishedName
+                        canonicalDomainName = $member.canonicalDomainName
+                        canonicalName=$member.canonicalName
+                        attribute = "Distribution List GrantSendOnBehalfTo (ADAttribute: PublicDelegates)"
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $onPremReplaceErrors+=$isErrorObject
                 }
             }
             else 
@@ -3872,9 +4445,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Managed by is a unique animal.
     #Managed by is represented by the single valued AD attribute and the multi-evalued exchange attribute.
@@ -3887,13 +4460,15 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsManagedBy)
         {  
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3911,10 +4486,28 @@ Function Start-DistributionListMigration
                     out-logfile -string "Object class is group - proceed."          
 
                     try{
-                        start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                        $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                     }
                     catch{
-                        out-logfile -string $_ -isError:$TRUE
+                        out-logfile -string $_
+                        $isTestError="Yes"
+                    }
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        out-logfile -string "Error adding routing contact to on premises resource."
+
+                        $isErrorObject = new-Object psObject -property @{
+                            distinguishedName = $member.distinguishedName
+                            canonicalDomainName = $member.canonicalDomainName
+                            canonicalName=$member.canonicalName
+                            attribute = "Distribution List ManagedBy (ADAttribute: managedBy)"
+                            errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $onPremReplaceErrors+=$isErrorObject
                     }
                 }
                 else 
@@ -3938,9 +4531,9 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Forwarding address is a single value replacemet.
     #Created separate function for single values and have called that function here.
@@ -3950,14 +4543,16 @@ Function Start-DistributionListMigration
     if ($allUsersForwardingAddress.Count -gt 0)
     {
         foreach ($member in $allUsersForwardingAddress)
-        {  
+        { 
+            $isTestError="No" #Reset error tracking.
+
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
             out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
 
-            if ($forLoopCounter -eq 1000)
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -3966,10 +4561,28 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                $isTestError=start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to on premises resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    canonicalDomainName = $member.canonicalDomainName
+                    canonicalName=$member.canonicalName
+                    attribute = "Mailbox Attribute Forwarding Address (ADAttribute: forwardingAddress)"
+                    errorMessage = "Unable to add mail routing contact to on premises mailbox object.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $onPremReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -3977,31 +4590,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
-
-    $global:unDoStatus=$global:unDoStatus+1
-
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-    <#
-    out-logFile -string "Start replacing Office 365 permissions."
-
-    try 
-    {
-        set-OnPremDLPermissions -allOnPremSendAs $allObjectSendAsAccess -allOnPremFullMailboxAccess $allObjectsFullMailboxAccess -allOnPremFolderPermissions $allMailboxesFolderPermissions -groupSMTPAddress $groupSMTPAddress
-    }
-    catch 
-    {
-        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    $global:unDoStatus=$global:unDoStatus+1
-
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
-
-    #>
-
-    #It's now time to beging updating the individual office 365 distribution groups that had dependencies on the migrated groups.
 
     $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
 
@@ -4011,9 +4599,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Accept)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4022,10 +4612,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4034,9 +4643,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with accept permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Reject Messages From"
 
@@ -4044,9 +4653,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Reject)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4055,10 +4666,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4067,9 +4697,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with reject permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Bypass Moderation From Users"
 
@@ -4077,9 +4707,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365BypassModeration)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4088,10 +4720,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List BypassModerationFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4100,9 +4751,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Grant Send On Behalf To Users"
 
@@ -4110,9 +4761,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365GrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4121,10 +4774,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4133,9 +4805,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Managed By"
 
@@ -4143,9 +4815,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365ManagedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4154,10 +4828,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List ManagedBy"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4166,9 +4859,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 managed by permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Start the process of updating any dynamic distribution groups.
 
@@ -4180,9 +4873,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicAccept)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4191,10 +4886,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4203,9 +4917,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with accept permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Reject Messages From"
 
@@ -4213,9 +4927,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicReject)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4224,10 +4940,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4236,9 +4971,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with reject permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Bypass Moderation From Users"
 
@@ -4246,9 +4981,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicBypassModeration)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4257,10 +4994,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List BypassModerationFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4269,9 +5025,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with bypass moderation permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Grant Send On Behalf To Users"
 
@@ -4279,9 +5035,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicGrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4290,10 +5048,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4302,9 +5079,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic groups with grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Dynamic Managed By"
 
@@ -4312,9 +5089,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicManagedBy)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4323,10 +5102,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List ManagedBy"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4335,9 +5133,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Start the process of updating the unified group dependencies.
 
@@ -4347,9 +5145,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalAccept)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4358,10 +5158,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 univeral modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4370,9 +5189,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 accept from permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Unified Reject From"
 
@@ -4380,9 +5199,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalReject)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4391,10 +5212,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4403,9 +5243,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 reject from permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logfile -string "Processing Office 365 Grant Send On Behalf To"
 
@@ -4413,9 +5253,11 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4424,10 +5266,28 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4436,9 +5296,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     #Process any group memberships to the service.
 
@@ -4450,9 +5310,10 @@ Function Start-DistributionListMigration
 
         foreach ($member in $allOffice365MemberOf )
         {
-            if ($forLoopCounter -eq 1000)
+            $isTestError="No" #Reset error tracking.
+            if ($forLoopCounter -eq $forLoopTrigger)
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
                 $forLoopCounter = 0
             }
             else 
@@ -4462,10 +5323,29 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             try {
-                start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List Membership"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4474,38 +5354,60 @@ Function Start-DistributionListMigration
         out-logfile -string "No cloud only groups had the migrated group as a member."
     }
     
-    $global:unDoStatus=$global:unDoStatus+1
+    
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+    
 
     out-logFile -string "Start replacing Office 365 permissions."
 
     try 
     {
-        set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
+        $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
     }
     catch 
     {
         out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_
+
+        $isErrorObject = new-Object psObject -property @{
+            permissionIdentity = "ALL"
+            attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
+            errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+        }
+
+        out-logfile -string $isErrorObject
+
+        $office365ReplacePermissionsErrors+=$isErrorObject
     }
 
     if ($enableHybridMailflow -eq $TRUE)
     {
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
 
+        $isTestError="No"
+
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
         try{
-            Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
+            $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
+            }
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
+
+        
 
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
@@ -4525,15 +5427,25 @@ Function Start-DistributionListMigration
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
         try{
-            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            $isTestError="No"
+
+            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
-        $global:unDoStatus=$global:unDoStatus+1
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+            }
 
-        out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
 
         [boolean]$stopLoop=$FALSE
         [int]$loopCounter=0
@@ -4578,29 +5490,54 @@ Function Start-DistributionListMigration
         out-logfile -string "Administrator has choosen to trigger modern group upgrade."
 
         try{
-            start-upgradeToOffice365Group -groupSMTPAddress $groupSMTPAddress
+            $isTestError="No"
+
+            $isTestError=start-upgradeToOffice365Group -groupSMTPAddress $groupSMTPAddress
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    if ($isTestError -eq "Yes")
+    {
+        $isErrorObject = new-Object psObject -property @{
+            errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group.  Administrator may need to manually perform the operation."
+        }
 
-    out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        out-logfile -string $isErrorObject
+
+        $generalErrors+=$isErrorObject
+    }
+
+    
 
     #If the administrator has selected to not retain the group - remove it.
 
     if ($retainOriginalGroup -eq $FALSE)
     {
+        $isTestError="No"
+
         out-logfile -string "Deleting the original group."
 
-        remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
+        $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
 
-    $global:unDoStatus=$global:unDoStatus+1
+    if ($isTestError -eq "Yes")
+    {
+        $isErrorObject = new-Object psObject -property @{
+            errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
+        }
 
-   out-Logfile -string ("Global UNDO Status = "+$global:unDoStatus.tostring())
+        out-logfile -string $isErrorObject
+
+        $generalErrors+=$isErrorObject
+    }
+
+    
+
+   
 
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
@@ -4672,7 +5609,7 @@ Function Start-DistributionListMigration
            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
        }
        catch {
-           out-logfile -string $_ -isError:$TRUE
+           out-logfile -string $_
        }
    }
 
@@ -4727,6 +5664,78 @@ Function Start-DistributionListMigration
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
+
+    if (($postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    {
+        out-logfile -string ""
+        out-logfile -string "+++++"
+        out-logfile -string "++++++++++"
+        out-logfile -string "MIGRATION ERRORS OCCURED - REFER TO LIST BELOW FOR ERRORS"
+        out-logfile -string "++++++++++"
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        foreach ($postCreateErrors in $postCreateErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
+            out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
+            out-logfile -string ("Name: "+$postCreateError.name)
+            out-logfile -string ("Alias: "+$postCreateError.Alias)
+            out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
+            out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
+            out-logfile -string "====="
+        }
+
+        foreach ($onPremReplaceError in $onPremReplaceErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Distinguished Name: "+$onPremReplaceError.distinguishedName)
+            out-logfile -string ("Canonical Domain Name: "+$onPremReplaceError.canonicalDomainName)
+            out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
+            out-logfile -string ("Attribute in Error: "+$onPremReplaceError.attribute)
+            out-logfile -string ("Error Message: "+$onPremReplaceError.errorMessage)
+            out-logfile -string "====="
+        }
+
+        foreach ($office365ReplaceError in $office365ReplaceErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Distinguished Name: "+$office365ReplaceError.distinguishedName)
+            out-logfile -string ("Primary SMTP Address: "+$office365ReplaceError.primarySMTPAddress)
+            out-logfile -string ("Alias: "+$office365ReplaceError.alias)
+            out-logfile -string ("Display Name: "+$office365ReplaceError.displayName)
+            out-logfile -string ("Attribute in Error: "+$office365ReplaceError.attribute)
+            out-logfile -string ("Error Message: "+$office365ReplaceError.errorMessage)
+            out-logfile -string "====="
+        }
+
+        foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
+            out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
+            out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+            out-logfile -string "====="
+        }
+
+        foreach ($generalError in $generalErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Error Message: "+$generalError.errorMessage)
+            out-logfile -string "====="
+        }
+
+        out-logfile -string ""
+        out-logfile -string "+++++"
+        out-logfile -string "++++++++++"
+        out-logfile -string "Errors were encountered in the distribution list creation process requireing administrator review."
+        out-logfile -string "Although the migration may have been successful - manual actions may need to be taken to full complete the migration."
+        out-logfile -string "++++++++++"
+        out-logfile -string "+++++"
+        out-logfile -string "" -isError:$TRUE
+
+    }
 
     #Archive the files into a date time success folder.
 

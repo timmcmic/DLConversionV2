@@ -42,6 +42,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]$isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -59,18 +61,23 @@
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
+        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
-        try{
-            invoke-expression -Command $functionCommand -errorAction Stop
-        }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
-        }
+        $scriptBlock = [scriptBlock]::create($functionCommand)
 
+        out-logfile -string ("The script block to execute: "+$scriptBlock)
 
+        try {
+            & $scriptBlock
+        }
+        catch {
+            out-logfile -string $_
+            $isTestError="Yes"
+        }
 
         Out-LogFile -string "END start-replaceOffice365"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

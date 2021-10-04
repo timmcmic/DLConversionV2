@@ -42,6 +42,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]$isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -63,30 +65,40 @@
         {
             out-logfile -string "Attribute is managedBy - this is single value on Dynamic DLs"
 
-            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress'"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP"
+
+            $scriptBlock = [scriptBlock]::create($functionCommand)
 
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
             try{
-                invoke-expression -Command $functionCommand -errorAction Stop
+                & $scriptBlock
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
             }
         }
         else 
         {
-            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
-            try{
-                invoke-expression -Command $functionCommand -errorAction Stop
+            $scriptBlock = [scriptBlock]::create($functionCommand)
+
+            out-logfile -string ("The script block to execute is: "+$scriptBlock)
+
+            try {
+                & $scriptBlock
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            catch {
+                out-logfile -string $_
+                $isTestError="Yes"
             }
         }
         
         Out-LogFile -string "END start-ReplaceOffice365Dynamic"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

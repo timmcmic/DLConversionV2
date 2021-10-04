@@ -36,6 +36,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]$isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -57,10 +59,13 @@
             add-o365DistributionGroupMember -identity $office365Group.primarySMTPAddress -member $groupSMTPAddress -errorAction STOP
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
 
         Out-LogFile -string "END start-replaceOffice365Members"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

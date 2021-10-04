@@ -48,6 +48,9 @@
         $functionMemberDepartRestriction=$NULL
         $functionRequireAuthToSendTo=$NULL
 
+        [boolean]$isTestError=$FALSE
+        $errors=@()
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -263,15 +266,126 @@
 
         try 
         {
-            out-logfile -string "Setting the single value settings for the distribution group."
+            out-logfile -string "Setting core single values for the distribution group."
 
-            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -Alias $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -ModerationEnabled $functionModerationEnabled -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -SendModerationNotifications $functionSendModerationNotifications -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -Alias $originalDLConfiguration.mailNickName -DisplayName $originalDLConfiguration.DisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $originalDLConfiguration.DisplayNamePrintable -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -errorAction STOP
         }
         catch 
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $originalDLConfiguration.mailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  Alias / DisplayName / HiddenFromAddressList / RequireSenderAuthenticaiton / SimpleDisplayName / WindowsEmailAddress / MailTipTranslations / Name"
+                ErrorMessage = $_
+            }
+
+            $errors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting single valued moderation propeties for the group.."
+
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -BypassNestedModerationEnabled $functionModerationFlags -ModerationEnabled $functionModerationEnabled -SendModerationNotifications $functionSendModerationNotifications -BypassSecurityGroupManagerCheck -errorAction STOP
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting moderation properties of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $originalDLConfiguration.mailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  BypassNedstedModerationEnabled / ModerationEnabled / SendModerationNotifications"
+                ErrorMessage = $_
+            }
+
+            $errors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting member join depart restritions on the group.."
+
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -BypassSecurityGroupManagerCheck -errorAction STOP
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting member join depart restritions on the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $originalDLConfiguration.mailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  MemberJoinRestriction / MemberDepartRestriction"
+                ErrorMessage = $_
+            }
+
+            $errors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting the single valued report to settings.."
+
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting single valued report to settings on the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $originalDLConfiguration.mailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ReportToManagerEnabled / ReportToOriginatorEnabled / SendOOFMessageToOriginatorEnabled"
+                ErrorMessage = $_
+            }
+
+            $errors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting the custom and extension attributes of the group."
+
+            Set-O365DistributionGroup -Identity $originalDLConfiguration.mailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $originalDLConfiguration.mailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttributeX / ExtensionAttributeX"
+                ErrorMessage = $_
+            }
+
+            $errors+=$isErrorObject
         }
 
         Out-LogFile -string "END SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
+
+        return $errors
     }
