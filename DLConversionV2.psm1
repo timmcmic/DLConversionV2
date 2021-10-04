@@ -5658,6 +5658,29 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
+    if (($postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    {
+        out-logfile -string ""
+        out-logfile -string ""
+        out-logfile -string "+++++"
+        out-logfile -string "MIGRATION ERRORS OCCURED - REFER TO LIST BELOW FOR ERRORS"
+        out-logfile -string "+++++"
+        out-logfile -string ""
+        out-logfile -string ""
+
+        foreach ($postCreateErrors in $postCreateErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
+            out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
+            out-logfile -string ("Name: "+$postCreateError.name)
+            out-logfile -string ("Alias: "+$postCreateError.Alias)
+            out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
+            out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
+            out-logfile -string "====="
+        }
+    }
+
     #Archive the files into a date time success folder.
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
