@@ -28,6 +28,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]$isTestError="No"
+
         #Declare function variables.
 
         #Start function processing.
@@ -50,7 +52,8 @@
             $attempt=upgrade-o365DistributionGroup -DlIdentities $groupSMTPAddress
         }
         catch{
-            out-logFile -string $_ -isError:$TRUE
+            out-logFile -string $_
+            $isTestError="Yes"
         }
 
         out-logfile -string $attempt
@@ -59,8 +62,11 @@
         if ($attempt.reason -ne $NULL)
         {
             out-logfile -string ("Error Reason = "+$attempt.errorReason)
+            $isTestError="Yes"
         }
         
         Out-LogFile -string "END start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

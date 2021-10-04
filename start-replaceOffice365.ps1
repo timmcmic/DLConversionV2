@@ -42,6 +42,8 @@
             [string]$groupSMTPAddress
         )
 
+        [string]isTestError="No"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -66,11 +68,14 @@
             invoke-expression -Command $functionCommand -errorAction Stop
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
 
 
         Out-LogFile -string "END start-replaceOffice365"
         Out-LogFile -string "********************************************************************************"
+
+        return $isTestError
     }

@@ -467,6 +467,9 @@ Function Start-DistributionListMigration
     [array]$preCreateErrors=@()
     [array]$postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
+    [array]$office365ReplaceErrors=@()
+    [array]$office365ReplacePermissionsErrors=@()
+    [array]$generalErrors=@()
     [string]$isTestError="No"
 
 
@@ -4160,7 +4163,7 @@ Function Start-DistributionListMigration
                         distinguishedName = $member.distinguishedName
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
-                        attribute = "Distribution List Membership (ADAttribute: DLMemRejectPerms)"
+                        attribute = "Distribution List RejectMessagesFromSendersOrMembers (ADAttribute: DLMemRejectPerms)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                     }
 
@@ -4224,7 +4227,7 @@ Function Start-DistributionListMigration
                         distinguishedName = $member.distinguishedName
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
-                        attribute = "Distribution List Membership (ADAttribute: DLMemSubmitPerms)"
+                        attribute = "Distribution List AcceptMessagesOnlyFromSendersorMembers (ADAttribute: DLMemSubmitPerms)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                     }
 
@@ -4288,7 +4291,7 @@ Function Start-DistributionListMigration
                         distinguishedName = $member.distinguishedName
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
-                        attribute = "Distribution List Membership (ADAttribute: MSExchCoManagedBy)"
+                        attribute = "Distribution List ManagedBy (ADAttribute: MSExchCoManagedBy)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                     }
 
@@ -4353,7 +4356,7 @@ Function Start-DistributionListMigration
                         distinguishedName = $member.distinguishedName
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
-                        attribute = "Distribution List Membership (ADAttribute: msExchBypassModerationFromDLMembers)"
+                        attribute = "Distribution List BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembers)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                     }
 
@@ -4417,7 +4420,7 @@ Function Start-DistributionListMigration
                         distinguishedName = $member.distinguishedName
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
-                        attribute = "Distribution List Membership (ADAttribute: PublicDelegates)"
+                        attribute = "Distribution List GrantSendOnBehalfTo (ADAttribute: PublicDelegates)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                     }
 
@@ -4493,7 +4496,7 @@ Function Start-DistributionListMigration
                             distinguishedName = $member.distinguishedName
                             canonicalDomainName = $member.canonicalDomainName
                             canonicalName=$member.canonicalName
-                            attribute = "Distribution List Membership (ADAttribute: msExchCoManagedBy)"
+                            attribute = "Distribution List ManagedBy (ADAttribute: managedBy)"
                             errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
                         }
 
@@ -4568,8 +4571,8 @@ Function Start-DistributionListMigration
                     distinguishedName = $member.distinguishedName
                     canonicalDomainName = $member.canonicalDomainName
                     canonicalName=$member.canonicalName
-                    attribute = "Distribution List Membership (ADAttribute: forwardingAddress)"
-                    errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                    attribute = "Mailbox Attribute Forwarding Address (ADAttribute: forwardingAddress)"
+                    errorMessage = "Unable to add mail routing contact to on premises mailbox object.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -4591,6 +4594,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Accept)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4602,10 +4607,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4624,6 +4648,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365Reject)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4635,10 +4661,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4657,6 +4702,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365BypassModeration)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4668,10 +4715,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List BypassModerationFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4690,6 +4756,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365GrantSendOnBehalfTo)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4701,10 +4769,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4723,6 +4810,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365ManagedBy)
         {
+            isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4734,10 +4823,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List ManagedBy"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4771,10 +4879,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4793,6 +4920,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicReject)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4804,10 +4933,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4826,6 +4974,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicBypassModeration)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4837,10 +4987,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List BypassModerationFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4859,6 +5028,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicGrantSendOnBehalfTo)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4870,10 +5041,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4892,6 +5082,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicManagedBy)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4903,10 +5095,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List ManagedBy"
+                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4927,6 +5138,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalAccept)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4938,10 +5151,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 univeral modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4960,6 +5192,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalReject)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -4971,10 +5205,29 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
+                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -4993,6 +5246,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
         {
+            $isTestError="No" #Reset error tracking.
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -5004,10 +5259,28 @@ Function Start-DistributionListMigration
             }
 
             try{
-                start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List GrantSendOnBehalfTo"
+                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -5030,6 +5303,7 @@ Function Start-DistributionListMigration
 
         foreach ($member in $allOffice365MemberOf )
         {
+            $isTestError="No" #Reset error tracking.
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
@@ -5042,10 +5316,29 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             try {
-                start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch {
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List Membership"
+                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
             }
         }
     }
@@ -5062,28 +5355,50 @@ Function Start-DistributionListMigration
 
     try 
     {
-        set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
+        $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
     }
     catch 
     {
         out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_ -isError:$TRUE
+        out-logfile -string $_
+
+        $isErrorObject = new-Object psObject -property @{
+            permissionIdentity = "ALL"
+            attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
+            errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+        }
+
+        out-logfile -string $isErrorObject
+
+        $office365ReplacePermissionsErrors+=$isErrorObject
     }
 
     if ($enableHybridMailflow -eq $TRUE)
     {
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
 
+        $isTestError="No"
+
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
         try{
-            Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
+            $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
-        
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
+            }
+
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
 
         
 
@@ -5105,15 +5420,25 @@ Function Start-DistributionListMigration
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
         try{
-            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            $isTestError="No"
+
+            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
 
-        
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+            }
 
-        
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
 
         [boolean]$stopLoop=$FALSE
         [int]$loopCounter=0
@@ -5158,14 +5483,26 @@ Function Start-DistributionListMigration
         out-logfile -string "Administrator has choosen to trigger modern group upgrade."
 
         try{
-            start-upgradeToOffice365Group -groupSMTPAddress $groupSMTPAddress
+            $isTestError="No"
+
+            $isTestError=start-upgradeToOffice365Group -groupSMTPAddress $groupSMTPAddress
         }
         catch{
-            out-logfile -string $_ -isError:$TRUE
+            out-logfile -string $_
+            $isTestError="Yes"
         }
     }
 
-    
+    if ($isTestError -eq "Yes")
+    {
+        $isErrorObject = new-Object psObject -property @{
+            errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group.  Administrator may need to manually perform the operation."
+        }
+
+        out-logfile -string $isErrorObject
+
+        $generalErrors+=$isErrorObject
+    }
 
     
 
@@ -5173,9 +5510,22 @@ Function Start-DistributionListMigration
 
     if ($retainOriginalGroup -eq $FALSE)
     {
+        $isTestError="No"
+
         out-logfile -string "Deleting the original group."
 
-        remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
+        $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
+    }
+
+    if ($isTestError -eq "Yes")
+    {
+        $isErrorObject = new-Object psObject -property @{
+            errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
+        }
+
+        out-logfile -string $isErrorObject
+
+        $generalErrors+=$isErrorObject
     }
 
     

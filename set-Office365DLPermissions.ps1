@@ -42,6 +42,9 @@
             [array]$allFolderPermissions=$NULL
         )
 
+        $isTestError="No"
+        $permissionsErrors=@()
+
         #Declare function variables.
 
         #Start processing the recipient permissions.
@@ -58,6 +61,8 @@
 
             foreach ($permission in $allSendAs)
             {
+                $isTestError="No" #Reset error tracking.
+
                 out-logfile -string ("Processing permission identity = "+$permission.identity)
                 out-logfile -string ("Processing permission trustee = "+$permission.trustee)
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
@@ -67,7 +72,24 @@
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "SendAs Permission"
+                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manaul add required."
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $permissionsErrors+=$isErrorObject
                 }
             }
         }
@@ -87,6 +109,8 @@
             try {
                 foreach ($permission in $allFullMailboxAccess)
                 {
+                    $isTestError="No" #Reset error tracking.
+
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
@@ -96,8 +120,24 @@
             }
             catch {
                 out-logFile -string "Unable to add the full mailbox access permission in Office 365."
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_
+                $isTestError="Yes"
             }
+
+            if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "FullMailboxAccess Permission"
+                        errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $permissionsErrors+=$isErrorObject
+                }
         }
         else 
         {
@@ -114,6 +154,8 @@
 
             foreach ($permission in $allFolderPermissions)
             {
+                $isTestError="No"
+
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
@@ -123,7 +165,24 @@
                 }
                 catch {
                     out-logFile -string "Unable to add the full mailbox access permission in Office 365."
-                    out-logfile -string $_ -isError:$TRUE
+                    out-logfile -string $_
+
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "Mailbox Folder Permission"
+                        errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $permissionsErrors+=$isErrorObject
                 }
             }
         }
@@ -138,4 +197,6 @@
 
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
+
+        return $permissionsErrors
     }
