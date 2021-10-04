@@ -64,13 +64,11 @@
         $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
-        $error.clear()
-
-        invoke-expression -Command $functionCommand -errorAction Stop
-
-        if ($error.Count -gt 0)
-        {
-            out-logfile -string $error[0]
+        try {
+            invoke-command -scriptBlock $functionCommand -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
             $isTestError="Yes"
         }
 

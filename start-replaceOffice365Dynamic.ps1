@@ -82,16 +82,13 @@
             $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
-            $error.clear()
-
-            invoke-expression -Command $functionCommand -errorAction Stop
-
-            if ($error.count -gt 0)
-            {
-                out-logfile -string $error[0]
+            try {
+                invoke-command -scriptBlock ($functionCommand) -errorAction STOP
+            }
+            catch {
+                out-logfile -string $_
                 $isTestError="Yes"
             }
-
         }
         
         Out-LogFile -string "END start-ReplaceOffice365Dynamic"

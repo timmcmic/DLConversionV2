@@ -4815,7 +4815,7 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365ManagedBy)
         {
-            isTestError="No" #Reset error tracking.
+            $isTestError="No" #Reset error tracking.
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4873,6 +4873,8 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allOffice365DynamicAccept)
         {
+            $isTestError="No"
+            
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
