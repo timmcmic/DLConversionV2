@@ -3305,6 +3305,11 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
+    out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
+    out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
+    out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
+    out-logfile -string ("The number of office 365 dynamic groups that have this group as bypass moderation = "+$allOffice365DynamicBypassModeration.count)
+    out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #EXIT #Debug Exit
