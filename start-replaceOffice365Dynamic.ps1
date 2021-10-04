@@ -79,7 +79,7 @@
         }
         else 
         {
-            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
 
             $scriptBlock = [scriptBlock]::create($functionCommand)
