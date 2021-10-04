@@ -5726,7 +5726,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Although the migration may have been successful - manual actions may need to be taken to full complete the migration."
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
-        out-logfile -string ""
+        out-logfile -string "" -isError:$TRUE
 
     }
 
