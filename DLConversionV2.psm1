@@ -3298,7 +3298,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 groups that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
     out-logfile -string ("The number of office 365 groups that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
     out-logfile -string ("The number of office 365 groups with accept permissions = "+$allOffice365Accept.count)
-    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365Reject.count)
     out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
     out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
     out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
@@ -4874,7 +4874,7 @@ Function Start-DistributionListMigration
         foreach ($member in $allOffice365DynamicAccept)
         {
             $isTestError="No"
-            
+
             if ($forLoopCounter -eq $forLoopTrigger)
             {
                 start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
