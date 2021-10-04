@@ -5664,8 +5664,8 @@ Function Start-DistributionListMigration
         out-logfile -string "+++++"
         out-logfile -string "++++++++++"
         out-logfile -string "MIGRATION ERRORS OCCURED - REFER TO LIST BELOW FOR ERRORS"
-        out-logfile -string "+++++"
         out-logfile -string "++++++++++"
+        out-logfile -string "+++++"
         out-logfile -string ""
 
         foreach ($postCreateErrors in $postCreateErrors)
@@ -5718,6 +5718,16 @@ Function Start-DistributionListMigration
             out-logfile -string ("Error Message: "+$generalError.errorMessage)
             out-logfile -string "====="
         }
+
+        out-logfile -string ""
+        out-logfile -string "+++++"
+        out-logfile -string "++++++++++"
+        out-logfile -string "Errors were encountered in the distribution list creation process requireing administrator review."
+        out-logfile -string "Although the migration may have been successful - manual actions may need to be taken to full complete the migration."
+        out-logfile -string "++++++++++"
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
     }
 
     #Archive the files into a date time success folder.
