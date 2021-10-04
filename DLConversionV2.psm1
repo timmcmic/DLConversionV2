@@ -4621,7 +4621,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 resource."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -4629,7 +4629,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+
                 }
 
                 out-logfile -string $isErrorObject
@@ -4675,7 +4676,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 resource."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -4683,7 +4684,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+
                 }
 
                 out-logfile -string $isErrorObject
@@ -4729,7 +4731,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 resource."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -4737,7 +4739,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -4783,7 +4785,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 resource."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -4791,7 +4793,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -4837,7 +4839,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 resource."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -4845,7 +4847,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -4903,7 +4905,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -4957,7 +4959,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5011,7 +5013,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5065,7 +5067,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5119,7 +5121,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
-                    errorMessage = "Unable to add mail routing contact to Office 365 dynamic distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5175,7 +5177,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 univeral modern distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5229,7 +5231,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5282,7 +5284,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add mail routing contact to Office 365 universal modern distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
@@ -5332,7 +5334,7 @@ Function Start-DistributionListMigration
 
             if ($isTestError -eq "Yes")
             {
-                out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+                out-logfile -string "Error adding migrated distribution list to Office 365 Distribution List."
 
                 $isErrorObject = new-Object psObject -property @{
                     distinguishedName = $member.distinguishedName
@@ -5340,7 +5342,7 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List Membership"
-                    errorMessage = "Unable to add mail routing contact to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
                 }
 
                 out-logfile -string $isErrorObject
