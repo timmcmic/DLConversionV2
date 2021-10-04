@@ -71,7 +71,9 @@
 
                 $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                $functionTest = invoke-expression -command $functionCommand
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest = invoke-command -scriptBlock $scriptBlock
 
                 out-logfile -string ("The function command executed = "+$functionCommand)
             }
@@ -82,8 +84,10 @@
                  Out-LogFile -string "Entering query office 365 mailboxes."
 
                  $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
- 
-                 $functionTest = invoke-expression -command $functionCommand 
+
+                 $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                 $functionTest = invoke-command -scriptBlock $scriptBlock
                  
                  out-logfile -string ("The function command executed = "+$functionCommand)
             }
@@ -99,7 +103,9 @@
                     
                     $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
-                    $functionTest = invoke-expression -command $functionCommand
+                    $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                    $functionTest = invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
@@ -109,7 +115,9 @@
                     
                     $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
 
-                    $functionTest = invoke-expression -command $functionCommand
+                    $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                    $functionTest = invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
@@ -119,7 +127,9 @@
                     
                     $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
 
-                    $functionTest = invoke-expression -command $functionCommand
+                    $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                    $functionTest = invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
