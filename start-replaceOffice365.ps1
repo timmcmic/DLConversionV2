@@ -54,6 +54,8 @@
 
         $functionCommand=$NULL
 
+        $ErrorActionPreference = 'Stop'
+
         Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
         out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
 
@@ -64,15 +66,15 @@
         $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'}"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
-        $error.clear()
-
-        invoke-expression -Command $functionCommand -errorAction Stop
-
-        if ($error.Count -gt 0)
-        {
-            out-logfile -string $error[0]
+        try{
+            invoke-expression -Command $functionCommand -errorAction Stop
+        }
+        catch{
+            out-logfile -string $_
             $isTestError="Yes"
         }
+
+        $ErrorActionPreference = 'Continue'
 
         Out-LogFile -string "END start-replaceOffice365"
         Out-LogFile -string "********************************************************************************"
