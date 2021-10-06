@@ -5678,6 +5678,11 @@ Function Start-DistributionListMigration
         out-logfile -string "+++++"
         out-logfile -string "++++++++++"
         out-logfile -string "MIGRATION ERRORS OCCURED - REFER TO LIST BELOW FOR ERRORS"
+        out-logfile -string ("Post Create Errors: "+$postCreateErrors.count)
+        out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
+        out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
+        out-logfile -string ("Office 365 Replace Permissions Errors: "+$office365ReplacePermissionsErrors.count)
+        out-logfile -string ("General Errors: "+$generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
         out-logfile -string ""
@@ -5730,7 +5735,7 @@ Function Start-DistributionListMigration
             }
         }
         
-        if ($office365ReplaceErrors -gt 0)
+        if ($office365ReplacePermissionsErrors -gt 0)
         {
             foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
             {
@@ -5768,16 +5773,4 @@ Function Start-DistributionListMigration
     #Archive the files into a date time success folder.
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
-
-    if ($isMultiMachine -eq $TRUE)
-    {
-        try{            
-            #remove-PSDrive $networkName -Force
-            
-            #remove-SMBMapping -LocalPath $logFolderPath -Force
-        }
-        catch{
-            exit
-        }
-    }
 }
