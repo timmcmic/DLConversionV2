@@ -3558,7 +3558,7 @@ Function Start-DistributionListMigration
 
                 if ($loopCounter -gt 0)
                 {
-                    start-sleep -sleepSeconds ($loopCounter * 5) -sleepstring "Invoke sleep - error creating distribution group."
+                    start-sleepProgress -sleepSeconds ($loopCounter * 5) -sleepstring "Invoke sleep - error creating distribution group."
                 }
                 $loopCounter=$loopCounter+1
             }
