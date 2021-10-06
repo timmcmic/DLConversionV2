@@ -952,5 +952,6 @@
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
 
+        out-logfile -string ("The number of function Errors = "+$functionErrors.count)
         return $functionErrors
     }

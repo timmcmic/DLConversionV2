@@ -5682,60 +5682,76 @@ Function Start-DistributionListMigration
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        foreach ($postCreateError in $postCreateErrors)
+        if ($postCreateErrors -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string "Post Create Errors:"
-            out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
-            out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
-            out-logfile -string ("Name: "+$postCreateError.name)
-            out-logfile -string ("Alias: "+$postCreateError.Alias)
-            out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
-            out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
-            out-logfile -string "====="
+            foreach ($postCreateError in $postCreateErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "Post Create Errors:"
+                out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
+                out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
+                out-logfile -string ("Name: "+$postCreateError.name)
+                out-logfile -string ("Alias: "+$postCreateError.Alias)
+                out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
+                out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
+                out-logfile -string "====="
+            }
         }
 
-        foreach ($onPremReplaceError in $onPremReplaceErrors)
+        if ($onPremReplaceErrors -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string "Replace On Premises Errors:"
-            out-logfile -string ("Distinguished Name: "+$onPremReplaceError.distinguishedName)
-            out-logfile -string ("Canonical Domain Name: "+$onPremReplaceError.canonicalDomainName)
-            out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
-            out-logfile -string ("Attribute in Error: "+$onPremReplaceError.attribute)
-            out-logfile -string ("Error Message: "+$onPremReplaceError.errorMessage)
-            out-logfile -string "====="
+            foreach ($onPremReplaceError in $onPremReplaceErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "Replace On Premises Errors:"
+                out-logfile -string ("Distinguished Name: "+$onPremReplaceError.distinguishedName)
+                out-logfile -string ("Canonical Domain Name: "+$onPremReplaceError.canonicalDomainName)
+                out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
+                out-logfile -string ("Attribute in Error: "+$onPremReplaceError.attribute)
+                out-logfile -string ("Error Message: "+$onPremReplaceError.errorMessage)
+                out-logfile -string "====="
+            }
         }
 
-        foreach ($office365ReplaceError in $office365ReplaceErrors)
+       
+        if ($office365ReplaceErrors -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string "Replace Office 365 Errors:"
-            out-logfile -string ("Distinguished Name: "+$office365ReplaceError.distinguishedName)
-            out-logfile -string ("Primary SMTP Address: "+$office365ReplaceError.primarySMTPAddress)
-            out-logfile -string ("Alias: "+$office365ReplaceError.alias)
-            out-logfile -string ("Display Name: "+$office365ReplaceError.displayName)
-            out-logfile -string ("Attribute in Error: "+$office365ReplaceError.attribute)
-            out-logfile -string ("Error Message: "+$office365ReplaceError.errorMessage)
-            out-logfile -string "====="
+            foreach ($office365ReplaceError in $office365ReplaceErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "Replace Office 365 Errors:"
+                out-logfile -string ("Distinguished Name: "+$office365ReplaceError.distinguishedName)
+                out-logfile -string ("Primary SMTP Address: "+$office365ReplaceError.primarySMTPAddress)
+                out-logfile -string ("Alias: "+$office365ReplaceError.alias)
+                out-logfile -string ("Display Name: "+$office365ReplaceError.displayName)
+                out-logfile -string ("Attribute in Error: "+$office365ReplaceError.attribute)
+                out-logfile -string ("Error Message: "+$office365ReplaceError.errorMessage)
+                out-logfile -string "====="
+            }
         }
-
-        foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+        
+        if ($office365ReplaceErrors -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string "Office 365 Permissions Error: "
-            out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
-            out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
-            out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
-            out-logfile -string "====="
+            foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "Office 365 Permissions Error: "
+                out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
+                out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
+                out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string "====="
+            }
         }
-
-        foreach ($generalError in $generalErrors)
+        
+        if ($generalErrors -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string "General Errors:"
-            out-logfile -string ("Error Message: "+$generalError.errorMessage)
-            out-logfile -string "====="
+            foreach ($generalError in $generalErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "General Errors:"
+                out-logfile -string ("Error Message: "+$generalError.errorMessage)
+                out-logfile -string "====="
+            }
         }
 
         out-logfile -string ""
