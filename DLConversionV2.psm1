@@ -5680,6 +5680,7 @@ Function Start-DistributionListMigration
         foreach ($postCreateErrors in $postCreateErrors)
         {
             out-logfile -string "====="
+            out-logfile -string "Post Create Errors:"
             out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
             out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
             out-logfile -string ("Name: "+$postCreateError.name)
@@ -5692,6 +5693,7 @@ Function Start-DistributionListMigration
         foreach ($onPremReplaceError in $onPremReplaceErrors)
         {
             out-logfile -string "====="
+            out-logfile -string "Replace On Premises Errors:"
             out-logfile -string ("Distinguished Name: "+$onPremReplaceError.distinguishedName)
             out-logfile -string ("Canonical Domain Name: "+$onPremReplaceError.canonicalDomainName)
             out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
@@ -5703,6 +5705,7 @@ Function Start-DistributionListMigration
         foreach ($office365ReplaceError in $office365ReplaceErrors)
         {
             out-logfile -string "====="
+            out-logfile -string "Replace Office 365 Errors:"
             out-logfile -string ("Distinguished Name: "+$office365ReplaceError.distinguishedName)
             out-logfile -string ("Primary SMTP Address: "+$office365ReplaceError.primarySMTPAddress)
             out-logfile -string ("Alias: "+$office365ReplaceError.alias)
@@ -5724,6 +5727,7 @@ Function Start-DistributionListMigration
         foreach ($generalError in $generalErrors)
         {
             out-logfile -string "====="
+            out-logfile -string "General Errors:"
             out-logfile -string ("Error Message: "+$generalError.errorMessage)
             out-logfile -string "====="
         }
