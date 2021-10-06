@@ -3555,7 +3555,7 @@ Function Start-DistributionListMigration
             else 
             {
                 out-logfile -string "Unable to create the distribution list on attempt.  Retry"
-                start-sleep -sleepSeconds 15 -sleepstring "Invoke sleep - error creating distribution group."
+                start-sleep -sleepSeconds ($loopCounter * 5) -sleepstring "Invoke sleep - error creating distribution group."
                 $loopCounter=$loopCounter+1
             }
         }
