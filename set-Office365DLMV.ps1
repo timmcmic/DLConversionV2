@@ -111,7 +111,7 @@
         [array]$functionEmailAddresses=@()
 
         [boolean]$isTestError=$false
-        [array]$errors=@()
+        [array]$functionErrors=@()
 
         #Start function processing.
 
@@ -173,7 +173,7 @@
 
                 out-logfile -string $isErrorObject
 
-                $errors+=$isErrorObject
+                $functionErrors+=$isErrorObject
             }
 
             foreach ($address in $functionEmailAddresses)
@@ -199,7 +199,7 @@
 
                     out-logfile -string $isErrorObject
 
-                    $errors+=$isErrorObject
+                    $functionErrors+=$isErrorObject
                 }
             }
         }
@@ -234,7 +234,7 @@
 
             out-logfile -string $isErrorObject
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
         
         if ($routingAddressIsPresent -eq $FALSE)
@@ -265,7 +265,7 @@
 
                 out-logfile -string $isErrorObject
 
-                $errors+=$isErrorObject
+                $functionErrors+=$isErrorObject
             }
         }
 
@@ -343,7 +343,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -431,7 +431,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -521,7 +521,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -609,7 +609,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -697,7 +697,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -785,7 +785,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -873,7 +873,7 @@
 
                         out-logfile -string $isErrorObject
 
-                        $errors+=$isErrorObject
+                        $functionErrors+=$isErrorObject
                     }
                 }
             }
@@ -952,5 +952,5 @@
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
 
-        return $errors
+        return $functionErrors
     }
