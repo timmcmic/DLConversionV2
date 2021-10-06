@@ -5723,6 +5723,7 @@ Function Start-DistributionListMigration
         foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
         {
             out-logfile -string "====="
+            out-logfile -string "Office 365 Permissions Error: "
             out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
             out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
             out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
