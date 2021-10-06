@@ -49,7 +49,7 @@
         $functionRequireAuthToSendTo=$NULL
 
         [boolean]$isTestError=$FALSE
-        $errors=@()
+        $functionErrors=@()
 
         #Start function processing.
 
@@ -285,7 +285,7 @@
                 ErrorMessage = $_
             }
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
 
         try 
@@ -309,7 +309,7 @@
                 ErrorMessage = $_
             }
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
 
         try 
@@ -333,7 +333,7 @@
                 ErrorMessage = $_
             }
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
 
         try 
@@ -357,7 +357,7 @@
                 ErrorMessage = $_
             }
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
 
         try 
@@ -381,11 +381,11 @@
                 ErrorMessage = $_
             }
 
-            $errors+=$isErrorObject
+            $functionErrors+=$isErrorObject
         }
 
         Out-LogFile -string "END SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
 
-        return $errors
+        return $functionErrors
     }
