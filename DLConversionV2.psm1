@@ -3620,7 +3620,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            $postCreateErrors=set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            $postCreateErrors+=set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
 
             $stopLoop = $TRUE
         }
@@ -3637,7 +3637,7 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
-
+    out-logfile -string ("The number of post create errors is: "+$postCreateErrors.count)
 
     #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
     #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
@@ -3691,7 +3691,7 @@ Function Start-DistributionListMigration
             $stopLoop=$TRUE
         }
         catch {
-            if ($loopCounter -gt 0)
+            if ($loopCounter -gt 4)
             {
                 out-logfile -string $_ -isError:$TRUE
             }
@@ -3705,7 +3705,7 @@ Function Start-DistributionListMigration
     } while ($stopLoop -eq $FALSE)
 
     
-
+    out-logfile -string ("The number of post create errors is: "+$postCreateErrors.count)
     
 
     out-logFile -string ("Capture the DL status post migration.")

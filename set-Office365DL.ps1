@@ -49,7 +49,7 @@
         $functionRequireAuthToSendTo=$NULL
 
         [boolean]$isTestError=$FALSE
-        $functionErrors=@()
+        [array]$functionErrors=@()
 
         #Start function processing.
 
