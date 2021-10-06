@@ -388,5 +388,5 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The number of function errors is: "+$functionerrors.count )
-        return $functionErrors
+        return ,$functionErrors
     }
