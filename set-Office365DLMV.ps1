@@ -953,5 +953,5 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The number of function Errors = "+$functionErrors.count)
-        Write-Output -NoEnumerate -InputObject $functionErrors
+        $global:postCreateErrors = $functionErrors
     }

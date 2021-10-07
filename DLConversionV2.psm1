@@ -465,7 +465,7 @@ Function Start-DistributionListMigration
     #Define new arrays to check for errors instead of failing.
 
     [array]$preCreateErrors=@()
-    [array]$postCreateErrors=@()
+    [array]$global:$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
     [array]$office365ReplacePermissionsErrors=@()
@@ -3620,7 +3620,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            $postCreateErrors+=set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            $$global:postCreateErrors+=set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
 
             $stopLoop = $TRUE
         }
@@ -3637,7 +3637,7 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
-    out-logfile -string ("The number of post create errors is: "+$postCreateErrors.count)
+    out-logfile -string ("The number of post create errors is: "+$$global:postCreateErrors.count)
 
     #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
     #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
@@ -3687,7 +3687,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $postCreateErrors+= set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+            $$global:postCreateErrors+= set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
             $stopLoop=$TRUE
         }
         catch {
@@ -3705,7 +3705,7 @@ Function Start-DistributionListMigration
     } while ($stopLoop -eq $FALSE)
 
     
-    out-logfile -string ("The number of post create errors is: "+$postCreateErrors.count)
+    out-logfile -string ("The number of post create errors is: "+$$global:postCreateErrors.count)
     
 
     out-logFile -string ("Capture the DL status post migration.")
@@ -5672,13 +5672,13 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    if (($postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($$global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
         out-logfile -string "++++++++++"
         out-logfile -string "MIGRATION ERRORS OCCURED - REFER TO LIST BELOW FOR ERRORS"
-        out-logfile -string ("Post Create Errors: "+$postCreateErrors.count)
+        out-logfile -string ("Post Create Errors: "+$$global:postCreateErrors.count)
         out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Permissions Errors: "+$office365ReplacePermissionsErrors.count)
@@ -5687,9 +5687,9 @@ Function Start-DistributionListMigration
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        if ($postCreateErrors -gt 0)
+        if ($$global:postCreateErrors -gt 0)
         {
-            foreach ($postCreateError in $postCreateErrors)
+            foreach ($postCreateError in $$global:postCreateErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Post Create Errors:"
