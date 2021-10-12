@@ -3911,9 +3911,9 @@ Function Start-DistributionListMigration
                 #To do so - we know that the DN has ,OU= so the first substring we'll search is ,OU=. 
                 #Then we'll do it again - this time for just OU.  And that should give us what we need for the OU.
 
-                $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
+                $tempOUSubstring = Get-OULocation -orig inalDLConfiguration $originalDLConfiguration -errorAction STOP
 
-                move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $tempOUSubstring -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+                move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $tempOUSubstring -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
 
                 $stopLoop = $TRUE
             }
@@ -3923,6 +3923,8 @@ Function Start-DistributionListMigration
                     out-logfile -string $_ -isError:$TRUE
                 }
                 else {
+
+                    out-logfile -string $_
                     start-sleepProgress -sleepString "Unable to move the DL to a non-sync OU - try again." -sleepSeconds 5
 
                     $loopCounter = $loopCounter +1
