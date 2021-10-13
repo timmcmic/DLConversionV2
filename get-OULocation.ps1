@@ -51,7 +51,7 @@
             $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($testOUSubstringLocation)
             out-logfile -string "Temp OU Substring = "
             out-logfile -string $tempOUSubstring
-            $testOUSubstringLocation = $testOUSubString.indexof("OU=")
+            $testOUSubstringLocation = $tempOUSubstring.indexof("OU=")
             out-logfile -string $testOUSubstringLocation.tostring()
             $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
             out-logfile -string "Temp OU Substring Substring ="
@@ -63,7 +63,7 @@
             $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof(",CN=")    
             out-logfile -string "Temp OU Substring = "
             out-logfile -string $tempOUSubstring
-            $testOUSubstringLocation = $testOUSubString.indexof("CN=")
+            $testOUSubstringLocation = $tempOUSubstring.indexof("CN=")
             out-logfile -string $testOUSubstringLocation.tostring()
             $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
             out-logfile -string "Temp OU Substring Substring ="
