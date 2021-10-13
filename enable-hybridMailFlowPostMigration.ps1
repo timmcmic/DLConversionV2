@@ -58,6 +58,9 @@
 
         #Declare function variables.
 
+        $global:logFile=$NULL #This is the global variable for the calculated log file name
+        [string]$global:staticFolderName="\DLMigration\"
+
         [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
         [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
         [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
