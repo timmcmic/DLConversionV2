@@ -471,7 +471,7 @@
         try{
             out-logfile -string "Re-obtaining the routing contact configuration."
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_
@@ -485,7 +485,7 @@
         try {
             out-logfile -string "Creating the dynamic distribution group for mail routing."
 
-            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE -errorAction STOP
+            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to create the dynamic distribution group."

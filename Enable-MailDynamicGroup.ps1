@@ -88,7 +88,7 @@
 
         #All of the email addresses that existed on the migrated group need to be stamped on the new group.
 
-        if (isRetryError -eq $FALSE)
+        if ($isRetry -eq $FALSE)
         {
             foreach ($address in $originalDLConfiguration.proxyAddresses)
             {
@@ -247,7 +247,7 @@
                 return $isTestError
             }
         }
-        
+
         Out-LogFile -string "END Enable-MailDyamicGroup"
         Out-LogFile -string "********************************************************************************"
     }
