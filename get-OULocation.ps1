@@ -39,10 +39,15 @@
 
         [string]$returnOU=$NULL
 
-        $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($originalDLConfiguration.distinguishedName.indexof(",OU="))
+        out-logfile -string $originalDLConfiguration.distinguishedname
+        $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof(",OU=")
+        out-logfile -string $testOUSubstringLocation.tostring
+        $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($testOUSubstringLocation)
         out-logfile -string "Temp OU Substring = "
         out-logfile -string $tempOUSubstring
-        $tempOUSubstring = $tempOUSubstring.substring($tempOUSubstring.indexOF("OU"))
+        $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof("OU")
+        out-logfile -string $testOUSubstringLocation.tostring
+        $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
         out-logfile -string "Temp OU Substring Substring ="
         out-logfile -string $tempOUSubstring
 
