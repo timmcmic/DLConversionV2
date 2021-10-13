@@ -81,7 +81,7 @@
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
 
-        if ($isRetryError -eq $FALSE) 
+        if ($isRetry -eq $FALSE) 
         {
             $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
         }
