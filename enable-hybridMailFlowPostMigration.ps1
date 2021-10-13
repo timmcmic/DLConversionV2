@@ -374,7 +374,7 @@
 
         out-logfile -string "Testing to ensure that the distribution list is directory synchornized."
 
-        out-logile -string ("IsDirSynced: "+$office365DLConfiguration.isDirSynced)
+        out-logfile -string ("IsDirSynced: "+$office365DLConfiguration.isDirSynced)
 
         if ($office365DLConfiguration.isDirSynced -eq $FALSE)
         {
@@ -404,6 +404,10 @@
 
         try {
             $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+
+            out-logfile -string "Overriding OU selection by adminsitrator - contact already exists.  Must be the same as contact."
+
+            $OU = get-OULocation -originalDLConfiguration $routingContactConfiguration
 
             out-logfile -string "The routing contact was found and recorded."
 
