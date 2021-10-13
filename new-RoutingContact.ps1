@@ -70,7 +70,7 @@
         [string]$functionCustomAttribute1="MigratedByScript"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
-        if (isRetry -eq $FALSE)
+        if ($isRetry -eq $FALSE)
         {
             [string]$functionCustomAttribute2=$originalDLConfiguration.mail
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
