@@ -51,7 +51,9 @@
             [string]$exchangeOnlineAppID="",
             [Parameter(Mandatory = $false)]
             [ValidateSet("Basic","Kerberos")]
-            [string]$exchangeAuthenticationMethod="Basic"
+            [string]$exchangeAuthenticationMethod="Basic",
+            [Parameter(Mandatory = $true)]
+            [string]$OU=$NULL
         )
 
         #Declare function variables.
@@ -75,6 +77,9 @@
         [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
         [string]$routingContactXML="routingContactXML"
         [string]$routingDynamicGroupXML="routingDynamicGroupXML"
+
+        $routingContactConfig=$NULL
+        $office365DLConfiguration = $NULL
 
         #Create the log file.
 
@@ -347,14 +352,104 @@
         Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
         Out-LogFile -string "********************************************************************************"
 
-        #This function assumes that we need to start from routing contact creation.
-        #This should not be necessary as we should have already reached this point simply by completing the migration.
+        #First step - gather the Office 365 DL Information.
+        #The DL should be present in the service and previously migrated.
 
         try {
-            
+            out-logfile -string "Obtaining Office 365 Distribution List Configuration"
+
+            $office365DLConfiguration = get-o365dlconfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
         }
         catch {
-            
+            out-logfile -string "Unable to obtain the distribution list information from Office 365."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        out-xmlFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
+
+        #Now that we have the configuration - we need to ensure dir sync is set to false.
+
+        out-logfile -string "Testing to ensure that the distribution list is directory synchornized."
+
+        out-logile -string ("IsDirSynced: "+$office365DLConfiguration.isDirSynced)
+
+        if ($office365DLConfiguration.isDirSynced -eq $FALSE)
+        {
+            out-logfile -string "The distribution list is cloud only - proceed."
+        }
+        else 
+        {
+            out-logfile -string "The distribution list is directory synchronized - this function may only run on cloud only groups." -isError:$TRUE    
+        }
+
+        #At this time test to ensure the routing contact is present.
+
+        try {
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+            out-logfile -string "The routing contact was found and recorded."
+
+            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+0
+        }
+        catch {
+            out-logfile -string "The routing contact is not present - create the routing contact."
+
+            try{
+                out-logfile -string "Creating the routing contact that is missing."
+
+                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -errorAction STOP
+
+                out-logfile -string "The routing contact was created successfully."
+            }
+            catch{
+                out-logfile -string "The routing contact could not be created."
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
+        try {
+            out-logfile -string "Re-obtaining the routing contact configuration."
+
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch {
+            out-logfile -string "Unable to obtain the routing contact information." -isError:$TRUE
+        }
+
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+1
+
+        #At this time the mail contact needs to be mail enabled.
+
+        try {
+            enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to mail enable the routing contact."
+        }
+
+        #Obtain the updated routing contact.
+
+        try{
+            out-logfile -string "Re-obtaining the routing contact configuration."
+
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch{
+            out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
+        }
+
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+2
+
+        #The routing contact is now mail enabled.  Create the dynamic distribution group.
+
+        try {
+            out-logfile -string "Creating the dynamic distribution group for mail routing."
+
+            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to create the dynamic distribution group."
+            out-logfile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END enable-hybridMailFlowPostMigration"

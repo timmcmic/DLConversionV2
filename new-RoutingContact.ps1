@@ -45,7 +45,11 @@
             [Parameter(Mandatory = $true)]
             $globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isRetry = $false,
+            [Parameter(Mandatory = $false)]
+            [string]$isRetryOU = $false
         )
 
         #Start function processing.
@@ -65,10 +69,26 @@
 
         [string]$functionCustomAttribute1="MigratedByScript"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
-        [string]$functionCustomAttribute2=$originalDLConfiguration.mail
-        out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
 
-        $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
+        if (isRetry -eq $FALSE)
+        {
+            [string]$functionCustomAttribute2=$originalDLConfiguration.mail
+            out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+        }
+        else 
+        {
+            [string]$functionCustomAttribute2=$originalDLConfiguration.windowsEmailAddress
+            out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+        }
+
+        if ($isRetryError -eq $FALSE) 
+        {
+            $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
+        }
+        else 
+        {
+            $tempOUSubstring=$isRetryOU
+        }
 
         [string]$functionOU=$tempOUSubstring
         out-logfile -string ("Function OU = "+$functionOU)
@@ -88,17 +108,29 @@
 
         out-logfile -string ("Function target address = "+$functionTargetAddress)
 
+        #This logic allows the code to be re-used when only the Office 365 information is available.
+
+        if ($isRetry -eq $FALSE)
+        {
+            [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+            $functionCN=$functionCN.replace(' ','')
+            [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+        }
+        else 
+        {
+            [string]$functionCN=$originalDLConfiguration.displayName+"-MigratedByScript"
+            $functionCN=$functionCN.replace(' ','')
+            [array]$functionProxyAddressArray=$originalDLConfiguration.windowsEmailAddress.split("@")    
+        }
+
         [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
         $functionDisplayName=$functionDisplayName.replace(' ','')
-        [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
-        $functionCN=$functionCN.replace(' ','')
         [string]$functionName=$functionCN
         [string]$functionFirstName = $originalDLConfiguration.DisplayName
         $functionFirstName=$functionFirstName.replace(' ','')
         [string]$functionLastName = "MigratedByScript"
         [boolean]$functionHideFromAddressList=$true
         [string]$functionRecipientDisplayType="6"
-        [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
         [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
         [string]$functionProxyAddress="SMTP:"+$functionMail
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
