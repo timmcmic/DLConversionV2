@@ -387,6 +387,21 @@
 
         #At this time test to ensure the routing contact is present.
 
+        $tempMailArray = $originalDLConfiguration.windowsEmailAddress.split("@")
+
+        foreach ($member in $tempMailArray)
+        {
+            out-logfile -string ("Temp Mail Address Member: "+$member)
+        }
+
+        $tempMailAddress = $tempMailArray[0]+"-MigratedByScript"
+
+        out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+        $tempMailAddress = $tempMailAddress+"@"+$tempMailArray[1]
+
+        out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
         try {
             $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
