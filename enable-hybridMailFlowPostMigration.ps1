@@ -387,7 +387,7 @@
 
         #At this time test to ensure the routing contact is present.
 
-        $tempMailArray = $originalDLConfiguration.windowsEmailAddress.split("@")
+        $tempMailArray = $office365DLConfiguration.windowsEmailAddress.split("@")
 
         foreach ($member in $tempMailArray)
         {
@@ -403,7 +403,7 @@
         out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
 
         try {
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
             out-logfile -string "The routing contact was found and recorded."
 
@@ -411,6 +411,7 @@
         }
         catch {
             out-logfile -string "The routing contact is not present - create the routing contact."
+            out-logfile -string $_
 
             try{
                 out-logfile -string "Creating the routing contact that is missing."
@@ -425,14 +426,33 @@
             }
         }
 
-        try {
-            out-logfile -string "Re-obtaining the routing contact configuration."
+        $loopCounter=0
+        $stopLoop=$FALSE
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch {
-            out-logfile -string "Unable to obtain the routing contact information." -isError:$TRUE
-        }
+        do {
+            try {
+                out-logfile -string "Re-obtaining the routing contact configuration."
+    
+                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+
+                $stopLoop = $TRUE
+            }
+            catch {
+
+                if ($loopCounter -lt 5)
+                {
+                    start-sleeProgress -sleepSeconds 5 -sleepString "Sleeping failed obtain contact..."
+                    $loopCounter=$loopCounter+1
+                }
+                else
+                {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to obtain the routing contact information." -isError:$TRUE
+                }
+            }
+        } until ($stopLoop -eq $TRUE)
+
+       
 
         out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+1
 
@@ -442,7 +462,8 @@
             enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -errorAction STOP
         }
         catch {
-            out-logfile -string "Unable to mail enable the routing contact."
+            out-logfile -string $_
+            out-logfile -string "Unable to mail enable the routing contact." -isError:$TRUE
         }
 
         #Obtain the updated routing contact.
@@ -453,6 +474,7 @@
             $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
         }
 
