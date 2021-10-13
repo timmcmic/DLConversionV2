@@ -130,7 +130,7 @@
                     out-logfile -string "Address is not a mail.onmicrosoft.com address."
 
                     try{
-                        set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
+                        set-dynamicdistributionGroup -identity $originalDLConfiguration.windowsEmailAddress -emailAddresses @{add=$address} -domainController $globalCatalogServer
                     }
                     catch{
                         out-logfile -string $_ 
