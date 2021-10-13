@@ -39,17 +39,38 @@
 
         [string]$returnOU=$NULL
 
+        #Test to see if the DN contains an OU.
+
         out-logfile -string $originalDLConfiguration.distinguishedname
+
         $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof(",OU=")
-        out-logfile -string $testOUSubstringLocation.tostring()
-        $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($testOUSubstringLocation)
-        out-logfile -string "Temp OU Substring = "
-        out-logfile -string $tempOUSubstring
-        $testOUSubstringLocation = $testOUSubString.indexof("OU=")
-        out-logfile -string $testOUSubstringLocation.tostring()
-        $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
-        out-logfile -string "Temp OU Substring Substring ="
-        out-logfile -string $tempOUSubstring
+
+        if ($testOUSubStringLocation -ge 0)
+        {
+            out-logfile -string $testOUSubstringLocation.tostring()
+            $tempOUSubstring = $originalDLConfiguration.distinguishedname.substring($testOUSubstringLocation)
+            out-logfile -string "Temp OU Substring = "
+            out-logfile -string $tempOUSubstring
+            $testOUSubstringLocation = $testOUSubString.indexof("OU=")
+            out-logfile -string $testOUSubstringLocation.tostring()
+            $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
+            out-logfile -string "Temp OU Substring Substring ="
+            out-logfile -string $tempOUSubstring
+        }
+        else 
+        {
+            out-logfile -string "The group is in a container and not an OU."
+            $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof(",CN=")    
+            out-logfile -string "Temp OU Substring = "
+            out-logfile -string $tempOUSubstring
+            $testOUSubstringLocation = $testOUSubString.indexof("CN=")
+            out-logfile -string $testOUSubstringLocation.tostring()
+            $tempOUSubstring = $tempOUSubstring.substring($testOUSubstringLocation)
+            out-logfile -string "Temp OU Substring Substring ="
+            out-logfile -string $tempOUSubstring
+        }
+
+        
 
         $returnOU = $tempOUSubstring
 
