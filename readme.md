@@ -11,11 +11,17 @@ start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalog
 
 -Migrate a distribution list using Exchange on premsies and enabling hybrid mail flow.  Allow ad connect to trigger as part of migration to speed up process.
 
-start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com"
+$onPremCred = get-credential
+$cloudCred = get-credential
+
+start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com" -enableHybridMailFlow:$TRUE
 
 -Migrate a distribution list using Exchange on premsies and enabling hybrid mail flow.  Allow ad connect to trigger as part of migration to speed up process.  At the end of the mirgation trigger an upgrade to a modern / universal / office 365 group.
 
-start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com" -triggerUpgradeToOffice365Group
+$onPremCred = get-credential
+$cloudCred = get-credential
+
+start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com" -triggerUpgradeToOffice365Group:$TRUE
 
 
 *Information regarding the usage of the DLConversionV2 module can be found in the following blog posts.
