@@ -1,6 +1,24 @@
 DLConversionV2 ReadMe File.
 
-Information regarding the usage of the DLConversionV2 module can be found in the following blog posts.
+*Sample DL Migrations
+
+-Migrate a distribution list without needing Exchange on-premises or enabling hybrid mail flow.  Allow ad connect to trigger as part of migration to speed up process.
+
+$onPremCred = get-credential
+$cloudCred = get-credential
+
+start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com"
+
+-Migrate a distribution list using Exchange on premsies and enabling hybrid mail flow.  Allow ad connect to trigger as part of migration to speed up process.
+
+start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com"
+
+-Migrate a distribution list using Exchange on premsies and enabling hybrid mail flow.  Allow ad connect to trigger as part of migration to speed up process.  At the end of the mirgation trigger an upgrade to a modern / universal / office 365 group.
+
+start-distributionListMigration -groupSMTPAddress test@domain.com -globalCatalogServer gc.domain.com -activeDirectoryCredential $onPremCred -asdConnectServer adconnect.domain.com -aadConnectCredential $onPremCred -exchangeServer exchange.domain.com -exchangeCredential $onPremCred -exchangeOnlineCredential $cloudCred -logFolderPath c:\temp -dnNoSyncOU "OU=something,dc=domain,dc=com" -triggerUpgradeToOffice365Group
+
+
+*Information regarding the usage of the DLConversionV2 module can be found in the following blog posts.
 
 *Introduction to the Distribution List Migration Module v2
 https://timmcmic.wordpress.com/2021/04/25/4116/
