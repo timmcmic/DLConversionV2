@@ -5469,7 +5469,16 @@ Function Start-DistributionListMigration
                 if($loopCounter -gt 10)
                 {
                     out-logfile -string "Unable to obtain the routing group after multiple tries."
-                    out-logfile -string $_ -isError:$TRUE
+
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                    }
+        
+                    out-logfile -string $isErrorObject
+        
+                    $generalErrors+=$isErrorObject
+
+                    $stopLoop=$TRUE
                 }
                 else 
                 {
@@ -5484,7 +5493,6 @@ Function Start-DistributionListMigration
         out-logfile -string $routingDynamicGroupConfig
         out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $routingDynamicGroupXML
     }
-
 
 
     #At this time the group has been migrated.
