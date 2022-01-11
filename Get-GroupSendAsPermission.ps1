@@ -118,7 +118,8 @@
         {
             out-logfile -string ("Obtaining the ACLS on DN = "+$dn)
 
-            $objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
+            #$objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
+            $objectPath = "Microsoft.ActiveDirectory.Management\ActiveDirectory:://RootDSE/$DN"
 
             out-logfile -string $objectPath
 
