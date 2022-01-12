@@ -54,6 +54,7 @@
         [string]$functionDisplayName=""
         [string]$functionSimpleDisplayName=""
         [string]$functionWindowsEmailAddress=""
+        [string]$functionReportToOriginator=""
 
         [boolean]$isTestError=$FALSE
         [array]$functionErrors=@()
@@ -220,6 +221,17 @@
             out-logfile -string ("The function reportToOwner = "+$functionreportToOwner)
         }
 
+        if ($originalDLConfiguration.reportToOriginator -eq $NULL)
+        {
+            out-logfile -string "The report to originator is NULL."
+
+            $functionReportToOriginator = $FALSE
+        }
+        else 
+        {
+            $functionReportToOriginator = $originalDLConfiguration.reportToOriginator    
+        }
+
         #Evaluate hidden from address list.
 
         if ($originalDLConfiguration.msExchHideFromAddressLists -eq $NULL)
@@ -374,7 +386,7 @@
         {
             out-logfile -string "Setting the single valued report to settings.."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $originalDLConfiguration.reportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+            Set-O365DistributionGroup -Identity $functionMailNickName -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $functionReportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
         }
         catch 
         {
