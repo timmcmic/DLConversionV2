@@ -70,14 +70,16 @@
         [string]$functionCustomAttribute1="MigratedByScript"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
-        if ($originalDLConfiguration.windowsEmailAddress -ne $NULL)
+
+
+        if ($originalDLConfiguration.mail -ne $NULL)
         {
             [string]$functionCustomAttribute2=$originalDLConfiguration.mail
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
         else 
         {
-            [string]$functionCustomAttribute2=$originalDLConfiguration.windowsEmailAddress
+            [string]$functionCustomAttribute2=$office365DLConfiguration.WindowsEmailAddress
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
 
@@ -135,7 +137,7 @@
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
 
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
-        
+
         [string]$functionSelfAccountSid = "S-1-5-10"
 
         out-logfile -string ("Function display name = "+$functionDisplayName)
