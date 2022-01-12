@@ -68,6 +68,8 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
             [array]$exchangeDLMembershipSMTP=$NULL,
             [Parameter(Mandatory = $true)]
@@ -109,6 +111,8 @@
         [boolean]$functionFirstRun=$TRUE
         [array]$functionRecipients=@()
         [array]$functionEmailAddresses=@()
+        [string]$functionMail=""
+        [string]$functionMailNickname=""
 
         [boolean]$isTestError=$false
         [array]$functionErrors=@()
@@ -123,6 +127,9 @@
 
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
+
+        out-logfile -string ("Office 365 DL Configuration:")
+        out-logfile -string $office365DLConfiguration
 
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 
@@ -139,8 +146,38 @@
             $functionEmailAddresses+=$address.tostring()
         }
 
+        foreach ($address in $office356DLConfiguration.emailAddresses)
+        {
+            if ($address.contains("mail.onmicrosoft.com"))
+            {
+                out-logfile -string ("Hybrid remote routing address found.")
+                out-logfile -string $address
+                $routingAddressIsPresent=$TRUE
+            }
+
+            out-logfile -string $address
+            $functionEmailAddresses+=$address.tostring()
+        }
+
+        $functionEmailAddresses = $functionEmailAddresses | select-object -unique
+
+        out-logfile -string $functionEmailAddresses
+
+        if ($originalDLConfiguration.mailNickName -ne $NULL)
+        {
+            out-logfile -string "Mail nickname present on premsies -> using this value."
+            $functionMailNickName = $originalDLConfiguration.mailNickName
+            out-logfile -string $functionMailNickName
+        }
+        else 
+        {
+            out-logfile -string "Mail nickname not present on premises -> using Office 365 value."
+            $functionMailNickName = $office365DLConfiguration.alias
+            out-logfile -string $functionMailNickName
+        }
+
         try {
-            Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+            Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch {
             out-logfile -string "Error bulk updating email addresses on distribution group."
@@ -155,7 +192,7 @@
             out-logfile -string "Establishing group primary SMTP Address."
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailnickname -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
+                set-o365DistributionGroup -identity $functionMailNickName -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
             }
             catch {
                 out-logfile -string "Error establishing new group primary SMTP Address."
@@ -165,7 +202,7 @@
                 $isErrorObject = new-Object psObject -property @{
                     PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                     ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                    Alias = $originalDLConfiguration.mailNickName
+                    Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Cloud Proxy Addresses"
                     ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premsies mail address.")
@@ -191,7 +228,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                         ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                        Alias = $originalDLConfiguration.mailNickName
+                        Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
                         ErrorMessage = ("Address "+$address+" could not be added to new cloud distribution group.  Manual addition required.")
@@ -208,15 +245,47 @@
 
         $isTestError=$FALSE
 
-        out-logfile -string "Processing on premises legacy ExchangeDN to X500"
-        out-logfile -string $originalDLConfiguration.legacyExchangeDN
+        if ($originalDLConfiguration.legacyExchangeDN -ne $NULL)
+        {
+            out-logfile -string "Processing on premises legacy ExchangeDN to X500"
+            out-logfile -string $originalDLConfiguration.legacyExchangeDN
 
-        $functionEmailAddress = "X500:"+$originalDLConfiguration.legacyExchangeDN
+            $functionEmailAddress = "X500:"+$originalDLConfiguration.legacyExchangeDN
+
+            out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
+
+            try {
+                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch {
+                out-logfile -string ("Error processing address: "+$functionEmailAddress)
+
+                out-logfile -string $_
+
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                    Alias = $functionMailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Cloud Proxy Addresses"
+                    ErrorMessage = ("Address "+$functionEmailAddress+" could not be added to new cloud distribution group.  Manual addition required.")
+                }
+
+                out-logfile -string $isErrorObject
+
+                $functionErrors+=$isErrorObject
+            }
+        }
+
+        out-logfile -string "Processing original cloud legacy ExchangeDN to X500"
+        out-logfile -string $office365DLConfiguration.legacyExchangeDN
+
+        $functionEmailAddress = "X500:"+$office365DLConfiguration.legacyExchangeDN
 
         out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
 
         try {
-            Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+            Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch {
             out-logfile -string ("Error processing address: "+$functionEmailAddress)
@@ -226,7 +295,7 @@
             $isErrorObject = new-Object psObject -property @{
                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                Alias = $originalDLConfiguration.mailNickName
+                Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud Proxy Addresses"
                 ErrorMessage = ("Address "+$functionEmailAddress+" could not be added to new cloud distribution group.  Manual addition required.")
@@ -236,18 +305,20 @@
 
             $functionErrors+=$isErrorObject
         }
+
+        
         
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
             $workingAddress=$newDLPrimarySMTPAddress.substring($newDLPrimarySMTPAddress.indexof("@"))
             $workingAddressArray=$workingaddress.split(".")
-            $hybridRemoteRoutingAddress=$originalDLConfiguration.mailnickname+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
+            $hybridRemoteRoutingAddress=$functionMailNickName+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
 
             out-logfile -string ("Hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
             try {
-                Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string ("Error processing address: "+$hybridRemoteRoutingAddress)
@@ -257,7 +328,7 @@
                 $isErrorObject = new-Object psObject -property @{
                     PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                     ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                    Alias = $originalDLConfiguration.mailNickName
+                    Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Cloud Proxy Addresses"
                     ErrorMessage = ("Address "+$hybridRemoteRoutingAddress+" could not be added to new cloud distribution group.  Manual addition required.")
@@ -305,7 +376,7 @@
             #Alberto Larrinaga for the suggestion.
 
             try {
-                update-o365DistributionGroupMember -identity $originalDLConfiguration.mailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop
+                update-o365DistributionGroupMember -identity $functionMailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop
             }
             catch {
                 out-logfile -string "Unable to bulk update distribution group membership."
@@ -325,7 +396,7 @@
 
 
                     try {
-                        add-O365DistributionGroupMember -identity $originalDLConfiguration.mailnickname -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
+                        add-O365DistributionGroupMember -identity $functionMailNickName -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
                     }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
@@ -336,7 +407,7 @@
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                             Alias = $originalDLConfiguration.mailNickName
-                            Name = $originalDLConfiguration.name
+                            Name = $functionMailNickName
                             Attribute = "Cloud Distribution Group Member"
                             ErrorMessage = ("Member "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
                         }
@@ -395,7 +466,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Error bulk updating RejectMessagesFromSendersOrMembers"
@@ -414,7 +485,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -423,7 +494,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group RejectMessagesFromSendersOrMembers"
                             ErrorMessage = ("Member of RejectMessagesFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -484,7 +555,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
 
             }
             catch {
@@ -504,7 +575,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -513,7 +584,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group AcceptMessagesOnlyFromSendersOrMembers"
                             ErrorMessage = ("Member of AcceptMessagesOnlyFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -573,7 +644,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk update managedBy"
@@ -592,7 +663,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -601,7 +672,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group ManagedBy"
                             ErrorMessage = ("Member of ManagedBy "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -661,7 +732,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk update moderatedBy."
@@ -680,7 +751,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -689,7 +760,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group ModeratedBy"
                             ErrorMessage = ("Member of ModeratedBy "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -749,7 +820,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk modify bypassModerationFromSendersOrMembers"
@@ -768,7 +839,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -BypassModerationFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -BypassModerationFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -777,7 +848,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group BypassModerationFromSendersOrMembers"
                             ErrorMessage = ("Member of BypassModerationFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -837,7 +908,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionMailNickName -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk updated GrantSendOnBehalfTo."
@@ -856,7 +927,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $originalDLConfiguration.mailNickName -GrantSendOnBehalfTo @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionMailNickName -GrantSendOnBehalfTo @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -865,7 +936,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group GrantSendOnBehalfTo"
                             ErrorMessage = ("Member of GrantSendOnBehalfTo "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
@@ -900,7 +971,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs" -confirm:$FALSE
+                        add-o365RecipientPermission -Identity $functionMailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -910,7 +981,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group SendAs"
                             ErrorMessage = ("Member of SendAs "+$member.externalDirectoryObjectID+" unable to add to cloud distribution group.  Manual addition required.")
@@ -922,7 +993,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        add-o365RecipientPermission -Identity $originalDLConfiguration.mailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
+                        add-o365RecipientPermission -Identity $functionMailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -931,7 +1002,7 @@
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                             ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $originalDLConfiguration.mailNickName
+                            Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Distribution Group SendAs"
                             ErrorMessage = ("Member of SendAs "+$member.primarySMTPAddressOrUPN+" unable to add to cloud distribution group.  Manual addition required.")
