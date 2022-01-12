@@ -146,7 +146,7 @@
             $functionEmailAddresses+=$address.tostring()
         }
 
-        foreach ($address in $office356DLConfiguration.emailAddresses)
+        foreach ($address in $office365DLConfiguration.emailAddresses)
         {
             if ($address.contains("mail.onmicrosoft.com"))
             {
