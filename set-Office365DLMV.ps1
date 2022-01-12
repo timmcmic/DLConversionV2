@@ -96,7 +96,9 @@
             [Parameter(Mandatory=$true)]
             [string]$groupTypeOverride,
             [Parameter(Mandatory=$true)]
-            $newDLPrimarySMTPAddress
+            $newDLPrimarySMTPAddress,
+            [Parameter(Mandatory=$TRUE)]
+            $mailOnMicrosoftComDomain
         )
 
         #Declare function variables.
@@ -105,8 +107,6 @@
         $functionEmailAddress = $NULL
         [boolean]$routingAddressIsPresent=$FALSE
         [string]$hybridRemoteRoutingAddress=$NULL
-        [string]$workingAddress=$NULL
-        [array]$workingAddressArray=@()
         [int]$functionLoopCounter=0
         [boolean]$functionFirstRun=$TRUE
         [array]$functionRecipients=@()
@@ -311,9 +311,7 @@
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
-            $workingAddress=$newDLPrimarySMTPAddress.substring($newDLPrimarySMTPAddress.indexof("@"))
-            $workingAddressArray=$workingaddress.split(".")
-            $hybridRemoteRoutingAddress=$functionMailNickName+$workingAddressArray[0]+".mail."+$workingAddressArray[1]+"."+$workingAddressArray[2]
+            $hybridRemoteRoutingAddress=$functionMailNickName+"@"+$mailOnMicrosoftComDomain
 
             out-logfile -string ("Hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 

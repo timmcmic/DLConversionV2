@@ -485,6 +485,11 @@ Function Start-DistributionListMigration
     [string]$global:fullStatusPath=$NULL
     [int]$statusFileCount=0
 
+    #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
+    #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
+
+    [string]$mailOnMicrosoftComDomain = ""
+
 
     #If multi threaded - the log directory needs to be created for each thread.
     #Create the log folder path for status before changing the log folder path.
@@ -1994,6 +1999,8 @@ Function Start-DistributionListMigration
     out-logfile -string "Begin accepted domain validation."
 
     test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+
+    $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain
 
     out-logfile -string "Being validating all distribution list members."
     
@@ -3634,7 +3641,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain
 
             $stopLoop = $TRUE
         }
