@@ -3541,7 +3541,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+            new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
 
             #If we made it this far then the group was created.
 
