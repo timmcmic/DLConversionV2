@@ -118,12 +118,11 @@
         {
             out-logfile -string ("Obtaining the ACLS on DN = "+$dn)
 
-            #$objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
-            $objectPath = "Microsoft.ActiveDirectory.Management\ActiveDirectory:://RootDSE/$DN"
+            $objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
 
             out-logfile -string $objectPath
 
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {(get-ACL $args).access} -ArgumentList $objectPath
+            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {(import-module ActiveDirectory ; get-ACL $args).access} -ArgumentList $objectPath
         }
         catch 
         {
