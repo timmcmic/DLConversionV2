@@ -159,9 +159,6 @@
             $functionEmailAddresses+=$address.tostring()
         }
 
-        $functionMail = ("SMTP:"+$originalDLConfiguration.mail)
-        $functionEmailAddresses+=$functionMail
-
         $functionEmailAddresses = $functionEmailAddresses | select-object -unique
 
         out-logfile -string $functionEmailAddresses
