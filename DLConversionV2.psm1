@@ -3701,7 +3701,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride
             $stopLoop=$TRUE
         }
         catch {
