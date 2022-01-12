@@ -52,6 +52,14 @@
             }
         }
 
+        #It is possible that the group does not have proxy address but just mail - this is now a supported scenario.
+        #To get this far the object has to have mail.
+
+        out-logfile -string ("The mail address is: "+$originalDLConfiguration.mail)
+        $tempAddress=$originalDLConfiguration.mail.split("@")
+        $originalDLDomainNames+=$tempAddress[1]
+        
+
         $originalDLDomainNames=$originalDLDomainNames | select-object -Unique
 
         out-logfile -string "Unique domain names on the group."
