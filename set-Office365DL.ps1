@@ -54,7 +54,7 @@
         [string]$functionDisplayName=""
         [string]$functionSimpleDisplayName=""
         [string]$functionWindowsEmailAddress=""
-        [string]$functionReportToOriginator=""
+        [boolean]$functionReportToOriginator=$NULL
 
         [boolean]$isTestError=$FALSE
         [array]$functionErrors=@()
