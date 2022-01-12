@@ -70,7 +70,7 @@
         [string]$functionCustomAttribute1="MigratedByScript"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
-        if ($isRetry -eq $FALSE)
+        if ($originalDLConfiguration.windowsEmailAddress -ne $NULL)
         {
             [string]$functionCustomAttribute2=$originalDLConfiguration.mail
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
@@ -81,16 +81,8 @@
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
 
-        if ($isRetry -eq $FALSE) 
-        {
-            $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
-        }
-        else 
-        {
-            $tempOUSubstring=$isRetryOU
-        }
+        [string]$functionOU=Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
-        [string]$functionOU=$tempOUSubstring
         out-logfile -string ("Function OU = "+$functionOU)
 
         foreach ($address in $office365DLConfiguration.emailAddresses)
@@ -110,31 +102,40 @@
 
         #This logic allows the code to be re-used when only the Office 365 information is available.
 
-        if ($isRetry -eq $FALSE)
+        [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+        $functionCN=$functionCN.replace(' ','')
+        [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+
+        if ($originalDLConfiguration.displayName -ne $NULL)
         {
-            [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
-            $functionCN=$functionCN.replace(' ','')
-            [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+            [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
+            $functionDisplayName=$functionDisplayName.replace(' ','')
         }
         else 
         {
-            [string]$functionCN=$originalDLConfiguration.displayName+"-MigratedByScript"
-            $functionCN=$functionCN.replace(' ','')
-            [array]$functionProxyAddressArray=$originalDLConfiguration.windowsEmailAddress.split("@")    
+            [string]$functionDisplayName = $office365DLConfiguration.DisplayName+"-MigratedByScript"
+            $functionDisplayName=$functionDisplayName.replace(' ','')
         }
+        
 
-        [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
-        $functionDisplayName=$functionDisplayName.replace(' ','')
         [string]$functionName=$functionCN
-        [string]$functionFirstName = $originalDLConfiguration.DisplayName
-        $functionFirstName=$functionFirstName.replace(' ','')
+
+        [string]$functionFirstName = $functionDisplayName
+
         [string]$functionLastName = "MigratedByScript"
+
         [boolean]$functionHideFromAddressList=$true
+
         [string]$functionRecipientDisplayType="6"
+
         [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
+
         [string]$functionProxyAddress="SMTP:"+$functionMail
+
         [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
+
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
+        
         [string]$functionSelfAccountSid = "S-1-5-10"
 
         out-logfile -string ("Function display name = "+$functionDisplayName)
