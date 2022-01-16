@@ -485,6 +485,11 @@ Function Start-DistributionListMigration
     [string]$global:fullStatusPath=$NULL
     [int]$statusFileCount=0
 
+    #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
+    #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
+
+    [string]$mailOnMicrosoftComDomain = ""
+
 
     #If multi threaded - the log directory needs to be created for each thread.
     #Create the log folder path for status before changing the log folder path.
@@ -1994,6 +1999,8 @@ Function Start-DistributionListMigration
     out-logfile -string "Begin accepted domain validation."
 
     test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+
+    $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain
 
     out-logfile -string "Being validating all distribution list members."
     
@@ -3541,7 +3548,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+            new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
 
             #If we made it this far then the group was created.
 
@@ -3574,7 +3581,21 @@ Function Start-DistributionListMigration
     do 
     {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+            #Group may not have exchange attributes on premises.
+            #Use the Office 365 values to obtain new group.
+
+            if ($originalDLConfiguration.mailNickName -ne $NULL)
+            {
+                out-logfile -string "On premises object has mail nickname / alias -> use this value to obtain new group."
+
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+            }
+            else 
+            {
+                out-logfile -string "On premsies object does not have mail nickname / alias -> use Office 365 value to obtain new group."    
+
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.alias -errorAction Stop
+            }
             
             #If we hit here we did not get a terminating error.  Write the configuration.
 
@@ -3620,7 +3641,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain
 
             $stopLoop = $TRUE
         }
@@ -3687,7 +3708,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride
             $stopLoop=$TRUE
         }
         catch {

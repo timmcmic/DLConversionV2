@@ -33,12 +33,15 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $true)]
             [string]$groupTypeOverride
         )
 
         #Declare function variables.
 
-        $functionGroupType=$NULL #Holds the return information for the group query.
+        [string]$functionGroupType=$NULL #Holds the return information for the group query.
+        [string]$functionMailNickName = ""
 
         #Start function processing.
 
@@ -50,6 +53,8 @@
 
         Out-LogFile -string ("OriginalDLConfiguration = ")
         out-logfile -string $originalDLConfiguration
+        out-logfile -string ("Office365DLConfiguration = ")
+        out-logfile -string $office365DLConfiguration
         out-logfile -string ("Group Type Override = "+$groupTypeOverride)
 
         #Calculate the group type to be utilized.
@@ -101,7 +106,26 @@
         {
             out-logfile -string "Creating the distribution group in Office 365."
 
-            new-o365distributionGroup -name $originalDLConfiguration.cn -alias $originalDLConfiguration.mailNickName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+            #It is possible that the group is not fully mail enabled.
+            #Groups may now be represented as mail enabled if only MAIL is populated.
+            #If on premsies attributes are not specified - use the attributes that were obtained from office 365.
+
+            if ($originalDLConfiguration.mailNickName -eq $NULL)
+            {
+                out-logfile -string "On premsies group does not have alias / mail nick name -> using Office 365 value."
+
+                $functionMailNickName = $office365DLConfiguration.alias
+
+                out-logfile -string ("Office 365 alias used for group creation: "+$functionMailNickName)
+            }
+            else 
+            {
+                out-logfile -string "On premises group has a mail nickname specified - using on premsies value."
+                $functionMailNickName = $originalDLConfiguration.mailNickName
+                out-logfile -string $functionMailNickName    
+            }
+
+            new-o365distributionGroup -name $originalDLConfiguration.cn -alias $functionMailNickName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
         }
         catch 
         {
