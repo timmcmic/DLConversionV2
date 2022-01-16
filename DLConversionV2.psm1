@@ -220,7 +220,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $FALSE)]
         [boolean]$isMultiMachine=$FALSE,
         [Parameter(Mandatory = $FALSE)]
-        [string]$remoteDriveLetter=$NULL
+        [string]$remoteDriveLetter=$NULL,
+        [Parameter(Mandatory=$TRUE)]
+        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE
     )
 
     if ($isMultiMachine -eq $TRUE)
@@ -1999,6 +2001,8 @@ Function Start-DistributionListMigration
     out-logfile -string "Begin accepted domain validation."
 
     test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+
+    tet-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled
 
     $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain
 
