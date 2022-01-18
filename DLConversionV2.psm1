@@ -1259,7 +1259,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    if ($allowNoeSyncedGroups -eq $FALSE)
+    if ($allowNonSyncedGroups -eq $FALSE)
     {
         Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
@@ -2028,11 +2028,29 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin accepted domain validation."
 
-    test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+    try {
+        test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
+    }
+    catch {
+        out-logfile $_
+        out-logfile -string "Unable to capture accepted domains for validation." -isError:$TRUE
+    }
 
-    tet-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled
+    try {
+        test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
+    }
 
-    $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain
+    try {
+        $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+    }
 
     out-logfile -string "Being validating all distribution list members."
     
@@ -2915,7 +2933,7 @@ Function Start-DistributionListMigration
 
     #Process normal mail enabled groups.
 
-    if ($retainOffice365Settings -eq $TRUE)
+    if (($retainOffice365Settings -eq $TRUE) -and ($allowNonSyncedGroup -eq $FALSE))
     {
         out-logFile -string "Office 365 settings are to be retained."
 
