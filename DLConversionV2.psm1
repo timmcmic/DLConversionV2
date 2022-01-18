@@ -3081,7 +3081,7 @@ Function Start-DistributionListMigration
         if ($retainSendAsOffice365 -eq $TRUE)
         {
             try{
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
