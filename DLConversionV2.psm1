@@ -221,9 +221,9 @@ Function Start-DistributionListMigration
         [boolean]$isMultiMachine=$FALSE,
         [Parameter(Mandatory = $FALSE)]
         [string]$remoteDriveLetter=$NULL,
-        [Parameter(Mandatory=$TRUE)]
+        [Parameter(Mandatory=$false)]
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
-        [Parameter(Mandatory=$TRUE)]
+        [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE
     )
 

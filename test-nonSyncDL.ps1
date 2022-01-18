@@ -87,7 +87,7 @@
             out-logfile -string "Attribute proxyAddresses is present."    
         }
 
-        ut-logfile -string "Testing mailNickName attribute..."
+        out-logfile -string "Testing mailNickName attribute..."
 
         if ($originalDLCOnfiguration.mailNickName -eq $NULL)
         {
