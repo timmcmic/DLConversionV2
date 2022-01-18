@@ -3078,7 +3078,7 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
 
-        if (($retainSendAsOffice365 -eq $TRUE) -and ($allowNonSyncedGroup -eq $FALSE))
+        if ($retainSendAsOffice365 -eq $TRUE)
         {
             try{
                 $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
@@ -5435,30 +5435,31 @@ Function Start-DistributionListMigration
     }
     
     
-
-    
-
-    out-logFile -string "Start replacing Office 365 permissions."
-
-    try 
+    if ($allowNonSyncedGroups -eq $FALSE)
     {
-        $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
-    }
-    catch 
-    {
-        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_
+        out-logFile -string "Start replacing Office 365 permissions."
 
-        $isErrorObject = new-Object psObject -property @{
-            permissionIdentity = "ALL"
-            attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
-            errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+        try 
+        {
+            $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
         }
+        catch 
+        {
+            out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
+            out-logfile -string $_
 
-        out-logfile -string $isErrorObject
+            $isErrorObject = new-Object psObject -property @{
+                permissionIdentity = "ALL"
+                attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
+                errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+            }
 
-        $office365ReplacePermissionsErrors+=$isErrorObject
+            out-logfile -string $isErrorObject
+
+            $office365ReplacePermissionsErrors+=$isErrorObject
+        }
     }
+    
 
     if ($enableHybridMailflow -eq $TRUE)
     {
