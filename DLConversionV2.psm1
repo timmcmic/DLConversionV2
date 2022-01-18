@@ -3078,7 +3078,7 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has forwarding on mailboxes = "+$allOffice365ForwardingAddress.count)
 
-        if ($retainSendAsOffice365 -eq $TRUE)
+        if (($retainSendAsOffice365 -eq $TRUE) -and ($allowNonSyncedGroup -eq $FALSE))
         {
             try{
                 $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
