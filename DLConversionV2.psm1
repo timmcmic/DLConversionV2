@@ -1231,14 +1231,23 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
-    try 
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
-        $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        try 
+        {
+            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
     }
-    catch 
+    else 
     {
-        out-logFile -string $_ -isError:$TRUE
+        $office365DLConfiguration="DistributionListIsNonSynced"
     }
+
+    
     
     Out-LogFile -string $office365DLConfiguration
 
