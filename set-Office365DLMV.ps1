@@ -98,7 +98,9 @@
             [Parameter(Mandatory=$true)]
             $newDLPrimarySMTPAddress,
             [Parameter(Mandatory=$TRUE)]
-            $mailOnMicrosoftComDomain
+            $mailOnMicrosoftComDomain,
+            [Parameter(Mandatory=$TRUE)]
+            $allowNonSyncedGroup=$FALSE
         )
 
         #Declare function variables.
@@ -277,37 +279,38 @@
             }
         }
 
-        out-logfile -string "Processing original cloud legacy ExchangeDN to X500"
-        out-logfile -string $office365DLConfiguration.legacyExchangeDN
+        if ($allowNonSyncedGroup -eq $FALSE)
+        {
+            out-logfile -string "Processing original cloud legacy ExchangeDN to X500"
+            out-logfile -string $office365DLConfiguration.legacyExchangeDN
 
-        $functionEmailAddress = "X500:"+$office365DLConfiguration.legacyExchangeDN
+            $functionEmailAddress = "X500:"+$office365DLConfiguration.legacyExchangeDN
 
-        out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
+            out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
 
-        try {
-            Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
-        }
-        catch {
-            out-logfile -string ("Error processing address: "+$functionEmailAddress)
-
-            out-logfile -string $_
-
-            $isErrorObject = new-Object psObject -property @{
-                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                Alias = $functionMailNickName
-                Name = $originalDLConfiguration.name
-                Attribute = "Cloud Proxy Addresses"
-                ErrorMessage = ("Address "+$functionEmailAddress+" could not be added to new cloud distribution group.  Manual addition required.")
+            try {
+                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
+            catch {
+                out-logfile -string ("Error processing address: "+$functionEmailAddress)
 
-            out-logfile -string $isErrorObject
+                out-logfile -string $_
 
-            $functionErrors+=$isErrorObject
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                    Alias = $functionMailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Cloud Proxy Addresses"
+                    ErrorMessage = ("Address "+$functionEmailAddress+" could not be added to new cloud distribution group.  Manual addition required.")
+                }
+
+                out-logfile -string $isErrorObject
+
+                $functionErrors+=$isErrorObject
+            }
         }
 
-        
-        
         if ($routingAddressIsPresent -eq $FALSE)
         {
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
@@ -1022,5 +1025,5 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The number of function Errors = "+$functionErrors.count)
-        $global:postCreateErrors = $functionErrors
+        $global:postCreateErrors += $functionErrors
     }

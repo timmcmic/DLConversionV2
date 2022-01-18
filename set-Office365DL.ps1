@@ -434,5 +434,5 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The number of function errors is: "+$functionerrors.count )
-        $global:postCreateErrors = $functionErrors
+        $global:postCreateErrors += $functionErrors
     }

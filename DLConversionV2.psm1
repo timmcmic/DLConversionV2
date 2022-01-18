@@ -1259,7 +1259,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    if ($allowNonSyncedGroups -eq $FALSE)
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
