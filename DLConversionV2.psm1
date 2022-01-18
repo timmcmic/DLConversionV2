@@ -222,7 +222,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $FALSE)]
         [string]$remoteDriveLetter=$NULL,
         [Parameter(Mandatory=$TRUE)]
-        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE
+        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
+        [Parameter(Mandatory=$TRUE)]
+        [boolean]$allowNonSyncedGroup=$FALSE
     )
 
     if ($isMultiMachine -eq $TRUE)
@@ -1248,16 +1250,33 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
+    if ($allowNoeSyncedGroups -eq $FALSE)
+    {
+        Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
-    try 
-    {
-        Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+        try 
+        {
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
     }
-    catch 
+    else 
     {
-        out-logFile -string $_ -isError:$TRUE
+        out-logfile -string "The administrator is attempting to migrate a non-synced group.  Office 365 check skipped."
+        
+        try 
+        {
+            test-nonSyncDL -originalDLConfiguration $originalDLConfiguration -errorAction STOP    
+        }
+        catch 
+        {
+            out-logfile -string $_ -isError:$TRUE   
+        }
     }
+
     
     #At this time we have the DL configuration on both sides and have checked to ensure it is dir synced.
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
