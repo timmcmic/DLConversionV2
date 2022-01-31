@@ -4124,7 +4124,7 @@ Function Start-DistributionListMigration
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
 
-    start-sleepProgress -sleepString "Starting sleep before invoking AD replicatoin.  Sleeping 15 seconds." -sleepSeconds 15
+    start-sleepProgress -sleepString "Starting sleep before invoking AD replication.  Sleeping 15 seconds." -sleepSeconds 15
 
     out-logfile -string "Invoking AD replication."
 
