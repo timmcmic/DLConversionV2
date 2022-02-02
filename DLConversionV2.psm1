@@ -5771,16 +5771,16 @@ Function Start-DistributionListMigration
 
         if ($global:postCreateErrors -gt 0)
         {
-            foreach ($postCreateError in $global:postCreateErrors)
+            foreach ($createError in $global:postCreateErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Post Create Errors:"
-                out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
-                out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
-                out-logfile -string ("Name: "+$postCreateError.name)
-                out-logfile -string ("Alias: "+$postCreateError.Alias)
-                out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
-                out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
+                out-logfile -string ("Primary Email Address or UPN: " +$CreateError.primarySMTPAddressOrUPN)
+                out-logfile -string ("External Directory Object ID: " +$CreateError.externalDirectoryObjectID)
+                out-logfile -string ("Name: "+$CreateError.name)
+                out-logfile -string ("Alias: "+$CreateError.Alias)
+                out-logfile -string ("Attribute in Error: "+$CreateError.attribute)
+                out-logfile -string ("Error Message Details: "+$CreateError.errorMessage)
                 out-logfile -string "====="
             }
         }
