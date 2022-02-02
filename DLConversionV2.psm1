@@ -5772,7 +5772,7 @@ Function Start-DistributionListMigration
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        if ($global:postCreateErrors -gt 0)
+        if ($global:postCreateErrors.count -gt 0)
         {
             foreach ($createError in $global:postCreateErrors)
             {

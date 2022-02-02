@@ -1000,6 +1000,10 @@
                             ErrorMessage = ("Member of SendAs "+$member.externalDirectoryObjectID+" unable to add to cloud distribution group.  Manual addition required.")
                             ErrorMessageDetail = $_
                         }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
                     }
                 }
                 elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
@@ -1023,6 +1027,10 @@
                             ErrorMessageDetail = $_
                         }
                     }
+
+                    out-logfile -string $isErrorObject
+
+                    $functionErrors+=$isErrorObject
                 }
                 else 
                 {
