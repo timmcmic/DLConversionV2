@@ -196,13 +196,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$retainSendAsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
         [boolean]$retainFullMailboxAccessOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$retainSendAsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
@@ -226,6 +222,13 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE
     )
+
+    #For mailbox folder permissions set these to false.
+    #Supported methods for gathering folder permissions require use of the pre-collection.
+    #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.
+    
+    [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
+    [boolean]$retainMailboxFolderPermsOffice365=$FALSE
 
     if ($isMultiMachine -eq $TRUE)
     {
