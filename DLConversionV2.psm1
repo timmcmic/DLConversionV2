@@ -5780,7 +5780,8 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Name: "+$CreateError.name)
                 out-logfile -string ("Alias: "+$CreateError.Alias)
                 out-logfile -string ("Attribute in Error: "+$CreateError.attribute)
-                out-logfile -string ("Error Message Details: "+$CreateError.errorMessage)
+                out-logfile -string ("Error Message: "+$CreateError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$CreateError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }

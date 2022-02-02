@@ -329,6 +329,7 @@
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  Alias / DisplayName / HiddenFromAddressList / RequireSenderAuthenticaiton / SimpleDisplayName / WindowsEmailAddress / MailTipTranslations / Name"
                 ErrorMessage = $_
+                ErrorMessageDetail = ""
             }
 
             $functionErrors+=$isErrorObject
@@ -353,6 +354,7 @@
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  BypassNedstedModerationEnabled / ModerationEnabled / SendModerationNotifications"
                 ErrorMessage = $_
+                ErrorMessageDetail = ""
             }
 
             $functionErrors+=$isErrorObject
@@ -377,6 +379,7 @@
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  MemberJoinRestriction / MemberDepartRestriction"
                 ErrorMessage = $_
+                ErrorMessageDetail = ""
             }
 
             $functionErrors+=$isErrorObject
@@ -401,6 +404,7 @@
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  ReportToManagerEnabled / ReportToOriginatorEnabled / SendOOFMessageToOriginatorEnabled"
                 ErrorMessage = $_
+                ErrorMessageDetail = ""
             }
 
             $functionErrors+=$isErrorObject
@@ -425,6 +429,7 @@
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  CustomAttributeX / ExtensionAttributeX"
                 ErrorMessage = $_
+                ErrorMessageDetail = ""
             }
 
             $functionErrors+=$isErrorObject
