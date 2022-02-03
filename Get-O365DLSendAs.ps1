@@ -50,7 +50,7 @@
         {
             Out-LogFile -string "Using Exchange Online to locate all of the send as rights in Office 365."
 
-            $functionSendAs = get-o365RecipientPermission -Trustee $groupSMTPAddress
+            $functionSendAs = get-o365RecipientPermission -Trustee $groupSMTPAddress -resultsize unlimited
         }
         catch 
         {
