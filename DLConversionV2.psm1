@@ -1395,6 +1395,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1443,6 +1444,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1502,6 +1504,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1549,6 +1552,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1610,6 +1614,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: ManagedBy)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1658,6 +1663,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: msExchCoManagedByLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1696,6 +1702,7 @@ Function Start-DistributionListMigration
                     name=$normalizedTest.name
                     attribute = "Test ManagedBy For Security Flag"
                     errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                    errorMessageDetail = ""
                 }
 
                 out-logfile -string $isErrorObject
@@ -1726,6 +1733,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "Test ManagedBy For Group Override"
                         errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1781,6 +1789,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1842,6 +1851,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1892,6 +1902,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1949,6 +1960,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2092,6 +2104,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "Member (ADAttribute: Members)"
                         ErrorMessage = "A member of the distribution list is not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2146,6 +2159,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers (ADAttributes: UnAuthOrig / DLMemRejectPerms)"
                         ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2200,6 +2214,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers (ADAttributes: authOrig / DLMemSubmitPerms)"
                         ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2254,6 +2269,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "Owners (ADAttributes: ManagedBy,msExchCoManagedByLink)"
                         ErrorMessage = "A member of owners was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2308,6 +2324,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "ModeratedBy (ADAttributes: msExchModeratedByLink)"
                         ErrorMessage = "A member of moderatedBy was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2362,6 +2379,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "BypassModerationFromSendersorMembers (ADAttributes: msExchBypassModerationLink,msExchBypassModerationFromDLMembersLink)"
                         ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2414,6 +2432,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "GrantSendOnBehalfTo (ADAttributes: publicDelegates)"
                         ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2468,6 +2487,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "SendAs"
                         ErrorMessage = "A member with SendAs permissions was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -4187,6 +4207,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List Membership (ADAttribute: Members)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4251,6 +4272,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List RejectMessagesFromSendersOrMembers (ADAttribute: DLMemRejectPerms)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4315,6 +4337,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List AcceptMessagesOnlyFromSendersorMembers (ADAttribute: DLMemSubmitPerms)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4379,6 +4402,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List ManagedBy (ADAttribute: MSExchCoManagedBy)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4444,6 +4468,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembers)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4508,6 +4533,7 @@ Function Start-DistributionListMigration
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List GrantSendOnBehalfTo (ADAttribute: PublicDelegates)"
                         errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessageDetail = $_
                     }
 
                     out-logfile -string $isErrorObject
@@ -4584,6 +4610,7 @@ Function Start-DistributionListMigration
                             canonicalName=$member.canonicalName
                             attribute = "Distribution List ManagedBy (ADAttribute: managedBy)"
                             errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                            errorMessagedetail = $_
                         }
 
                         out-logfile -string $isErrorObject
@@ -4659,6 +4686,7 @@ Function Start-DistributionListMigration
                     canonicalName=$member.canonicalName
                     attribute = "Mailbox Attribute Forwarding Address (ADAttribute: forwardingAddress)"
                     errorMessage = "Unable to add mail routing contact to on premises mailbox object.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4711,7 +4739,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4766,7 +4794,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4821,6 +4849,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4875,6 +4904,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4929,6 +4959,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -4987,6 +5018,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5041,6 +5073,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5095,6 +5128,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5149,6 +5183,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5203,6 +5238,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5259,6 +5295,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5313,6 +5350,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5366,6 +5404,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5424,6 +5463,7 @@ Function Start-DistributionListMigration
                     displayName = $member.displayName
                     attribute = "Distribution List Membership"
                     errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessageDetail = $_
                 }
 
                 out-logfile -string $isErrorObject
@@ -5455,6 +5495,7 @@ Function Start-DistributionListMigration
                 permissionIdentity = "ALL"
                 attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
                 errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+                errorMessageDetail = $_
             }
 
             out-logfile -string $isErrorObject
@@ -5484,6 +5525,7 @@ Function Start-DistributionListMigration
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
+                errorMessaegDetail = $_
             }
 
             out-logfile -string $isErrorObject
@@ -5524,6 +5566,7 @@ Function Start-DistributionListMigration
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                errorMessageDetail = $_
             }
 
             out-logfile -string $isErrorObject
@@ -5547,6 +5590,7 @@ Function Start-DistributionListMigration
 
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                        errorMessageDetail = $_
                     }
         
                     out-logfile -string $isErrorObject
@@ -5596,6 +5640,7 @@ Function Start-DistributionListMigration
     {
         $isErrorObject = new-Object psObject -property @{
             errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group.  Administrator may need to manually perform the operation."
+            errorMessageDetail = $_
         }
 
         out-logfile -string $isErrorObject
@@ -5620,6 +5665,7 @@ Function Start-DistributionListMigration
     {
         $isErrorObject = new-Object psObject -property @{
             errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
+            errorMessageDetail = $_
         }
 
         out-logfile -string $isErrorObject
@@ -5800,6 +5846,7 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
                 out-logfile -string ("Attribute in Error: "+$onPremReplaceError.attribute)
                 out-logfile -string ("Error Message: "+$onPremReplaceError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$onPremReplaceError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
@@ -5817,6 +5864,7 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Display Name: "+$office365ReplaceError.displayName)
                 out-logfile -string ("Attribute in Error: "+$office365ReplaceError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplaceError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$office365Replace.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
@@ -5830,6 +5878,7 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
                 out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$office365ReplacePermissionsError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
@@ -5841,6 +5890,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "====="
                 out-logfile -string "General Errors:"
                 out-logfile -string ("Error Message: "+$generalError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$generalError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }

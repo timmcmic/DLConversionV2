@@ -46,6 +46,7 @@
             $isErrorObject = new-Object psObject -property @{
                 Attribute = "Mail"
                 ErrorMessage = ("Mail attribute missing on non-syncDL and is required.")
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -62,6 +63,7 @@
             $isErrorObject = new-Object psObject -property @{
                 Attribute = "LegacyExchangeDN"
                 ErrorMessage = ("LegacyExchangeDN attribute missing on non-syncDL and is required.")
+                errorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -78,6 +80,7 @@
             $isErrorObject = new-Object psObject -property @{
                 Attribute = "ProxyAddresses"
                 ErrorMessage = ("ProxyAddresses attribute missing on non-syncDL and is required.")
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -94,6 +97,7 @@
             $isErrorObject = new-Object psObject -property @{
                 Attribute = "MailNickName"
                 ErrorMessage = ("MailNickName attribute missing on non-syncDL and is required.")
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject

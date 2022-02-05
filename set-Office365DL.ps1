@@ -328,8 +328,8 @@
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  Alias / DisplayName / HiddenFromAddressList / RequireSenderAuthenticaiton / SimpleDisplayName / WindowsEmailAddress / MailTipTranslations / Name"
-                ErrorMessage = $_
-                ErrorMessageDetail = ""
+                ErrorMessage = "Error setting single valued attribute of the migrated distribution list."
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -353,8 +353,8 @@
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  BypassNedstedModerationEnabled / ModerationEnabled / SendModerationNotifications"
-                ErrorMessage = $_
-                ErrorMessageDetail = ""
+                ErrorMessage = "Error setting additional single valued attribute of the migrated distribution group."
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -378,8 +378,8 @@
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  MemberJoinRestriction / MemberDepartRestriction"
-                ErrorMessage = $_
-                ErrorMessageDetail = ""
+                ErrorMessage = "Error setting join or depart restrictions."
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -403,8 +403,8 @@
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  ReportToManagerEnabled / ReportToOriginatorEnabled / SendOOFMessageToOriginatorEnabled"
-                ErrorMessage = $_
-                ErrorMessageDetail = ""
+                ErrorMessage = "Error setting report to attributes."
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject
@@ -428,8 +428,8 @@
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
                 Attribute = "Cloud distribution list:  CustomAttributeX / ExtensionAttributeX"
-                ErrorMessage = $_
-                ErrorMessageDetail = ""
+                ErrorMessage = "Error setting custom or extension attributes."
+                ErrorMessageDetail = $_
             }
 
             $functionErrors+=$isErrorObject

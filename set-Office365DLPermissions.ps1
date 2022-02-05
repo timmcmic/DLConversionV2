@@ -85,6 +85,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "SendAs Permission"
                         errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manaul add required."
+                        errorMessageDetail = $_
                     }
     
                     out-logfile -string $isErrorObject
@@ -132,6 +133,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "FullMailboxAccess Permission"
                         errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                        errorMessageDetail = $_
                     }
     
                     out-logfile -string $isErrorObject
@@ -178,6 +180,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "Mailbox Folder Permission"
                         errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                        errorMessageDetail = $_
                     }
     
                     out-logfile -string $isErrorObject
