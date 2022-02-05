@@ -5789,7 +5789,7 @@ Function Start-DistributionListMigration
             }
         }
 
-        if ($onPremReplaceErrors -gt 0)
+        if ($onPremReplaceErrors.count -gt 0)
         {
             foreach ($onPremReplaceError in $onPremReplaceErrors)
             {
@@ -5805,7 +5805,7 @@ Function Start-DistributionListMigration
         }
 
        
-        if ($office365ReplaceErrors -gt 0)
+        if ($office365ReplaceErrors.count -gt 0)
         {
             foreach ($office365ReplaceError in $office365ReplaceErrors)
             {
@@ -5821,7 +5821,7 @@ Function Start-DistributionListMigration
             }
         }
         
-        if ($office365ReplacePermissionsErrors -gt 0)
+        if ($office365ReplacePermissionsErrors.count -gt 0)
         {
             foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
             {
@@ -5834,7 +5834,7 @@ Function Start-DistributionListMigration
             }
         }
         
-        if ($generalErrors -gt 0)
+        if ($generalErrors.count -gt 0)
         {
             foreach ($generalError in $generalErrors)
             {
