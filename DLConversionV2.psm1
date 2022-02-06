@@ -3907,10 +3907,6 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop=$FALSE)
 
-        
-
-        
-
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
 
