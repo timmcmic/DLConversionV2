@@ -61,7 +61,7 @@
 
         out-Logfile -string "Processing operation..."
 
-        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
+        $functionCommand="set-o365DistributionGroup -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP -bypassSecurityGroupManagerCheck"
         out-logfile -string ("The command to execute:  "+$functionCommand)
 
         $scriptBlock = [scriptBlock]::create($functionCommand)
