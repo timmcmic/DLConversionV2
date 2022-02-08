@@ -337,7 +337,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
-    [string]$$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalized"
+    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalized"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"

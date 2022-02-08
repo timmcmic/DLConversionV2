@@ -50,6 +50,7 @@
         $functionTest=$NULL #Holds the return information for the group query.
         $functionObject=$NULL #This is used to hold the object that will be returned.
         [string]$functionSMTPAddress=$NULL
+        $functionDN=$NULL
 
         #Start function processing.
 
@@ -87,7 +88,11 @@
                 }
                 else
                 {
-                    $functionTest = get-adObject -filter {canonicalName -eq $CN} -properties * -credential $adCredential -errorAction STOP
+                    #Canonical name is a calculated value - need to tranlate to DN and then search directory.
+                    
+                    $DN = get-distinguishedName -canonicalName $CN
+
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
     
                     if ($functionTest -eq $NULL)
                     {
@@ -96,7 +101,6 @@
     
                     Out-LogFile -string "The array member was found by DN."
                 }
-
 
                 $stopLoop=$TRUE
             }
