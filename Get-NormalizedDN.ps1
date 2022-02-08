@@ -34,6 +34,8 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
+            [Parameter(Mandatory = $true)]
+            [string]$CN,
             [Parameter(Mandatory = $TRUE)]
             $adCredential,
             [Parameter(Mandatory = $TRUE)]
@@ -95,7 +97,6 @@
                     $loopcounter = $loopCounter+1
                     start-sleepProgress -sleepString "Sleeping for 5 seconds get-adobjectError" -sleepSeconds 5
                 }
-                
             }
         } until ($stopLoop -eq $TRUE)
         
