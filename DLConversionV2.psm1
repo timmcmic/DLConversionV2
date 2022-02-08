@@ -337,6 +337,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
+    [string]$$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalized"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
@@ -1981,6 +1982,56 @@ Function Start-DistributionListMigration
         }
     }
 
+    Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
+
+    Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
+
+    if ($allObjectSendAsAccess -ne $NULL)
+    {
+        foreach ($permission in $allObjectSendAsAccess)
+        {
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $NULL -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "On Premsies Group not present in Office 365 - Migrated group has send as permissions."
+                        errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $allObjectsSendAsAccessNormalized+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
         Out-LogFile -string "The following objects are members of the grant send on behalf to:"
@@ -2029,6 +2080,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
+    out-lgofile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #Exit #Debug Exit.
@@ -2506,6 +2558,61 @@ Function Start-DistributionListMigration
         out-logfile -string "There were no members with send as rights."    
     }
 
+    out-logfile -string "Begin evaluation of groups on premises that the group to be migrated has send as rights on."
+
+    if ($allObjectsSendAsAccessNormalized.count -gt 0)
+    {
+        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
+
+        foreach ($member in $allObjectsSendAsAccessNormalized)
+        {
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Group with SendAs"
+                        ErrorMessage = "The group to be migrated has send as rights on an on premises object.  The object is not present in Office 365."
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "There were no members with send as rights."    
+    }
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -2799,6 +2906,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
+    if ($allObjectsSendAsAccessNormalized.count -ne 0)
+    {
+        out-logfile -string $allObjectsSendAsAccessNormalized
+
+        out-xmlFile -itemToExport allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+    }
+    
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML

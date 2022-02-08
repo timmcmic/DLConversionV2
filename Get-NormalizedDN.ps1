@@ -73,15 +73,30 @@
             try 
             {
                 Out-LogFile -string "Attempting to find the AD object associated with the member."
-    
-                $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
-    
-                if ($functionTest -eq $NULL)
+
+                if ($DN -ne $NULL)
                 {
-                    throw "The array member cannot be found by DN in Active Directory."
-                }
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
     
-                Out-LogFile -string "The array member was found by DN."
+                    if ($functionTest -eq $NULL)
+                    {
+                        throw "The array member cannot be found by DN in Active Directory."
+                    }
+    
+                    Out-LogFile -string "The array member was found by DN."
+                }
+                else
+                {
+                    $functionTest = get-adObject -filter {canonicalName -eq $CN} -properties * -credential $adCredential -errorAction STOP
+    
+                    if ($functionTest -eq $NULL)
+                    {
+                        throw "The array member cannot be found by DN in Active Directory."
+                    }
+    
+                    Out-LogFile -string "The array member was found by DN."
+                }
+
 
                 $stopLoop=$TRUE
             }
