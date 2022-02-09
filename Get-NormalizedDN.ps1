@@ -75,7 +75,7 @@
             {
                 Out-LogFile -string "Attempting to find the AD object associated with the member."
 
-                if ($DN -ne $NULL)
+                if ($DN -ne "Empty")
                 {
                     $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
     
