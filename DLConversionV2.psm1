@@ -337,7 +337,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
-    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalized"
+    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
@@ -2910,7 +2910,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectsSendAsAccessNormalized
 
-        out-xmlFile -itemToExport allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
     }
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
@@ -5598,7 +5598,7 @@ Function Start-DistributionListMigration
     }
     
     
-    if ($allowNonSyncedGroups -eq $FALSE)
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         out-logFile -string "Start replacing Office 365 permissions."
 
