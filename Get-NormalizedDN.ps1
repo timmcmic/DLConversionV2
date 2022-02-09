@@ -62,6 +62,7 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
+        out-logfile -string ("CN Set = "+$CN)
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
         out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
@@ -75,8 +76,10 @@
             {
                 Out-LogFile -string "Attempting to find the AD object associated with the member."
 
-                if ($DN -ne "Empty")
+                if ($DN -ne "None")
                 {
+                    out-logfile -string "Attepmting to find the user via distinguished name.
+                    "
                     $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
     
                     if ($functionTest -eq $NULL)
@@ -88,6 +91,8 @@
                 }
                 else
                 {
+                    out-logfile -string "Attempting to find member by canonical name converted to distinguished name." 
+                    
                     #Canonical name is a calculated value - need to tranlate to DN and then search directory.
                     
                     $DN = get-distinguishedName -canonicalName $CN
