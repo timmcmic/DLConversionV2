@@ -5622,10 +5622,7 @@ Function Start-DistributionListMigration
 
             $office365ReplacePermissionsErrors+=$isErrorObject
         }
-    }
-
-    Exit #Debug exit
-    
+    }    
 
     if ($enableHybridMailflow -eq $TRUE)
     {
