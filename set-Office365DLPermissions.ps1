@@ -36,10 +36,15 @@
             [array]$allSendAs=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
+            [array]$allOnPremSendAs=$NULL,
+            [Parameter(Mandatory = $true)]
+            [AllowEmptyCollection()]
             [array]$allFullMailboxAccess=$NULL,
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allFolderPermissions=$NULL
+            [array]$allFolderPermissions=$NULL,
+            [Parameter(Mandatory = $false)]
+            [string]$originalGroupPrimarySMTPAddress=""
         )
 
         $isTestError="No"
@@ -52,6 +57,54 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
+
+        #Determine if any dir synced groups on premises has send as set.  If so reset in service so migrated group continues to work.
+
+        if ($allOnPremSendAs -ne $NULL)
+        {
+            out-logfile -string "The migrated group has send as rights on premises for groups that are directory synced."
+            out-logfile -string "Adding the send as right to the cloud for the migrated distribution group."
+
+            foreach ($permission in $allOnPremSendAs)
+            {
+                $isTestError="No" #Reset error tracking.
+                $accessRight="SendAs"
+
+                out-logfile -string ("Processing permission identity = "+$permission.primarySMTPAddressorUPN)
+                out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
+                out-logfile -string ("Processing permission access rights = "+$accessRight)
+
+                try {
+                    add-o365RecipientPermission -identity $permission.primarySMTPAddressOrUPN -trustee $originalGroupPrimarySMTPAddress -accessRights $accessRight -confirm:$FALSE
+                }
+                catch {
+                    out-logfile -string "Unable to add the recipient permission in office 365."
+                    out-logfile -string $_
+
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.primarySMTPAddressorUPN
+                        attribute = "SendAs Permission"
+                        errorMessage = "Migrated DL has send as permissions on directory synced group.  Attempt to mirror permission in cloud failed.  Manaul add required."
+                        errorMessageDetail = $_
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $permissionsErrors+=$isErrorObject
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There are no send as permissions to process."    
+        }
 
         #Determine if send as is populated and if so reset permissiosn.
 

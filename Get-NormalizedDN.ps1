@@ -92,7 +92,7 @@
                 else
                 {
                     out-logfile -string "Attempting to find member by canonical name converted to distinguished name." 
-                    
+
                     #Canonical name is a calculated value - need to tranlate to DN and then search directory.
                     
                     $DN = get-distinguishedName -canonicalName $CN
@@ -157,7 +157,7 @@
                     ExternalDirectoryObjectID = $null
                     isAlreadyMigrated = $false
                     isError=$false
-                    isErrorMessage=$NUL
+                    isErrorMessage=""
                 }
             }
             elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
@@ -182,7 +182,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
 
@@ -203,7 +203,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
             }
@@ -222,7 +222,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
             }
             elseif ($functionTest.objectClass -eq "User")
@@ -240,7 +240,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $FALSE
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                 }
             }
             elseif ($functionTest.objectClass -eq "Group")
@@ -264,7 +264,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NULL
+                        isErrorMessage=""
                     }
                 }
 
@@ -286,7 +286,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
                 
@@ -316,7 +316,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NULL
+                        isErrorMessage=""
                     }
                 }
                 else 
