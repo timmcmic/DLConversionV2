@@ -381,7 +381,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsManagedBy=$NULL
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
-    [array]$allObjectsSendAsAccessNormalized=$NULL
+    [array]$allObjectsSendAsAccessNormalized=@()
     [array]$allMailboxesFolderPermissions=@()
     [array]$allGroupsCoManagedByBL=$NULL
 
