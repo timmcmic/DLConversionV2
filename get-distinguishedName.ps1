@@ -1,4 +1,4 @@
-#All credits to author.
+#All credits to author - link below.  Code modified by publisher.
 #https://millerb.co.uk/2019/07/16/Get-DistinguishedName-From-CanonicalName.html
 
 
