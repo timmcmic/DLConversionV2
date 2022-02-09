@@ -64,7 +64,7 @@
                 out-logfile -string ("Processing permission trustee = "+$permission.user)
 
                 try {
-                    add-adPermission -identity $permission.identity -user $permission.user -AccessRights ExtendedRight -ExtendedRights "Send As"
+                    add-adPermission -identity $permission.identity -user $permission.user -AccessRights ExtendedRight -ExtendedRights "Send As" -confirm:$FALSE -errorAction Stop
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission send as on premises."
@@ -92,7 +92,7 @@
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE
+                    add-MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE -errorAction Stop
                 }
             }
             catch {
@@ -121,7 +121,7 @@
                     out-logfile -string ("Processing permissions folder = "+$permission.folderName)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE
+                    add-MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE -errorAction Stop
                 }
                 catch {
                     out-logFile -string "Unable to add the full mailbox access permission in Office 365."
@@ -133,10 +133,6 @@
         {
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
-
-        
-    
-        
 
         Out-LogFile -string "END set-OnPremDLPermissions"
         Out-LogFile -string "********************************************************************************"
