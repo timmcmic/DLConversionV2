@@ -222,7 +222,7 @@
 
                 try 
                 {
-                    $functionSendAsObjects+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP
+                    $functionSendAsObjects+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -CN:$NULL
                 }
                 catch 
                 {
