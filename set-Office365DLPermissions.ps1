@@ -247,12 +247,9 @@
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
 
-        
-    
-        
-
+        out-logfile -string ("Count of Errors"+$permissionsErrors.count)
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
-
+        
         return $permissionsErrors
     }
