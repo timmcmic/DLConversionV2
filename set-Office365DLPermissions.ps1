@@ -86,7 +86,7 @@
 
                 if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+                    out-logfile -string "Error adding mirgated distribution list to send as permission of cloud only group.."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.primarySMTPAddressorUPN
