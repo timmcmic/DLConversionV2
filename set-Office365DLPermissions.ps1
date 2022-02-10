@@ -75,7 +75,7 @@
                 out-logfile -string ("Processing permission access rights = "+$accessRight)
 
                 try {
-                    add-o365RecipientPermission -identity $permission.primarySMTPAddressOrUPN -trustee $originalGroupPrimarySMTPAddress -accessRights $accessRight -confirm:$FALSE
+                    add-o365RecipientPermission -identity $permission.primarySMTPAddressOrUPN -trustee $originalGroupPrimarySMTPAddress -accessRights $accessRight -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."
@@ -121,7 +121,7 @@
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 try {
-                    add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights -confirm:$FALSE
+                    add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."
@@ -169,7 +169,7 @@
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE
+                    add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
             }
             catch {
@@ -216,7 +216,7 @@
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE
+                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to add the full mailbox access permission in Office 365."
