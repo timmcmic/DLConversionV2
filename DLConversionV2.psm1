@@ -5627,6 +5627,8 @@ Function Start-DistributionListMigration
         }
     }    
 
+    out-logfile -string ("Count of office 365 permissions errors: "+$office365ReplacePermissionsErrors.count)
+    
     if ($enableHybridMailflow -eq $TRUE)
     {
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
