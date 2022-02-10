@@ -33,16 +33,16 @@
         (
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allSendAs=$NULL,
+            [array]$allSendAs=@(),
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allOnPremSendAs=$NULL,
+            [array]$allOnPremSendAs=@(),
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allFullMailboxAccess=$NULL,
+            [array]$allFullMailboxAccess=@(),
             [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
-            [array]$allFolderPermissions=$NULL,
+            [array]$allFolderPermissions=@(),
             [Parameter(Mandatory = $false)]
             [string]$originalGroupPrimarySMTPAddress=""
         )
@@ -60,7 +60,7 @@
 
         #Determine if any dir synced groups on premises has send as set.  If so reset in service so migrated group continues to work.
 
-        if ($allOnPremSendAs -ne $NULL)
+        if ($allOnPremSendAs.count -gt 0)
         {
             out-logfile -string "The migrated group has send as rights on premises for groups that are directory synced."
             out-logfile -string "Adding the send as right to the cloud for the migrated distribution group."
@@ -108,7 +108,7 @@
 
         #Determine if send as is populated and if so reset permissiosn.
 
-        if ($allSendAs -ne $NULL)
+        if ($allSendAs.count -gt 0)
         {
             out-logfile -string "There are objects that have send as rights - processing."
 
@@ -156,7 +156,7 @@
     
         
 
-        if ($allFullMailboxAccess -ne $NULL)
+        if ($allFullMailboxAccess.count -gt 0)
         {
             out-logfile -string "There are objects that have full mailbox access rights - processing."
 
@@ -203,7 +203,7 @@
     
         
 
-        if ($allFolderPermissions -ne $NULL)
+        if ($allFolderPermissions.count -gt 0)
         {
             out-logfile -string "Processing mailbox folder permissions in Office 365."
 
