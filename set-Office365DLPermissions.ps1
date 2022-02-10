@@ -48,7 +48,7 @@
         )
 
         $isTestError="No"
-        $permissionsErrors=@()
+        [array]$permissionsErrors=@()
 
         #Declare function variables.
 
