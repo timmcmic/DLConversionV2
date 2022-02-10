@@ -5606,7 +5606,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
+            $office365ReplacePermissionsErrors=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
         }
         catch 
         {
@@ -5628,7 +5628,7 @@ Function Start-DistributionListMigration
     }    
 
     out-logfile -string ("Count of office 365 permissions errors: "+$office365ReplacePermissionsErrors.count)
-    
+
     if ($enableHybridMailflow -eq $TRUE)
     {
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
