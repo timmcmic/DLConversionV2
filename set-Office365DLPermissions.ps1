@@ -81,6 +81,7 @@
                     out-logfile -string "Unable to add the recipient permission in office 365."
                     out-logfile -string $_
 
+                    $errorMessageDetail=$_
                     $isTestError="Yes"
                 }
 
@@ -92,7 +93,7 @@
                         permissionIdentity = $permission.primarySMTPAddressorUPN
                         attribute = "SendAs Permission"
                         errorMessage = "Migrated DL has send as permissions on directory synced group.  Attempt to mirror permission in cloud failed.  Manaul add required."
-                        errorMessageDetail = $_
+                        errorMessageDetail = $errorMessageDetail
                     }
     
                     out-logfile -string $isErrorObject
@@ -127,6 +128,7 @@
                     out-logfile -string "Unable to add the recipient permission in office 365."
                     out-logfile -string $_
 
+                    $errorMessageDetail=$_
                     $isTestError="Yes"
                 }
 
@@ -138,7 +140,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "SendAs Permission"
                         errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manaul add required."
-                        errorMessageDetail = $_
+                        errorMessageDetail = $errorMessageDetail
                     }
     
                     out-logfile -string $isErrorObject
@@ -175,6 +177,7 @@
             catch {
                 out-logFile -string "Unable to add the full mailbox access permission in Office 365."
                 out-logfile -string $_
+                $errorMessageDetail=$_
                 $isTestError="Yes"
             }
 
@@ -186,7 +189,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "FullMailboxAccess Permission"
                         errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
-                        errorMessageDetail = $_
+                        errorMessageDetail = $errorMessageDetail
                     }
     
                     out-logfile -string $isErrorObject
@@ -221,6 +224,7 @@
                 catch {
                     out-logFile -string "Unable to add the full mailbox access permission in Office 365."
                     out-logfile -string $_
+                    $errorMessageDetail=$_
 
                     $isTestError="Yes"
                 }
@@ -233,7 +237,7 @@
                         permissionIdentity = $permission.Identity
                         attribute = "Mailbox Folder Permission"
                         errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
-                        errorMessageDetail = $_
+                        errorMessageDetail = $errorMessageDetail
                     }
     
                     out-logfile -string $isErrorObject

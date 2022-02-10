@@ -5596,6 +5596,8 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No cloud only groups had the migrated group as a member."
     }
+
+    out-logfile -string ("Count of office 365 permissions errors: "+$office365ReplacePermissionsErrors.count)
     
     
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -5610,6 +5612,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
             out-logfile -string $_
+            $isTestErrorDetail=$_
 
             $isErrorObject = new-Object psObject -property @{
                 permissionIdentity = "ALL"
@@ -5638,13 +5641,14 @@ Function Start-DistributionListMigration
         catch{
             out-logfile -string $_
             $isTestError="Yes"
+            $errorMessageDetail=$_
         }
 
         if ($isTestError -eq "Yes")
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
-                errorMessaegDetail = $_
+                errorMessaegDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject
