@@ -68,7 +68,7 @@
             foreach ($permission in $allOnPremSendAs)
             {
                 $isTestError="No" #Reset error tracking.
-                $accessRight="SendAsOnPremisesSourcedGroup"
+                $accessRight="SendAs"
 
                 out-logfile -string ("Processing permission identity = "+$permission.primarySMTPAddressorUPN)
                 out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
