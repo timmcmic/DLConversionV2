@@ -68,7 +68,7 @@
             foreach ($permission in $allOnPremSendAs)
             {
                 $isTestError="No" #Reset error tracking.
-                $accessRight="SendAs"
+                $accessRight="SendAsOnPremisesSourcedGroup"
 
                 out-logfile -string ("Processing permission identity = "+$permission.primarySMTPAddressorUPN)
                 out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
@@ -255,5 +255,5 @@
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
         
-        return $permissionsErrors
+        return ,$permissionsErrors
     }
