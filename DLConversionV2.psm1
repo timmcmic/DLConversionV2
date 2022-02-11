@@ -478,6 +478,7 @@ Function Start-DistributionListMigration
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
     [array]$global:office365ReplacePermissionsErrors=@()
+    [array]$global:onPremReplacePermissionsErrors=@()
     [array]$generalErrors=@()
     [string]$isTestError="No"
 
@@ -5923,7 +5924,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    if (($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -5933,6 +5934,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
+        out-logfile -string ("On Prem Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("General Errors: "+$generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
@@ -5995,6 +5997,20 @@ Function Start-DistributionListMigration
             {
                 out-logfile -string "====="
                 out-logfile -string "Office 365 Permissions Error: "
+                out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
+                out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
+                out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$office365ReplacePermissionsError.errorMessageDetail)
+                out-logfile -string "====="
+            }
+        }
+
+        if ($global:onPremReplacePermissionsErrors.count -gt 0)
+        {
+            foreach ($onPremReplacePermissionsError in $global:office365ReplacePermissionsErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "On Prem Permissions Error: "
                 out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
                 out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)

@@ -133,7 +133,7 @@
 
                 if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+                    out-logfile -string "Error adding migrated DL to on premises DL send as on cloud object.."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
@@ -182,7 +182,7 @@
 
             if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+                    out-logfile -string "Unable to add the full mailbox access permission in Office 365."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
@@ -230,7 +230,7 @@
 
                 if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Error adding routing contact to Office 365 Distribution List."
+                    out-logfile -string "Unable to add the full mailbox access permission in Office 365."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
@@ -250,7 +250,6 @@
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
 
-        out-logfile -string ("Count of Errors"+$global:office365ReplacePermissionsErrors.count)
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
         
