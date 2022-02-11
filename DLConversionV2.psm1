@@ -477,7 +477,7 @@ Function Start-DistributionListMigration
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
-    [array]$office365ReplacePermissionsErrors=@()
+    [array]$global:office365ReplacePermissionsErrors=@()
     [array]$generalErrors=@()
     [string]$isTestError="No"
 
@@ -5595,10 +5595,7 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile -string "No cloud only groups had the migrated group as a member."
-    }
-
-    out-logfile -string ("Count of office 365 permissions errors: "+$office365ReplacePermissionsErrors.count)
-    
+    }   
     
     if ($allowNonSyncedGroup -eq $FALSE)
     {
@@ -5606,7 +5603,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            $office365ReplacePermissionsErrors=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
+            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
         }
         catch 
         {
@@ -5623,11 +5620,9 @@ Function Start-DistributionListMigration
 
             out-logfile -string $isErrorObject
 
-            $office365ReplacePermissionsErrors+=$isErrorObject
+            $global:office365ReplacePermissionsErrors+=$isErrorObject
         }
     }    
-
-    out-logfile -string ("Count of office 365 permissions errors: "+$office365ReplacePermissionsErrors.count)
 
     if ($enableHybridMailflow -eq $TRUE)
     {
@@ -5928,7 +5923,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    if (($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -5937,7 +5932,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("Post Create Errors: "+$global:postCreateErrors.count)
         out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
-        out-logfile -string ("Office 365 Replace Permissions Errors: "+$office365ReplacePermissionsErrors.count)
+        out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("General Errors: "+$generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
@@ -5994,9 +5989,9 @@ Function Start-DistributionListMigration
             }
         }
         
-        if ($office365ReplacePermissionsErrors.count -gt 0)
+        if ($global:office365ReplacePermissionsErrors.count -gt 0)
         {
-            foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+            foreach ($office365ReplacePermissionsError in $global:office365ReplacePermissionsErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Office 365 Permissions Error: "

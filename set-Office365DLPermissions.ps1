@@ -48,7 +48,6 @@
         )
 
         $isTestError="No"
-        [array]$permissionsErrors=@()
 
         #Declare function variables.
 
@@ -98,7 +97,7 @@
     
                     out-logfile -string $isErrorObject
     
-                    $permissionsErrors+=$isErrorObject
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
             }
         }
@@ -145,7 +144,7 @@
     
                     out-logfile -string $isErrorObject
     
-                    $permissionsErrors+=$isErrorObject
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
             }
         }
@@ -194,7 +193,7 @@
     
                     out-logfile -string $isErrorObject
     
-                    $permissionsErrors+=$isErrorObject
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
         }
         else 
@@ -242,7 +241,7 @@
     
                     out-logfile -string $isErrorObject
     
-                    $permissionsErrors+=$isErrorObject
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
             }
         }
@@ -251,9 +250,8 @@
             out-logfile -string "There are no full mailbox access permissions to process."  
         }
 
-        out-logfile -string ("Count of Errors"+$permissionsErrors.count)
+        out-logfile -string ("Count of Errors"+$global:office365ReplacePermissionsErrors.count)
         Out-LogFile -string "END set-Office365DLPermissions"
         Out-LogFile -string "********************************************************************************"
         
-        return ,$permissionsErrors
     }
