@@ -187,11 +187,10 @@ function start-collectOffice365FullMailboxAccess
             }
             else 
             {
-                foreach ($testMailbox in $bringMyOwnMailboxes)
+                foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
-                    $auditMailboxes += get-exomailbox -identity $testMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                 }
-                
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
                 $fileName = $office365MailboxList
