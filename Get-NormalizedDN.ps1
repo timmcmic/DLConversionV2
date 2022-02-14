@@ -75,7 +75,7 @@
         try
         {
             out-logfile -string "Obtaining the active directory domain for this operation."
-            $activeDirectoryDomain=get-activeDirectoryDomain -dn $DN -errorAction STOP
+            $activeDirectoryDomainName=get-activeDirectoryDomain -dn $DN -errorAction STOP
             out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomain)
         }
         catch
