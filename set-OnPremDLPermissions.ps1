@@ -26,7 +26,7 @@
 
     #>
     Function set-OnPremDLPermissions
-     {
+    {
         [cmdletbinding()]
 
         Param
@@ -78,19 +78,20 @@
             }
 
             if ($isTestError -eq "Yes")
-                {
-                    out-logfile -string "Error adding migrated mail contact to send as permissions on premises."
+            {
+                out-logfile -string "Error adding migrated mail contact to send as permissions on premises."
+
+                $isErrorObject = new-Object psObject -property @{
+                    permissionIdentity = $permission.Identity
+                    attribute = "Send As Permission"
+                    errorMessage = "Unable to add the migrated distribution list mail contact with send as permissions to groups sourced on onPremRecipientSendAs."
+                    errorMessageDetail = $errorMessageDetail
+                }
     
-                    $isErrorObject = new-Object psObject -property @{
-                        permissionIdentity = $permission.Identity
-                        attribute = "Send As Permission"
-                        errorMessage = "Unable to add the migrated distribution list mail contact with send as permissions to groups sourced on onPremRecipientSendAs."
-                        errorMessageDetail = $errorMessageDetail
-                    }
+                out-logfile -string $isErrorObject
     
-                    out-logfile -string $isErrorObject
-    
-                    $global:OnPremReplacePermissionsErrors+=$isErrorObject
+                $global:OnPremReplacePermissionsErrors+=$isErrorObject
+            }
         }
         else 
         {
@@ -125,19 +126,20 @@
             }
 
             if ($isTestError -eq "Yes")
-                {
-                    out-logfile -string "Error processing full mailbox access rights on premises (migrated mail contact) for migrated DL."
-    
-                    $isErrorObject = new-Object psObject -property @{
-                        permissionIdentity = $permission.Identity
-                        attribute = "Mailbox Folder Permission"
-                        errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
-                        errorMessageDetail = $errorMessageDetail
-                    }
-    
-                    out-logfile -string $isErrorObject
-    
-                    $global:onPremReplacePermissionsErrors+=$isErrorObject
+            {
+                out-logfile -string "Error processing full mailbox access rights on premises (migrated mail contact) for migrated DL."
+
+                $isErrorObject = new-Object psObject -property @{
+                    permissionIdentity = $permission.Identity
+                    attribute = "Mailbox Folder Permission"
+                    errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                    errorMessageDetail = $errorMessageDetail
+                }
+
+                out-logfile -string $isErrorObject
+
+                $global:onPremReplacePermissionsErrors+=$isErrorObject
+            }
         }
         else 
         {
