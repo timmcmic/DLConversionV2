@@ -65,8 +65,6 @@
 
         Out-LogFile -string "END GET-ActiveDirectoryDomainName"
         Out-LogFile -string "********************************************************************************"
-
-        start-sleep -s 30 #Debug sleep
         
         #This function is designed to open local and remote powershell sessions.
         #If the session requires import - for example exchange - return the session for later work.
