@@ -180,7 +180,7 @@ function start-collectOffice365MailboxFolders
                 out-logfile -string "Using the mailboxes that the administrator provided."
                 out-logfile -string "Following the same logic as our get so that the retry file aligns if necessary."
 
-                foreach ($auditMailbox in $auditMailboxes)
+                foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
                     $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
                 }
