@@ -175,19 +175,20 @@
             }
 
             if ($isTestError -eq "Yes")
-                {
-                    out-logfile -string "Unable to add mailbox folder permissions on premises for migrated mail contact.."
-    
-                    $isErrorObject = new-Object psObject -property @{
-                        permissionIdentity = $permission.Identity
-                        attribute = "Mailbox Folder Permission"
-                        errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
-                        errorMessageDetail = $errorMessageDetail
-                    }
-    
-                    out-logfile -string $isErrorObject
-    
-                    $global:onPremReplacePermissionsErrors+=$isErrorObject
+            {
+                out-logfile -string "Unable to add mailbox folder permissions on premises for migrated mail contact.."
+
+                $isErrorObject = new-Object psObject -property @{
+                    permissionIdentity = $permission.Identity
+                    attribute = "Mailbox Folder Permission"
+                    errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                    errorMessageDetail = $errorMessageDetail
+                }
+
+                out-logfile -string $isErrorObject
+
+                $global:onPremReplacePermissionsErrors+=$isErrorObject
+            }
         }
         else 
         {
