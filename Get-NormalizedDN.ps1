@@ -70,6 +70,19 @@
 
         $stopLoop = $FALSE
         [int]$loopCounter = 0
+        $activeDirectoryDomain =""
+
+        try
+        {
+            out-logfile -string "Obtaining the active directory domain for this operation."
+            $activeDirectoryDomain=get-activeDirectoryDomain -dn $DN -errorAction STOP
+            out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomain)
+        }
+        catch
+        {
+            out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
+        }
+
 
         do {
             try 
@@ -78,9 +91,9 @@
 
                 if ($DN -ne "None")
                 {
-                    out-logfile -string "Attepmting to find the user via distinguished name.
-                    "
-                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
+                    out-logfile -string "Attepmting to find the user via distinguished name."
+
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomain
     
                     if ($functionTest -eq $NULL)
                     {
@@ -97,7 +110,7 @@
                     
                     $DN = get-distinguishedName -canonicalName $CN
 
-                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomain
     
                     if ($functionTest -eq $NULL)
                     {
