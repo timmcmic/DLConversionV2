@@ -80,6 +80,7 @@
         }
         catch
         {
+            out-logfile $_
             out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
         }
 
