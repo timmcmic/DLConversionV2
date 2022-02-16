@@ -75,6 +75,7 @@ function start-collectOffice365FullMailboxAccess
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\AuditData\"
+    [array]$auditMailboxes=@()
 
     #Declare function variables.
 
@@ -186,8 +187,10 @@ function start-collectOffice365FullMailboxAccess
             }
             else 
             {
-                $auditMailboxes = $bringMyOwnMailboxes
-
+                foreach ($auditMailbox in $bringMyOwnMailboxes)
+                {
+                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
                 $fileName = $office365MailboxList

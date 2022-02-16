@@ -337,6 +337,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
+    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
@@ -380,6 +381,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsManagedBy=$NULL
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
+    [array]$allObjectsSendAsAccessNormalized=@()
     [array]$allMailboxesFolderPermissions=@()
     [array]$allGroupsCoManagedByBL=$NULL
 
@@ -475,7 +477,8 @@ Function Start-DistributionListMigration
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
-    [array]$office365ReplacePermissionsErrors=@()
+    [array]$global:office365ReplacePermissionsErrors=@()
+    [array]$global:onPremReplacePermissionsErrors=@()
     [array]$generalErrors=@()
     [string]$isTestError="No"
 
@@ -1322,7 +1325,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1384,7 +1387,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1433,7 +1436,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1493,7 +1496,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1541,7 +1544,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1603,7 +1606,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1652,7 +1655,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1778,7 +1781,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1840,7 +1843,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1891,7 +1894,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1949,7 +1952,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1976,6 +1979,56 @@ Function Start-DistributionListMigration
             catch 
             {
                 out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
+
+    Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
+
+    if ($allObjectSendAsAccess -ne $NULL)
+    {
+        foreach ($permission in $allObjectSendAsAccess)
+        {
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "On Premsies Group not present in Office 365 - Migrated group has send as permissions."
+                        errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $allObjectsSendAsAccessNormalized+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
             }
         }
     }
@@ -2028,6 +2081,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
+    out-logfile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #Exit #Debug Exit.
@@ -2505,6 +2559,61 @@ Function Start-DistributionListMigration
         out-logfile -string "There were no members with send as rights."    
     }
 
+    out-logfile -string "Begin evaluation of groups on premises that the group to be migrated has send as rights on."
+
+    if ($allObjectsSendAsAccessNormalized.count -gt 0)
+    {
+        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
+
+        foreach ($member in $allObjectsSendAsAccessNormalized)
+        {
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Group with SendAs"
+                        ErrorMessage = "The group to be migrated has send as rights on an on premises object.  The object is not present in Office 365."
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "There were no members with send as rights."    
+    }
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -2798,6 +2907,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
+    if ($allObjectsSendAsAccessNormalized.count -ne 0)
+    {
+        out-logfile -string $allObjectsSendAsAccessNormalized
+
+        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+    }
+    
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
@@ -3695,10 +3811,6 @@ Function Start-DistributionListMigration
             }
         }   
     } while ($stopLoop -eq $false)
-
-    
-
-    
 
     #EXIT #Debug Exit.
 
@@ -5484,21 +5596,21 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile -string "No cloud only groups had the migrated group as a member."
-    }
+    }   
     
-    
-    if ($allowNonSyncedGroups -eq $FALSE)
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         out-logFile -string "Start replacing Office 365 permissions."
 
         try 
         {
-            $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
+            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
         }
         catch 
         {
             out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
             out-logfile -string $_
+            $isTestErrorDetail=$_
 
             $isErrorObject = new-Object psObject -property @{
                 permissionIdentity = "ALL"
@@ -5509,10 +5621,9 @@ Function Start-DistributionListMigration
 
             out-logfile -string $isErrorObject
 
-            $office365ReplacePermissionsErrors+=$isErrorObject
+            $global:office365ReplacePermissionsErrors+=$isErrorObject
         }
-    }
-    
+    }    
 
     if ($enableHybridMailflow -eq $TRUE)
     {
@@ -5528,13 +5639,14 @@ Function Start-DistributionListMigration
         catch{
             out-logfile -string $_
             $isTestError="Yes"
+            $errorMessageDetail=$_
         }
 
         if ($isTestError -eq "Yes")
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
-                errorMessaegDetail = $_
+                errorMessaegDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject
@@ -5812,7 +5924,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    if (($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -5821,7 +5933,8 @@ Function Start-DistributionListMigration
         out-logfile -string ("Post Create Errors: "+$global:postCreateErrors.count)
         out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
-        out-logfile -string ("Office 365 Replace Permissions Errors: "+$office365ReplacePermissionsErrors.count)
+        out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
+        out-logfile -string ("On Prem Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("General Errors: "+$generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
@@ -5878,12 +5991,26 @@ Function Start-DistributionListMigration
             }
         }
         
-        if ($office365ReplacePermissionsErrors.count -gt 0)
+        if ($global:office365ReplacePermissionsErrors.count -gt 0)
         {
-            foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+            foreach ($office365ReplacePermissionsError in $global:office365ReplacePermissionsErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Office 365 Permissions Error: "
+                out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
+                out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
+                out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$office365ReplacePermissionsError.errorMessageDetail)
+                out-logfile -string "====="
+            }
+        }
+
+        if ($global:onPremReplacePermissionsErrors.count -gt 0)
+        {
+            foreach ($onPremReplacePermissionsError in $global:office365ReplacePermissionsErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "On Prem Permissions Error: "
                 out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
                 out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)

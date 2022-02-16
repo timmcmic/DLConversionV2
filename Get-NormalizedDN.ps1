@@ -34,6 +34,8 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
+            [Parameter(Mandatory = $true)]
+            [string]$CN,
             [Parameter(Mandatory = $TRUE)]
             $adCredential,
             [Parameter(Mandatory = $TRUE)]
@@ -48,6 +50,7 @@
         $functionTest=$NULL #Holds the return information for the group query.
         $functionObject=$NULL #This is used to hold the object that will be returned.
         [string]$functionSMTPAddress=$NULL
+        $functionDN=$NULL
 
         #Start function processing.
 
@@ -59,6 +62,7 @@
 
         Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
         OUt-LogFile -string ("DN Set = "+$DN)
+        out-logfile -string ("CN Set = "+$CN)
         out-logfile -string ("Credential user name = "+$adCredential.UserName)
         out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
@@ -66,20 +70,56 @@
 
         $stopLoop = $FALSE
         [int]$loopCounter = 0
+        $activeDirectoryDomainName =""
+
+        try
+        {
+            out-logfile -string "Obtaining the active directory domain for this operation."
+            $activeDirectoryDomainName=get-activeDirectoryDomainName -dn $DN -errorAction STOP
+            out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomainName)
+        }
+        catch
+        {
+            out-logfile $_
+            out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
+        }
+
 
         do {
             try 
             {
                 Out-LogFile -string "Attempting to find the AD object associated with the member."
-    
-                $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP
-    
-                if ($functionTest -eq $NULL)
+
+                if ($DN -ne "None")
                 {
-                    throw "The array member cannot be found by DN in Active Directory."
-                }
+                    out-logfile -string "Attepmting to find the user via distinguished name."
+
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
     
-                Out-LogFile -string "The array member was found by DN."
+                    if ($functionTest -eq $NULL)
+                    {
+                        throw "The array member cannot be found by DN in Active Directory."
+                    }
+    
+                    Out-LogFile -string "The array member was found by DN."
+                }
+                else
+                {
+                    out-logfile -string "Attempting to find member by canonical name converted to distinguished name." 
+
+                    #Canonical name is a calculated value - need to tranlate to DN and then search directory.
+                    
+                    $DN = get-distinguishedName -canonicalName $CN
+
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
+    
+                    if ($functionTest -eq $NULL)
+                    {
+                        throw "The array member cannot be found by DN in Active Directory."
+                    }
+    
+                    Out-LogFile -string "The array member was found by DN."
+                }
 
                 $stopLoop=$TRUE
             }
@@ -95,7 +135,6 @@
                     $loopcounter = $loopCounter+1
                     start-sleepProgress -sleepString "Sleeping for 5 seconds get-adobjectError" -sleepSeconds 5
                 }
-                
             }
         } until ($stopLoop -eq $TRUE)
         
@@ -132,7 +171,7 @@
                     ExternalDirectoryObjectID = $null
                     isAlreadyMigrated = $false
                     isError=$false
-                    isErrorMessage=$NUL
+                    isErrorMessage=""
                 }
             }
             elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
@@ -157,7 +196,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
 
@@ -178,7 +217,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
             }
@@ -197,7 +236,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
             }
             elseif ($functionTest.objectClass -eq "User")
@@ -215,7 +254,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $FALSE
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                 }
             }
             elseif ($functionTest.objectClass -eq "Group")
@@ -239,7 +278,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NULL
+                        isErrorMessage=""
                     }
                 }
 
@@ -261,7 +300,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=$NUL
+                        isErrorMessage=""
                     }
                 }
                 
@@ -291,7 +330,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=$NULL
+                        isErrorMessage=""
                     }
                 }
                 else 

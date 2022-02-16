@@ -62,6 +62,7 @@ function start-collectOffice365MailboxFolders
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\AuditData\"
+    [array]$auditMailboxes=@()
 
     #Declare function variables.
 
@@ -179,7 +180,10 @@ function start-collectOffice365MailboxFolders
                 out-logfile -string "Using the mailboxes that the administrator provided."
                 out-logfile -string "Following the same logic as our get so that the retry file aligns if necessary."
 
-                $auditMailboxes = $bringMyOwnMailboxes
+                foreach ($auditMailbox in $bringMyOwnMailboxes)
+                {
+                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
+                }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
