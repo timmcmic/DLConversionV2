@@ -106,6 +106,7 @@
                 else
                 {
                     out-logfile -string "Attempting to find member by canonical name converted to distinguished name." 
+                    out-logfile -string "This is most likely a send as permission on the object itself that we are normalizing for conversion."
 
                     #Canonical name is a calculated value - need to tranlate to DN and then search directory.
                     
@@ -131,7 +132,9 @@
                 }
                 else 
                 {
+                    out-logfile -string $_
                     out-logfile -string "Error getting AD object.  Sleep and try again."
+                    out-logfile -string $_
                     $loopcounter = $loopCounter+1
                     start-sleepProgress -sleepString "Sleeping for 5 seconds get-adobjectError" -sleepSeconds 5
                 }
