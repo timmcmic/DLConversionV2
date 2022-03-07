@@ -825,6 +825,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The range upper for Exchange Schema is: "+ $exchangeRangeUpper)
     }
     catch{
+        out-logfile -string $_
         out-logfile -string "Error occured obtaining the Exchange Schema Version."
         out-logfile -string $_ -isError:$TRUE
     }
@@ -879,9 +880,10 @@ Function Start-DistributionListMigration
       #User specified non-certifate authentication credentials.
 
         try {
-            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath -errorAction STOP
         }
         catch {
+            out-logfile -string $_
             out-logfile -string "Unable to create the exchange online connection using credentials."
             out-logfile -string $_ -isError:$TRUE
         }
@@ -894,6 +896,7 @@ Function Start-DistributionListMigration
             new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
         }
         catch {
+            out-logfile -string $_
             out-logfile -string "Unable to create the exchange online connection using certificate."
             out-logfile -string $_ -isError:$TRUE
         }
@@ -911,30 +914,33 @@ Function Start-DistributionListMigration
         {
             Out-LogFile -string "Calling New-PowerShellSession"
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $coreVariables.exchangeOnPremisesPowershellSessionName -connectionURI $staticOnPremExchange.exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $staticOnPremExchange.exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $coreVariables.exchangeOnPremisesPowershellSessionName -connectionURI $staticOnPremExchange.exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $staticOnPremExchange.exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -errorAction STOP
         }
         catch 
         {
+            out-logfile -string $_
             Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
         }
         try 
         {
             Out-LogFile -string "Calling import-PowerShellSession"
 
-            import-powershellsession -powershellsession $sessionToImport
+            import-powershellsession -powershellsession $sessionToImport -errorAction STOP
         }
         catch 
         {
+            out-logfile -string $_
             Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
         }
         try 
         {
             out-logfile -string "Calling set entire forest."
 
-            enable-ExchangeOnPremEntireForest
+            enable-ExchangeOnPremEntireForest -errorAction Stop
         }
         catch 
         {
+            out-logfile -string $_
             Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
         }
     }
@@ -957,6 +963,7 @@ Function Start-DistributionListMigration
         }
         catch 
         {
+            out-logfile -string $_
             out-logfile -string "Unable to create remote powershell session to the AD Connect server."
             out-logfile -string $_ -isError:$TRUE
         }
@@ -972,6 +979,7 @@ Function Start-DistributionListMigration
     }
     catch 
     {
+        out-logfile -string $_
         out-logfile -string "Unable to create remote powershell session to the AD Global Catalog server."
         out-logfile -string $_ -isError:$TRUE
     }
@@ -3471,6 +3479,7 @@ Function Start-DistributionListMigration
             out-statusFile -threadNumber $global:globals.threadNumber -errorAction STOP
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to write status file." -isError:$TRUE
         }
 
@@ -3500,6 +3509,7 @@ Function Start-DistributionListMigration
             remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
 
@@ -3637,6 +3647,7 @@ Function Start-DistributionListMigration
             remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
 
@@ -5722,10 +5733,6 @@ Function Start-DistributionListMigration
         $generalErrors+=$isErrorObject
     }
 
-    
-
-   
-
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
    out-logfile -string "If thread number > 1 - write the status file here."
@@ -5840,6 +5847,7 @@ Function Start-DistributionListMigration
         remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
+            out-logfile -string $_
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
    }
