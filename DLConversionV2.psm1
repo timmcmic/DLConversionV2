@@ -5710,7 +5710,7 @@ Function Start-DistributionListMigration
                     out-logfile -string "Unable to obtain the routing group after multiple tries."
 
                     $isErrorObject = new-Object psObject -property @{
-                        errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                        errorMessage = "Unable to obtain the routing group after multiple tries."
                         erroMessageDetail = $isTestErrorDetail
                     }
         
@@ -5756,6 +5756,11 @@ Function Start-DistributionListMigration
             $isTestError="Yes"
         }
     }
+    else
+    {
+        $isTestError="No"
+    }
+
 
     if ($isTestError -eq "Yes")
     {
@@ -5769,8 +5774,6 @@ Function Start-DistributionListMigration
         $generalErrors+=$isErrorObject
     }
 
-    
-
     #If the administrator has selected to not retain the group - remove it.
 
     if ($retainOriginalGroup -eq $FALSE)
@@ -5781,6 +5784,11 @@ Function Start-DistributionListMigration
 
         $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
+    else
+    {
+        $isTestError = "No"
+    }
+
 
     if ($isTestError -eq "Yes")
     {
