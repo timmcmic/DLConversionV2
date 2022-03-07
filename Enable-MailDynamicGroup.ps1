@@ -41,20 +41,27 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $false)]
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $false)]
             $isRetry=$FALSE
         )
-
-        [string]$isTestError="No"
 
         #Declare function variables.
 
         $functionEmailAddress=$NULL
+        [string]$isTestError="No"
+        [boolean]$useCloudSettings=$FALSE
 
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Enable-MailDyamicGroup"
         Out-LogFile -string "********************************************************************************"
+
+        if ( ($originalDLConfiguration.name -eq "") -or ($originalDLConfiguration.mailNickName -eq "") -or ($orignialDLConfiguration.mail -eq "") -or ($originalDLConfiguration.displayName -eq "") )
+        {
+            $useCloudSettings = $TRUE
+        }
 
         #Log the parameters and variables for the function.
 
@@ -69,8 +76,15 @@
             {
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
-                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
+                if ($useCloudSettings -eq $FALSE)
+                {
+                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
 
+                }
+                else 
+                {
+                    new-dynamicDistributionGroup -name $office365DLConfiguration.name -alias $office365DLConfiguration.Alias -primarySMTPAddress $office365DLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $office365DLConfiguration.DisplayName -errorAction STOP
+                }
             }
             else 
             {
