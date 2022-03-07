@@ -5676,7 +5676,21 @@ Function Start-DistributionListMigration
         try{
             $isTestError="No"
 
-            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            #It is possible that we may need to support a distribution list that is missing attributes.
+            #The enable mail dynamic has a retry flag - which is designed to create the DL post migration if necessary.
+            #We're going to overload this here - if any of the attributes necessary are set to NULL - then pass in the O365 config and the retry flag.
+            #This is what the enable post migration does - bases this off the O365 object.
+
+            if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.mail -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
+            {
+                out-logfile -string "Using Office 365 attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE
+            }
+            else
+            {
+                out-logfile -string "Using on premises attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            }
         }
         catch{
             out-logfile -string $_
@@ -5710,7 +5724,7 @@ Function Start-DistributionListMigration
                     out-logfile -string "Unable to obtain the routing group after multiple tries."
 
                     $isErrorObject = new-Object psObject -property @{
-                        errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                        errorMessage = "Unable to obtain the routing group after multiple tries."
                         erroMessageDetail = $isTestErrorDetail
                     }
         
@@ -5756,6 +5770,11 @@ Function Start-DistributionListMigration
             $isTestError="Yes"
         }
     }
+    else
+    {
+        $isTestError="No"
+    }
+
 
     if ($isTestError -eq "Yes")
     {
@@ -5769,8 +5788,6 @@ Function Start-DistributionListMigration
         $generalErrors+=$isErrorObject
     }
 
-    
-
     #If the administrator has selected to not retain the group - remove it.
 
     if ($retainOriginalGroup -eq $FALSE)
@@ -5781,6 +5798,11 @@ Function Start-DistributionListMigration
 
         $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -errorAction STOP
     }
+    else
+    {
+        $isTestError = "No"
+    }
+
 
     if ($isTestError -eq "Yes")
     {
