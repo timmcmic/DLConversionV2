@@ -5676,7 +5676,7 @@ Function Start-DistributionListMigration
         try{
             $isTestError="No"
 
-            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration -office365DLConfiguration $office365DLConfiguration
+            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
         }
         catch{
             out-logfile -string $_

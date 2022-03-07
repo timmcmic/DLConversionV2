@@ -60,6 +60,7 @@
 
         if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
         {
+            out-logfile -string "On premises attributes missing - using cloud attributes."
             $useCloudSettings = $TRUE
         }
 
@@ -78,16 +79,21 @@
 
                 if ($useCloudSettings -eq $FALSE)
                 {
-                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
+                    out-logfile -string "Creating dynamic group with on premises attributes."
 
+                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
                 }
                 else 
                 {
+                    out-logfile -string "Creating dynamic group with Office 365 attributes."
+
                     new-dynamicDistributionGroup -name $office365DLConfiguration.name -alias $office365DLConfiguration.Alias -primarySMTPAddress $office365DLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $office365DLConfiguration.DisplayName -errorAction STOP
                 }
             }
             else 
             {
+                out-logfile -string "Retry operation - using alternate creation method."
+                
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $routingContactConfig
 
                 new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
