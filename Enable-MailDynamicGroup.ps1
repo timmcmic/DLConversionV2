@@ -58,7 +58,7 @@
         Out-LogFile -string "BEGIN Enable-MailDyamicGroup"
         Out-LogFile -string "********************************************************************************"
 
-        if ( ($originalDLConfiguration.name -eq "") -or ($originalDLConfiguration.mailNickName -eq "") -or ($orignialDLConfiguration.mail -eq "") -or ($originalDLConfiguration.displayName -eq "") )
+        if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
         {
             $useCloudSettings = $TRUE
         }
