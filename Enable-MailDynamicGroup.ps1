@@ -41,28 +41,20 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $false)]
-            $office365DLConfiguration,
-            [Parameter(Mandatory = $false)]
             $isRetry=$FALSE
         )
+
+        [string]$isTestError="No"
 
         #Declare function variables.
 
         $functionEmailAddress=$NULL
-        [string]$isTestError="No"
-        [boolean]$useCloudSettings=$FALSE
 
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Enable-MailDyamicGroup"
         Out-LogFile -string "********************************************************************************"
-
-        if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
-        {
-            out-logfile -string "On premises attributes missing - using cloud attributes."
-            $useCloudSettings = $TRUE
-        }
 
         #Log the parameters and variables for the function.
 
@@ -77,26 +69,14 @@
             {
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
-                if ($useCloudSettings -eq $FALSE)
-                {
-                    out-logfile -string "Creating dynamic group with on premises attributes."
+                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName 
 
-                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
-                }
-                else 
-                {
-                    out-logfile -string "Creating dynamic group with Office 365 attributes."
-
-                    new-dynamicDistributionGroup -name $office365DLConfiguration.name -alias $office365DLConfiguration.Alias -primarySMTPAddress $office365DLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $office365DLConfiguration.DisplayName -errorAction STOP
-                }
             }
             else 
             {
-                out-logfile -string "Retry operation - using alternate creation method."
-
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $routingContactConfig
 
-                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
+                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName
             }
 
         }
@@ -121,22 +101,14 @@
                 {
                     out-logfile -string "Address is not a mail.onmicrosoft.com address."
 
-                    if ($useCloudSettings -eq $FALSE)
-                    {
-                        try{
-                            set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
-                        }
-                        catch{
-                            out-logfile -string $_ 
-                            $isTestError="Yes"
-                            return $isTestError
-                        }
+                    try{
+                        set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
                     }
-                    else
-                    {
-                        set-dynamicdistributionGroup -identity $office365DLConfiguration.windowsEmailAddress -emailAddresses @{add=$address} -domainController $globalCatalogServer
+                    catch{
+                        out-logfile -string $_ 
+                        $isTestError="Yes"
+                        return $isTestError
                     }
-
                 }
                 else 
                 {
@@ -182,29 +154,14 @@
             out-logfile -string $originalDLConfiguration.legacyExchangeDN
             out-logfile -string ("Calculated x500 Address = "+$functionEmailAddress)
 
-            if ($useCloudSettings -eq $FALSE)
-            {
-                try{
-                    set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
-                }
-                catch{
-                    out-logfile -string $_
-                    $isTestError="Yes"
-                    return $isTestError        
-                }
+            try{
+                set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
             }
-            else
-            {
-                try{
-                    set-dynamicDistributionGroup -identity $office365DLConfiguration.windowsemailaddress -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
-                }
-                catch{
-                    out-logfile -string $_
-                    $isTestError="Yes"
-                    return $isTestError        
-                }
+            catch{
+                out-logfile -string $_
+                $isTestError="Yes"
+                return $isTestError        
             }
-
         }
         else 
         {
@@ -223,27 +180,13 @@
                 out-logfile -string "The sender authentication setting was not set - maybe legacy version of Exchange."
                 out-logfile -string "The sender authentication setting value FALSE in this instance."
 
-                if ($useCloudSettings -eq $FALSE)
-                {
-                    try {
-                        set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $FALSE -domainController $globalCatalogServer
-                    }
-                    catch {
-                        out-logfile -string $_
-                        $isTestError="Yes"
-                        return $isTestError
-                    }
+                try {
+                    set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -RequireSenderAuthenticationEnabled $FALSE -domainController $globalCatalogServer
                 }
-                else
-                {
-                    try {
-                        set-dynamicdistributionGroup -identity $office365DLConfiguration.windowsEmailAddress -RequireSenderAuthenticationEnabled $FALSE -domainController $globalCatalogServer
-                    }
-                    catch {
-                        out-logfile -string $_
-                        $isTestError="Yes"
-                        return $isTestError
-                    }
+                catch {
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                    return $isTestError
                 }
             }
             else

@@ -254,49 +254,55 @@ Function Start-DistributionListMigration
         }
     }
 
-    #Define global variables.
+    #Define global variables into reference object.
 
-    $global:threadNumber=$threadNumberAssigned
-    $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration\"
-    [string]$global:staticAuditFolderName="\AuditData\"
-    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
-    [int]$global:unDoStatus=0
+    $global:globals = new-Object psObject
+
+    $global:globals | add-member -memberType NoteProperty -Name threadNumber -value $threadNumberAssigned
+    $global:globals | add-member -memberType NoteProperty -Name staticFolderName -value "\DLMigration\"
+    $global:globals | add-member -memberType NoteProperty -Name staticAuditFolderName -value "\AuditData\"
+    $global:globals | add-member -memberType NoteProperty -Name importFile -value ($logFolderPath+$global:globals.staticAuditFolderName)
+
     [array]$importData=@()
     [string]$importFilePath=$NULL
 
     #Define variables utilized in the core function that are not defined by parameters.
 
-    [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
-    [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
-    [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
-    [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
-    [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
-    [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
-    [string]$dlConversionPowershellModule="DLConversionV2"
-    [string]$globalCatalogPort=":3268"
-    [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
+    $coreVariables = new-object psObject
+
+    $coreVariables | add-member -memberType NoteProperty -Name useOnPremisesExchange -value $false
+    $coreVariables | add-member -memberType NoteProperty -Name useAADConnect -value $false
+    $coreVariables | add-member -memberType NoteProperty -Name exchangeOnPremisesPowershellSessionName -value "ExchangeOnPremises"
+    $coreVariables | add-member -memberType NoteProperty -Name aadConnectPowershellSessionName -value "AADConnect"
+    $coreVariables | add-member -memberType NoteProperty -Name ADGlobalCatalogPowershellSessionName -value "ADGlobalCatalog"
+    $coreVariables | add-member -memberType NoteProperty -Name exchangeOnlinePowershellModuleName -value "ExchangeOnlineManagement"
+    $coreVariables | add-member -memberType NoteProperty -Name activeDirectoryPowershellModuleName -value "ActiveDirectory"
+    $coreVariables | add-member -memberType NoteProperty -Name dlConversionPowershellModule -value "DLConversionV2"
+    $coreVariables | add-member -memberType NoteProperty -Name globalCatalogPort -value ":3268"
+    $coreVariables | add-member -memberType NoteProperty -Name globalCatalogWithPort -value ($globalCatalogServer+$coreVariables.globalCatalogPort)
 
     #The variables below are utilized to define working parameter sets.
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
-    
-    [string]$acceptMessagesFromDLMembers="dlMemSubmitPerms" #Attribute for the allow email members.
-    [string]$rejectMessagesFromDLMembers="dlMemRejectPerms"
-    [string]$bypassModerationFromDL="msExchBypassModerationFromDLMembersLink"
-    [string]$forwardingAddressForDL="altRecipient"
-    [string]$grantSendOnBehalfToDL="publicDelegates"
-    #[array]$dlPropertySet = 'authOrig','canonicalName','cn','DisplayName','DisplayNamePrintable','distinguishedname',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','groupcategory','groupscope','legacyExchangeDN','mail','mailNickName','managedBy','memberof','msDS-ExternalDirectoryObjectId','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType','members',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','Name','objectClass','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig'
-    [array]$dlPropertySet = '*'
-    [array]$dlPropertySetToClear = @()
-    [array]$dlPropertiesToClearModern='authOrig','DisplayName','DisplayNamePrintable',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion'
-    [array]$dlPropertiesToClearLegacy='authOrig','DisplayName','DisplayNamePrintable',$rejectMessagesFromDLMembers,$acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion'
+
+    $parameterSets = new-object psObject
+
+    $parameterSets | add-member -memberType NoteProperty -Name acceptMessagesFromDLMembers -value "dlMemSubmitPerms"
+    $parameterSets | add-member -memberType NoteProperty -Name rejectMessagesFromDLMembers -value "dlMemRejectPerms"
+    $parameterSets | add-member -memberType NoteProperty -Name bypassModerationFromDL -value "msExchBypassModerationFromDLMembersLink"
+    $parameterSets | add-member -memberType NoteProperty -Name forwardingAddressForDL -value "altRecipient"
+    $parameterSets | add-member -memberType NoteProperty -Name grantSendOnBehalfToDL -value "publicDelegates"
+    $parameterSets | add-member -memberType NoteProperty -Name dlPropertySet -value '*'
+    $parameterSets | add-member -memberType NoteProperty -Name dlPropertySetToClear -value @()
+    $parameterSets | add-member -memberType NoteProperty -Name dlPropertiesToClearModern -value ('authOrig','DisplayName','DisplayNamePrintable',$parameterSets.rejectMessagesFromDLMembers,$parameterSets.acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$parameterSets.bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$parameterSets.grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion')
+    $parameterSets | add-member -memberType NoteProperty -Name dlPropertiesToClearLegacy -value ('authOrig','DisplayName','DisplayNamePrintable',$parameterSets.rejectMessagesFromDLMembers,$parameterSets.acceptMessagesFromDLMembers,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$parameterSets.bypassModerationFromDL,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$parameterSets.grantSendOnBehalfToDL,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion')
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+
+    $staticOnPremExchange = new-object psObject
+
+    $staticOnPremExchange | add-member -memberType NoteProperty -Name exchangeServerConfiguration -value "Microsoft.Exchange"
+    $staticOnPremExchange | add-member -memberType NoteProperty -Name exchangeServerAllowRedirection -value $TRUE
+    $staticOnPremExchange | add-member -memberType NoteProperty -Name exchangeServerURI -value ("https://"+$exchangeServer+"/powershell")
 
     #On premises variables for the distribution list to be migrated.
 
@@ -315,60 +321,59 @@ Function Start-DistributionListMigration
 
     #Define XML files to contain backups.
 
-    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
-    [string]$originalDLConfigurationUpdatedXML = "originalDLConfigurationUpdatedXML"
-    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
-    [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
-    [string]$office365DLConfigurationPostMigrationXML = "office365DLConfigurationPostMigrationXML"
-    [string]$office365DLMembershipPostMigrationXML = "office365DLMembershipPostMigrationXML"
-    [string]$exchangeDLMembershipSMTPXML = "exchangeDLMemberShipSMTPXML"
-    [string]$exchangeRejectMessagesSMTPXML = "exchangeRejectMessagesSMTPXML"
-    [string]$exchangeAcceptMessagesSMTPXML = "exchangeAcceptMessagesSMTPXML"
-    [string]$exchangeManagedBySMTPXML = "exchangeManagedBySMTPXML"
-    [string]$exchangeModeratedBySMTPXML = "exchangeModeratedBYSMTPXML"
-    [string]$exchangeBypassModerationSMTPXML = "exchangeBypassModerationSMTPXML"
-    [string]$exchangeGrantSendOnBehalfToSMTPXML = "exchangeGrantSendOnBehalfToXML"
-    [string]$exchangeSendAsSMTPXML = "exchangeSendASSMTPXML"
-    [string]$allGroupsMemberOfXML = "allGroupsMemberOfXML"
-    [string]$allGroupsRejectXML = "allGroupsRejectXML"
-    [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
-    [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
-    [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
-    [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
-    [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
-    [string]$allGroupsSendAsXML = "allGroupSendAsXML"
-    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
-    [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
-    [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
-    [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
-    [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
-    [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
-    [string]$allOffice365MemberOfXML="allOffice365MemberOfXML"
-    [string]$allOffice365AcceptXML="allOffice365AcceptXML"
-    [string]$allOffice365RejectXML="allOffice365RejectXML"
-    [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
-    [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
-    [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
-    [string]$allOffice365DynamicAcceptXML="allOffice365DynamicAcceptXML"
-    [string]$allOffice365DynamicRejectXML="allOffice365DynamicRejectXML"
-    [string]$allOffice365DynamicBypassModerationXML="allOffice365DynamicBypassModerationXML"
-    [string]$allOffice365DynamicGrantSendOnBehalfToXML="allOffice365DynamicGrantSentOnBehalfToXML"
-    [string]$allOffice365DynamicManagedByXML="allOffice365DynamicManagedByXML"
-    [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
-    [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
-    [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
-    [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
-    [string]$routingContactXML="routingContactXML"
-    [string]$routingDynamicGroupXML="routingDynamicGroupXML"
-    [string]$allGroupsCoManagedByXML="allGroupsCoManagedByXML"
+    $staticXML = new-object psObject
 
-    #Define the retention files.
-
-    [string]$retainOffice365RecipientFullMailboxAccessXML="office365RecipientFullMailboxAccess.xml"
-    [string]$retainMailboxFolderPermsOffice365XML="office365MailboxFolderPermissions.xml"
-    [string]$retainOnPremRecipientFullMailboxAccessXML="onPremRecipientFullMailboxAccess.xml"
-    [string]$retainOnPremMailboxFolderPermissionsXML="onPremailboxFolderPermissions.xml"
-    [string]$retainOnPremRecipientSendAsXML="onPremRecipientSendAs.xml"
+    $staticXML | add-member -memberType NoteProperty -Name originalDLConfigurationADXML -value "originalDLConfigurationADXML"
+    $staticXML | add-member -memberType NoteProperty -Name originalDLConfigurationUpdatedXML -value "originalDLConfigurationUpdatedXML"
+    $staticXML | add-member -memberType NoteProperty -Name originalDLConfigurationObjectXML -value "originalDLConfigurationObjectXML"
+    $staticXML | add-member -memberType NoteProperty -Name office365DLConfigurationXML -value "office365DLConfigurationXML"
+    $staticXML | add-member -memberType NoteProperty -Name office365DLConfigurationPostMigrationXML -value "office365DLConfigurationPostMigrationXML"
+    $staticXML | add-member -memberType NoteProperty -Name office365DLMembershipPostMigrationXML -value "office365DLMembershipPostMigrationXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeDLMembershipSMTPXML -value "exchangeDLMemberShipSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeRejectMessagesSMTPXML -value "exchangeRejectMessagesSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeAcceptMessagesSMTPXML -value "exchangeAcceptMessagesSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeManagedBySMTPXML -value "exchangeManagedBySMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeModeratedBySMTPXML -value "exchangeModeratedBYSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeBypassModerationSMTPXML -value "exchangeBypassModerationSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeGrantSendOnBehalfToSMTPXML -value "exchangeGrantSendOnBehalfToXML"
+    $staticXML | add-member -memberType NoteProperty -Name exchangeSendAsSMTPXML -value "exchangeSendASSMTPXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsMemberOfXML -value "allGroupsMemberOfXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsRejectXML -value "allGroupsRejectXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsAcceptXML -value "allGroupsAcceptXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsBypassModerationXML -value "allGroupsBypassModerationXML"
+    $staticXML | add-member -memberType NoteProperty -Name allUsersForwardingAddressXML -value "allUsersForwardingAddressXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsGrantSendOnBehalfToXML -value "allGroupsGrantSendOnBehalfToXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsManagedByXML -value "allGroupsManagedByXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsSendAsXML -value "allGroupSendAsXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsSendAsNormalizedXML -value "allGroupsSendAsNormalizedXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsFullMailboxAccessXML -value "allGroupsFullMailboxAccessXML"
+    $staticXML | add-member -memberType NoteProperty -Name allMailboxesFolderPermissionsXML -value "allMailboxesFolderPermissionsXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365UniversalAcceptXML -value "allOffice365UniversalAcceptXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365UniversalRejectXML -value "allOffice365UniversalRejectXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365UniversalGrantSendOnBehalfToXML -value "allOffice365UniversalGrantSendOnBehalfToXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365MemberOfXML -value "allOffice365MemberOfXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365AcceptXML -value "allOffice365AcceptXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365RejectXML -value "allOffice365RejectXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365BypassModerationXML -value "allOffice365BypassModerationXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365GrantSendOnBehalfToXML -value "allOffice365GrantSentOnBehalfToXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365ManagedByXML -value "allOffice365ManagedByXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365DynamicAcceptXML -value "allOffice365DynamicAcceptXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365DynamicRejectXML -value "allOffice365DynamicRejectXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365DynamicBypassModerationXML -value "allOffice365DynamicBypassModerationXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365DynamicGrantSendOnBehalfToXML -value "allOffice365DynamicGrantSentOnBehalfToXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365DynamicManagedByXML -value "allOffice365DynamicManagedByXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365ForwardingAddressXML -value "allOffice365ForwardingAddressXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffic365SendAsAccessXML -value "allOffice365SendAsAccessXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365FullMailboxAccessXML -value "allOffice365FullMailboxAccessXML"
+    $staticXML | add-member -memberType NoteProperty -Name allOffice365MailboxesFolderPermissionsXML -value "allOffice365MailboxesFolderPermissionsXML"
+    $staticXML | add-member -memberType NoteProperty -Name routingContactXML -value "routingContactXML"
+    $staticXML | add-member -memberType NoteProperty -Name routingDynamicGroupXML -value "routingDynamicGroupXML"
+    $staticXML | add-member -memberType NoteProperty -Name allGroupsCoManagedByXML -value "allGroupsCoManagedByXML"
+    $staticXML | add-member -memberType NoteProperty -Name retainOffice365RecipientFullMailboxAccessXML -value "office365RecipientFullMailboxAccess.xml"
+    $staticXML | add-member -memberType NoteProperty -Name retainMailboxFolderPermsOffice365XML -value "office365MailboxFolderPermissions.xml"
+    $staticXML | add-member -memberType NoteProperty -Name retainOnPremRecipientFullMailboxAccessXML -value "onPremRecipientFullMailboxAccess.xml"
+    $staticXML | add-member -memberType NoteProperty -Name retainOnPremMailboxFolderPermissionsXML -value "onPremailboxFolderPermissions.xml"
+    $staticXML | add-member -memberType NoteProperty -Name retainOnPremRecipientSendAsXML -value "onPremRecipientSendAs.xml"
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -419,34 +424,35 @@ Function Start-DistributionListMigration
 
     #The following are the cloud parameters we query for to look for dependencies.
 
-    [string]$office365AcceptMessagesFrom="AcceptMessagesOnlyFromDLMembers"
-    [string]$office365BypassModerationFrom="BypassModerationFromDLMembers"
-    [string]$office365CoManagers="CoManagedBy"
-    [string]$office365GrantSendOnBehalfTo="GrantSendOnBehalfTo"
-    [string]$office365ManagedBy="ManagedBy"
-    [string]$office365Members="Members"
-    [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
-    [string]$office365ForwardingAddress="ForwardingAddress"
+    $cloudParams = new-object psObject
 
-    [string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
-    [string]$office365RejectMessagesUsers="RejectMessagesFrom"
-    [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
-
-    [string]$office365UnifiedAccept="AcceptMessagesOnlyFromSendersOrMembers"
-    [string]$office365UnifiedReject="RejectMessagesFromSendersOrMembers"
-
+    $cloudParams | add-member -memberType NoteProperty -Name office365AcceptMessagesFrom -value "AcceptMessagesOnlyFromDLMembers"
+    $cloudParams | add-member -memberType NoteProperty -Name office365BypassModerationFrom -value "BypassModerationFromDLMembers"
+    $cloudParams | add-member -memberType NoteProperty -Name office365CoManagers -value "CoManagedBy"
+    $cloudParams | add-member -memberType NoteProperty -Name office365GrantSendOnBehalfTo -value "GrantSendOnBehalfTo"
+    $cloudParams | add-member -memberType NoteProperty -Name office365ManagedBy -value "ManagedBy"
+    $cloudParams | add-member -memberType NoteProperty -Name office365Members -value "Members"
+    $cloudParams | add-member -memberType NoteProperty -Name office365RejectMessagesFrom -value "RejectMessagesFromDLMembers"
+    $cloudParams | add-member -memberType NoteProperty -Name office365ForwardingAddress -value "ForwardingAddress"
+    $cloudParams | add-member -memberType NoteProperty -Name office365AcceptMessagesUsers -value "AcceptMessagesOnlyFrom"
+    $cloudParams | add-member -memberType NoteProperty -Name office365RejectMessagesUsers -value "RejectMessagesFrom"
+    $cloudParams | add-member -memberType NoteProperty -Name office365BypassModerationusers -value "BypassModerationFromSendersOrMembers"
+    $cloudParams | add-member -memberType NoteProperty -Name office365UnifiedAccept -value "AcceptMessagesOnlyFromSendersOrMembers"
+    $cloudParams | add-member -memberType NoteProperty -Name office365UnifiedReject -value "RejectMessagesFromSendersOrMembers"
 
     #The following are the on premises parameters utilized for restoring depdencies.
 
-    [string]$onPremUnAuthOrig="unauthorig"
-    [string]$onPremAuthOrig="authOrig"
-    [string]$onPremManagedBy="managedBy"
-    [string]$onPremMSExchCoManagedByLink="msExchCoManagedByLink"
-    [string]$onPremPublicDelegate="publicDelegates"
-    [string]$onPremMsExchModeratedByLink="msExchModeratedByLink"
-    [string]$onPremmsExchBypassModerationLink="msExchBypassModerationLink"
-    [string]$onPremMemberOf="member"
-    [string]$onPremAltRecipient="altRecipient"
+    $onPremParams = new-object psObject
+
+    $onPremParams | add-member -memberType NoteProperty -Name onPremUnAuthOrig -value "unauthorig"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremAuthOrig -value "authOrig"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremManagedBy -value "managedBy"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremExchCoManagedByLink -value "msExchCoManagedByLink"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremPublicDelegate -value "publicDelegates"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremExchModeratedByLink -value "msExchModeratedByLink"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremExchBypassModerationLink -value "msExchBypassModerationLink"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremMemberOf -value "member"
+    $onPremParams | add-member -memberType NoteProperty -Name onPremAltRecipient -value "altRecipient"
 
     #Cloud variables for the distribution list to be migrated.
 
@@ -508,14 +514,14 @@ Function Start-DistributionListMigration
     {
         new-statusFile -logFolderPath $logFolderPath
 
-        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+        $logFolderPath=$logFolderPath+$threadFolder[$global:globals.threadNumber]
     }
 
     #Ensure that no status files exist at the start of the run.
 
     if ($totalThreadCount -gt 0)
     {
-        if ($global:threadNumber -eq 1)
+        if ($global:globals.threadNumber -eq 1)
         {
             remove-statusFiles -fullCleanup:$TRUE
         }
@@ -587,119 +593,42 @@ Function Start-DistributionListMigration
     #For parameters that are optional if statements determine if they are populated for recording.
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "PARAMETERS"
+    Out-LogFile -string "PARAMETERS SUPPLIED"
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.tostring())
-    out-logfile -string ("Spaces Removed Group SMTP Address: "+$groupSMTPAddress)
-    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.toString())
-    Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-    Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
-    Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
+    out-logfile -string $PSBoundParameters
 
-    if ($aadConnectServer -ne "")
-    {
-        $aadConnectServer = $aadConnectServer -replace '\s',''
-        Out-LogFile -string ("AADConnectServer = "+$aadConnectServer)
-    }
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "PARAMETERS SET"
+    Out-LogFile -string "********************************************************************************"
+    $CommandName = $PSCmdlet.MyInvocation.InvocationName
+    $ParameterList = (Get-Command -Name $CommandName).Parameters
+    foreach ($Parameter in $ParameterList) 
+    {   
+        out-logfile -string (Get-Variable -Name $Parameter.Values.Name -ErrorAction SilentlyContinue)
+    }    
 
-    if ($aadConnectCredential -ne $null)
-    {
-        Out-LogFile -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())
-    }
-
-    if ($exchangeServer -ne "")
-    {
-        Out-LogFile -string ("ExchangeServer = "+$exchangeServer)
-    }
-
-    if ($exchangecredential -ne $null)
-    {
-        Out-LogFile -string ("ExchangeUserName = "+$exchangeCredential.UserName.toString())
-    }
-
-    if ($exchangeOnlineCredential -ne $null)
-    {
-        Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
-    }
-
-    if ($exchangeOnlineCertificateThumbPrint -ne "")
-    {
-        Out-LogFile -string ("ExchangeOnlineCertificateThumbprint = "+$exchangeOnlineCertificateThumbPrint)
-    }
-
-    Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
-    out-logfile -string ("Retain Office 365 Settings = "+$retainOffice365Settings)
-    out-logfile -string ("OU that does not sync to Office 365 = "+$dnNoSyncOU)
-    out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
-    out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
-    out-logfile -string ("Group type override = "+$groupTypeOverride)
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string " RECORD VARIABLES"
+    Out-LogFile -string " RECORD GLOBAL VARIABLES"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
-    out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
-    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremisesExchange)
-    Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
-    Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
-    Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
-    Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
-    Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
-    Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
-    out-logFile -string ("Static property for accept messages from members = "+$acceptMessagesFromDLMembers)
-    out-logFile -string ("Static property for accept messages from members = "+$rejectMessagesFromDLMembers)
-    Out-LogFile -string ("DL Properties to collect = ")
+    out-logfile "----------"
+    out-logfile $global:globals
+    out-logfile "----------"
+    out-logfile $coreVariables
+    out-logfile "----------"
+    out-logfile $parameterSets
+    out-logfile "----------"
+    out-logfile $staticOnPremExchange
+    out-logfile "----------"
+    out-logfile $staticXML
+    out-logfile "----------"
+    out-logfile $cloudParams
+    out-logfile "----------"
+    out-logfile $onPremParams
+    out-logfile "----------"
 
-    foreach ($dlProperty in $dlPropertySet)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared legacy = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearLegacy)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared modern = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearModern)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
-    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$exchangeServerAllowRedirection)
-    Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
-    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
-    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
-    Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
-    Out-LogFile -string ("Exchange DL members XML Name - "+$exchangeDLMembershipSMTPXML)
-    Out-LogFile -string ("Exchange Reject members XML Name - "+$exchangeRejectMessagesSMTPXML)
-    Out-LogFile -string ("Exchange Accept members XML Name - "+$exchangeAcceptMessagesSMTPXML)
-    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$exchangeManagedBySMTPXML)
-    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$exchangeModeratedBySMTPXML)
-    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$exchangeBypassModerationSMTPXML)
-    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$exchangeGrantSendOnBehalfToSMTPXML)
-    Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
-    Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
-    Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
-    Out-Logfile -string ("All Co Managed By BL XML - "+$allGroupsCoManagedByXML)
-    Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
-    out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
-    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
-    out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
-    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for managed by members = "+$office365ManagedBy)
-    out-logfile -string ("Property in office 365 for members = "+$office365Members)
-    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365RejectMessagesFrom)
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
@@ -732,13 +661,13 @@ Function Start-DistributionListMigration
     
         #Set useAADConnect to TRUE since the parameters necessary for use were passed.
         
-        $useAADConnect=$TRUE
+        $coreVariables.useAADConnect=$TRUE
 
-        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$useAADConnect)
+        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$coreVariables.useAADConnect)
     }
     else
     {
-        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$useAADConnect)
+        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$coreVariables.useAADConnect)
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -765,13 +694,13 @@ Function Start-DistributionListMigration
 
         #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
-        $useOnPremisesExchange=$TRUE
+        $coreVariables.useOnPremisesExchange=$TRUE
 
-        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
+        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$coreVariables.useOnPremisesExchange)
     }
     else
     {
-        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
+        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$coreVariables.useOnPremisesExchange)
     }
 
     #Validate that only one method of engaging exchange online was specified.
@@ -821,17 +750,17 @@ Function Start-DistributionListMigration
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
 
-    if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
+    if (($coreVariables.useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
     {
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
     }
 
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremisesExchange -eq $FALSE))
+    if (($auditSendAsOnPrem -eq $TRUE ) -and ($coreVariables.useOnPremisesExchange -eq $FALSE))
     {
         out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
     }
 
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremisesExchange -eq $FALSE))
+    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($coreVariables.useOnPremisesExchange -eq $FALSE))
     {
         out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
     }
@@ -886,7 +815,6 @@ Function Start-DistributionListMigration
         out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
     }
 
-
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
@@ -904,17 +832,17 @@ Function Start-DistributionListMigration
     if ($exchangeRangeUpper -ge $exchangeLegacySchemaVersion)
     {
         out-logfile -string "Modern exchange version detected - using modern parameters"
-        $dlPropertySetToClear=$dlPropertiesToClearModern
+        $parameterSets.dlPropertySetToClear=$parameterSets.dlPropertiesToClearModern
     }
     else 
     {
         out-logfile -string "Legacy exchange versions detected - using legacy parameters"
-        $dlPropertySetToClear = $dlPropertiesToClearLegacy   
+        $parameterSets.dlPropertySetToClear = $parameterSets.dlPropertiesToClearLegacy   
     }
 
     Out-LogFile -string ("DL property set to be cleared after schema evaluation = ")
 
-    foreach ($dlProperty in $dlPropertySetToClear)
+    foreach ($dlProperty in $parameterSets.dlPropertySetToClear)
     {
         Out-LogFile -string $dlProperty
     }
@@ -932,15 +860,15 @@ Function Start-DistributionListMigration
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-   Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
+   Test-PowershellModule -powershellModuleName $coreVariables.exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-   Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
+   Test-PowershellModule -powershellModuleName $coreVariables.activeDirectoryPowershellModuleName
 
    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-   Test-PowershellModule -powershellModuleName $dlConversionPowershellModule -powershellVersionTest:$TRUE
+   Test-PowershellModule -powershellModuleName $coreVariables.dlConversionPowershellModule -powershellVersionTest:$TRUE
 
    #Create the connection to exchange online.
 
@@ -977,13 +905,13 @@ Function Start-DistributionListMigration
    
    Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
 
-    if ($useOnPremisesExchange -eq $TRUE)
+    if ($coreVariables.useOnPremisesExchange -eq $TRUE)
     {
         try 
         {
             Out-LogFile -string "Calling New-PowerShellSession"
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $coreVariables.exchangeOnPremisesPowershellSessionName -connectionURI $staticOnPremExchange.exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $staticOnPremExchange.exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
         }
         catch 
         {
@@ -1019,13 +947,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Determine if AAD Connect information specified and establish session if necessary."
 
-    if ($useAADConnect -eq $TRUE)
+    if ($coreVariables.useAADConnect -eq $TRUE)
     {
         try 
         {
             out-logfile -string "Creating powershell session to the AD Connect server."
 
-            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
+            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName
         }
         catch 
         {
@@ -1040,7 +968,7 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
-        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
+        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.adGlobalCatalogPowershellSessionName
     }
     catch 
     {
@@ -1063,7 +991,7 @@ Function Start-DistributionListMigration
 
     try
     {
-        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
     }
     catch
     {
@@ -1075,7 +1003,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $staticXML.originalDLConfiguration
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
@@ -1089,7 +1017,7 @@ Function Start-DistributionListMigration
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
             
-            $importFilePath=Join-path $importFile $retainOnPremRecipientSendAsXML
+            $importFilePath=Join-path $importFile $staticXML.retainOnPremRecipientSendAsXML
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1129,7 +1057,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectSendAsAccess
 
-        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $allGroupsSendAsXML
+        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $staticXML.allGroupsSendAsXML
     }
 
     Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
@@ -1143,7 +1071,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
-            $importFilePath=Join-path $importFile $retainOnPremRecipientFullMailboxAccessXML
+            $importFilePath=Join-path $importFile $staticXML.retainOnPremRecipientFullMailboxAccessXML
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1171,7 +1099,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectsFullMailboxAccess
 
-        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $allGroupsFullMailboxAccessXML
+        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $staticXML.allGroupsFullMailboxAccessXML
     }
 
     out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
@@ -1185,7 +1113,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
-            $importFilePath=Join-path $importFile $retainOnPremMailboxFolderPermissionsXML
+            $importFilePath=Join-path $importFile $staticXML.retainOnPremMailboxFolderPermissionsXML
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1215,7 +1143,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allMailboxesFolderPermissions
 
-        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $allMailboxesFolderPermissionsXML
+        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $staticXML.allMailboxesFolderPermissionsXML
     }
 
     #If there are any sendAs or mailbox access permissiosn for the group.
@@ -1259,7 +1187,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
-    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $staticXML.office365DLConfigurationXML
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
@@ -1325,7 +1253,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1387,7 +1315,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1436,7 +1364,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1496,7 +1424,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1544,7 +1472,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1606,7 +1534,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1655,7 +1583,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1781,7 +1709,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1843,7 +1771,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1894,7 +1822,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1952,7 +1880,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -2004,7 +1932,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
+                $normalizedTest=get-normalizedDN -globalCatalogServer $coreVariables.globalCatalogWithPort -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -2050,7 +1978,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $adGlobalCatalogPowershellSessionName
+        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $coreVariables.globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $coreVariables.adGlobalCatalogPowershellSessionName
     }
     catch 
     {
@@ -2664,7 +2592,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsMemberOf += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2693,7 +2621,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allUsersForwardingAddress += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allUsersForwardingAddress += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2722,7 +2650,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsReject += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsReject += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2751,7 +2679,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsAccept += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsAccept += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2778,7 +2706,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
 
             }
             catch {
@@ -2811,7 +2739,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsBypassModeration += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsBypassModeration += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2840,7 +2768,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2869,7 +2797,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsManagedBy += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsManagedBy += get-canonicalname -globalCatalog $coreVariables.globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2911,12 +2839,12 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectsSendAsAccessNormalized
 
-        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $staticXML.allGroupsSendAsNormalizedXML
     }
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
-        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
+        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $staticXML.exchangeDLMembershipSMTPXML
     }
     else 
     {
@@ -2925,7 +2853,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $staticXML.exchangeRejectMessagesSMTPXML
     }
     else 
     {
@@ -2934,7 +2862,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $staticXML.exchangeAcceptMessagesSMTPXML
     }
     else 
     {
@@ -2943,7 +2871,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $staticXML.exchangeManagedBySMTPXML
     }
     else 
     {
@@ -2952,7 +2880,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
+        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $staticXML.exchangeModeratedBySMTPXML
     }
     else 
     {
@@ -2961,7 +2889,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $staticXML.exchangeBypassModerationSMTPXML
     }
     else 
     {
@@ -2970,7 +2898,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
-        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $exchangeGrantSendOnBehalfToSMTPXML
+        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $staticXML.exchangeGrantSendOnBehalfToSMTPXML
     }
     else 
     {
@@ -2979,7 +2907,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeSendAsSMTP -ne $NULL)
     {
-        out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $exchangeSendAsSMTPXML
+        out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $staticXML.exchangeSendAsSMTPXML
     }
     else 
     {
@@ -2988,7 +2916,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsMemberOf -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
+        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $staticXML.allGroupsMemberOfXML
     }
     else 
     {
@@ -2997,7 +2925,7 @@ Function Start-DistributionListMigration
     
     if ($allGroupsReject -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
+        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $staticXML.allGroupsRejectXML
     }
     else 
     {
@@ -3006,7 +2934,7 @@ Function Start-DistributionListMigration
     
     if ($allGroupsAccept -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
+        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $staticXML.$allGroupsAcceptXML
     }
     else 
     {
@@ -3015,7 +2943,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsCoManagedByBL -ne $NULL)
     {
-        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $allGroupsCoManagedByXML
+        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $staticXML.allGroupsCoManagedByXML
     }
     else 
     {
@@ -3024,7 +2952,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsBypassModeration -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
+        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $staticXML.allGroupsBypassModerationXML
     }
     else 
     {
@@ -3033,7 +2961,7 @@ Function Start-DistributionListMigration
 
     if ($allUsersForwardingAddress -ne $NULL)
     {
-        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $allUsersForwardingAddressXML
+        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $staticXML.allUsersForwardingAddressXML
     }
     else 
     {
@@ -3042,7 +2970,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsManagedBy -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $allGroupsManagedByXML
+        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $staticXML.allGroupsManagedByXML
     }
     else 
     {
@@ -3051,7 +2979,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
+        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $staticXML.allGroupsGrantSendOnBehalfToXML
     }
     else 
     {
@@ -3077,7 +3005,7 @@ Function Start-DistributionListMigration
         out-logFile -string "Office 365 settings are to be retained."
 
         try {
-            $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Members -errorAction STOP
+            $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365Members -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3086,7 +3014,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL is a member of = "+$allOffice365MemberOf.count)
 
         try {
-            $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -errorAction STOP
+            $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365AcceptMessagesFrom -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3095,7 +3023,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has accept rights = "+$allOffice365Accept.count)
 
         try {
-            $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -errorAction STOP
+            $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365RejectMessagesFrom -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3104,7 +3032,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365Reject.count)
 
         try {
-            $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom -errorAction STOP
+            $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365BypassModerationFrom -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3113,7 +3041,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365BypassModeration.count)
 
         try {
-            $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -errorAction STOP
+            $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365GrantSendOnBehalfTo -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3122,7 +3050,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grantSendOnBehalFto = "+$allOffice365GrantSendOnBehalfTo.count)
 
         try {
-            $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy -errorAction STOP
+            $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365ManagedBy -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3133,7 +3061,7 @@ Function Start-DistributionListMigration
         #Process all dynamic distribution groups.
 
         try {
-            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365AcceptMessagesFrom -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3142,7 +3070,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has accept rights = "+$allOffice365DynamicAccept.count)
 
         try {
-            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365RejectMessagesFrom -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3151,7 +3079,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has reject rights = "+$allOffice365DynamicReject.count)
 
         try {
-            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365BypassModerationFrom -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3160,7 +3088,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365DynamicBypassModeration.count)
 
         try {
-            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365GrantSendOnBehalfTo -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3169,7 +3097,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grantSendOnBehalFto = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
 
         try {
-            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365ManagedBy -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3180,7 +3108,7 @@ Function Start-DistributionListMigration
         #Process universal groups.
 
         try {
-            $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365AcceptMessagesFrom -groupType "Unified" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3189,7 +3117,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalAccept.count)
 
         try{
-            $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365RejectMessagesFrom -groupType "Unified" -errorAction STOP
         }
         catch{
             out-logFile -string $_ -isError:$TRUE
@@ -3198,7 +3126,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has reject rights on = "+$allOffice365UniversalReject.count)
 
         try {
-            $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365GrantSendOnBehalfTo -groupType "Unified" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3209,7 +3137,7 @@ Function Start-DistributionListMigration
         #Process other mail enabled object dependencies.
 
         try {
-            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress -errorAction STOP
+            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $cloudParams.office365ForwardingAddress -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3240,7 +3168,7 @@ Function Start-DistributionListMigration
             }
             elseif ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
             {
-                $importFilePath=Join-path $importFile $retainOffice365RecipientFullMailboxAccessXML
+                $importFilePath=Join-path $importFile $staticXML.retainOffice365RecipientFullMailboxAccessXML
 
                 try {
                     $importData = import-CLIXML -path $importFilePath
@@ -3264,7 +3192,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has opted to retain folder permissions in Office 365."
 
-            $importFilePath=Join-path $importFile $retainMailboxFolderPermsOffice365XML
+            $importFilePath=Join-path $importFile $staticXML.retainMailboxFolderPermsOffice365XML
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -3285,7 +3213,7 @@ Function Start-DistributionListMigration
         if ($allOffice365MemberOf -ne $NULL)
         {
             out-logfile -string $allOffice365MemberOf
-            out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $allOffice365MemberofXML
+            out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $staticXML.allOffice365MemberOfXML
         }
         else 
         {
@@ -3295,7 +3223,7 @@ Function Start-DistributionListMigration
         if ($allOffice365Accept -ne $NULL)
         {
             out-logfile -string $allOffice365Accept
-            out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $allOffice365AcceptXML
+            out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $staticXML.allOffice365AcceptXML
         }
         else 
         {
@@ -3305,7 +3233,7 @@ Function Start-DistributionListMigration
         if ($allOffice365Reject -ne $NULL)
         {
             out-logfile -string $allOffice365Reject
-            out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $allOffice365RejectXML
+            out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $staticXML.allOffice365RejectXML
         }
         else 
         {
@@ -3315,7 +3243,7 @@ Function Start-DistributionListMigration
         if ($allOffice365BypassModeration -ne $NULL)
         {
             out-logfile -string $allOffice365BypassModeration
-            out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $allOffice365BypassModerationXML
+            out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $staticXML.allOffice365BypassModerationXML
         }
         else 
         {
@@ -3325,7 +3253,7 @@ Function Start-DistributionListMigration
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
         {
             out-logfile -string $allOffice365GrantSendOnBehalfTo
-            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
+            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $staticXML.allOffice365GrantSendOnBehalfToXML
         }
         else 
         {
@@ -3335,7 +3263,7 @@ Function Start-DistributionListMigration
         if ($allOffice365ManagedBy -ne $NULL)
         {
             out-logfile -string $allOffice365ManagedBy
-            out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
+            out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $staticXML.allOffice365ManagedByXML
 
             out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
 
@@ -3349,7 +3277,7 @@ Function Start-DistributionListMigration
         if ($allOffice365DynamicAccept -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicAccept
-            out-xmlFile -itemToExport $allOffice365DynamicAccept -itemNameToExport $allOffice365DynamicAcceptXML
+            out-xmlFile -itemToExport $allOffice365DynamicAccept -itemNameToExport $staticXML.allOffice365DynamicAcceptXML
         }
         else 
         {
@@ -3359,7 +3287,7 @@ Function Start-DistributionListMigration
         if ($allOffice365DynamicReject -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicReject
-            out-xmlFile -itemToExport $allOffice365DynamicReject -itemNameToExport $allOffice365DynamicRejectXML
+            out-xmlFile -itemToExport $allOffice365DynamicReject -itemNameToExport $staticXML.allOffice365DynamicRejectXML
         }
         else 
         {
@@ -3369,7 +3297,7 @@ Function Start-DistributionListMigration
         if ($allOffice365DynamicBypassModeration -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicBypassModeration
-            out-xmlFile -itemToExport $allOffice365DynamicBypassModeration -itemNameToExport $allOffice365DynamicBypassModerationXML
+            out-xmlFile -itemToExport $allOffice365DynamicBypassModeration -itemNameToExport $staticXML.allOffice365DynamicBypassModerationXML
         }
         else 
         {
@@ -3379,7 +3307,7 @@ Function Start-DistributionListMigration
         if ($allOffice365DynamicGrantSendOnBehalfTo -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicGrantSendOnBehalfTo
-            out-xmlfile -itemToExport $allOffice365DynamicGrantSendOnBehalfTo -itemNameToExport $allOffice365DynamicGrantSendOnBehalfToXML
+            out-xmlfile -itemToExport $allOffice365DynamicGrantSendOnBehalfTo -itemNameToExport $staticXML.allOffice365DynamicGrantSendOnBehalfToXML
         }
         else 
         {
@@ -3389,7 +3317,7 @@ Function Start-DistributionListMigration
         if ($allOffice365DynamicManagedBy -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicManagedBy
-            out-xmlFile -itemToExport $allOffice365DynamicManagedBy -itemNameToExport $allOffice365DynamicManagedByXML
+            out-xmlFile -itemToExport $allOffice365DynamicManagedBy -itemNameToExport $staticXML.allOffice365DynamicManagedByXML
 
             out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
 
@@ -3403,7 +3331,7 @@ Function Start-DistributionListMigration
         if ($allOffice365ForwardingAddress -ne $NULL)
         {
             out-logfile -string $allOffice365ForwardingAddress
-            out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $allOffice365ForwardingAddressXML
+            out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $staticXML.allOffice365ForwardingAddressXML
         }
         else 
         {
@@ -3413,7 +3341,7 @@ Function Start-DistributionListMigration
         if ($allOffice365UniversalAccept -ne $NULL)
         {
             out-logfile -string $allOffice365UniversalAccept
-            out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $allOffice365UniversalAcceptXML
+            out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $staticXML.allOffice365UniversalAcceptXML
         }
         else 
         {
@@ -3423,7 +3351,7 @@ Function Start-DistributionListMigration
         if ($allOffice365UniversalReject -ne $NULL)
         {
             out-logfile -string $allOffice365UniversalReject
-            out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $allOffice365UniversalRejectXML
+            out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $staticXML.allOffice365UniversalRejectXML
         }
         else 
         {
@@ -3433,7 +3361,7 @@ Function Start-DistributionListMigration
         if ($allOffice365UniversalGrantSendOnBehalfTo -ne $NULL)
         {
             out-logfile -string $allOffice365UniversalGrantSendOnBehalfTo
-            out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $allOffice365UniversalGrantSendOnBehalfToXML
+            out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $staticXML.allOffice365UniversalGrantSendOnBehalfToXML
         }
         else 
         {
@@ -3443,7 +3371,7 @@ Function Start-DistributionListMigration
         if ($allOffice365SendAsAccess -ne $NULL)
         {
             out-logfile -string $allOffice365SendAsAccess
-            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffic365SendAsAccessXML
+            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $staticXML.allOffic365SendAsAccessXML
 
             out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
 
@@ -3457,7 +3385,7 @@ Function Start-DistributionListMigration
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
-            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOffice365FullMailboxAccessXML
+            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $staticXML.allOffice365FullMailboxAccessXML
 
             out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
 
@@ -3471,7 +3399,7 @@ Function Start-DistributionListMigration
         if ($allOffice365MailboxFolderPermissions -ne $NULL)
         {
             out-logfile -string $allOffice365MailboxFolderPermissions
-            out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $allOffice365MailboxesFolderPermissionsXML
+            out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $staticXML.allOffice365MailboxesFolderPermissionsXML
 
             out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
 
@@ -3540,7 +3468,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
 
         try{
-            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+            out-statusFile -threadNumber $global:globals.threadNumber -errorAction STOP
         }
         catch{
             out-logfile -string "Unable to write status file." -isError:$TRUE
@@ -3569,7 +3497,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Trigger cleanup of individual status files."
 
         try{
-            remove-statusFiles -functionThreadNumber $global:threadNumber
+            remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
@@ -3581,14 +3509,14 @@ Function Start-DistributionListMigration
     #$Capture the moved DL configuration (since attibutes change upon move.)
 
     try {
-        $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
     }
     catch {
         out-logFile -string $_ -isError:$TRUE
     }
 
     out-LogFile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
+    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $staticXML.originalDLConfigurationUpdatedXML
 
     
 
@@ -3598,12 +3526,12 @@ Function Start-DistributionListMigration
 
     out-logfile -string "If thread number > 1 - write the status file here."
 
-    if ($global:threadNumber -gt 1)
+    if ($global:globals.threadNumber -gt 1)
     {
         out-logfile -string "Thread number is greater than 1."
 
         try{
-            out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+            out-statusFile -threadNumber $global:globals.threadNumber -errorAction STOP
         }
         catch{
             out-logfile -string $_
@@ -3627,7 +3555,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
         
-        if ($global:threadNumber -eq 1)
+        if ($global:globals.threadNumber -eq 1)
         {
             out-logfile -string "This is the master thread responsible for triggering operations."
             out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
@@ -3639,7 +3567,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Other threads are pending.  Sleep 5 seconds."
             } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
-        elseif ($global:threadNumber -gt 1)
+        elseif ($global:globals.threadNumber -gt 1)
         {
             out-logfile -string "This is not the master thread responsible for triggering operations."
             out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
@@ -3653,14 +3581,14 @@ Function Start-DistributionListMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.()
     
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if ($global:globals.threadNumber -eq 0 -or ($global:globals.threadNumber -eq 1))
     {
         start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
         out-logfile -string "Invoking AD replication."
 
         try {
-            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.adGlobalCatalogPowershellSessionName -errorAction STOP
         }
         catch {
             out-logfile -string $_
@@ -3670,15 +3598,15 @@ Function Start-DistributionListMigration
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if ($global:globals.threadNumber -eq 0 -or ($global:globals.threadNumber -eq 1))
     {
-        if ($useAADConnect -eq $TRUE)
+        if ($coreVariables.useAADConnect -eq $TRUE)
         {
             start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
 
             out-logfile -string "Invoking AD Connect."
 
-            invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+            invoke-ADConnect -powerShellSessionName $coreVariables.aadConnectPowershellSessionName
 
             start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
         }   
@@ -3690,9 +3618,9 @@ Function Start-DistributionListMigration
 
     #The single functions have triggered operations.  Other threads may continue.
 
-    if ($global:threadNumber -eq 1)
+    if ($global:globals.threadNumber -eq 1)
     {
-        out-statusFile -threadNumber $global:threadNumber
+        out-statusFile -threadNumber $global:globals.threadNumber
         start-sleepProgress -sleepString "Starting sleep after writing file..." -sleepSeconds 3
     }
 
@@ -3706,7 +3634,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Trigger cleanup of individual status files."
 
         try{
-            remove-statusFiles -functionThreadNumber $global:threadNumber
+            remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
@@ -3791,7 +3719,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $staticXML.office365DLConfigurationPostMigrationXML
             
             #If we made it this far we can end the loop - we were succssful.
 
@@ -3860,7 +3788,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $staticXML.office365DLConfigurationPostMigrationXML
 
             #Now that we are this far - we can exit the loop.
 
@@ -3928,7 +3856,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $staticXML.office365DLConfigurationPostMigrationXML
 
             #Now that we wrote it - stop the loop.
 
@@ -4024,7 +3952,7 @@ Function Start-DistributionListMigration
 
         do {
             try {
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop=$TRUE
             }
@@ -4043,7 +3971,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $staticXML.originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
@@ -4053,7 +3981,7 @@ Function Start-DistributionListMigration
         
         do {
             try{
-                Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremisesExchange -errorAction STOP
+                Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $parameterSets.dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $coreVariables.useOnPremisesExchange -errorAction STOP
 
                 $stopLoop = $TRUE
             }
@@ -4080,7 +4008,7 @@ Function Start-DistributionListMigration
         
         do {
             try {
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -4099,7 +4027,7 @@ Function Start-DistributionListMigration
 
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $staticXML.originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
@@ -4142,7 +4070,7 @@ Function Start-DistributionListMigration
                 $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
                 $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
                 $tempDN=$tempNameArray[0]+","+$tempOU
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -4160,7 +4088,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop = $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $staticXML.originalDLConfigurationUpdatedXML+$global:unDoStatus
 
         
 
@@ -4226,7 +4154,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
             $stopLoop=$TRUE
         }
@@ -4246,7 +4174,7 @@ Function Start-DistributionListMigration
     } while ($stopLoop -eq $FALSE)
 
     out-logfile -string $routingContactConfiguration
-    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
+    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $staticXML.routingContactXML
 
     
 
@@ -4260,7 +4188,7 @@ Function Start-DistributionListMigration
     out-logfile -string "Invoking AD replication."
 
     try {
-        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.adGlobalCatalogPowershellSessionName -errorAction STOP
     }
     catch {
         out-logfile -string $_
@@ -4293,12 +4221,12 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremMemberOf)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremMemberOf)
 
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremMemberOf -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4358,12 +4286,12 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremUnAuthOrig)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremUnAuthOrig)
 
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremUnAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4413,7 +4341,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremAuthOrig)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremAuthOrig)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4428,7 +4356,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremAuthOrig -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4478,7 +4406,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremExchCoManagedByLink)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4493,7 +4421,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $$onPremParams.onPremExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4544,7 +4472,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremmsExchBypassModerationLink)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremExchBypassModerationLink)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4559,7 +4487,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedName)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremmsExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremExchBypassModerationLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4609,7 +4537,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremPublicDelegate)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4624,7 +4552,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4679,7 +4607,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremMSExchCoManagedByLink)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremExchCoManagedByLink)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4701,7 +4629,7 @@ Function Start-DistributionListMigration
                     out-logfile -string "Object class is group - proceed."          
 
                     try{
-                        $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremMSExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                        $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $$onPremParams.onPremExchCoManagedByLink -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                     }
                     catch{
                         out-logfile -string $_
@@ -4764,7 +4692,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremAltRecipient)
+            out-logfile -string ("Attribute Operation = "+$onPremParams.onPremAltRecipient)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4777,7 +4705,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                $isTestError=start-replaceOnPremSV -routingContact $routingContactConfiguration -attributeOperation $onPremParams.onPremAltRecipient -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4829,7 +4757,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $cloudParams.office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4885,7 +4813,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $cloudParams.office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4941,7 +4869,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $cloudParams.office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4997,7 +4925,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $cloudParams.office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5053,7 +4981,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $cloudParams.office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5113,7 +5041,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $cloudParams.office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5168,7 +5096,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $cloudParams.office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5224,7 +5152,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $cloudParams.office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5280,7 +5208,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $cloudParams.office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5336,7 +5264,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $cloudParams.office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5394,7 +5322,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $cloudParams.office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5450,7 +5378,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $cloudParams.office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5506,7 +5434,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $cloudParams.office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5659,14 +5587,14 @@ Function Start-DistributionListMigration
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
         }
 
         out-logfile -string $routingContactConfiguration
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML+$global:unDoStatus
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $staticXML.routingContactXML+$global:unDoStatus
 
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
@@ -5676,7 +5604,7 @@ Function Start-DistributionListMigration
         try{
             $isTestError="No"
 
-            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
         }
         catch{
             out-logfile -string $_
@@ -5700,7 +5628,7 @@ Function Start-DistributionListMigration
 
         do {
             try{
-                $routingDynamicGroupConfig = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+                $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort -parameterSet $parameterSets.dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
 
                 $stopLoop = $TRUE
             }
@@ -5723,7 +5651,7 @@ Function Start-DistributionListMigration
                 else 
                 {
                     out-logfile -string "Unable to obtain the dynamic group - retrying..."
-                    start-sleepProgress -sleepstring "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
+                    start-sleepProgress -string "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
 
                     $loopCounter = $loopCounter+1
                 }
@@ -5731,7 +5659,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $routingDynamicGroupConfig
-        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $routingDynamicGroupXML
+        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $staticXML.routingDynamicGroupXML
     }
 
 
@@ -5802,12 +5730,12 @@ Function Start-DistributionListMigration
 
    out-logfile -string "If thread number > 1 - write the status file here."
 
-   if ($global:threadNumber -gt 1)
+   if ($global:globals.threadNumber -gt 1)
    {
        out-logfile -string "Thread number is greater than 1."
 
        try{
-           out-statusFile -threadNumber $global:threadNumber -errorAction STOP
+           out-statusFile -threadNumber $global:globals.threadNumber -errorAction STOP
        }
        catch{
            out-logfile -string $_
@@ -5831,7 +5759,7 @@ Function Start-DistributionListMigration
    {
        out-logfile -string "Multiple threads are in use - depending on thread number take different actions."
        
-       if ($global:threadNumber -eq 1)
+       if ($global:globals.threadNumber -eq 1)
        {
            out-logfile -string "This is the master thread responsible for triggering operations."
            out-logfile -string "Search status directory and count files - if file count = number of threads - 1 thread 1 can proceed."
@@ -5843,7 +5771,7 @@ Function Start-DistributionListMigration
                start-sleepProgress -sleepString "Other threads are pending.  Sleep 5 seconds." -sleepSeconds 5
            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
        }
-       elseif ($global:threadNumber -gt 1)
+       elseif ($global:globals.threadNumber -gt 1)
        {
            out-logfile -string "This is not the master thread responsible for triggering operations."
            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
@@ -5858,14 +5786,14 @@ Function Start-DistributionListMigration
 
    #Replicate domain controllers so that the change is received as soon as possible.()
    
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if ($global:globals.threadNumber -eq 0 -or ($global:globals.threadNumber -eq 1))
    {
        start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
        out-logfile -string "Invoking AD replication."
 
        try {
-           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.adGlobalCatalogPowershellSessionName -errorAction STOP
        }
        catch {
            out-logfile -string $_
@@ -5875,15 +5803,15 @@ Function Start-DistributionListMigration
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if ($global:globals.threadNumber -eq 0 -or ($global:globals.threadNumber -eq 1))
    {
-       if ($useAADConnect -eq $TRUE)
+       if ($coreVariables.useAADConnect -eq $TRUE)
        {
            start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
 
            out-logfile -string "Invoking AD Connect."
 
-           invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+           invoke-ADConnect -powerShellSessionName $coreVariables.aadConnectPowershellSessionName
 
            start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
 
@@ -5896,9 +5824,9 @@ Function Start-DistributionListMigration
 
    #The single functions have triggered operations.  Other threads may continue.
 
-   if ($global:threadNumber -eq 1)
+   if ($global:globals.threadNumber -eq 1)
    {
-       out-statusFile -threadNumber $global:threadNumber
+       out-statusFile -threadNumber $global:globals.threadNumber
    }
 
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
@@ -5909,7 +5837,7 @@ Function Start-DistributionListMigration
         start-sleepProgress -sleepString "Sleep..." -sleepSeconds 10
 
         try{
-        remove-statusFiles -functionThreadNumber $global:threadNumber
+        remove-statusFiles -functionThreadNumber $global:globals.threadNumber
         }
         catch{
             out-logfile -string "Unable to remove status files" -isError:$TRUE
