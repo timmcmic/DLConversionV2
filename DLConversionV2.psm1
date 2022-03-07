@@ -1,18 +1,17 @@
-
 #############################################################################################
-# DISCLAIMER:																				#
-#																							#
-# THE SAMPLE SCRIPTS ARE NOT SUPPORTED UNDER ANY MICROSOFT STANDARD SUPPORT					#
-# PROGRAM OR SERVICE. THE SAMPLE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY				#
-# OF ANY KIND. MICROSOFT FURTHER DISCLAIMS ALL IMPLIED WARRANTIES INCLUDING, WITHOUT		#
-# LIMITATION, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR OF FITNESS FOR A PARTICULAR		#
-# PURPOSE. THE ENTIRE RISK ARISING OUT OF THE USE OR PERFORMANCE OF THE SAMPLE SCRIPTS		#
-# AND DOCUMENTATION REMAINS WITH YOU. IN NO EVENT SHALL MICROSOFT, ITS AUTHORS, OR			#
-# ANYONE ELSE INVOLVED IN THE CREATION, PRODUCTION, OR DELIVERY OF THE SCRIPTS BE LIABLE	#
-# FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS	#
-# PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS)	#
-# ARISING OUT OF THE USE OF OR INABILITY TO USE THE SAMPLE SCRIPTS OR DOCUMENTATION,		#
-# EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES						#
+# DISCLAIMER: #
+# #
+# THE SAMPLE SCRIPTS ARE NOT SUPPORTED UNDER ANY MICROSOFT STANDARD SUPPORT #
+# PROGRAM OR SERVICE. THE SAMPLE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY #
+# OF ANY KIND. MICROSOFT FURTHER DISCLAIMS ALL IMPLIED WARRANTIES INCLUDING, WITHOUT #
+# LIMITATION, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR OF FITNESS FOR A PARTICULAR #
+# PURPOSE. THE ENTIRE RISK ARISING OUT OF THE USE OR PERFORMANCE OF THE SAMPLE SCRIPTS #
+# AND DOCUMENTATION REMAINS WITH YOU. IN NO EVENT SHALL MICROSOFT, ITS AUTHORS, OR #
+# ANYONE ELSE INVOLVED IN THE CREATION, PRODUCTION, OR DELIVERY OF THE SCRIPTS BE LIABLE #
+# FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS #
+# PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) #
+# ARISING OUT OF THE USE OF OR INABILITY TO USE THE SAMPLE SCRIPTS OR DOCUMENTATION, #
+# EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES #
 #############################################################################################
 
 
@@ -20,129 +19,129 @@ Function Start-DistributionListMigration
 {
     <#
     .SYNOPSIS
-
+ 
     This is the trigger function that begins the process of allowing an administrator to migrate a distribution list from
     on premises to Office 365.
-
+ 
     .DESCRIPTION
-
+ 
     Trigger function.
-
+ 
     .PARAMETER groupSMTPAddress
-
+ 
     *REQUIRED*
     The SMTP address of the distribution list to be migrated.
-
+ 
     .PARAMETER globalCatalogServer
-
+ 
     *REQUIRED*
     A global catalog server in the domain where the group to be migrated resides.
-
-
+ 
+ 
     .PARAMETER activeDirectoryCredential
-
+ 
     *REQUIRED*
     This is the credential that will be utilized to perform operations against the global catalog server.
     If the group and all it's dependencies reside in a single domain - a domain administrator is acceptable.
     If the group and it's dependencies span multiple domains in a forest - enterprise administrator is required.
-      
+       
     .PARAMETER logFolder
-
+ 
     *REQUIRED*
     The location where logging for the migration should occur including all XML outputs for backups.
-
+ 
     .PARAMETER aadConnectServer
-
+ 
     *OPTIONAL*
     This is the AADConnect server that automated sycn attempts will be attempted.
     If specified with an AADConnect credential - delta syncs will be triggered automatically in attempts to service the move.
     This requires WINRM be enabled on the ADConnect server and may have additional WINRM dependencies / configuration.
     Name should be specified in fully qualified domain format.
-
+ 
     .PARAMETER aadConnectCredential
-
+ 
     *OPTIONAL*
     The credential specified to perform remote powershell / winrm sessions to the AADConnect server.
-
+ 
     .PARAMETER exchangeServer
-
+ 
     *REQUIRED IF HYBRID MAIL FLOW ENALBED*
     This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
     If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
     If using a single server (direct connection) then kerberos authentication may be utilized.
-    
+     
     .PARAMETER exchangeCredential
-
+ 
     *REQUIRED IF HYBRID MAIL FLOW ENABLED*
     This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
     This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
-
+ 
     .PARAMETER exchangeOnlineCredential
-
+ 
     *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
-    This is the credential utilized for Exchange Online connections.  
+    This is the credential utilized for Exchange Online connections.
     The credential must be specified if certificate based authentication is not configured.
     The account requires global administration rights / exchange organization management rights.
     An exchange online credential cannot be combined with an exchangeOnlineCertificateThumbprint.
-
+ 
     .PARAMETER exchangeOnlineCertificateThumbprint
-
+ 
     *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
     This is the certificate thumbprint that will be utilzied for certificate authentication to Exchange Online.
     This requires all the pre-requists be established and configured prior to access.
     A certificate thumbprint cannot be specified with exchange online credentials.
-
+ 
     .PARAMETER exchangeAuthenticationMethod
-
+ 
     *OPTIONAL*
     This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
     Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
-
+ 
     .PARAMETER retainOffice365Settings
-
+ 
     *OPTIONAL*
     It is possible over the course of migrations that cloud only resources could have dependencies on objects that still remain on premises.
     The administrator can choose to scan office 365 to capture any cloud only dependencies that may exist.
     The default is true.
-
+ 
     .PARAMETER doNoSyncOU
-
+ 
     *REQUIRED IF RETAIN GROUP FALSE*
     This is the administrator specified organizational unit that is NOT configured to sync in AD Connect.
     When the administrator specifies to NOT retain the group the group is moved to this OU to allow for deletion from Office 365.
     A doNOSyncOU must be specified if the administrator specifies to NOT retain the group.
-
+ 
     .PARAMETER retainOriginalGroup
-
+ 
     *OPTIONAL*
     Allows the administrator to retain the group - for example if the group also has on premises security dependencies.
     This triggers a mail disable of the group resulting in group deletion from Office 365.
     The name of the group is randomized with a character ! to ensure no conflict with hybird mail flow - if hybrid mail flow enabled.
-
+ 
     .PARAMETER enableHybridMailFlow
-
+ 
     *OPTIONAL*
     Allows the administrator to decide that they want mail flow from on premises to cloud to work for the migrated DL.
     This involves provisioning a mail contact and a dynamic distribution group.
     The dynamic distribution group is intentionally choosen to prevent soft matching of a group and an undo of the migration.
     This option requires on premises Exchange be specified and configured.
-
+ 
     .PARAMETER groupTypeOverride
-
+ 
     *OPTIONAL*
     This allows the administrator to override the group type created in the cloud from on premises.
     For example - if the group was provisioned on premises as security but does not require security rights in Office 365 - the administrator can override to DISTRIBUTION.
     Mandatory types -> SECURITY or DISTRIBUTION
-
-	.OUTPUTS
-
+ 
+    .OUTPUTS
+ 
     Logs all activities and backs up all original data to the log folder directory.
     Moves the distribution group from on premieses source of authority to office 365 source of authority.
-
+ 
     .EXAMPLE
-
+ 
     Start-DistributionListMigration
-
+ 
     #>
     [cmdletbinding()]
 
@@ -196,13 +195,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$retainSendAsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
         [boolean]$retainFullMailboxAccessOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$retainSendAsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainMailboxFolderPermsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
@@ -220,8 +215,19 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $FALSE)]
         [boolean]$isMultiMachine=$FALSE,
         [Parameter(Mandatory = $FALSE)]
-        [string]$remoteDriveLetter=$NULL
+        [string]$remoteDriveLetter=$NULL,
+        [Parameter(Mandatory=$false)]
+        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [boolean]$allowNonSyncedGroup=$FALSE
     )
+
+    #For mailbox folder permissions set these to false.
+    #Supported methods for gathering folder permissions require use of the pre-collection.
+    #Precolletion automatically sets these to true. These were origianlly added to support doing it at runtime - but its too slow.
+    
+    [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
+    [boolean]$retainMailboxFolderPermsOffice365=$FALSE
 
     if ($isMultiMachine -eq $TRUE)
     {
@@ -301,7 +307,7 @@ Function Start-DistributionListMigration
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
     [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
-    [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
+    [array]$exchangeModeratedBySMTP=@() #Array of members with moderation rights.
     [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
     [array]$exchangeGrantSendOnBehalfToSMTP=@()
     [array]$exchangeSendAsSMTP=@()
@@ -330,6 +336,7 @@ Function Start-DistributionListMigration
     [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
     [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
     [string]$allGroupsSendAsXML = "allGroupSendAsXML"
+    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
     [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
@@ -373,6 +380,7 @@ Function Start-DistributionListMigration
     [array]$allGroupsManagedBy=$NULL
     [array]$allObjectsFullMailboxAccess=$NULL
     [array]$allObjectSendAsAccess=$NULL
+    [array]$allObjectsSendAsAccessNormalized=@()
     [array]$allMailboxesFolderPermissions=@()
     [array]$allGroupsCoManagedByBL=$NULL
 
@@ -468,7 +476,8 @@ Function Start-DistributionListMigration
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
-    [array]$office365ReplacePermissionsErrors=@()
+    [array]$global:office365ReplacePermissionsErrors=@()
+    [array]$global:onPremReplacePermissionsErrors=@()
     [array]$generalErrors=@()
     [string]$isTestError="No"
 
@@ -484,6 +493,11 @@ Function Start-DistributionListMigration
     [string]$global:statusPath="\Status\"
     [string]$global:fullStatusPath=$NULL
     [int]$statusFileCount=0
+
+    #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
+    #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
+
+    [string]$mailOnMicrosoftComDomain = ""
 
 
     #If multi threaded - the log directory needs to be created for each thread.
@@ -701,13 +715,13 @@ Function Start-DistributionListMigration
     {
         #The credential was specified but the server name was not.
 
-        Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
+        Out-LogFile -string "ERROR: AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
     }
     elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
     {
         #The server name was specified but the credential was not.
 
-        Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
+        Out-LogFile -string "ERROR: AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
     }
     elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
     {
@@ -734,13 +748,13 @@ Function Start-DistributionListMigration
     {
         #The exchange credential was specified but the exchange server was not specified.
 
-        Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
+        Out-LogFile -string "ERROR: Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
     }
     elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
     {
         #The exchange server was specified but the exchange credential was not.
 
-        Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
+        Out-LogFile -string "ERROR: Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
     }
     elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
     {
@@ -765,11 +779,11 @@ Function Start-DistributionListMigration
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
     {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+        Out-LogFile -string "ERROR: Only one method of cloud authentication can be specified. Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
     }
     elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
     {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+        out-logfile -string "ERROR: One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
     }
     else
     {
@@ -972,7 +986,7 @@ Function Start-DistributionListMigration
         }
         catch 
         {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            Out-LogFile -string "ERROR: Unable to create powershell session." -isError:$TRUE
         }
         try 
         {
@@ -982,7 +996,7 @@ Function Start-DistributionListMigration
         }
         catch 
         {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            Out-LogFile -string "ERROR: Unable to create powershell session." -isError:$TRUE
         }
         try 
         {
@@ -992,7 +1006,7 @@ Function Start-DistributionListMigration
         }
         catch 
         {
-            Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
+            Out-LogFile -string "ERROR: Unable to view entire forest." -isError:$TRUE
         }
     }
     else
@@ -1042,7 +1056,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
+    #At this point we are ready to capture the original DL configuration. We'll use the ad provider to gather this information.
 
     Out-LogFile -string "Getting the original DL Configuration"
 
@@ -1067,7 +1081,7 @@ Function Start-DistributionListMigration
     if ($retainSendAsOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies send as."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+        out-logfile -string "NOTE: THIS IS A LONG RUNNING OPERATION."
 
         if ($useCollectedSendAsOnPrem -eq $TRUE)
         {
@@ -1122,7 +1136,7 @@ Function Start-DistributionListMigration
     if ($retainFullMailboxAccessOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+        out-logfile -string "NOTE: THIS IS A LONG RUNNING OPERATION."
 
         if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
         {
@@ -1164,7 +1178,7 @@ Function Start-DistributionListMigration
     if ($retainMailboxFolderPermsOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to retain mailbox folder permissions.."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+        out-logfile -string "NOTE: THIS IS A LONG RUNNING OPERATION."
 
         if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
         {
@@ -1222,14 +1236,23 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
-    try 
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
-        $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        try 
+        {
+            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
     }
-    catch 
+    else 
     {
-        out-logFile -string $_ -isError:$TRUE
+        $office365DLConfiguration="DistributionListIsNonSynced"
     }
+
+    
     
     Out-LogFile -string $office365DLConfiguration
 
@@ -1241,16 +1264,33 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
+    if ($allowNonSyncedGroup -eq $FALSE)
+    {
+        Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
 
-    try 
-    {
-        Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+        try 
+        {
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
     }
-    catch 
+    else 
     {
-        out-logFile -string $_ -isError:$TRUE
+        out-logfile -string "The administrator is attempting to migrate a non-synced group. Office 365 check skipped."
+        
+        try 
+        {
+            test-nonSyncDL -originalDLConfiguration $originalDLConfiguration -errorAction STOP    
+        }
+        catch 
+        {
+            out-logfile -string $_ -isError:$TRUE   
+        }
     }
+
     
     #At this time we have the DL configuration on both sides and have checked to ensure it is dir synced.
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
@@ -1284,7 +1324,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1346,7 +1386,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1357,6 +1397,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFrom (ADAttribute: UnAuthOrig)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1394,7 +1435,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1405,6 +1446,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "RejectMessagesFromDLMembers (ADAttribute DLMemRejectPerms)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1453,7 +1495,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1464,6 +1506,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFrom (ADAttribute: AuthOrig)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1500,7 +1543,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1511,6 +1554,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "AcceptMessagesOnlyFromDLMembers (ADAttribute: DLMemSubmitPerms)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1561,7 +1605,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1572,6 +1616,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: ManagedBy)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1609,7 +1654,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1620,6 +1665,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "Owners (ADAttribute: msExchCoManagedByLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1657,7 +1703,8 @@ Function Start-DistributionListMigration
                     alias=$normalizedTest.alias
                     name=$normalizedTest.name
                     attribute = "Test ManagedBy For Security Flag"
-                    errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                    errorMessage = "A group was found on the owners attribute that is no longer a security group. Security group is required. Remove group or change group type to security."
+                    errorMessageDetail = ""
                 }
 
                 out-logfile -string $isErrorObject
@@ -1687,7 +1734,8 @@ Function Start-DistributionListMigration
                         alias=$normalizedTest.alias
                         name=$normalizedTest.name
                         attribute = "Test ManagedBy For Group Override"
-                        errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                        errorMessage = "The group being migrated was found on the Owners attribute. The administrator has requested migration as Distribution not Security. To remain an owner the group must be migrated as Security - remove override or remove owner."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1732,7 +1780,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1743,6 +1791,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "ModeratedBy (ADAttribute: msExchModeratedByLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1793,7 +1842,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1804,6 +1853,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationLink)"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1843,7 +1893,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP
+                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1854,6 +1904,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembersLink"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1900,7 +1951,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1911,6 +1962,7 @@ Function Start-DistributionListMigration
                         name=$normalizedTest.name
                         attribute = "GrantSendOnBehalfTo (ADAttribute: publicDelegates"
                         errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -1930,6 +1982,56 @@ Function Start-DistributionListMigration
         }
     }
 
+    Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
+
+    Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
+
+    if ($allObjectSendAsAccess -ne $NULL)
+    {
+        foreach ($permission in $allObjectSendAsAccess)
+        {
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        primarySMTPAddressOrUPN = $normalizedTest.name
+                        externalDirectoryObjectID = $NULL
+                        alias=$normalizedTest.alias
+                        name=$normalizedTest.name
+                        attribute = "On Premsies Group not present in Office 365 - Migrated group has send as permissions."
+                        errorMessage = $normalizedTest.isErrorMessage
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+                else {
+                    $allObjectsSendAsAccessNormalized+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
         Out-LogFile -string "The following objects are members of the grant send on behalf to:"
@@ -1941,7 +2043,7 @@ Function Start-DistributionListMigration
         out-logfile "The group has no grant send on behalf to."    
     }
 
-    #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
+    #At this time we have discovered all permissions based off the LDAP properties of the users. The one remaining is what objects have SENDAS rights on this DL.
 
     out-logfile -string "Obtaining send as permissions."
 
@@ -1978,6 +2080,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
+    out-logfile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #Exit #Debug Exit.
@@ -1993,7 +2096,29 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Begin accepted domain validation."
 
-    test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration
+    try {
+        test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
+    }
+    catch {
+        out-logfile $_
+        out-logfile -string "Unable to capture accepted domains for validation." -isError:$TRUE
+    }
+
+    try {
+        test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
+    }
+
+    try {
+        $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+    }
 
     out-logfile -string "Being validating all distribution list members."
     
@@ -2032,6 +2157,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "Member (ADAttribute: Members)"
                         ErrorMessage = "A member of the distribution list is not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2086,6 +2212,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers (ADAttributes: UnAuthOrig / DLMemRejectPerms)"
                         ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2140,6 +2267,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers (ADAttributes: authOrig / DLMemSubmitPerms)"
                         ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2194,6 +2322,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "Owners (ADAttributes: ManagedBy,msExchCoManagedByLink)"
                         ErrorMessage = "A member of owners was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2248,6 +2377,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "ModeratedBy (ADAttributes: msExchModeratedByLink)"
                         ErrorMessage = "A member of moderatedBy was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2302,6 +2432,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "BypassModerationFromSendersorMembers (ADAttributes: msExchBypassModerationLink,msExchBypassModerationFromDLMembersLink)"
                         ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2354,6 +2485,7 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "GrantSendOnBehalfTo (ADAttributes: publicDelegates)"
                         ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2408,6 +2540,62 @@ Function Start-DistributionListMigration
                         Name = $member.name
                         Attribute = "SendAs"
                         ErrorMessage = "A member with SendAs permissions was not found in Office 365."
+                        errorMessageDetail = ""
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $preCreateErrors+=$isErrorObject
+                }
+            }
+            catch{
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+    else 
+    {
+        out-logfile -string "There were no members with send as rights."    
+    }
+
+    out-logfile -string "Begin evaluation of groups on premises that the group to be migrated has send as rights on."
+
+    if ($allObjectsSendAsAccessNormalized.count -gt 0)
+    {
+        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
+
+        foreach ($member in $allObjectsSendAsAccessNormalized)
+        {
+            #Reset error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+            try{
+                $isTestError=test-O365Recipient -member $member
+
+                if ($isTestError -eq "Yes")
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
+                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
+                        Alias = $member.Alias
+                        Name = $member.name
+                        Attribute = "Group with SendAs"
+                        ErrorMessage = "The group to be migrated has send as rights on an on premises object. The object is not present in Office 365."
+                        errorMessageDetail = ""
                     }
 
                     out-logfile -string $isErrorObject
@@ -2438,7 +2626,7 @@ Function Start-DistributionListMigration
     if ($preCreateErrors.count -gt 0)
     {
         out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "Pre-requist checks failed. Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
         out-logfile -string ""
 
@@ -2454,7 +2642,7 @@ Function Start-DistributionListMigration
             out-logfile -string "====="
         }
 
-        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        out-logfile -string "Pre-requist checks failed. Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
     }
 
     #Exit #Debug Exit
@@ -2718,6 +2906,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
+    if ($allObjectsSendAsAccessNormalized.count -ne 0)
+    {
+        out-logfile -string $allObjectsSendAsAccessNormalized
+
+        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+    }
+    
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
@@ -2876,7 +3071,7 @@ Function Start-DistributionListMigration
 
     #Process normal mail enabled groups.
 
-    if ($retainOffice365Settings -eq $TRUE)
+    if (($retainOffice365Settings -eq $TRUE) -and ($allowNonSyncedGroup -eq $FALSE))
     {
         out-logFile -string "Office 365 settings are to be retained."
 
@@ -3024,7 +3219,7 @@ Function Start-DistributionListMigration
         if ($retainSendAsOffice365 -eq $TRUE)
         {
             try{
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_ -isError:$TRUE
@@ -3331,17 +3526,17 @@ Function Start-DistributionListMigration
     #In this case we should write a status file for all threads.
     #When all threads have reached this point it is safe to have them all move their DLs to the non-Sync OU.
 
-    #If there are multiple threads in use hold all of them for thread 
+    #If there are multiple threads in use hold all of them for thread
 
     out-logfile -string "Determine if multiple migration threads are in use..."
 
     if ($totalThreadCount -eq 0)
     {
-        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+        out-logfile -string "Multiple threads are not in use. Continue functions..."
     }
     else 
     {
-        out-logfile -string "Multiple threads are in use.  Hold at this point for all threads to reach the point of moving to non-Sync OU."
+        out-logfile -string "Multiple threads are in use. Hold at this point for all threads to reach the point of moving to non-Sync OU."
 
         try{
             out-statusFile -threadNumber $global:threadNumber -errorAction STOP
@@ -3425,7 +3620,7 @@ Function Start-DistributionListMigration
 
     if ($totalThreadCount -eq 0)
     {
-        out-logfile -string "Multiple threads are not in use.  Continue functions..."
+        out-logfile -string "Multiple threads are not in use. Continue functions..."
     }
     else 
     {
@@ -3440,17 +3635,17 @@ Function Start-DistributionListMigration
 
             do 
             {
-                out-logfile -string "Other threads are pending.  Sleep 5 seconds."
+                out-logfile -string "Other threads are pending. Sleep 5 seconds."
             } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
         }
         elseif ($global:threadNumber -gt 1)
         {
             out-logfile -string "This is not the master thread responsible for triggering operations."
-            out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
+            out-logfile -string "Search directory and count files. If the file count = number of threads proceed."
 
             do 
             {
-                out-logfile -string "Thread 1 is not ready to trigger.  Sleep 5 seconds."
+                out-logfile -string "Thread 1 is not ready to trigger. Sleep 5 seconds."
             } until ((get-statusFileCount) -eq  $totalThreadCount)
         }
     }
@@ -3472,7 +3667,7 @@ Function Start-DistributionListMigration
     }
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
-    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+    #Note: If this is not done we are subject to sitting and waiting for it to complete.
 
     if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
@@ -3492,7 +3687,7 @@ Function Start-DistributionListMigration
         }
     }   
 
-    #The single functions have triggered operations.  Other threads may continue.
+    #The single functions have triggered operations. Other threads may continue.
 
     if ($global:threadNumber -eq 1)
     {
@@ -3541,7 +3736,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            new-office365dl -originalDLConfiguration $originalDLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+            new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
 
             #If we made it this far then the group was created.
 
@@ -3554,7 +3749,7 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Unable to create the distribution list on attempt.  Retry"
+                out-logfile -string "Unable to create the distribution list on attempt. Retry"
 
                 if ($loopCounter -gt 0)
                 {
@@ -3574,9 +3769,23 @@ Function Start-DistributionListMigration
     do 
     {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+            #Group may not have exchange attributes on premises.
+            #Use the Office 365 values to obtain new group.
+
+            if ($originalDLConfiguration.mailNickName -ne $NULL)
+            {
+                out-logfile -string "On premises object has mail nickname / alias -> use this value to obtain new group."
+
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+            }
+            else 
+            {
+                out-logfile -string "On premsies object does not have mail nickname / alias -> use Office 365 value to obtain new group."    
+
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.alias -errorAction Stop
+            }
             
-            #If we hit here we did not get a terminating error.  Write the configuration.
+            #If we hit here we did not get a terminating error. Write the configuration.
 
             out-LogFile -string "Write new DL configuration to XML."
 
@@ -3595,16 +3804,12 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration. Sleeping 15 seconds." -sleepSeconds 15
 
                 $loopCounter = $loopCounter+1 
             }
         }   
     } while ($stopLoop -eq $false)
-
-    
-
-    
 
     #EXIT #Debug Exit.
 
@@ -3620,7 +3825,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP
+            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -newDLPrimarySMTPAddress $office365DLConfigurationPostMigration.primarySMTPAddress -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup
 
             $stopLoop = $TRUE
         }
@@ -3668,7 +3873,7 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration. Sleeping 15 seconds." -sleepSeconds 15
 
                 $loopCounter = $loopCounter+1 
             }
@@ -3680,14 +3885,14 @@ Function Start-DistributionListMigration
 
     
 
-    #The distribution list has now been created.  There are single value attributes that we're now ready to update.
+    #The distribution list has now been created. There are single value attributes that we're now ready to update.
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -groupTypeOverride $groupTypeOverride
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride
             $stopLoop=$TRUE
         }
         catch {
@@ -3717,7 +3922,7 @@ Function Start-DistributionListMigration
         try {
             $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
 
-            #If we made it this far we successfully got the DL.  Write it.
+            #If we made it this far we successfully got the DL. Write it.
 
             out-LogFile -string "Write new DL configuration to XML."
 
@@ -3736,7 +3941,7 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration. Sleeping 15 seconds." -sleepSeconds 15
 
                 $loopCounter = $loopCounter+1 
             }
@@ -3771,7 +3976,7 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration. Sleeping 15 seconds." -sleepSeconds 15
  
                 $loopCounter = $loopCounter+1 
             }
@@ -3780,7 +3985,7 @@ Function Start-DistributionListMigration
 
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
-    #The group as this point sits in the non-sync OU.  This was to service the deletion.
+    #The group as this point sits in the non-sync OU. This was to service the deletion.
     #The administrator may have reasons for keeping the group.
     #If they do the plan is to do two things.
     ###Rename the group by adding a ! to the name - this ensures that if the group is every accidentally mail enabled it will not soft match the migrated group.
@@ -3812,10 +4017,6 @@ Function Start-DistributionListMigration
                 }
             }
         } while ($stopLoop=$FALSE)
-
-        
-
-        
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -3899,17 +4100,17 @@ Function Start-DistributionListMigration
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
 
-        Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
+        Out-LogFile -string "Move the original group back to the OU it came from. The group will no longer be soft matched."
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
 
         do {
             try {
-                #Discovered that it's possible someone used the name "Test Group".  This breaks the following DN search as OU appears in the name - WHOOPS
+                #Discovered that it's possible someone used the name "Test Group". This breaks the following DN search as OU appears in the name - WHOOPS
                 #So we need to try to make the substring call more unique - as to avoid detecting OU in a name.
-                #To do so - we know that the DN has ,OU= so the first substring we'll search is ,OU=. 
-                #Then we'll do it again - this time for just OU.  And that should give us what we need for the OU.
+                #To do so - we know that the DN has ,OU= so the first substring we'll search is ,OU=.
+                #Then we'll do it again - this time for just OU. And that should give us what we need for the OU.
 
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration -errorAction STOP
 
@@ -4053,7 +4254,7 @@ Function Start-DistributionListMigration
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
 
-    start-sleepProgress -sleepString "Starting sleep before invoking AD replicatoin.  Sleeping 15 seconds." -sleepSeconds 15
+    start-sleepProgress -sleepString "Starting sleep before invoking AD replication. Sleeping 15 seconds." -sleepSeconds 15
 
     out-logfile -string "Invoking AD replication."
 
@@ -4112,7 +4313,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List Membership (ADAttribute: Members)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4176,7 +4378,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List RejectMessagesFromSendersOrMembers (ADAttribute: DLMemRejectPerms)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4205,7 +4408,7 @@ Function Start-DistributionListMigration
     {
         foreach ($member in $allGroupsAccept)
         {  
-            $isTestError="No" #Reset test 
+            $isTestError="No" #Reset test
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
@@ -4240,7 +4443,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List AcceptMessagesOnlyFromSendersorMembers (ADAttribute: DLMemSubmitPerms)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4304,7 +4508,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List ManagedBy (ADAttribute: MSExchCoManagedBy)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4369,7 +4574,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List BypassModerationFromSendersOrMembers (ADAttribute: msExchBypassModerationFromDLMembers)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4433,7 +4639,8 @@ Function Start-DistributionListMigration
                         canonicalDomainName = $member.canonicalDomainName
                         canonicalName=$member.canonicalName
                         attribute = "Distribution List GrantSendOnBehalfTo (ADAttribute: PublicDelegates)"
-                        errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                        errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                        erroMessageDetail = $isTestErrorDetail
                     }
 
                     out-logfile -string $isErrorObject
@@ -4509,7 +4716,8 @@ Function Start-DistributionListMigration
                             canonicalDomainName = $member.canonicalDomainName
                             canonicalName=$member.canonicalName
                             attribute = "Distribution List ManagedBy (ADAttribute: managedBy)"
-                            errorMessage = "Unable to add mail routing contact to on premises distribution group.  Manual add required."
+                            errorMessage = "Unable to add mail routing contact to on premises distribution group. Manual add required."
+                            erroMessageDetail = $isTestErrorDetail
                         }
 
                         out-logfile -string $isErrorObject
@@ -4519,7 +4727,7 @@ Function Start-DistributionListMigration
                 }
                 else 
                 {
-                    out-logfile -string "Other objects than groups have this group as a manager.  Not processing the routing contact change as manager."
+                    out-logfile -string "Other objects than groups have this group as a manager. Not processing the routing contact change as manager."
                     out-logfile -string "Automatically setting preserve group as to not break permissions on objects."    
 
                     $retainOriginalGroup = $TRUE
@@ -4584,7 +4792,8 @@ Function Start-DistributionListMigration
                     canonicalDomainName = $member.canonicalDomainName
                     canonicalName=$member.canonicalName
                     attribute = "Mailbox Attribute Forwarding Address (ADAttribute: forwardingAddress)"
-                    errorMessage = "Unable to add mail routing contact to on premises mailbox object.  Manual add required."
+                    errorMessage = "Unable to add mail routing contact to on premises mailbox object. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4623,6 +4832,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4636,8 +4846,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4678,6 +4888,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4691,8 +4902,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4733,6 +4944,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4746,7 +4958,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4787,6 +5000,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4800,7 +5014,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4841,6 +5056,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4854,7 +5070,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4912,7 +5129,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -4953,6 +5171,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -4966,7 +5185,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5007,6 +5227,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5020,7 +5241,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List BypassModerationFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5061,6 +5283,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5074,7 +5297,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5115,6 +5339,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5128,7 +5353,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List ManagedBy"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5171,6 +5397,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5184,7 +5411,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5225,6 +5453,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5238,7 +5467,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5279,6 +5509,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
             }
 
             if ($isTestError -eq "Yes")
@@ -5291,7 +5522,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5336,6 +5568,7 @@ Function Start-DistributionListMigration
             }
             catch {
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5349,7 +5582,8 @@ Function Start-DistributionListMigration
                     alias = $member.Alias
                     displayName = $member.displayName
                     attribute = "Distribution List Membership"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
+                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group. Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
                 }
 
                 out-logfile -string $isErrorObject
@@ -5361,33 +5595,34 @@ Function Start-DistributionListMigration
     else 
     {
         out-logfile -string "No cloud only groups had the migrated group as a member."
-    }
+    }   
     
-    
-
-    
-
-    out-logFile -string "Start replacing Office 365 permissions."
-
-    try 
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
-        $office365ReplacePermissionsErrors+=set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions
-    }
-    catch 
-    {
-        out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
-        out-logfile -string $_
+        out-logFile -string "Start replacing Office 365 permissions."
 
-        $isErrorObject = new-Object psObject -property @{
-            permissionIdentity = "ALL"
-            attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
-            errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+        try 
+        {
+            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $groupSMTPAddress -errorAction STOP
         }
+        catch 
+        {
+            out-logfile -string "Unable to set office 365 send as or full mailbox access permissions."
+            out-logfile -string $_
+            $isTestErrorDetail=$_
 
-        out-logfile -string $isErrorObject
+            $isErrorObject = new-Object psObject -property @{
+                permissionIdentity = "ALL"
+                attribute = "Send As / Full Mailbox Access / Mailbox Folder Permissions"
+                errorMessage = "Unable to call function to reset send as, full mailbox access, and mailbox folder permissions in Office 365."
+                erroMessageDetail = $isTestErrorDetail
+            }
 
-        $office365ReplacePermissionsErrors+=$isErrorObject
-    }
+            out-logfile -string $isErrorObject
+
+            $global:office365ReplacePermissionsErrors+=$isErrorObject
+        }
+    }    
 
     if ($enableHybridMailflow -eq $TRUE)
     {
@@ -5403,12 +5638,14 @@ Function Start-DistributionListMigration
         catch{
             out-logfile -string $_
             $isTestError="Yes"
+            $errorMessageDetail=$_
         }
 
         if ($isTestError -eq "Yes")
         {
             $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
+                errorMessage = "Unable to enable the mail routing contact as a full recipient. Manually enable the mail routing contact."
+                errorMessaegDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject
@@ -5418,7 +5655,7 @@ Function Start-DistributionListMigration
 
         
 
-        #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
+        #The mail contact has been created and upgrade. Now we need to capture the updated configuration.
 
         try{
             $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
@@ -5431,7 +5668,7 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML+$global:unDoStatus
 
         #The routing contact configuration has been updated and retained.
-        #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
+        #Now create the dynamic distribution group. This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
 
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
@@ -5448,7 +5685,8 @@ Function Start-DistributionListMigration
         if ($isTestError -eq "Yes")
         {
             $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing. Manually create the dynamic distribution group."
+                erroMessageDetail = $isTestErrorDetail
             }
 
             out-logfile -string $isErrorObject
@@ -5471,7 +5709,8 @@ Function Start-DistributionListMigration
                     out-logfile -string "Unable to obtain the routing group after multiple tries."
 
                     $isErrorObject = new-Object psObject -property @{
-                        errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                        errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing. Manually create the dynamic distribution group."
+                        erroMessageDetail = $isTestErrorDetail
                     }
         
                     out-logfile -string $isErrorObject
@@ -5520,7 +5759,8 @@ Function Start-DistributionListMigration
     if ($isTestError -eq "Yes")
     {
         $isErrorObject = new-Object psObject -property @{
-            errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group.  Administrator may need to manually perform the operation."
+            errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group. Administrator may need to manually perform the operation."
+            erroMessageDetail = $isTestErrorDetail
         }
 
         out-logfile -string $isErrorObject
@@ -5544,7 +5784,8 @@ Function Start-DistributionListMigration
     if ($isTestError -eq "Yes")
     {
         $isErrorObject = new-Object psObject -property @{
-            errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
+            errorMessage = "Uanble to remove the on premises group at request of administrator. Group may need to be manually removed."
+            erroMessageDetail = $isTestErrorDetail
         }
 
         out-logfile -string $isErrorObject
@@ -5583,7 +5824,7 @@ Function Start-DistributionListMigration
 
    if ($totalThreadCount -eq 0)
    {
-       out-logfile -string "Multiple threads are not in use.  Continue functions..."
+       out-logfile -string "Multiple threads are not in use. Continue functions..."
    }
    else 
    {
@@ -5598,17 +5839,17 @@ Function Start-DistributionListMigration
 
            do 
            {
-               start-sleepProgress -sleepString "Other threads are pending.  Sleep 5 seconds." -sleepSeconds 5
+               start-sleepProgress -sleepString "Other threads are pending. Sleep 5 seconds." -sleepSeconds 5
            } until ((get-statusFileCount) -eq ($totalThreadCount - 1))
        }
        elseif ($global:threadNumber -gt 1)
        {
            out-logfile -string "This is not the master thread responsible for triggering operations."
-           out-logfile -string "Search directory and count files.  If the file count = number of threads proceed."
+           out-logfile -string "Search directory and count files. If the file count = number of threads proceed."
 
            do 
            {               
-               start-sleepProgress -sleepString "Thread 1 is not ready to trigger.  Sleep 5 seconds." -sleepSeconds 5
+               start-sleepProgress -sleepString "Thread 1 is not ready to trigger. Sleep 5 seconds." -sleepSeconds 5
 
            } until ((get-statusFileCount) -eq  $totalThreadCount)
        }
@@ -5631,7 +5872,7 @@ Function Start-DistributionListMigration
    }
 
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
-   #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+   #Note: If this is not done we are subject to sitting and waiting for it to complete.
 
    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
    {
@@ -5652,7 +5893,7 @@ Function Start-DistributionListMigration
        }
    }   
 
-   #The single functions have triggered operations.  Other threads may continue.
+   #The single functions have triggered operations. Other threads may continue.
 
    if ($global:threadNumber -eq 1)
    {
@@ -5682,7 +5923,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
-    if (($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -5691,29 +5932,31 @@ Function Start-DistributionListMigration
         out-logfile -string ("Post Create Errors: "+$global:postCreateErrors.count)
         out-logfile -string ("On-Premises Replace Errors :"+$onPremReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
-        out-logfile -string ("Office 365 Replace Permissions Errors: "+$office365ReplacePermissionsErrors.count)
+        out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
+        out-logfile -string ("On Prem Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("General Errors: "+$generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        if ($global:postCreateErrors -gt 0)
+        if ($global:postCreateErrors.count -gt 0)
         {
-            foreach ($postCreateError in $global:postCreateErrors)
+            foreach ($createError in $global:postCreateErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Post Create Errors:"
-                out-logfile -string ("Primary Email Address or UPN: " +$postCreateError.primarySMTPAddressOrUPN)
-                out-logfile -string ("External Directory Object ID: " +$postCreateError.externalDirectoryObjectID)
-                out-logfile -string ("Name: "+$postCreateError.name)
-                out-logfile -string ("Alias: "+$postCreateError.Alias)
-                out-logfile -string ("Attribute in Error: "+$postCreateError.attribute)
-                out-logfile -string ("Error Message Details: "+$postCreateError.errorMessage)
+                out-logfile -string ("Primary Email Address or UPN: " +$CreateError.primarySMTPAddressOrUPN)
+                out-logfile -string ("External Directory Object ID: " +$CreateError.externalDirectoryObjectID)
+                out-logfile -string ("Name: "+$CreateError.name)
+                out-logfile -string ("Alias: "+$CreateError.Alias)
+                out-logfile -string ("Attribute in Error: "+$CreateError.attribute)
+                out-logfile -string ("Error Message: "+$CreateError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$CreateError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
 
-        if ($onPremReplaceErrors -gt 0)
+        if ($onPremReplaceErrors.count -gt 0)
         {
             foreach ($onPremReplaceError in $onPremReplaceErrors)
             {
@@ -5724,12 +5967,13 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Canonical Name: "+$onPremReplaceError.canonicalName)
                 out-logfile -string ("Attribute in Error: "+$onPremReplaceError.attribute)
                 out-logfile -string ("Error Message: "+$onPremReplaceError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$onPremReplaceError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
 
        
-        if ($office365ReplaceErrors -gt 0)
+        if ($office365ReplaceErrors.count -gt 0)
         {
             foreach ($office365ReplaceError in $office365ReplaceErrors)
             {
@@ -5741,30 +5985,47 @@ Function Start-DistributionListMigration
                 out-logfile -string ("Display Name: "+$office365ReplaceError.displayName)
                 out-logfile -string ("Attribute in Error: "+$office365ReplaceError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplaceError.errorMessage)
+                out-logfile -string ("Error Message Details: "+$office365Replace.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
         
-        if ($office365ReplacePermissionsErrors -gt 0)
+        if ($global:office365ReplacePermissionsErrors.count -gt 0)
         {
-            foreach ($office365ReplacePermissionsError in $office365ReplacePermissionsErrors)
+            foreach ($office365ReplacePermissionsError in $global:office365ReplacePermissionsErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "Office 365 Permissions Error: "
                 out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
                 out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
                 out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$office365ReplacePermissionsError.errorMessageDetail)
+                out-logfile -string "====="
+            }
+        }
+
+        if ($global:onPremReplacePermissionsErrors.count -gt 0)
+        {
+            foreach ($onPremReplacePermissionsError in $global:office365ReplacePermissionsErrors)
+            {
+                out-logfile -string "====="
+                out-logfile -string "On Prem Permissions Error: "
+                out-logfile -string ("Permission in Error: "+$office365ReplacePermissionsError.permissionidentity)
+                out-logfile -string ("Attribute in Error: "+$office365ReplacePermissionsError.attribute)
+                out-logfile -string ("Error Message: "+$office365ReplacePermissionsError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$office365ReplacePermissionsError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
         
-        if ($generalErrors -gt 0)
+        if ($generalErrors.count -gt 0)
         {
             foreach ($generalError in $generalErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "General Errors:"
                 out-logfile -string ("Error Message: "+$generalError.errorMessage)
+                out-logfile -string ("Error Message Detail: "+$generalError.errorMessageDetail)
                 out-logfile -string "====="
             }
         }
