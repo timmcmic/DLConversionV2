@@ -5651,7 +5651,7 @@ Function Start-DistributionListMigration
                 else 
                 {
                     out-logfile -string "Unable to obtain the dynamic group - retrying..."
-                    start-sleepProgress -string "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
+                    start-sleepProgress -sleepstring "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
 
                     $loopCounter = $loopCounter+1
                 }
