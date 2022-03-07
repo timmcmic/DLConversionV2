@@ -5676,7 +5676,21 @@ Function Start-DistributionListMigration
         try{
             $isTestError="No"
 
-            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            #It is possible that we may need to support a distribution list that is missing attributes.
+            #The enable mail dynamic has a retry flag - which is designed to create the DL post migration if necessary.
+            #We're going to overload this here - if any of the attributes necessary are set to NULL - then pass in the O365 config and the retry flag.
+            #This is what the enable post migration does - bases this off the O365 object.
+
+            if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.mail -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
+            {
+                out-logfile -string "Using Office 365 attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE
+            }
+            else
+            {
+                out-logfile -string "Using on premises attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            }
         }
         catch{
             out-logfile -string $_
