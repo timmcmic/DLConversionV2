@@ -206,7 +206,7 @@
         else 
         {
             try{
-                set-dynamicDistributionGroup -identity $originalDLConfiguration.windowsEmailAddress -RequireSenderAuthenticationEnabled $originalDLConfiguration.RequireSenderAuthenticationEnabled
+                set-dynamicDistributionGroup -identity $originalDLConfiguration.windowsEmailAddress -RequireSenderAuthenticationEnabled $originalDLConfiguration.RequireSenderAuthenticationEnabled -domainController $globalCatalogServer
             }
             catch{
                 out-logfile -string "Unable to update require sender authentication on the group."
