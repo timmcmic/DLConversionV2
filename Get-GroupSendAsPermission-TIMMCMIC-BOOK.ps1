@@ -85,95 +85,45 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
+        <#
+        
+        #Importing the active directory module.
 
-        #Get ACL and the ability to work varies greatly with windows versions.
-        #We'll implement a home grown try catch here.
-
-        #Get the ACLS on the object building the path without dll in the name.
-
-
-        out-logfile -string ("Obtaining the ACLS on DN = "+$dn)
-
-        $objectPath = "Microsoft.ActiveDirectory.Management\ActiveDirectory:://RootDSE/$DN"
-
-        out-logfile -string $objectPath
-
-        $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
-
-        #If the call includes an exception - this variation did not work.
-
-        if ($functionACLS.exception -ne $NULL)
+        try 
         {
-            out-logfile -string "Error attempting first send as acl call."
-            out-logfile -string $functionACLS.exception
+           out-logfile -string "Importing the active directory module within the powershell session."
+
+           invoke-command -session $functionPSSession -ScriptBlock {Import-Module "ActiveDirectory"}
         }
-        else 
+        catch 
         {
-            out-logfile -string "Send as acls gathered first try - setting success."
-            $success=$TRUE    
+            out-logfile -string "Unable to import the active directory module in the remote powershell session."
+            out-logfile -string $_ -isError:$TRUE
         }
+        
+        #The powershell session to the GC was opened - set the location to AD for query.
 
-        #If the previous call was not successful - this time try with DLL.
-
-        if ($sucess -eq $FALSE)
+        try 
         {
-            $objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
+           out-logfile -string "Setting the location of the remote powershell command to AD:"
 
-            out-logfile -string $objectPath
-
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
-
-            #If the call includes an exception - this variation did not work.
-
-            if ($functionACLS.exception -ne $NULL)
-            {
-                out-logfile -string "Error attempting second send as acl call."
-                out-logfile -string $functionACLS.exception
-            }
-            else 
-            {
-                out-logfile -string "Send as acls gathered second try - setting success."
-                $success=$TRUE    
-            }
+           invoke-command -session $functionPSSession -ScriptBlock {Set-Location "AD:"}
+        }
+        catch 
+        {
+            out-logfile -string "Unable to set the location of the command to AD:."
+            out-logfile -string $_ -isError:$TRUE
         }
 
-        #If the previos call was not successful - we'll try with just get-acl.
-        #This is prone to failure with special characters and different windows versions.
+        #>
 
-        if ($sucess -eq $FALSE)
-        {
-            $objectPath = $dn
+        #With the location set to active directory - we can then pull the ACLS off the object.
+        #So there's been 
 
-            out-logfile -string $objectPath
+        
+        
+        
 
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
-
-            #If the call includes an exception - this variation did not work.
-
-            if ($functionACLS.exception -ne $NULL)
-            {
-                out-logfile -string "Error attempting third send as acl call."
-                out-logfile -string $functionACLS.exception
-            }
-            else 
-            {
-                out-logfile -string "Send as acls gathered third try - setting success."
-                $success=$TRUE    
-            }
-        }
-    
-        #At this time we've made three attempts to capture send as permissions on the group to be migrated.
-        #If success is not true throw exception.
-
-        if ($success -eq $FALSE)
-        {
-            out-logfile -string "Unable to obtain send as permissions using three known methods."
-            out-logfile -string "Send As Failure" -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "Success gathering send as - proceeding..."    
-        }
 
         #The ACLS object has been extracted.
         #We want all perms that are extended, allowed, and match the object type for send as.
