@@ -98,7 +98,7 @@
 
         out-logfile -string $objectPath
 
-        $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
+        $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath *>&1
 
         #If the call includes an exception - this variation did not work.
 
@@ -121,7 +121,7 @@
 
             out-logfile -string $objectPath
 
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
+            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath *>&1
 
             #If the call includes an exception - this variation did not work.
 
@@ -146,7 +146,7 @@
 
             out-logfile -string $objectPath
 
-            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath
+            $functionACLS = invoke-command -session $functionPSSession -ScriptBlock {import-module ActiveDirectory ; (get-ACL $args).access} -ArgumentList $objectPath *>&1
 
             #If the call includes an exception - this variation did not work.
 
