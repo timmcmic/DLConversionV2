@@ -115,7 +115,7 @@
 
         #If the previous call was not successful - this time try with DLL.
 
-        if ($sucess -eq $FALSE)
+        if ($success -eq $FALSE)
         {
             $objectPath = "Microsoft.ActiveDirectory.Management.dll\ActiveDirectory:://RootDSE/$DN"
 
@@ -140,7 +140,7 @@
         #If the previos call was not successful - we'll try with just get-acl.
         #This is prone to failure with special characters and different windows versions.
 
-        if ($sucess -eq $FALSE)
+        if ($success -eq $FALSE)
         {
             $objectPath = $dn
 
