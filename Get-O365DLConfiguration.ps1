@@ -27,12 +27,16 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $false)]
+            [string]$groupTypeOverride=""
         )
 
         #Declare function variables.
 
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
+        $functionMailSecurity="MailUniversalSecurityGroup"
+        $functionMailDistribution="MailUniversalDistributionGroup"
 
         #Start function processing.
 
@@ -48,11 +52,31 @@
         
         try 
         {
-            Out-LogFile -string "Using Exchange Online to capture the distribution group."
+            if ($groupTypeOverride -eq "")
+            {
+                Out-LogFile -string "Using Exchange Online to capture the distribution group."
 
-            $functionDLConfiguration=get-O365DistributionGroup -identity $groupSMTPAddress -errorAction STOP
+                $functionDLConfiguration=get-O365DistributionGroup -identity $groupSMTPAddress -errorAction STOP
             
-            Out-LogFile -string "Original DL configuration found and recorded."
+                Out-LogFile -string "Original DL configuration found and recorded."
+            }
+            elseif ($groupTypeOverride -eq "Security")
+            {
+                Out-logfile -string "Using Exchange Online to capture distribution group with filter security"
+
+                $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailSecurity -errorAction STOP
+
+                out-logfile -string "Original DL configuration found and recorded by filter security."
+            }
+            elseif ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "Using Exchange Online to capture distribution group with filter distribution."
+
+                $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailDistribution
+
+                out-logfile -string "Original DL configuration found and recorded by filter distribution."
+            }
+            
         }
         catch 
         {
