@@ -285,14 +285,7 @@
             $functionRequireAuthToSendTo = $originalDLConfiguration.msExchRequireAuthToSendTo
         }
 
-        if ($originalDLConfiguration.mailNickName -ne $NULL)
-        {
-            $functionMailNickname = $originalDLConfiguration.mailNickName
-        }
-        else 
-        {
-            $functionMailNickName = $office365DLConfiguration.alias    
-        }
+        $functionMailNickname = $office365DLConfigurationPostMigration.externalDirectoryObjectID
 
         if ($originalDLConfiguration.displayName -ne $NULL)
         {
