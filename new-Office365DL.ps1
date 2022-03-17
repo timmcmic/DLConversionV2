@@ -42,6 +42,7 @@
 
         [string]$functionGroupType=$NULL #Holds the return information for the group query.
         [string]$functionMailNickName = ""
+        $functionDL = $NULL
 
         #Start function processing.
 
@@ -125,7 +126,9 @@
                 out-logfile -string $functionMailNickName    
             }
 
-            new-o365distributionGroup -name $originalDLConfiguration.cn -alias $functionMailNickName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+            $functionDL = new-o365distributionGroup -name $originalDLConfiguration.cn -alias $functionMailNickName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+
+            out-logfile -string $functionDL
         }
         catch 
         {
@@ -134,4 +137,6 @@
 
         Out-LogFile -string "END New-Office365DL"
         Out-LogFile -string "********************************************************************************"
+
+        return $functionDL
     }
