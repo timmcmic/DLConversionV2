@@ -198,7 +198,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [boolean]$retainFullMailboxAccessOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$retainSendAsOffice365=$FALSE,
+        [boolean]$retainSendAsOffice365=$TRUE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
@@ -1199,7 +1199,7 @@ Function Start-DistributionListMigration
                 $allMailboxesFolderPermissions = get-onPremFolderPermissions -originalDLConfiguration $originalDLConfiguration -collectedData $importData
             }
             catch {
-                out-logfile -string "Unable to process send as rights on premises."
+                out-logfile -string "Unable to process on prem folder permissions."
                 out-logfile -string $_ -isError:$TRUE
             }  
         }
@@ -1983,6 +1983,17 @@ Function Start-DistributionListMigration
         }
     }
 
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the grant send on behalf to:"
+        
+        out-logfile -string $exchangeGrantSendOnBehalfToSMTP
+    }
+    else 
+    {
+        out-logfile "The group has no grant send on behalf to."    
+    }
+
     Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
 
     Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
@@ -2033,18 +2044,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the grant send on behalf to:"
-        
-        out-logfile -string $exchangeGrantSendOnBehalfToSMTP
-    }
-    else 
-    {
-        out-logfile "The group has no grant send on behalf to."    
-    }
-
-    #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
+   #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
 
     out-logfile -string "Obtaining send as permissions."
 
@@ -2082,6 +2082,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
     out-logfile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
+    out-logfile -string ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count)
+    out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #Exit #Debug Exit.
@@ -3227,6 +3229,8 @@ Function Start-DistributionListMigration
             }
         }
 
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has send as rights on = "+$allOffice365SendAsAccess.count)
+
         if ($retainFullMailboxAccessOffice365 -eq $TRUE)
         {
             if ($useCollectedFullMailboxAccessOffice365 -eq $FALSE)
@@ -3260,6 +3264,8 @@ Function Start-DistributionListMigration
  
         }  
 
+        out-logfile -string ("The number of Office 365 mailboxes that have full mailbox access rights for the migrated group ="+$allOffice365FullMailboxAccess.count)
+
         if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
         {
             out-logfile -string "Administrator has opted to retain folder permissions in Office 365."
@@ -3281,6 +3287,8 @@ Function Start-DistributionListMigration
                 out-logfile -string $_ -isError:$TRUE
             }
         }
+
+        out-logfile -string ("The number of Office 365 mailboxes folders that have folder permissions for the migrated group ="+$allOffice365MailboxFolderPermissions.count)
 
         if ($allOffice365MemberOf -ne $NULL)
         {
@@ -3501,6 +3509,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
+    out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
     out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
     out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
     out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
@@ -3773,18 +3782,28 @@ Function Start-DistributionListMigration
             #Group may not have exchange attributes on premises.
             #Use the Office 365 values to obtain new group.
 
+            #Removing this code.  I used a return from the newDL to capture the newDL configuraiton due to later ambigous items.
+
+            <#
+
             if ($originalDLConfiguration.mailNickName -ne $NULL)
             {
                 out-logfile -string "On premises object has mail nickname / alias -> use this value to obtain new group."
 
-                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -errorAction Stop
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -groupTypeOverride $groupTypeOverride -errorAction Stop
+
+                $loopCounter=$loopCounter+1
             }
             else 
             {
                 out-logfile -string "On premsies object does not have mail nickname / alias -> use Office 365 value to obtain new group."    
 
-                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.alias -errorAction Stop
+                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.alias -groupTypeOverride $groupTypeOverride -errorAction Stop
+
+                $loopCounter=$loopCounter+1
             }
+
+            #>
             
             #If we hit here we did not get a terminating error.  Write the configuration.
 
@@ -3853,7 +3872,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
@@ -3893,7 +3912,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
             $stopLoop=$TRUE
         }
         catch {
@@ -3921,7 +3940,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
