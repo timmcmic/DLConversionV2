@@ -3221,11 +3221,22 @@ Function Start-DistributionListMigration
 
         if ($retainSendAsOffice365 -eq $TRUE)
         {
-            try{
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            out-logfile -string "Retain Office 365 send as set to try - invoke only if group is type security on premsies."
+
+            if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
+            {
+                out-logfile -string "Group is type security on premises - therefore it may have send as rights."
+
+                try{
+                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else 
+            {
+                out-logfile -string "Group is not security on premsies therefore has no send as rights in Office 365."
             }
         }
 
