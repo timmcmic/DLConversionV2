@@ -35,7 +35,9 @@
             [Parameter(Mandatory = $true)]
             $office365DLConfiguration,
             [Parameter(Mandatory = $true)]
-            [string]$groupTypeOverride
+            [string]$groupTypeOverride,
+            [Parameter(Mandatory = $true)]
+            $office365DLConfigurationPostMigration
         )
 
         #Declare function variables.
@@ -314,7 +316,7 @@
         {
             out-logfile -string "Setting core single values for the distribution group."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -Alias $functionMailNickName -DisplayName $functionDisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $functionSimpleDisplayName -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -errorAction STOP
+            Set-O365DistributionGroup -Identity $office365DLConfigurationPostMigration.externalDirectoryObjectID -Alias $functionMailNickName -DisplayName $functionDisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $functionSimpleDisplayName -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -errorAction STOP
         }
         catch 
         {
