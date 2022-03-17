@@ -96,7 +96,7 @@
             [Parameter(Mandatory=$true)]
             [string]$groupTypeOverride,
             [Parameter(Mandatory=$true)]
-            $newDLPrimarySMTPAddress,
+            $office365DLConfigurationPostMigration,
             [Parameter(Mandatory=$TRUE)]
             $mailOnMicrosoftComDomain,
             [Parameter(Mandatory=$TRUE)]
@@ -133,6 +133,9 @@
         out-logfile -string ("Office 365 DL Configuration:")
         out-logfile -string $office365DLConfiguration
 
+        out-logfile -string ("Office 365 DL Configuration Post Migration")
+        out-logfile -string $office365DLConfigurationPostMigration
+
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 
         foreach ($address in $originalDLConfiguration.proxyAddresses)
@@ -165,6 +168,7 @@
 
         out-logfile -string $functionEmailAddresses
 
+        <#
         if ($originalDLConfiguration.mailNickName -ne $NULL)
         {
             out-logfile -string "Mail nickname present on premsies -> using this value."
@@ -177,6 +181,11 @@
             $functionMailNickName = $office365DLConfiguration.alias
             out-logfile -string $functionMailNickName
         }
+        #>
+
+        out-logfile -string "Set mail nickname reference to external directory object ID of the post migration group."
+
+        $functionMailNickName = $office365DLConfigurationPostMigration.externalDirectoryObjectID
 
         try {
             Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
