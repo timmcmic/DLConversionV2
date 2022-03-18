@@ -57,6 +57,7 @@
         [string]$functionSimpleDisplayName=""
         [string]$functionWindowsEmailAddress=""
         [boolean]$functionReportToOriginator=$NULL
+        [string]$functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
 
         [boolean]$isTestError=$FALSE
         [array]$functionErrors=@()
@@ -285,7 +286,24 @@
             $functionRequireAuthToSendTo = $originalDLConfiguration.msExchRequireAuthToSendTo
         }
 
-        $functionMailNickname = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        #It is possible that the group is not fully mail enabled.
+        #Groups may now be represented as mail enabled if only MAIL is populated.
+        #If on premsies attributes are not specified - use the attributes that were obtained from office 365.
+
+        if ($originalDLConfiguration.mailNickName -eq $NULL)
+        {
+            out-logfile -string "On premsies group does not have alias / mail nick name -> using Office 365 value."
+
+            $functionMailNickName = $office365DLConfiguration.alias
+
+            out-logfile -string ("Office 365 alias used for group creation: "+$functionMailNickName)
+        }
+        else 
+        {
+            out-logfile -string "On premises group has a mail nickname specified - using on premsies value."
+            $functionMailNickName = $originalDLConfiguration.mailNickName
+            out-logfile -string $functionMailNickName    
+        }
 
         if ($originalDLConfiguration.displayName -ne $NULL)
         {
@@ -309,7 +327,7 @@
         {
             out-logfile -string "Setting core single values for the distribution group."
 
-            Set-O365DistributionGroup -Identity $office365DLConfigurationPostMigration.externalDirectoryObjectID -Alias $functionMailNickName -DisplayName $functionDisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $functionSimpleDisplayName -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -errorAction STOP
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -name $originalDLConfiguration.cn -Alias $functionMailNickName -DisplayName $functionDisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $functionSimpleDisplayName -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -Name $originalDLConfiguration.cn -BypassSecurityGroupManagerCheck -errorAction STOP
         }
         catch 
         {
@@ -334,7 +352,7 @@
         {
             out-logfile -string "Setting single valued moderation propeties for the group.."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -BypassNestedModerationEnabled $functionModerationFlags -ModerationEnabled $functionModerationEnabled -SendModerationNotifications $functionSendModerationNotifications -BypassSecurityGroupManagerCheck -errorAction STOP
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -BypassNestedModerationEnabled $functionModerationFlags -ModerationEnabled $functionModerationEnabled -SendModerationNotifications $functionSendModerationNotifications -BypassSecurityGroupManagerCheck -errorAction STOP
         }
         catch 
         {
@@ -359,7 +377,7 @@
         {
             out-logfile -string "Setting member join depart restritions on the group.."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -BypassSecurityGroupManagerCheck -errorAction STOP
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -BypassSecurityGroupManagerCheck -errorAction STOP
         }
         catch 
         {
@@ -384,7 +402,7 @@
         {
             out-logfile -string "Setting the single valued report to settings.."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $functionReportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $functionReportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
         }
         catch 
         {
@@ -409,7 +427,7 @@
         {
             out-logfile -string "Setting the custom and extension attributes of the group."
 
-            Set-O365DistributionGroup -Identity $functionMailNickName -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
