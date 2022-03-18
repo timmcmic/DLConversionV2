@@ -102,38 +102,13 @@
             out-logfile -string "An invalid group type was utilized in function new-Office365DL" -isError:$TRUE    
         }
 
+        out-logfile -string ("Random DL name: "+$functionName)
+
         #Create the distribution group in office 365.
         
         try 
         {
             out-logfile -string "Creating the distribution group in Office 365."
-
-            <#
-
-            Changed 3/18/2022
-        
-            Removing this code and we will use the randomized migration name above 
-
-            #It is possible that the group is not fully mail enabled.
-            #Groups may now be represented as mail enabled if only MAIL is populated.
-            #If on premsies attributes are not specified - use the attributes that were obtained from office 365.
-
-            if ($originalDLConfiguration.mailNickName -eq $NULL)
-            {
-                out-logfile -string "On premsies group does not have alias / mail nick name -> using Office 365 value."
-
-                $functionMailNickName = $office365DLConfiguration.alias
-
-                out-logfile -string ("Office 365 alias used for group creation: "+$functionMailNickName)
-            }
-            else 
-            {
-                out-logfile -string "On premises group has a mail nickname specified - using on premsies value."
-                $functionMailNickName = $originalDLConfiguration.mailNickName
-                out-logfile -string $functionMailNickName    
-            }
-
-            #>
 
             $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
 
