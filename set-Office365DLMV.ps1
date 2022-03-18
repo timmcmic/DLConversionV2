@@ -1084,8 +1084,6 @@
         out-logfile -string $isErrorObject
 
         $functionErrors+=$isErrorObject
-        }
-
 
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"

@@ -42,6 +42,7 @@
 
         [string]$functionGroupType=$NULL #Holds the return information for the group query.
         [string]$functionMailNickName = ""
+        [string]$functionName = ((Get-Date -Format FileDateTime)+(Get-Random)).tostring()
         $functionDL = $NULL
 
         #Start function processing.
@@ -107,6 +108,12 @@
         {
             out-logfile -string "Creating the distribution group in Office 365."
 
+            <#
+
+            Changed 3/18/2022
+        
+            Removing this code and we will use the randomized migration name above 
+
             #It is possible that the group is not fully mail enabled.
             #Groups may now be represented as mail enabled if only MAIL is populated.
             #If on premsies attributes are not specified - use the attributes that were obtained from office 365.
@@ -126,9 +133,11 @@
                 out-logfile -string $functionMailNickName    
             }
 
-            $functionDL = new-o365distributionGroup -name $originalDLConfiguration.cn -alias $functionMailNickName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+            #>
 
-            out-logfile -string $functionDL
+            $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+
+            out-logfile - string $functionDL
         }
         catch 
         {
