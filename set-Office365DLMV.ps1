@@ -115,6 +115,8 @@
         [array]$functionEmailAddresses=@()
         [string]$functionMail=""
         [string]$functionMailNickname=""
+        [string]$functionExternalDirectoryObjectID = ""
+        [string]$functionEmailAddressToRemove = ""
 
         [boolean]$isTestError=$false
         [array]$functionErrors=@()
@@ -168,7 +170,16 @@
 
         out-logfile -string $functionEmailAddresses
 
-        <#
+        $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        
+        out-logfile -string "External directory object ID utilized for set commands:"
+        out-logfile -string $functionExternalDirectoryObjectID
+
+        $functionEmailAddressToRemove = $office365DLConfigurationPostMigration.primarySMTPAddress
+
+        out-logfile -string "Email address to remove after resetting attributes."
+        out-logfile -string $functionEmailAddressToRemove
+
         if ($originalDLConfiguration.mailNickName -ne $NULL)
         {
             out-logfile -string "Mail nickname present on premsies -> using this value."
@@ -181,14 +192,11 @@
             $functionMailNickName = $office365DLConfiguration.alias
             out-logfile -string $functionMailNickName
         }
-        #>
 
         out-logfile -string "Set mail nickname reference to external directory object ID of the post migration group."
 
-        $functionMailNickName = $office365DLConfigurationPostMigration.externalDirectoryObjectID
-
         try {
-            Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+            Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch {
             out-logfile -string "Error bulk updating email addresses on distribution group."
@@ -203,7 +211,7 @@
             out-logfile -string "Establishing group primary SMTP Address."
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -primarySMTPAddress $originalDLConfiguration.mail -errorAction STOP
             }
             catch {
                 out-logfile -string "Error establishing new group primary SMTP Address."
@@ -230,7 +238,7 @@
                 out-logfile -string ("Processing address: "+$address)
 
                 try{
-                    Set-O365DistributionGroup -identity $originalDLConfiguration.mailNickName -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
+                    Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{add=$address} -errorAction STOP -BypassSecurityGroupManagerCheck
                 }
                 catch{
                     out-logfile -string ("Error processing address: "+$address)
@@ -268,7 +276,7 @@
             out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
 
             try {
-                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+                Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string ("Error processing address: "+$functionEmailAddress)
@@ -301,7 +309,7 @@
             out-logfile -string ("The x500 address to process = "+$functionEmailAddress)
 
             try {
-                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+                Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{add=$functionEmailAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string ("Error processing address: "+$functionEmailAddress)
@@ -332,7 +340,7 @@
             out-logfile -string ("Hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
             try {
-                Set-O365DistributionGroup -identity $functionMailNickName -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
+                Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string ("Error processing address: "+$hybridRemoteRoutingAddress)
@@ -391,7 +399,7 @@
             #Alberto Larrinaga for the suggestion.
 
             try {
-                update-o365DistributionGroupMember -identity $functionMailNickName -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop
+                update-o365DistributionGroupMember -identity $functionExternalDirectoryObjectID -members $functionRecipients -BypassSecurityGroupManagerCheck -confirm:$FALSE -errorAction Stop
             }
             catch {
                 out-logfile -string "Unable to bulk update distribution group membership."
@@ -411,7 +419,7 @@
 
 
                     try {
-                        add-O365DistributionGroupMember -identity $functionMailNickName -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
+                        add-O365DistributionGroupMember -identity $functionExternalDirectoryObjectID -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
                     }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
@@ -482,7 +490,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Error bulk updating RejectMessagesFromSendersOrMembers"
@@ -501,7 +509,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -572,7 +580,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
 
             }
             catch {
@@ -592,7 +600,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -662,7 +670,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk update managedBy"
@@ -681,7 +689,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -751,7 +759,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk update moderatedBy."
@@ -770,7 +778,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -840,7 +848,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk modify bypassModerationFromSendersOrMembers"
@@ -859,7 +867,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -BypassModerationFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -BypassModerationFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -929,7 +937,7 @@
             out-logfile -string $functionRecipients
 
             try {
-                set-o365DistributionGroup -identity $functionMailNickName -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch {
                 out-logfile -string "Unable to bulk updated GrantSendOnBehalfTo."
@@ -948,7 +956,7 @@
                     out-logfile -string ("Attempting to add recipient: "+$recipient)
 
                     try {
-                        set-o365DistributionGroup -identity $functionMailNickName -GrantSendOnBehalfTo @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -GrantSendOnBehalfTo @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                     catch {
                         out-logfile -string ("Error procesing recipient: "+$recipient)
 
@@ -1020,7 +1028,7 @@
                     out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
                     try {
-                        add-o365RecipientPermission -Identity $functionMailNickName -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
+                        add-o365RecipientPermission -Identity $functionExternalDirectoryObjectID -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
@@ -1051,6 +1059,33 @@
         {
             Out-LogFile -string "There were no members to process."    
         }
+
+        out-logfile -string "Remove the SMTP Address added by creating the temporary DL."
+
+        try {
+            out-logfile -string ("Removing: "+$functionEmailAddressToRemove)
+            Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{remove=$functionEmailAddressToRemove} -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch {
+            out-logfile -string "Unable to remove SMTP address assigned by default during group creation."
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Unable to remove temporary SMTP address of group."
+                ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
+                ErrorMessageDetail = $_
+            }
+        }
+
+        out-logfile -string $isErrorObject
+
+        $functionErrors+=$isErrorObject
+        }
+
 
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
