@@ -3790,32 +3790,7 @@ Function Start-DistributionListMigration
     do 
     {
         try {
-            #Group may not have exchange attributes on premises.
-            #Use the Office 365 values to obtain new group.
-
-            #Removing this code.  I used a return from the newDL to capture the newDL configuraiton due to later ambigous items.
-
-            <#
-
-            if ($originalDLConfiguration.mailNickName -ne $NULL)
-            {
-                out-logfile -string "On premises object has mail nickname / alias -> use this value to obtain new group."
-
-                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $originalDLConfiguration.mailnickname -groupTypeOverride $groupTypeOverride -errorAction Stop
-
-                $loopCounter=$loopCounter+1
-            }
-            else 
-            {
-                out-logfile -string "On premsies object does not have mail nickname / alias -> use Office 365 value to obtain new group."    
-
-                $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.alias -groupTypeOverride $groupTypeOverride -errorAction Stop
-
-                $loopCounter=$loopCounter+1
-            }
-
-            #>
-            
+                        
             #If we hit here we did not get a terminating error.  Write the configuration.
 
             out-LogFile -string "Write new DL configuration to XML."

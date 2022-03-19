@@ -112,7 +112,7 @@
 
             $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
 
-            out-logfile - string $functionDL
+            out-logfile -string $functionDL
         }
         catch 
         {
