@@ -3961,7 +3961,7 @@ Function Start-DistributionListMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $originalDLConfiguration.mail -errorAction STOP
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
 
             #Membership obtained - export.
 
