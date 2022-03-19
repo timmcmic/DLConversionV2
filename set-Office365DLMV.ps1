@@ -193,8 +193,6 @@
             out-logfile -string $functionMailNickName
         }
 
-        out-logfile -string "Set mail nickname reference to external directory object ID of the post migration group."
-
         try {
             Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
         }
@@ -1043,11 +1041,11 @@
                             ErrorMessage = ("Member of SendAs "+$member.primarySMTPAddressOrUPN+" unable to add to cloud distribution group.  Manual addition required.")
                             ErrorMessageDetail = $_
                         }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
                     }
-
-                    out-logfile -string $isErrorObject
-
-                    $functionErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1079,11 +1077,11 @@
                 ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
                 ErrorMessageDetail = $_
             }
+
+            out-logfile -string $isErrorObject
+
+            $functionErrors+=$isErrorObject
         }
-
-        out-logfile -string $isErrorObject
-
-        $functionErrors+=$isErrorObject
 
         Out-LogFile -string "END SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
