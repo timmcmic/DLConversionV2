@@ -107,6 +107,8 @@
                 out-logfile -string $_ -isError:$TRUE
             }
 
+            <#
+
             $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
             out-logfile -string "Processing full mailbox access based on imported data."
@@ -127,6 +129,17 @@
                     }
                 }
             }
+
+            #>
+
+            out-logfile -string "Filter all entries for objects that have been removed."
+            out-logfile -string ("Pre count: "+$collectedData.count)
+
+            $collectedData = $collectedData | where {$_.user.userPrincipalName -ne $NULL}
+
+            out-logfile -string ("Post count: "+$collectedData.count)
+
+            $functionFullMailboxAccess = $collectedData | where {$_.user.userprincipalName.contains($groupSMTPAddress)}
         }
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"

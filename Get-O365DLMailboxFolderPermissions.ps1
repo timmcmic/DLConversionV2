@@ -54,6 +54,7 @@
         }
         elseif ($collectedData -ne $NULL)
         {
+            <#
             $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
 
             out-logfile -string "Processing folder permissions for imported data."
@@ -71,6 +72,17 @@
                     $functionFolderAccess+=$folder
                 }
             }
+
+            #>
+
+            out-logfile -string "Filter all entries for objects that have been removed."
+            out-logfile -string ("Pre count: "+$collectedData.count)
+
+            $collectedData = $collectedData | where {$_.user.userPrincipalName -ne $NULL}
+
+            out-logfile -string ("Post count: "+$collectedData.count)
+
+            $functionFolderAccess = $collectedData | where {$_.user.userprincipalName.contains($groupSMTPAddress)}
         }
 
         write-progress -activity "Processing Recipient" -completed
