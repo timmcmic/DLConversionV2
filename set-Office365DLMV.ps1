@@ -999,7 +999,7 @@
                     out-LogFile -string ("Processing updated member = "+$functionDirectoryObjectID[1])
 
                     try {
-                        add-o365RecipientPermission -Identity $functionMailNickName -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs" -confirm:$FALSE
+                        add-o365RecipientPermission -Identity $functionExternalDirectoryObjectID -Trustee $functionDirectoryObjectID[1] -AccessRights "SendAs" -confirm:$FALSE
                     }
                     catch {
                         out-logfile -string "Unable to add member. "
