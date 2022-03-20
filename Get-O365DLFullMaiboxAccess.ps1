@@ -132,14 +132,9 @@
 
             #>
 
-            out-logfile -string "Filter all entries for objects that have been removed."
-            out-logfile -string ("Pre count: "+$collectedData.count)
+            out-logfile "Obtaining all full mailbox access permissions in Office 365."
 
-            $collectedData = $collectedData | where {$_.user.userPrincipalName -ne $NULL}
-
-            out-logfile -string ("Post count: "+$collectedData.count)
-
-            $functionFullMailboxAccess = $collectedData | where {$_.user.userprincipalName.contains($groupSMTPAddress)}
+            $functionFullMailboxAccess = $collectedData | where {$_.user.contains($functionRecipient.identity)
         }
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
