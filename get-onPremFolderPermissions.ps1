@@ -60,7 +60,7 @@
                     write-host $recipient.user
                     write-host $originalDLConfiguration.samAccountName
 
-                    if ($recipient.user.tostring() -eq $originalDLConfiguration.samAccountName)
+                    if ($recipient.user.adrecipient.samAccountName.tostring() -eq $originalDLConfiguration.samAccountName)
                     {
                         out-logfile -string ("Mailbox folder permission found - recording."+$recipient.identity)
                         $functionFolderRightsUsers+=$recipient
