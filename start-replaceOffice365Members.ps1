@@ -56,7 +56,7 @@
         out-Logfile -string "Processing operation..."
 
         try{
-            add-o365DistributionGroupMember -identity $office365Group.primarySMTPAddress -member $groupSMTPAddress -errorAction STOP
+            add-o365DistributionGroupMember -identity $office365Group.primarySMTPAddress -member $groupSMTPAddress -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch{
             out-logfile -string $_
