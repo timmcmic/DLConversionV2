@@ -71,6 +71,9 @@ function start-collectOffice365FullMailboxAccess
         $bringMyOwnMailboxes=$NULL
     )
 
+    $windowTitle = "Start-collectOffice365FullMailboxAccess"
+    $host.ui.RawUI.WindowTitle = $windowTitle
+
     #Delare global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name

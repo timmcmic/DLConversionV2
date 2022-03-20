@@ -223,6 +223,9 @@ Function Start-DistributionListMigration
         [boolean]$allowNonSyncedGroup=$FALSE
     )
 
+    $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
+    $host.ui.RawUI.WindowTitle = $windowTitle
+
     #For mailbox folder permissions set these to false.
     #Supported methods for gathering folder permissions require use of the pre-collection.
     #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.

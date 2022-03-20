@@ -58,6 +58,9 @@ function start-collectOffice365MailboxFolders
         $bringMyOwnMailboxes=$NULL
     )
 
+    $windowTitle = "Start-collectOffice365MailboxFolders"
+    $host.ui.RawUI.WindowTitle = $windowTitle
+
     #Delare global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name

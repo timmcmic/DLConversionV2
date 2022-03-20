@@ -212,6 +212,9 @@ Function Start-MultipleDistributionListMigration
         [string]$remoteDriveLetter=$NULL
     )
 
+    $windowTitle = "Start-MultipleDistributionListMigration Controller"
+    $host.ui.RawUI.WindowTitle = $windowTitle
+
     #Define global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name

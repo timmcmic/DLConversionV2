@@ -67,6 +67,9 @@ function start-collectOnPremFullMailboxAccess
         $bringMyOwnMailboxes=$NULL
     )
 
+    $windowTitle = "Start-collectOnPremFullMailboxAccess"
+    $host.ui.RawUI.WindowTitle = $windowTitle
+
     #Delare global variables.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
