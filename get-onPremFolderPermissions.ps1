@@ -41,6 +41,7 @@
         Out-LogFile -string "BEGIN get-onPremFolderPermissions"
         Out-LogFile -string "********************************************************************************"
 
+        <#
         try 
         {
             
@@ -78,6 +79,8 @@
         }
 
         #>
+
+        out-logfile -string "Test for folder permissions."
 
         $functionFolderRightsUsers = $collectedData | where {$_.user.adrecipient.samaccountname.contains($originalDLConfiguration.samAccountName)}
 
