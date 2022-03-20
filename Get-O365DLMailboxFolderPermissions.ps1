@@ -82,7 +82,7 @@
 
             out-logfile -string ("Post count: "+$collectedData.count)
 
-            $functionFolderAccess = $collectedData | where {$_.user.userprincipalname.contains($groupSMTPAddress)}
+            $functionFolderAccess = $collectedData | where {$_.user.contains($groupSMTPAddress)}
         }
 
         write-progress -activity "Processing Recipient" -completed
