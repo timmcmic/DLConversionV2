@@ -207,7 +207,42 @@
 
         if ($allFolderPermissions.count -gt 0)
         {
-            out-logfile -string "Processing mailbox folder permissions in Office 365."
+            out-logfile -string "Removing existing mailbox permission in Office 365 to avoid ambiguity."
+
+            foreach ($permission in $allFolderPermissions)
+            {
+                $isTestError="No"
+
+                try {
+                    out-logfile -string ("Processing permission identity = "+$permission.identity)
+                    out-logfile -string ("Processing permission trustee = "+$permission.user.userPrincipalName)
+
+                    remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -confirm:$FALSE -errorAction STOP
+                }
+                catch {
+                    out-logFile -string "Unable to remove the existing folder permission in Office 365."
+                    out-logfile -string $_
+                    $errorMessageDetail=$_
+
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Unable to remove the existing folder permission in Office 365."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "Mailbox Folder Permission"
+                        errorMessage = "Unable to remove the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                        errorMessageDetail = $errorMessageDetail
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
+                }
+            }
 
             foreach ($permission in $allFolderPermissions)
             {
@@ -217,11 +252,12 @@
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
+                    out-logfile -string ("Processing permission sharing flags = "+$permission.sharingPermissionFlags)
 
-                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user -accessRights $permission.AccessRights -confirm:$FALSE -errorAction STOP
+                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
                 }
                 catch {
-                    out-logFile -string "Unable to add the full mailbox access permission in Office 365."
+                    out-logFile -string "Unable to add the folder access permission in Office 365."
                     out-logfile -string $_
                     $errorMessageDetail=$_
 
@@ -230,7 +266,7 @@
 
                 if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Unable to add the full mailbox access permission in Office 365."
+                    out-logfile -string "Unable to add the folder access permission in Office 365."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
