@@ -152,12 +152,12 @@
 
         if ($allOnPremFolderPermissions -ne $NULL)
         {
-            $isTestError = "No"
-
             out-logfile -string "Processing mailbox folder permissions on Premises."
 
             foreach ($permission in $allOnPremFolderPermissions)
             {
+                $isTestError = "No"
+                
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     out-logfile -string ("Processing permission trustee = "+$permission.user)
