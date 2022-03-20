@@ -72,19 +72,6 @@
         [int]$loopCounter = 0
         $activeDirectoryDomainName =""
 
-        try
-        {
-            out-logfile -string "Obtaining the active directory domain for this operation."
-            $activeDirectoryDomainName=get-activeDirectoryDomainName -dn $DN -errorAction STOP
-            out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomainName)
-        }
-        catch
-        {
-            out-logfile $_
-            out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
-        }
-
-
         do {
             try 
             {
@@ -92,6 +79,18 @@
 
                 if ($DN -ne "None")
                 {
+                    try
+                    {
+                        out-logfile -string "Obtaining the active directory domain for this operation."
+                        $activeDirectoryDomainName=get-activeDirectoryDomainName -dn $DN -errorAction STOP
+                        out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomainName)
+                    }
+                    catch
+                    {
+                        out-logfile $_
+                        out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
+                    }
+
                     out-logfile -string "Attepmting to find the user via distinguished name."
 
                     $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
@@ -110,6 +109,18 @@
                     #Canonical name is a calculated value - need to tranlate to DN and then search directory.
                     
                     $DN = get-distinguishedName -canonicalName $CN
+
+                    try
+                    {
+                        out-logfile -string "Obtaining the active directory domain for this operation."
+                        $activeDirectoryDomainName=get-activeDirectoryDomainName -dn $DN -errorAction STOP
+                        out-logfile -string ("Active Directory Domain Calculated: "+$activeDirectoryDomainName)
+                    }
+                    catch
+                    {
+                        out-logfile $_
+                        out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
+                    }
 
                     $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
     
