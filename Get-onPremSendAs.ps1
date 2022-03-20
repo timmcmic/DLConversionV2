@@ -161,7 +161,7 @@
 
             out-logfile -string "Test for send as rights."
 
-            $functionSendAsIdentities = $collectedData | where {$_.user.conatains($originalDLConfiguration.samaccountname)}
+            $functionSendAsIdentities = $collectedData | where {$_.user.contains($originalDLConfiguration.samaccountname)}
         }
         else 
         {
