@@ -82,7 +82,14 @@
 
         out-logfile -string "Test for folder permissions."
 
-        $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.primarySMTPAddress.contains($originalDLConfiguration.mail)}
+        out-logfile -string "Filter all permissions for objects that are no longer vaild"
+        out-logfile -string ("Pre collected data count: "+$collectedData.count)
+
+        $collectedData = $collectedData | where {$_.user.adrecipient -ne $NULL}
+
+        out-logfile -string ("Post collected data count: "+$collecteddata.count)
+
+        $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.primarySMTpAddress.contains($originalDLConfiguration.mail)}
 
         out-logfile -string $functionFolderRightsUsers
 
