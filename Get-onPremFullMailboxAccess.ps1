@@ -95,6 +95,7 @@
         }
         elseif ($collectedData -ne $NULL)
         {
+            <#
             try 
             {
                 out-logfile -string "Testing for full mailbo access rights.."
@@ -104,7 +105,6 @@
                 foreach ($recipient in $collectedData)
                 {
                     $MbxNumber++
-
                     write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
 
                     $PercentComplete += $ProgressDelta
@@ -129,6 +129,10 @@
             }
 
             write-progress -Activity "Processing Recipient" -Completed
+
+            #>
+
+            $functionPermissions = $collectedData | where {$_.user.contains($originalDLConfiguration.samAccountName)}
         }
 
         Out-LogFile -string "********************************************************************************"

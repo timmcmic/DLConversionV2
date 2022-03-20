@@ -122,6 +122,7 @@
         }
         elseif ($collectedData -ne $NULL)
         {
+            <#
             try 
             {
                 out-logfile -string "Test for send as rights."
@@ -156,6 +157,9 @@
             }
 
             write-progress -Activity "Processing Recipient" -Completed
+            #>
+
+            $functionSendAsIdentities = $collectedData | where {$_.user.conatains($originalDLConfiguration.samaccountname)}
         }
         else 
         {
