@@ -82,7 +82,7 @@
 
         out-logfile -string "Test for folder permissions."
 
-        $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.SamAccountName.contains($originalDLConfiguration.samAccountName)}
+        $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.primarySMTPAddress.contains($originalDLConfiguration.mail)}
 
         out-logfile -string $functionFolderRightsUsers
 

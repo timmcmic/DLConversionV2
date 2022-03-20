@@ -306,7 +306,7 @@ function start-collectOffice365FullMailboxAccess
                 $forCounter++    
             }
 
-            $auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | Where-Object {$_.user -notlike "NT Authority\Self"}
+            $auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | where {$_.user -notlike "NT Authority\Self"}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
