@@ -61,6 +61,8 @@
         $functionUniveralRecipientDisplayType = "GroupMailbox"
         $functionDynamicDistributionGroupRecipientType = "DynamicDistributionGroup"
 
+        $functionForwarding = "ForwardingAddress"
+
         Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
         out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
         out-logfile -string ("Office 365 Recipient Type = "+$office365Member.recipientType)
@@ -70,7 +72,14 @@
 
         out-Logfile -string "Processing operation..."
 
-        if (($office365Member.recipientType -eq $functionDistributionGroupRecipientType) -and ($office365Member.recipientDisplayTypeDetails -eq $functionUniveralRecipientDisplayType))
+        if ($office365Attribute -eq $functionForwarding)
+        {
+            out-logfile -string "Recipient is a mailbox with forwarding rights."
+
+            $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP -bypassSecurityGroupManagerCheck"
+            out-logfile -string ("The command to execute:  "+$functionCommand)
+        }
+        elseif (($office365Member.recipientType -eq $functionDistributionGroupRecipientType) -and ($office365Member.recipientDisplayTypeDetails -eq $functionUniveralRecipientDisplayType))
         {
             out-logfile -string "Recipient is a unified group."
 

@@ -399,6 +399,8 @@ Function Start-DistributionListMigration
     [array]$allOffice365ManagedBy=$NULL
     [array]$allOffice365GrantSendOnBehalfTo=$NULL
 
+    <#
+
     #The following are for universal distribution groups.
 
     [array]$allOffice365UniversalAccept=$NULL
@@ -412,6 +414,8 @@ Function Start-DistributionListMigration
     [array]$allOffice365DynamicBypassModeration=$NULL
     [array]$allOffice365DynamicManagedBy=$NULL
     [array]$allOffice365DynamicGrantSendOnBehalfTo=$NULL
+
+    #>
 
     #These are for other mail enabled objects.
 
@@ -5106,9 +5110,63 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 managed by permissions."    
     }
 
-    
+    $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
+
+    out-logfile -string "Processing Office 365 Forwarding Address"
+
+    if ($allOffice365ForwardingAddress.count -gt 0)
+    {
+        foreach ($member in $allOffice365ForwardingAddress)
+        {
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365ForwardingAddress -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_
+                $isTestErrorDetail = $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding migrated distribution list to Office 365 Resource."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Mailbox Forwarding Address"
+                    errorMessage = "Unable to set forwarding address for mailbox.  Manual add required."
+                    erroMessageDetail = $isTestErrorDetail
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no Office 365 groups with mailbox forward for migrated DL."    
+    }
 
     
+
+    <#
 
     #Start the process of updating any dynamic distribution groups.
 
@@ -5389,10 +5447,10 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
-    
+    #>
 
-    
-
+    <#   
+ 
     #Start the process of updating the unified group dependencies.
 
     out-logfile -string "Processing Office 365 Unified Accept From"
@@ -5558,7 +5616,7 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
-    
+    #>
 
     
 
