@@ -116,16 +116,6 @@
                 $functionTest += invoke-command -scriptBlock $scriptBlock
                 
                 out-logfile -string ("The function command executed = "+$functionCommand)
-
-                out-logfile -string "Starting collection of universal distribution groups."
-
-                $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
-
-                $scriptBlock=[scriptBlock]::create($functionCommand)
-
-                $functionTest += invoke-command -scriptBlock $scriptBlock
-                
-                out-logfile -string ("The function command executed = "+$functionCommand)
             }
             else
             {
@@ -231,7 +221,7 @@
 
                 out-logfile -string "Starting collection of mail contact recipients."
 
-                $functionCommand = "Get-o365MailUser -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365MailContact -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
