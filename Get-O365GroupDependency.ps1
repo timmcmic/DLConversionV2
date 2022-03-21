@@ -211,7 +211,7 @@
 
                 out-logfile -string "Starting collection of mailbox recipients."
 
-                $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Mailbox -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -219,7 +219,7 @@
 
                 out-logfile -string "Starting collection of mail user recipients."
 
-                $functionCommand = "Get-o365Mailuser -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Mailuser -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -227,7 +227,7 @@
 
                 out-logfile -string "Starting collection of mail contact recipients."
 
-                $functionCommand = "Get-o365MailUser -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365MailUser -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
