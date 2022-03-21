@@ -95,6 +95,8 @@
             {
                 #The attribute type is a property of the DL - attempt to obtain.
 
+                <#
+
                 Out-LogFile -string "Entering query office 365 for DL to be set on property."
 
                 if ($groupType -eq "Standard")
@@ -137,6 +139,64 @@
                 {
                     throw "Invalid group type specified in function call.  Acceptable Standard or Universal"    
                 } 
+
+                #>
+
+                out-logfile -string "Starting to gather attribute for all recipient types."
+                out-logfile -string "Starting collection of distribution groups."
+
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest = invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+
+                out-logfile -string "Starting collection of dynamic distribution groups."
+
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+
+                out-logfile -string "Starting collection of universal distribution groups."
+
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+
+                out-logfile -string "Starting collection of mailbox recipients."
+
+                $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+
+                out-logfile -string "Starting collection of mail user recipients."
+
+                $functionCommand = "Get-o365Mailuser -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+
+                out-logfile -string "Starting collection of mail contact recipients."
+
+                $functionCommand = "Get-o365MailUser -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+
             }
 
             if ($functionTest -eq $NULL)
