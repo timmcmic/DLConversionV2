@@ -91,6 +91,42 @@
                  
                  out-logfile -string ("The function command executed = "+$functionCommand)
             }
+            elseif ($attributeType -eq "ManagedBy")
+            {
+                #The attribute type is managed by.  This is only relevant to groups.
+
+                out-logfile "Managed by is only relevant to groups - performing query on only groups."
+
+                out-logfile -string "Starting collection of distribution groups."
+
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest = invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+
+                out-logfile -string "Starting collection of dynamic distribution groups."
+
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+
+                out-logfile -string "Starting collection of universal distribution groups."
+
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functionTest += invoke-command -scriptBlock $scriptBlock
+                
+                out-logfile -string ("The function command executed = "+$functionCommand)
+            }
             else
             {
                 #The attribute type is a property of the DL - attempt to obtain.
