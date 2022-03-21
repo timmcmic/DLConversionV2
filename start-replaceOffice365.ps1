@@ -37,7 +37,7 @@
             [Parameter(Mandatory = $true)]
             $office365Attribute,
             [Parameter(Mandatory = $true)]
-            [string]$office365Member,
+            $office365Member,
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress
         )
