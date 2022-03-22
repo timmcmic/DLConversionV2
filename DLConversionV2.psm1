@@ -343,20 +343,20 @@ Function Start-DistributionListMigration
     [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
     [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
     [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
-    [string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
-    [string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
-    [string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
+    #[string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
+    #[string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
+    #[string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
     [string]$allOffice365MemberOfXML="allOffice365MemberOfXML"
     [string]$allOffice365AcceptXML="allOffice365AcceptXML"
     [string]$allOffice365RejectXML="allOffice365RejectXML"
     [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
     [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
     [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
-    [string]$allOffice365DynamicAcceptXML="allOffice365DynamicAcceptXML"
-    [string]$allOffice365DynamicRejectXML="allOffice365DynamicRejectXML"
-    [string]$allOffice365DynamicBypassModerationXML="allOffice365DynamicBypassModerationXML"
-    [string]$allOffice365DynamicGrantSendOnBehalfToXML="allOffice365DynamicGrantSentOnBehalfToXML"
-    [string]$allOffice365DynamicManagedByXML="allOffice365DynamicManagedByXML"
+    #[string]$allOffice365DynamicAcceptXML="allOffice365DynamicAcceptXML"
+    #[string]$allOffice365DynamicRejectXML="allOffice365DynamicRejectXML"
+    #[string]$allOffice365DynamicBypassModerationXML="allOffice365DynamicBypassModerationXML"
+    #[string]$allOffice365DynamicGrantSendOnBehalfToXML="allOffice365DynamicGrantSentOnBehalfToXML"
+    #[string]$allOffice365DynamicManagedByXML="allOffice365DynamicManagedByXML"
     [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
@@ -431,8 +431,8 @@ Function Start-DistributionListMigration
     [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
     [string]$office365ForwardingAddress="ForwardingAddress"
 
-    [string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
-    [string]$office365RejectMessagesUsers="RejectMessagesFrom"
+    #[string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
+    #[string]$office365RejectMessagesUsers="RejectMessagesFrom"
     [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
 
     [string]$office365UnifiedAccept="AcceptMessagesOnlyFromSendersOrMembers"
@@ -3135,6 +3135,8 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has managedBY = "+$allOffice365ManagedBy.count)
 
+        <#
+
         #Process all dynamic distribution groups.
 
         try {
@@ -3210,6 +3212,8 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
+
+        #>
 
         #Process other mail enabled object dependencies.
 
@@ -3368,6 +3372,8 @@ Function Start-DistributionListMigration
             $allOffice365ManagedBy=@()    
         }
 
+        <#
+
         if ($allOffice365DynamicAccept -ne $NULL)
         {
             out-logfile -string $allOffice365DynamicAccept
@@ -3422,6 +3428,8 @@ Function Start-DistributionListMigration
             $allOffice365DynamicManagedBy=@()    
         }
 
+        #>
+
         if ($allOffice365ForwardingAddress -ne $NULL)
         {
             out-logfile -string $allOffice365ForwardingAddress
@@ -3431,6 +3439,8 @@ Function Start-DistributionListMigration
         {
             $allOffice365ForwardingAddress=@()    
         }
+
+        <#
 
         if ($allOffice365UniversalAccept -ne $NULL)
         {
@@ -3461,6 +3471,8 @@ Function Start-DistributionListMigration
         {
             $allOffice365UniversalGrantSendOnBehalfTo=@()    
         }
+
+        #>
 
         if ($allOffice365SendAsAccess -ne $NULL)
         {
@@ -3511,24 +3523,24 @@ Function Start-DistributionListMigration
 
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
     out-logfile -string ("Summary of dependencies found:")
-    out-logfile -string ("The number of office 365 groups that the migrated DL is a member of = "+$allOffice365MemberOf.count)
-    out-logfile -string ("The number of office 365 groups that this group is a manager of: = "+$allOffice365ManagedBy.count)
-    out-logfile -string ("The number of office 365 groups that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
-    out-logfile -string ("The number of office 365 groups that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
-    out-logfile -string ("The number of office 365 groups with accept permissions = "+$allOffice365Accept.count)
-    out-logfile -string ("The number of office 365 groups with reject permissions = "+$allOffice365Reject.count)
+    out-logfile -string ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
+    out-logfile -string ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count)
+    out-logfile -string ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
+    out-logfile -string ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
+    out-logfile -string ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
     out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
-    out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
-    out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
-    out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
+    #out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
+    #out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
+    #out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
     out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
-    out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
-    out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
-    out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
-    out-logfile -string ("The number of office 365 dynamic groups that have this group as bypass moderation = "+$allOffice365DynamicBypassModeration.count)
-    out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
+    #out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
+    #out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
+    #out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
+    #out-logfile -string ("The number of office 365 dynamic groups that have this group as bypass moderation = "+$allOffice365DynamicBypassModeration.count)
+    #out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #EXIT #Debug Exit
@@ -4837,7 +4849,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4893,7 +4905,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5096,7 +5108,7 @@ Function Start-DistributionListMigration
 
     
 
-    
+    <#
 
     #Start the process of updating any dynamic distribution groups.
 
@@ -5377,9 +5389,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
-    
+    #>
 
-    
+    <#
 
     #Start the process of updating the unified group dependencies.
 
@@ -5546,7 +5558,7 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
-    
+    #>
 
     
 
