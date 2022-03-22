@@ -528,13 +528,16 @@ Function Start-DistributionListMigration
 
     $functionVariables = Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
 
-    out-logfile -string $functionVariables
-
-    exit
-
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+
+    foreach ($var in $functionVariables)
+    {
+        out-logfile ($var.name+" "+$var.Value)
+    }
+
+    exit
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
