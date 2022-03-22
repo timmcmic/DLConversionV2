@@ -33,7 +33,7 @@
             [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $TRUE)]
-            [string]$attributeType,
+            [string]$attributeType
         )
 
         #Declare function variables.
