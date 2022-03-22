@@ -18,6 +18,8 @@
 
 Function Start-DistributionListMigration 
 {
+    $automaticVariables = get-variable #Gather automatic variables for later processing.
+
     <#
     .SYNOPSIS
 
@@ -523,6 +525,12 @@ Function Start-DistributionListMigration
             remove-statusFiles -fullCleanup:$TRUE
         }
     }
+
+    $functionVariables = Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
+
+    out-logfile -string $functionVariables
+
+    exit
 
     #Log start of DL migration to the log file.
 
@@ -3543,7 +3551,7 @@ Function Start-DistributionListMigration
     #out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
