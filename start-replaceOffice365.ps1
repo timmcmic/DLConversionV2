@@ -66,7 +66,7 @@
         Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
         out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
         out-logfile -string ("Office 365 Recipient Type = "+$office365Member.recipientType)
-        out-logfile -string ("Office 365 Recipient Display Type Details ="+$office365Member.recipientDisplayTypeDetails)
+        out-logfile -string ("Office 365 Recipient Display Type Details ="+$office365Member.recipientTypeDetails)
 
         #Declare function variables.
 
@@ -79,7 +79,7 @@
             $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP -bypassSecurityGroupManagerCheck"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
-        elseif (($office365Member.recipientType -eq $functionDistributionGroupRecipientType) -and ($office365Member.recipientDisplayTypeDetails -eq $functionUniveralRecipientDisplayType))
+        elseif (($office365Member.recipientType -eq $functionDistributionGroupRecipientType) -and ($office365Member.recipientTypeDetails -eq $functionUniveralRecipientDisplayType))
         {
             out-logfile -string "Recipient is a unified group."
 
