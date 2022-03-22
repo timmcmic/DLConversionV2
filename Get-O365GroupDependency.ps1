@@ -35,8 +35,6 @@
             [Parameter(Mandatory = $TRUE)]
             [string]$attributeType,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("Standard","Unified","Dynamic")]
-            [string]$groupType="Standard"
         )
 
         #Declare function variables.
