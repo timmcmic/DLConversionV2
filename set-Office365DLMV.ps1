@@ -193,12 +193,19 @@
             out-logfile -string $functionMailNickName
         }
 
+        #With the new temp DL logic - the fast deletion and then immediately moving into set operations sometimes caused cache collisions.
+        #This caused the following bulk logic to fail - then the individual set logics would also fail.
+        #This left us with the temp DL without any actual SMTP addresses.
+        #New logic - try / sleep 10 times then try the individuals.
+        
         $maxRetries = 0
 
         Do
         {
             try {
                 $isTestError=$FALSE
+
+                out-logfile -string ("Max retry attempt: "+$maxRetries.toString())
 
                 Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
             }
@@ -208,6 +215,7 @@
                 $isTestError=$TRUE
                 out-logfile -string "Starting 10 second sleep before trying bulk update."
                 start-sleep -s 10
+                $maxRetries = $maxRetries+1
             }
     
         }
