@@ -193,15 +193,26 @@
             out-logfile -string $functionMailNickName
         }
 
-        try {
-            Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
-        }
-        catch {
-            out-logfile -string "Error bulk updating email addresses on distribution group."
-            out-logfile -string $_
-            $isTestError=$TRUE
-        }
+        $maxRetries = 0
 
+        Do
+        {
+            try {
+                $isTestError=$FALSE
+
+                Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch {
+                out-logfile -string "Error bulk updating email addresses on distribution group."
+                out-logfile -string $_
+                $isTestError=$TRUE
+                out-logfile -string "Starting 10 second sleep before trying bulk update."
+                start-sleep -s 10
+            }
+    
+        }
+        while($maxRetries -lt 10)
+        
         if ($isTestError -eq $TRUE)
         {
             out-logfile -string "Attempting SMTP address updates per address."
