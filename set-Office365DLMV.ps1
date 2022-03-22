@@ -197,7 +197,7 @@
         #This caused the following bulk logic to fail - then the individual set logics would also fail.
         #This left us with the temp DL without any actual SMTP addresses.
         #New logic - try / sleep 10 times then try the individuals.
-        
+
         $maxRetries = 0
 
         Do
@@ -208,6 +208,8 @@
                 out-logfile -string ("Max retry attempt: "+$maxRetries.toString())
 
                 Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
+
+                $maxRetries = 10 #The previous set was successful - so immediately bail.
             }
             catch {
                 out-logfile -string "Error bulk updating email addresses on distribution group."
@@ -217,7 +219,6 @@
                 start-sleep -s 10
                 $maxRetries = $maxRetries+1
             }
-    
         }
         while($maxRetries -lt 10)
         
