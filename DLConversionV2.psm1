@@ -5108,7 +5108,7 @@ Function Start-DistributionListMigration
 
     
 
-    
+    <#
 
     #Start the process of updating any dynamic distribution groups.
 
@@ -5389,9 +5389,9 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
     }
 
-    
+    #>
 
-    
+    <#
 
     #Start the process of updating the unified group dependencies.
 
@@ -5558,7 +5558,7 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
     }
 
-    
+    #>
 
     
 
