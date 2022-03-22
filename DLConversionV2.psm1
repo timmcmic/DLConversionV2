@@ -534,7 +534,7 @@ Function Start-DistributionListMigration
 
     foreach ($var in $functionVariables)
     {
-        out-logfile ($var.name+" "+$var.Value)
+        out-logfile ("Name: "+$var.name+" Value: "+$var.Value)
     }
 
     exit
