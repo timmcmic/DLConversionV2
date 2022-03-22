@@ -431,8 +431,8 @@ Function Start-DistributionListMigration
     [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
     [string]$office365ForwardingAddress="ForwardingAddress"
 
-    [string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
-    [string]$office365RejectMessagesUsers="RejectMessagesFrom"
+    #[string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
+    #[string]$office365RejectMessagesUsers="RejectMessagesFrom"
     [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
 
     [string]$office365UnifiedAccept="AcceptMessagesOnlyFromSendersOrMembers"
