@@ -223,8 +223,6 @@ Function Start-DistributionListMigration
         [boolean]$allowNonSyncedGroup=$FALSE
     )
 
-    $automaticVariables = get-variable #Gather automatic variables for later processing.
-
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
@@ -526,18 +524,9 @@ Function Start-DistributionListMigration
         }
     }
 
-    $functionVariables = Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
-
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-
-    foreach ($var in $functionVariables)
-    {
-        out-logfile ("Name: "+$var.name+" Value: "+$var.Value)
-    }
-
-    exit
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
