@@ -76,7 +76,7 @@
         {
             out-logfile -string "Recipient is a mailbox with forwarding rights."
 
-            $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP -bypassSecurityGroupManagerCheck"
+            $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute '$groupSMTPAddress' -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         elseif (($office365Member.recipientType -eq $functionDistributionGroupRecipientType) -and ($office365Member.recipientTypeDetails -eq $functionUniveralRecipientDisplayType))
@@ -104,21 +104,21 @@
         {
             out-logfile -string "Recipient is a mailbox."
 
-            $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP -bypassSecurityGroupManagerCheck"
+            $functionCommand="set-o365Mailbox -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         elseif ($office365Member.recipientType -eq $functionMailUserRecipientType)
         {
             out-logfile -string "Recipient is a mail user."
 
-            $functionCommand="set-o365MailUser -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP -bypassSecurityGroupManagerCheck"
+            $functionCommand="set-o365MailUser -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         elseif ($office365Member.recipientType -eq $functionMailContactRecipientType)
         {
             out-logfile -string "Recipient is a mail user."
 
-            $functionCommand="set-o365MailContact -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP -bypassSecurityGroupManagerCheck"
+            $functionCommand="set-o365MailContact -identity $office365Member -$office365Attribute @{add='$groupSMTPAddress'} -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         else 
