@@ -18,8 +18,6 @@
 
 Function Start-DistributionListMigration 
 {
-    $automaticVariables = get-variable #Gather automatic variables for later processing.
-
     <#
     .SYNOPSIS
 
@@ -224,6 +222,8 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE
     )
+
+    $automaticVariables = get-variable #Gather automatic variables for later processing.
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
