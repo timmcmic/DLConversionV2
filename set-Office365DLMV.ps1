@@ -100,7 +100,9 @@
             [Parameter(Mandatory=$TRUE)]
             $mailOnMicrosoftComDomain,
             [Parameter(Mandatory=$TRUE)]
-            $allowNonSyncedGroup=$FALSE
+            $allowNonSyncedGroup=$FALSE,
+            [Parameter(Mandatory=$TRUE)]
+            $allOffice365SendAsAccessOnGroup=$NULL
         )
 
         #Declare function variables.
@@ -1027,12 +1029,12 @@
                         out-logfile -string $_
 
                         $isErrorObject = new-Object psObject -property @{
-                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $functionMailNickName
-                            Name = $originalDLConfiguration.name
+                            PrimarySMTPAddressorUPN = $member.externalDirectoryObjectID
+                            ExternalDirectoryObjectID = $NULL
+                            Alias = $NULL
+                            Name = $NULL
                             Attribute = "Cloud Distribution Group SendAs"
-                            ErrorMessage = ("Member of SendAs "+$member.externalDirectoryObjectID+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessage = ("Unable to add migrated distribution group with send as to "+$member.externalDirectoryObjectID+".  Manual addition required.")
                             ErrorMessageDetail = $_
                         }
 
@@ -1053,12 +1055,12 @@
                         out-logfile -string $_
 
                         $isErrorObject = new-Object psObject -property @{
-                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                            Alias = $functionMailNickName
-                            Name = $originalDLConfiguration.name
+                            PrimarySMTPAddressorUPN = $member.primarySMTPAddressorUPN
+                            ExternalDirectoryObjectID = $NULL
+                            Alias = $NULL
+                            Name = $NULL
                             Attribute = "Cloud Distribution Group SendAs"
-                            ErrorMessage = ("Member of SendAs "+$member.primarySMTPAddressOrUPN+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessage = ("Unable to add migrated distribution group with send as to "+$member.primarySMTPAddressOrUPN+".  Manual addition required.")
                             ErrorMessageDetail = $_
                         }
 
@@ -1076,6 +1078,41 @@
         else 
         {
             Out-LogFile -string "There were no members to process."    
+        }
+
+        out-logfile -string "Resetting send as directly set on the group to be migrated."
+
+        if ($allOffice365SendAsAccessOnGroup -ne $NULL)
+        {
+            foreach ($member in $allOffice365SendAsAccessOnGroup)
+            {
+                out-logfile -string ("Processing trustee: "+$member.trustee)
+
+                try
+                {
+                    add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $member.trustee -accessRights $member.accessRights -errorAction STOP
+                }
+                catch
+                {
+                    out-logfile -string "Unable to add member. "
+
+                    out-logfile -string $_
+
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = $member.trustee
+                        ExternalDirectoryObjectID = $null
+                        Alias = $functionMailNickName
+                        Name = $originalDLConfiguration.name
+                        Attribute = "Send As On Migrated Group"
+                        ErrorMessage = ("Unable to add "+$member.trustee+" to migrated distribution group with send as rights.  Manual addition required.")
+                        ErrorMessageDetail = $_
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $functionErrors+=$isErrorObject
+                }
+            }
         }
 
         out-logfile -string "Remove the SMTP Address added by creating the temporary DL."

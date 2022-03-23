@@ -361,6 +361,7 @@ Function Start-DistributionListMigration
     [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
     [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
     [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
+    [string]$allOffice365SendAsAccessOnGroupXML = 'allOffice365SendAsAccessOnGroupXML'
     [string]$routingContactXML="routingContactXML"
     [string]$routingDynamicGroupXML="routingDynamicGroupXML"
     [string]$allGroupsCoManagedByXML="allGroupsCoManagedByXML"
@@ -401,23 +402,24 @@ Function Start-DistributionListMigration
 
     #The following are for universal distribution groups.
 
-    [array]$allOffice365UniversalAccept=$NULL
-    [array]$allOffice365UniversalReject=$NULL
-    [array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
+    #[array]$allOffice365UniversalAccept=$NULL
+    #[array]$allOffice365UniversalReject=$NULL
+    #[array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
 
     #The following are for dynamic distribution groups.
 
-    [array]$allOffice365DynamicAccept=$NULL
-    [array]$allOffice365DynamicReject=$NULL
-    [array]$allOffice365DynamicBypassModeration=$NULL
-    [array]$allOffice365DynamicManagedBy=$NULL
-    [array]$allOffice365DynamicGrantSendOnBehalfTo=$NULL
+    #[array]$allOffice365DynamicAccept=$NULL
+    #[array]$allOffice365DynamicReject=$NULL
+    #[array]$allOffice365DynamicBypassModeration=$NULL
+    #[array]$allOffice365DynamicManagedBy=$NULL
+    #[array]$allOffice365DynamicGrantSendOnBehalfTo=$NULL
 
     #These are for other mail enabled objects.
 
     [array]$allOffice365ForwardingAddress=$NULL
     [array]$allOffice365FullMailboxAccess=$NULL
     [array]$allOffice365SendAsAccess=$NULL
+    [array]$allOffice365SendAsAccessOnGroup = $NULL 
     [array]$allOffice365MailboxFolderPermissions=$NULL
 
     #The following are the cloud parameters we query for to look for dependencies.
@@ -3235,7 +3237,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Group is type security on premises - therefore it may have send as rights."
 
                 try{
-                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -3248,6 +3250,13 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has send as rights on = "+$allOffice365SendAsAccess.count)
+
+        try {
+            $allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        }
+        catch {
+            out-logFile -string $_ -isError:$TRUE
+        }
 
         if ($retainFullMailboxAccessOffice365 -eq $TRUE)
         {
@@ -3488,6 +3497,12 @@ Function Start-DistributionListMigration
             $allOffice365SendAsAccess=@()    
         }
 
+        if ($allOffice365SendAsAccessOnGroup -ne $NULL)
+        {
+            out-logfile -string $allOffice365SendAsAccessOnGroup
+            out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $allOffice365SendAsAccessOnGroupXML
+        }
+
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
@@ -3533,7 +3548,8 @@ Function Start-DistributionListMigration
     #out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
     #out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
     #out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
-    out-logfile -string ("The number of office 365 recipients with send as = "+$allOffice365SendAsAccess.count)
+    out-logfile -string ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
+    out-logfile -string ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
     out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
     #out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)

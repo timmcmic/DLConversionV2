@@ -28,6 +28,8 @@
         (
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress
+            [Parameter(Mandatory = $false)]
+            [string]$isTrustee=$FALSE
         )
 
         #Declare function variables.
@@ -45,17 +47,35 @@
         Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the recipient using the exchange online powershell session.
-        
-        try 
-        {
-            Out-LogFile -string "Using Exchange Online to locate all of the send as rights in Office 365."
 
-            $functionSendAs = get-o365RecipientPermission -Trustee $groupSMTPAddress -resultsize unlimited
-        }
-        catch 
+        if ($isTrustee -eq $TRUE)
         {
-            Out-LogFile -string $_ -isError:$TRUE
+            try 
+            {
+                Out-LogFile -string "Obtaining all Office 365 groups the migrated DL has send as permissions on."
+
+                $functionSendAs = get-o365RecipientPermission -Trustee $groupSMTPAddress -resultsize unlimited -errorAction STOP
+            }
+            catch 
+            {
+                Out-LogFile -string $_ -isError:$TRUE
+            }
         }
+        else
+        {
+            try
+            {
+                out-logfile -string "Obtaining all send as permissions set directly in Office 365 on the group to be migrated."
+
+                $functionSendAs = get-O365RecipientPermission -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP
+            }
+            catch
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+        
+        
 
         Out-LogFile -string "END Get-O365DLSendAs"
         Out-LogFile -string "********************************************************************************"
