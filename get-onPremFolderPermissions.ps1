@@ -91,9 +91,7 @@
 
         $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.primarySMTpAddress.contains($originalDLConfiguration.mail)}
 
-        out-logfile -string $functionFolderRightsUsers
-
-        write-progress -Activity "Processing Recipient" -Completed
+        
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END get-onPremFolderPermissions"
@@ -101,6 +99,7 @@
 
         if ($functionFolderRightsUsers.count -gt 0)
         {
+            out-logfile -string $functionFolderRightsUsers
             return $functionFolderRightsUsers
         }
     }

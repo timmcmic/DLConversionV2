@@ -144,6 +144,7 @@
         
         if ($functionPermissions.count -gt 0)
         {
+            out-logfile -string $functionPermissions
             return $functionPermissions
         }
     }

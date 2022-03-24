@@ -174,6 +174,7 @@
 
         if ($functionSendAsIdentities.count -gt 0)
         {
+            out-logfile -string $functionSendAsIdentities
             return $functionSendAsIdentities
         }
     }
