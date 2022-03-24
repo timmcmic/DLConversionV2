@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
             [Parameter(Mandatory = $false)]
             [string]$isTrustee=$FALSE
         )
