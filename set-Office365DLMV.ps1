@@ -1090,7 +1090,7 @@
 
                 try
                 {
-                    add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $member.trustee -accessRights $member.accessRights -errorAction STOP
+                    add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $member.trustee -accessRights $member.accessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch
                 {
