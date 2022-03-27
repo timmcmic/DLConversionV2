@@ -3502,6 +3502,11 @@ Function Start-DistributionListMigration
             out-logfile -string $allOffice365SendAsAccessOnGroup
             out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $allOffice365SendAsAccessOnGroupXML
         }
+        else
+        {
+            $allOffice365SendAsAccessOnGroup=@()
+        }
+        
 
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
