@@ -36,59 +36,63 @@
 
         #Start function processing.
 
-        Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-MIGRATIONSUMMARY"
-        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string '********************************************************************************'
+        Out-LogFile -string 'BEGIN GET-MIGRATIONSUMMARY'
+        Out-LogFile -string '********************************************************************************'
 
         $workingDirectories = get-childItem -path $logFolderPath -recurse -directory
 
         foreach ($directory in $workingDirectories)
         {
-            out-logfile -string ("Evaluating Directory: "+$directory.name)
+            out-logfile -string ('Evaluating Directory: '+$directory.name)
 
-            if ($directory.name -like "*FAILED")
+            if ($directory.name -like '*FAILED')
             {
-                out-logfile -string ("Failed Detected: "+$directory.name)
+                out-logfile -string ('Failed Detected: '+$directory.name)
                 $failedJobs+=$directory
             }
-            elseif ($directory.name -like "*SUCCESS*")
+            elseif ($directory.name -like '*SUCCESS*')
             {
-                out-logfile -string ("Success Detected: "+$directory.name)
+                out-logfile -string ('Success Detected: '+$directory.name)
                 $successJobs+=$directory
             }
             else 
             {
-                out-logfile -string "Directory neither success or fail."
+                out-logfile -string 'Directory neither success or fail.'
             }
         }
 
-        out-logfile -string "================================================================================"
-        out-logfile -string "***MIGRATION SUMMARY***"
-        out-logfile -string "================================================================================"
-        out-logfile -string ""
-        out-logfile -string "+++FAILED SUMMARY+++"
-        out-logfile -string ("Number of failed migrations: " + $failedJobs.count)
+        out-logfile -string '================================================================================'
+        out-logfile -string '***MIGRATION SUMMARY***'
+        out-logfile -string '================================================================================'
+        out-logfile -string ''
+        out-logfile -string '+++FAILED SUMMARY+++'
+        out-logfile -string ('Number of failed migrations: ' + $failedJobs.count)
 
         foreach ($job in $failedJobs)
         {
-            $temp = $job.name.split("-")
-            out-logfile -string ("Group: "+$temp[1]+ " Status: "+$temp[2])
+            $temp = $job.name.split('-')
+			$tempStatus = $temp[-1]
+			$tempGroupName = $temp[1..($temp.count - 2)] -join '-'
+            out-logfile -string "Group: $($tempGroupName)  Status: $($tempStatus)"
         }
 
-        out-logfile -string ""
-        out-logfile -string "+++SUCCESS SUMMARY+++"
-        out-logfile -string ("Number of successful migrations: " + $successJobs.count)
+        out-logfile -string ''
+        out-logfile -string '+++SUCCESS SUMMARY+++'
+        out-logfile -string ('Number of successful migrations: ' + $successJobs.count)
 
         foreach ($job in $successJobs)
         {
-            $temp = $job.name.split("-")
-            out-logfile -string ("Group: "+$temp[1]+ " Status: "+$temp[2])
+            $temp = $job.name.split('-')
+			$tempStatus = $temp[-1]
+			$tempGroupName = $temp[1..($temp.count - 2)] -join '-'
+            out-logfile -string "Group: $($tempGroupName)  Status: $($tempStatus)"
         }
 
-        out-logfile -string "================================================================================"
-        out-logfile -string "================================================================================"
+        out-logfile -string '================================================================================'
+        out-logfile -string '================================================================================'
 
 
-        Out-LogFile -string "END GET-MIGRATIONSUMMARY"
-        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string 'END GET-MIGRATIONSUMMARY'
+        Out-LogFile -string '********************************************************************************'
     }
