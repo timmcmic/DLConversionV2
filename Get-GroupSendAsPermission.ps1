@@ -220,33 +220,45 @@
             {
                 out-logfile -string ("Processing identity = "+$sendAsName)
 
-                $stopLoop = $FALSE
-                [int]$loopCounter = 0
+                out-logfile -string "Testing for NTAuthority\Self"
 
-                do 
+                if ($sendAsName -eq "Self")
                 {
-                    try 
-                    {
-                        $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
+                    out-logfile -string "Self right found on distribution group."
 
-                        $stopLoop = $TRUE
-                    }
-                    catch 
-                    {
-                        if ($loopCounter -gt 4)
-                        {
-                            out-logfile -string "Unablet to retrive the object by name."
-                            out-logfile -string $_ -isError:$TRUE
-                        }
-                        else 
-                        {
-                            out-logfile -string "Error with get-adObject -> sleep and retry."
-                            $loopCounter=$loopCounter+1
-                            start-sleepProgress -sleepString "Error with get-adobject -> sleep and retry." -sleepSeconds 5
+                    $functionSendAsRightDN += $dn
+                }
 
+                else
+                {
+                    $stopLoop = $FALSE
+                    [int]$loopCounter = 0
+
+                    do 
+                    {
+                        try 
+                        {
+                            $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
+
+                            $stopLoop = $TRUE
                         }
-                    }    
-                } until ($stopLoop -eq $TRUE)
+                        catch 
+                        {
+                            if ($loopCounter -gt 4)
+                            {
+                                out-logfile -string "Unablet to retrive the object by name."
+                                out-logfile -string $_ -isError:$TRUE
+                            }
+                            else 
+                            {
+                                out-logfile -string "Error with get-adObject -> sleep and retry."
+                                $loopCounter=$loopCounter+1
+                                start-sleepProgress -sleepString "Error with get-adobject -> sleep and retry." -sleepSeconds 5
+
+                            }
+                        }    
+                    } until ($stopLoop -eq $TRUE)
+                }
             }
         }
         else 
