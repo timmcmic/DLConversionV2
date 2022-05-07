@@ -305,6 +305,8 @@
         Out-LogFile -string "END GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
 
+        $functionSendAsObjects = $functionSendAsObjects | select-object -Unique
+
         return $functionSendAsObjects
         
         #This function is designed to open local and remote powershell sessions.
