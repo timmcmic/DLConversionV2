@@ -56,7 +56,7 @@
         [string]$functionDisplayName=""
         [string]$functionSimpleDisplayName=""
         [string]$functionWindowsEmailAddress=""
-        [boolean]$functionReportToOriginator=$NULL
+        [boolean]$functionReportToOriginator=$FALSE
         [string]$functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
 
         [boolean]$isTestError=$FALSE
