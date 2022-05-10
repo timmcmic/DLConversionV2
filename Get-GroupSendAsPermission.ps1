@@ -305,7 +305,7 @@
         Out-LogFile -string "END GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
 
-        $functionSendAsObjects = $functionSendAsObjects | select-object -Unique
+        $functionSendAsObjects = $functionSendAsObjects
 
         return $functionSendAsObjects
         
