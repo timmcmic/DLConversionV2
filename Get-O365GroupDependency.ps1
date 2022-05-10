@@ -66,7 +66,7 @@
 
                 Out-LogFile -string "Entering query office 365 for DL membership."
 
-                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq `"$dn1`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
