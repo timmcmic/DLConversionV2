@@ -66,7 +66,7 @@
 
                 Out-LogFile -string "Entering query office 365 for DL membership."
 
-                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Recipient -Filter { ($attributeType -eq `"$dn1`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -80,7 +80,7 @@
 
                  Out-LogFile -string "Entering query office 365 mailboxes."
 
-                 $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                 $functionCommand = "Get-o365Mailbox -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                  $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -96,7 +96,7 @@
 
                 out-logfile -string "Starting collection of distribution groups."
 
-                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -106,7 +106,7 @@
 
                 out-logfile -string "Starting collection of dynamic distribution groups."
 
-                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -126,7 +126,7 @@
                 {
                     out-logfile -string "The group type is standard - querying distribution groups."
                     
-                    $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                    $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -138,7 +138,7 @@
                 {
                     out-logfile -string "The group type is unified - querying distribution groups."
                     
-                    $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                    $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -150,7 +150,7 @@
                 {
                     out-logfile -string "The group type is dynamic - querying distribution groups."
                     
-                    $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                    $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -168,7 +168,7 @@
                 out-logfile -string "Starting to gather attribute for all recipient types."
                 out-logfile -string "Starting collection of distribution groups."
 
-                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -178,7 +178,7 @@
 
                 out-logfile -string "Starting collection of dynamic distribution groups."
 
-                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -188,7 +188,7 @@
 
                 out-logfile -string "Starting collection of universal distribution groups."
 
-                $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq '$dn' } -errorAction 'STOP'"
+                $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -198,7 +198,7 @@
 
                 out-logfile -string "Starting collection of mailbox recipients."
 
-                $functionCommand = "Get-o365Mailbox -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Mailbox -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -208,7 +208,7 @@
 
                 out-logfile -string "Starting collection of mail user recipients."
 
-                $functionCommand = "Get-o365Mailuser -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365Mailuser -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
@@ -218,7 +218,7 @@
 
                 out-logfile -string "Starting collection of mail contact recipients."
 
-                $functionCommand = "Get-o365MailContact -Filter { ($attributeType -eq '$dn') -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
+                $functionCommand = "Get-o365MailContact -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
