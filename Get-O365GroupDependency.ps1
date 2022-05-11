@@ -38,9 +38,9 @@
 
         #Declare function variables.
 
-        $functionTest=$NULL #Holds the return information for the group query.
+        [array]$functionTest=@() #Holds the return information for the group query.
         $functionCommand=$NULL #Holds the expression that will be utilized to query office 365.
-        [array]$functionObjectArray=$NULL #This is used to hold the object that will be returned.
+        [array]$functionObjectArray=@() #This is used to hold the object that will be returned.
 
         #Start function processing.
 
@@ -70,7 +70,7 @@
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                $functionTest = invoke-command -scriptBlock $scriptBlock
+                $functiontest += invoke-command -scriptBlock $scriptBlock
 
                 out-logfile -string ("The function command executed = "+$functionCommand)
             }
@@ -84,7 +84,7 @@
 
                  $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                 $functionTest = invoke-command -scriptBlock $scriptBlock
+                 $functiontest += invoke-command -scriptBlock $scriptBlock
                  
                  out-logfile -string ("The function command executed = "+$functionCommand)
             }
@@ -100,7 +100,7 @@
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                $functionTest = invoke-command -scriptBlock $scriptBlock
+                $functiontest += invoke-command -scriptBlock $scriptBlock
                 
                 out-logfile -string ("The function command executed = "+$functionCommand)
 
@@ -130,7 +130,7 @@
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                    $functionTest = invoke-command -scriptBlock $scriptBlock
+                    $functiontest += invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
@@ -142,7 +142,7 @@
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                    $functionTest = invoke-command -scriptBlock $scriptBlock
+                    $functiontest += invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
@@ -154,7 +154,7 @@
 
                     $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                    $functionTest = invoke-command -scriptBlock $scriptBlock
+                    $functiontest += invoke-command -scriptBlock $scriptBlock
                     
                     out-logfile -string ("The function command executed = "+$functionCommand)
                 }
@@ -172,7 +172,7 @@
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
-                $functionTest = invoke-command -scriptBlock $scriptBlock
+                $functiontest += invoke-command -scriptBlock $scriptBlock
                 
                 out-logfile -string ("The function command executed = "+$functionCommand)
 
