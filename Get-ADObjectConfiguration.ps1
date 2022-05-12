@@ -87,7 +87,7 @@
 
                 out-logfile -string ("Spaces Removed Address Length: "+$groupsmtpAddress.length.toString())
 
-                $functionDLConfiguration=Get-ADObject -filter "mail -eq '$groupSMTPAddress'" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                $functionDLConfiguration=Get-ADObject -filter "mail -eq `"$groupSMTPAddress`"" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             elseif ($DN -ne "None")
             {
