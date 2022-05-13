@@ -50,7 +50,14 @@
 
         #Log the parameters and variables for the function.
 
-        OUt-LogFile -string ("DN Set = "+$DN)
+        OUt-LogFile -string ("DN Original Set = "+$DN)
+        
+        #Escape double quotes if present in the DN.
+
+        $DN = $dn.Replace('"','`"')
+
+        out-logfile -string ("Updated DN = "+$dn)
+
         out-logfile -string ("Attribute Type = "+$attributeType)
         out-logfile -string ("Group Type = "+$groupType)
         
