@@ -223,8 +223,6 @@ Function Start-DistributionListMigration
         [boolean]$allowNonSyncedGroup=$FALSE
     )
 
-    $groupSMTPAddress = $groupSMTPAddress.replace('`','``')
-
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
