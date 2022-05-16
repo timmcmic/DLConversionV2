@@ -54,6 +54,7 @@
         
         #Escape double quotes if present in the DN.
 
+        $DN = $dn.replace('`','``')
         $DN = $dn.Replace('"','`"')
 
         out-logfile -string ("Updated DN = "+$dn)
