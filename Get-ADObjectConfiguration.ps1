@@ -121,6 +121,26 @@
         #This function is designed to open local and remote powershell sessions.
         #If the session requires import - for example exchange - return the session for later work.
         #If not no return is required.
+$
+        #This is new - perform a safety check.
+        #Becuase we are using the mail attribute - there is no guaratee that more than one object will not be returned if searching by mail.
+
+        if ($functionDLConfiguration.count -gt 0)
+        {
+            out-logfile -string "The functionDLConfiguration contains more than one object."
+            out-logfile -string $functionDLConfiguration.count
+
+            foreach ($object in $functionDLConfiguration)
+            {
+                out-logfile -string "======================="
+                out-logfile -string $object
+                out-logfile -string "======================="
+            }
+
+            out-logfile -string "Please locate objects that share the mail attribute of the DL to be migrated."
+            out-logfile -string "The objects sharing the address must have the mail address changed."
+            out-logfile -string "Duplicate mail attributes detected across multiple AD objects - stop failure." -isError:$TRUE
+        }
         
         return $functionDLConfiguration
     }
