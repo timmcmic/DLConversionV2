@@ -64,6 +64,8 @@
         out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
         out-logfile -string ("Global catalog server = "+$globalCatalogServer)
         out-logfile -string ("AD User Name = "+$adCredential.UserName)
+        out-logfile -string ("Is Retry Status = "+$isRetry)
+        out-logfile -string ("Is Retry OU = "+$isRetryOU)
 
         #Declare function variables and output to screen.
 
@@ -71,19 +73,31 @@
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
 
-
         if ($originalDLConfiguration.mail -ne $NULL)
         {
+            out-logfile -string "DL Configuration Contains Mail = use mail attribute."
             [string]$functionCustomAttribute2=$originalDLConfiguration.mail
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
         else 
         {
+            out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
             [string]$functionCustomAttribute2=$office365DLConfiguration.WindowsEmailAddress
             out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
         }
 
-        [string]$functionOU=Get-OULocation -originalDLConfiguration $originalDLConfiguration
+        out-logfile -string "Evaluate OU location to utilize."
+
+        if ($isRetry -eq $FALSE)
+        {
+            out-logfile -string "Operation is not retried - using on premises value."
+            [string]$functionOU=Get-OULocation -originalDLConfiguration $originalDLConfiguration
+        }
+        else 
+        {
+            out-logfile -string "Operation is being retried - use administrator supplied value."
+            $functionOU = $isRetryOU
+        }
 
         out-logfile -string ("Function OU = "+$functionOU)
 
@@ -104,9 +118,35 @@
 
         #This logic allows the code to be re-used when only the Office 365 information is available.
 
-        [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+        if ($isRetry -eq $FALSE)
+        {
+            out-logfile -string "Operation is not retried - use on premsies value."
+            [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+        }
+        else 
+        {
+            out-logfile -string "Operation is retried - use Office 365 value."
+            [string]$functionCN=$originalDLConfiguration.alias+"-MigratedByScript"
+        }
+        
         $functionCN=$functionCN.replace(' ','')
-        [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+        out-logfile -string ("Function Common Name:"+$functionCN)
+
+        if ($isRetry -eq $FALSE)
+        {
+            out-logfile -string "Operation is not retried - use on premsies value."
+            [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
+        }
+        else 
+        {
+            out-logfile -string "Operation is retried - use Office 365 value."
+            [array]$functionProxyAddressArray=$originalDLConfiguration.windowsEmailAddress.split("@")
+        }
+        
+        foreach ($member in $functionProxyAddressArray)
+        {
+            out-logfile -string $member
+        }
 
         if ($originalDLConfiguration.displayName -ne $NULL)
         {
@@ -119,7 +159,6 @@
             $functionDisplayName=$functionDisplayName.replace(' ','')
         }
         
-
         [string]$functionName=$functionCN
 
         [string]$functionFirstName = $functionDisplayName

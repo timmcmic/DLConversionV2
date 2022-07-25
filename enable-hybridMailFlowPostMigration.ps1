@@ -454,9 +454,7 @@
                     out-logfile -string "Unable to obtain the routing contact information." -isError:$TRUE
                 }
             }
-        } until ($stopLoop -eq $TRUE)
-
-       
+        } until ($stopLoop -eq $TRUE)       
 
         out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+1
 
