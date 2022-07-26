@@ -66,7 +66,7 @@
             {
                 Out-LogFile -string "Gathering the AD object based on distinguished name."
     
-                $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -errorAction STOP
+                $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -server $globalCatalogServer -errorAction STOP
 
                 $stopLoop = $TRUE
             }

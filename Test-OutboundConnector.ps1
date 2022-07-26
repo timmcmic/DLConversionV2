@@ -34,7 +34,7 @@
 
         $exchangeOnlineOutboundConnectors = get-o365OutboundConnector
 
-        if ($overrideCentralMailTransportEnabled -eq $FALSE)
+        if ($overrideCentralizedMailTransportEnabled -eq $FALSE)
         {
             foreach ($outboundConnector in $exchangeOnlineOutboundConnectors)
             {

@@ -454,9 +454,7 @@
                     out-logfile -string "Unable to obtain the routing contact information." -isError:$TRUE
                 }
             }
-        } until ($stopLoop -eq $TRUE)
-
-       
+        } until ($stopLoop -eq $TRUE)       
 
         out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+1
 
@@ -495,6 +493,10 @@
             out-logfile -string "Unable to create the dynamic distribution group."
             out-logfile -string $_ -isError:$TRUE
         }
+
+        disable-allPowerShellSessions
+
+        Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 
         Out-LogFile -string "END enable-hybridMailFlowPostMigration"
         Out-LogFile -string "********************************************************************************"

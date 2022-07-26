@@ -107,8 +107,15 @@
                     out-logfile -string "Attempting to find member by canonical name converted to distinguished name." 
 
                     #Canonical name is a calculated value - need to tranlate to DN and then search directory.
-                    
-                    $DN = get-distinguishedName -canonicalName $CN
+
+                    try
+                    {
+                        $DN = get-distinguishedName -canonicalName $CN -errorAction STOP
+                    }
+                    catch
+                    {
+                        out-logfile -string "Unable to obtain the DN from canoincal name." -isError:$TRUE
+                    }
 
                     try
                     {

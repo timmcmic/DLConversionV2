@@ -129,7 +129,8 @@
             foreach ($object in $functionDLConfiguration)
             {
                 out-logfile -string "=========="
-                out-logfile -string $object
+                out-logfile -string $object.distinguishedName
+                out-logfile -string $object.mail
                 out-logfile -string "=========="
             }
 
