@@ -494,6 +494,10 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
+        disable-allPowerShellSessions
+
+        Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+
         Out-LogFile -string "END enable-hybridMailFlowPostMigration"
         Out-LogFile -string "********************************************************************************"
     }
