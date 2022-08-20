@@ -21,7 +21,8 @@
 
         [string]$functionDomainName = ""
         [array]$functionAcceptedDomains = @()
-        [string]$functionDomainString = "mail.onmicrosoft.com"
+        [string]$functionDomainString0 = "mail.onmicrosoft.com"
+        [string]$functionDomainString1 = "microsoftonline.com"
         
         #Initiate the test.
         
@@ -35,15 +36,26 @@
         {
             out-logfile -string ("Testing Domain: "+$domain.domainName)
 
-            if ($domain.domainName.contains($functionDomainString))
+            if ($domain.domainName.contains($functionDomainString0))
             {
                 out-logfile -string ("Mail.onmicrosoft.com domain name found: "+$domain.domainName)
+                $functionDomainName = $domain.domainName
+            }
+            elseif ($domain.domainName.contains($functionDomainString1))
+            {
+                out-logfile -string ("Legacy microsoft online domain name found: "+$domain.domainName)
                 $functionDomainName = $domain.domainName
             }
             else 
             {
                 out-logfile -string ("Domain is not mail.onmicrosoft.com: "+$domain.domainName)    
             }
+        }
+
+        if ($functionDomainName -eq "")
+        {
+            out-logfile -string "No viable mail routing address was found."
+            out-logfile -string "Contact support or post an issue on GITHUB." -isError:$true
         }
 
         Out-LogFile -string "END Get-MailOnMicrosoftComDomain"
