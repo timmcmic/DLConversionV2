@@ -226,6 +226,20 @@ Function Start-DistributionListMigration
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
+    {
+        new-statusFile -logFolderPath $logFolderPath
+
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+    }
+
+    #Log start of DL migration to the log file.
+
+    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+
     #For mailbox folder permissions set these to false.
     #Supported methods for gathering folder permissions require use of the pre-collection.
     #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.
@@ -504,17 +518,6 @@ Function Start-DistributionListMigration
     #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
 
     [string]$mailOnMicrosoftComDomain = ""
-
-
-    #If multi threaded - the log directory needs to be created for each thread.
-    #Create the log folder path for status before changing the log folder path.
-
-    if ($totalThreadCount -gt 0)
-    {
-        new-statusFile -logFolderPath $logFolderPath
-
-        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
-    }
 
     #Ensure that no status files exist at the start of the run.
 
