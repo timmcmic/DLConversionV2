@@ -364,6 +364,7 @@ function start-collectOnPremMailboxFolders
                         folderName = $permission.folderName
                         user = $permission.user
                         accessRights = $permission.accessRights
+                        sharingPermissionFlags = $permission.sharingPermissionFlags
                     }
 
                     out-logfile -string $forPermissionObject
