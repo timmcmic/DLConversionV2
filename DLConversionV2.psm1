@@ -242,6 +242,8 @@ Function Start-DistributionListMigration
 
     #Output all parameters bound or unbound and their associated values.
 
+    out-logfile -string "Output bound parameters..."
+
     foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
     {
         $bound = $PSBoundParameters.ContainsKey($paramName)
