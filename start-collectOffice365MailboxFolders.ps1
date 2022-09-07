@@ -450,6 +450,7 @@ function start-collectOffice365MailboxFolders
                                     folderName = $permission.folderName
                                     user = $permission.user
                                     accessRights = $permission.accessRights
+                                    sharingpermissionflags = $permission.SharingPermissionFlags
                                 }
 
                                 out-logfile -string $forPermissionObject
