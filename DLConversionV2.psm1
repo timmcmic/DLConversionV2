@@ -240,6 +240,22 @@ Function Start-DistributionListMigration
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
+    #Output all parameters bound or unbound and their associated values.
+
+    foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+    {
+        $bound = $PSBoundParameters.ContainsKey($paramName)
+
+        $parameterObject = New-Object PSObject -Property @{
+            ParameterName = $paramName
+            ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                             else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+            Bound = $bound
+          }
+
+          out-logfile -string $parameterObject
+    }
+
     #For mailbox folder permissions set these to false.
     #Supported methods for gathering folder permissions require use of the pre-collection.
     #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.
