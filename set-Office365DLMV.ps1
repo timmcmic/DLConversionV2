@@ -357,7 +357,28 @@
             out-logfile -string "A hybrid remote routing address was not present.  Adding hybrid remote routing address."
             $hybridRemoteRoutingAddress=$functionMailNickName+"@"+$mailOnMicrosoftComDomain
 
-            out-logfile -string ("Hybrid remote routing address = "+$hybridRemoteRoutingAddress)
+            out-logfile -string ("Calculated hybrid remote routing address = "+$hybridRemoteRoutingAddress)
+
+            out-logfile -string ("Determine if the calcualted routing address is already in use.")
+
+            $hybridDoLoop = $FALSE
+
+            do
+            {
+                if (get-o365Recipient -identity $hybridRemoteRoutingAddress)
+                {
+                    out-logfile -string "Calculated hybrid remote routing address found on another mail enabled object."
+                    $hybridDoLoop = $FALSE
+                    $hybridDoRandom = (Get-Random).toString()  
+                    $hybridRemoteRoutingAddress=$functionMailNickName+$hybridDoRandom+"@"+$mailOnMicrosoftComDomain
+                    out-logfile -string ("Calculated remote routing address with random number: "+$hybridRemoteRoutingAddress)
+                }
+                else 
+                {
+                    out-logfile -string "Calculated hybrid remote routing address is not present - continue."
+                    $hybridDoLoop = $TRUE   
+                }
+            }until ($hybridDoLoop -eq $TRUE)
 
             try {
                 Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses @{add=$hybridRemoteRoutingAddress} -errorAction STOP -BypassSecurityGroupManagerCheck
