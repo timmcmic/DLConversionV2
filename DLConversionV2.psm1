@@ -547,10 +547,6 @@ Function Start-DistributionListMigration
         }
     }
 
-    #Log start of DL migration to the log file.
-
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
