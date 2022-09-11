@@ -544,8 +544,10 @@ Function Start-DistributionListMigration
             Bound = $bound
             }
 
-            out-logfile -string $parameterObject
+        $parameterOutput+=$parameterObject
     }
+
+    out-logfile -string $parameterOutput
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
