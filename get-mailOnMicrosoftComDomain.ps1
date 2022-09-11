@@ -15,6 +15,8 @@
     #>
     Function Get-MailOnMicrosoftComDomain
      {
+        [cmdletbinding()]
+
         #Define variables that will be utilzed in the function.
 
         [string]$functionDomainName = ""

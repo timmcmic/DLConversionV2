@@ -18,6 +18,7 @@
     #>
     Function disable-allPowerShellSessions
      {
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
