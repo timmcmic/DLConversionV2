@@ -30,6 +30,26 @@
             $o365dlconfiguration
         )
 
+        out-logfile -string "Output bound parameters..."
+
+        $parameteroutput = @()
+
+        foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+        {
+            $bound = $PSBoundParameters.ContainsKey($paramName)
+
+            $parameterObject = New-Object PSObject -Property @{
+                ParameterName = $paramName
+                ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                                    else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+                Bound = $bound
+                }
+
+            $parameterOutput+=$parameterObject
+        }
+
+        out-logfile -string $parameterOutput
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN INVOKE-OFFICE365SAFETYCHECK"
         Out-LogFile -string "********************************************************************************"
