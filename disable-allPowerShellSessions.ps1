@@ -19,6 +19,22 @@
     Function disable-allPowerShellSessions
      {
 
+        out-logfile -string "Output bound parameters..."
+
+        foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+        {
+            $bound = $PSBoundParameters.ContainsKey($paramName)
+
+            $parameterObject = New-Object PSObject -Property @{
+                ParameterName = $paramName
+                ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                                else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+                Bound = $bound
+            }
+
+            out-logfile -string $parameterObject
+        }
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"

@@ -50,6 +50,22 @@
             [string]$globalCatalogServer
         )
 
+        out-logfile -string "Output bound parameters..."
+
+        foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+        {
+            $bound = $PSBoundParameters.ContainsKey($paramName)
+
+            $parameterObject = New-Object PSObject -Property @{
+                ParameterName = $paramName
+                ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                                else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+                Bound = $bound
+            }
+
+            out-logfile -string $parameterObject
+        }
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
