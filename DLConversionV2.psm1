@@ -533,6 +533,8 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Output bound parameters..."
 
+    $parameteroutput = @()
+
     foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
     {
         $bound = $PSBoundParameters.ContainsKey($paramName)
