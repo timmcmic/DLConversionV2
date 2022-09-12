@@ -2089,7 +2089,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    Exit #Debug Exit.
+    #Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
     #Validate that the discovered dependencies are valid in Office 365.
