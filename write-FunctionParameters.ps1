@@ -7,8 +7,6 @@
 
     This function outputs all of the paramters from a function to the log file for review.
 
-    
-
     #>
     Function write-FunctionParameters
     {
@@ -43,6 +41,6 @@
         }
     
         out-logfile -string $parameterOutput
-        
+
         Out-LogFile -string "********************************************************************************"
     }
