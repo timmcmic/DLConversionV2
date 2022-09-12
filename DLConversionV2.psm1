@@ -1372,7 +1372,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "REJECT USERS"
 
-    if ($originalDLConfiguration($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
     {
         foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
         {
