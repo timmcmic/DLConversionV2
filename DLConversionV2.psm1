@@ -535,6 +535,10 @@ Function Start-DistributionListMigration
 
     #Output all parameters bound or unbound and their associated values.
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "PARAMETERS"
+    Out-LogFile -string "********************************************************************************"
+
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     Out-LogFile -string "================================================================================"
@@ -594,20 +598,6 @@ Function Start-DistributionListMigration
     $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
     
     $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride   
-
-    #Output parameters to the log file for recording.
-    #For parameters that are optional if statements determine if they are populated for recording.
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "PARAMETERS"
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.tostring())
-    out-logfile -string ("Spaces Removed Group SMTP Address: "+$groupSMTPAddress)
-    out-logfile -string ("Group SMTP Address Length = "+$groupSMTPAddress.length.toString())
-    Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-    Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
-    Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
 
     if ($aadConnectServer -ne "")
     {
@@ -1316,9 +1306,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
 
-    if ($originalDLConfiguration.member -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.member)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
         {
             #Resetting error variable.
 
