@@ -24,13 +24,6 @@
             $variableArray
         )
 
-        param
-        (
-            $keyArray,
-            $parameterArray,
-            $variableArray
-        )
-
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START write-FunctionParameters"
         Out-LogFile -string "********************************************************************************"
