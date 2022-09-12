@@ -531,10 +531,8 @@ Function Start-DistributionListMigration
 
     #Output all parameters bound or unbound and their associated values.
 
-    out-logfile -string "Output bound parameters..."
-
     write-funcionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
-    
+
     out-logfile -string $parameterOutput
 
     Out-LogFile -string "================================================================================"
