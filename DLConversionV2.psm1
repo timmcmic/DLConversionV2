@@ -1372,9 +1372,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "REJECT USERS"
 
-    if ($originalDLConfiguration.unAuthOrig -ne $NULL)
+    if ($originalDLConfiguration($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.unAuthOrig)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1421,9 +1421,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "REJECT GROUPS"
 
-    if ($originalDLConfiguration.dlMemRejectPerms -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.dlMemRejectPerms)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1481,9 +1481,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "ACCEPT USERS"
 
-    if ($originalDLConfiguration.AuthOrig -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.AuthOrig)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1529,9 +1529,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "ACCEPT GROUPS"
 
-    if ($originalDLConfiguration.dlMemSubmitPerms -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.dlMemSubmitPerms)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1591,9 +1591,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Process MANAGEDBY"
 
-    if ($originalDLConfiguration.managedBy -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.managedBy)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1640,9 +1640,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Process CoMANAGERS"
 
-    if ($originalDLConfiguration.msExchCoManagedByLink -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.msExchCoManagedByLink)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1766,9 +1766,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Process MODERATEDBY"
 
-    if ($originalDLConfiguration.msExchModeratedByLink -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.msExchModeratedByLink)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1828,9 +1828,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Process BYPASS USERS"
 
-    if ($originalDLConfiguration.msExchBypassModerationLink -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.msExchBypassModerationLink)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1879,9 +1879,9 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Process BYPASS GROUPS"
 
-    if ($originalDLConfiguration.msExchBypassModerationFromDLMembersLink -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value) -ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersLink)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -1937,9 +1937,9 @@ Function Start-DistributionListMigration
         out-logfile "The group has no bypass moderation."    
     }
 
-    if ($originalDLConfiguration.publicDelegates -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value)-ne $NULL)
     {
-        foreach ($DN in $originalDLConfiguration.publicDelegates)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value))
         {
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -2088,7 +2088,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    #Exit #Debug Exit.
+    Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
     #Validate that the discovered dependencies are valid in Office 365.
@@ -2719,11 +2719,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has reject permissions on.
 
-    if ($originalDLConfiguration.dLMemRejectPermsBL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value)BL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.dLMemRejectPermsBL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value)BL)
         {
             try 
             {
@@ -2748,11 +2748,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has accept permissions on.
 
-    if ($originalDLConfiguration.dLMemSubmitPermsBL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value)BL -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.dLMemSubmitPermsBL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value)BL)
         {
             try 
             {
