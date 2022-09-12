@@ -25,8 +25,6 @@
         )
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "START write-FunctionParameters"
-        Out-LogFile -string "********************************************************************************"
     
         $parameteroutput = @()
     
@@ -45,8 +43,6 @@
         }
     
         out-logfile -string $parameterOutput
-
-        Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "END write-FunctionParameters"
+        
         Out-LogFile -string "********************************************************************************"
     }
