@@ -95,6 +95,26 @@ function start-collectOnPremFullMailboxAccess
 
     new-LogFile -groupSMTPAddress OnPremFullMailboxAccessPermissions -logFolderPath $logFolderPath
 
+    out-logfile -string "Output bound parameters..."
+
+    $parameteroutput = @()
+
+    foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+    {
+        $bound = $PSBoundParameters.ContainsKey($paramName)
+
+        $parameterObject = New-Object PSObject -Property @{
+            ParameterName = $paramName
+            ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                                else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+            Bound = $bound
+            }
+
+        $parameterOutput+=$parameterObject
+    }
+
+    out-logfile -string $parameterOutput
+
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."

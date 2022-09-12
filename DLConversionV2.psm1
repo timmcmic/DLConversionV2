@@ -236,28 +236,6 @@ Function Start-DistributionListMigration
         $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
     }
 
-    #Log start of DL migration to the log file.
-
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-
-    #Output all parameters bound or unbound and their associated values.
-
-    out-logfile -string "Output bound parameters..."
-
-    foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
-    {
-        $bound = $PSBoundParameters.ContainsKey($paramName)
-
-        $parameterObject = New-Object PSObject -Property @{
-            ParameterName = $paramName
-            ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
-                             else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
-            Bound = $bound
-          }
-
-          out-logfile -string $parameterObject
-    }
-
     #For mailbox folder permissions set these to false.
     #Supported methods for gathering folder permissions require use of the pre-collection.
     #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.
@@ -550,6 +528,28 @@ Function Start-DistributionListMigration
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+
+    #Output all parameters bound or unbound and their associated values.
+
+    out-logfile -string "Output bound parameters..."
+
+    $parameteroutput = @()
+
+    foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
+    {
+        $bound = $PSBoundParameters.ContainsKey($paramName)
+
+        $parameterObject = New-Object PSObject -Property @{
+            ParameterName = $paramName
+            ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
+                                else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
+            Bound = $bound
+            }
+
+        $parameterOutput+=$parameterObject
+    }
+
+    out-logfile -string $parameterOutput
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
