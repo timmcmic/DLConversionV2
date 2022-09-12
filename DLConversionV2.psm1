@@ -3647,7 +3647,7 @@ Function Start-DistributionListMigration
     }
 
     out-LogFile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML
+    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML"-MoveToNoSyncOU"
 
     
 
@@ -3835,7 +3835,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML"-NewO365DL"
             
             #If we made it this far we can end the loop - we were succssful.
 
@@ -3904,7 +3904,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML"-SetMVAtts"
 
             #Now that we are this far - we can exit the loop.
 
@@ -3972,7 +3972,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML-"-SetSingleValAtts"
 
             #Now that we wrote it - stop the loop.
 
