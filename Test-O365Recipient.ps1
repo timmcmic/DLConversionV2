@@ -37,23 +37,9 @@
 
         out-logfile -string "Output bound parameters..."
 
-        $parameteroutput = @()
+        #Output all parameters bound or unbound and their associated values.
 
-        foreach ($paramName in $MyInvocation.MyCommand.Parameters.Keys)
-        {
-            $bound = $PSBoundParameters.ContainsKey($paramName)
-
-            $parameterObject = New-Object PSObject -Property @{
-                ParameterName = $paramName
-                ParameterValue = if ($bound) { $PSBoundParameters[$paramName] }
-                                    else { Get-Variable -Scope Local -ErrorAction Ignore -ValueOnly $paramName }
-                Bound = $bound
-                }
-
-            $parameterOutput+=$parameterObject
-        }
-
-        out-logfile -string $parameterOutput
+        write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
         #Declare local variables.
 
