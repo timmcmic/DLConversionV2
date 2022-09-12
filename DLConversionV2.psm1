@@ -313,6 +313,7 @@ Function Start-DistributionListMigration
         onPremMemberOf = @{"Value" = "memberOf" ; "Description" = "LDAP Backlink Attribute for Members"}
         onPremBypassModerationFromDLMembersBL = @{"Value" = "msExchBypassModerationFromDLMembersBL" ; "Description" = "LDAP Backlink Attribute for Bypass Moderation from DL Members"}
         onPremCoManagedByBL = @{"Value" = "msExchCoManagedObjectsBL" ; "Description" = "LDAP Backlink Attribute for Co Managers (Multivalued ManagedBY)"}
+        onPremGrantSendOnBehalfToBL = @{"Value" = "publicDelegatesBL" ; "Description" = "LDAP Backlink Attribute for Grant Send On Behalf To"}
     }
 
     [array]$dlPropertySet = '*'
@@ -2661,11 +2662,11 @@ Function Start-DistributionListMigration
 
     #Start with groups this DL is a member of remaining on premises.
 
-    if ($originalDLConfiguration.memberOf -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.memberof)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value))
         {
             try 
             {
@@ -2690,11 +2691,11 @@ Function Start-DistributionListMigration
 
     #Handle all recipients that have forwarding to this group based on forwarding address.
 
-    if ($originalDLConfiguration.altRecipientBL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.altRecipientBL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value))
         {
             try 
             {
@@ -2719,11 +2720,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has reject permissions on.
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value)BL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value)BL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value))
         {
             try 
             {
@@ -2748,11 +2749,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has accept permissions on.
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value)BL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value)BL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value))
         {
             try 
             {
@@ -2775,11 +2776,11 @@ Function Start-DistributionListMigration
         out-logfile -string "The group does not have accept permissions on any groups."
     }
 
-    if ($originalDlConfiguration.msExchCoManagedObjectsBL -ne $NULL)
+    if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
     {
         out-logfile -string "Calling ge canonical name."
 
-        foreach ($dn in $originalDLConfiguration.msExchCoManagedObjectsBL)
+        foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
         {
             try 
             {
@@ -2808,11 +2809,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has bypass moderation permissions on.
 
-    if ($originalDLConfiguration.msExchBypassModerationFromDLMembersBL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.msExchBypassModerationFromDLMembersBL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value))
         {
             try 
             {
@@ -2837,11 +2838,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has accept permissions on.
 
-    if ($originalDLConfiguration.publicDelegatesBL -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.publicDelegatesBL)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value))
         {
             try 
             {
@@ -2866,11 +2867,11 @@ Function Start-DistributionListMigration
 
     #Handle all groups this object has manager permissions on.
 
-    if ($originalDLConfiguration.managedObjects -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
     {
         out-logfile -string "Calling get-CanonicalName."
 
-        foreach ($DN in $originalDLConfiguration.managedObjects)
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
         {
             try 
             {
@@ -3063,7 +3064,7 @@ Function Start-DistributionListMigration
         $allGroupsGrantSendOnBehalfTo =@()
     }
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
