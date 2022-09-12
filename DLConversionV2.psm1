@@ -274,7 +274,6 @@ Function Start-DistributionListMigration
     [string]$global:staticFolderName="\DLMigration\"
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
-    [int]$global:unDoStatus=0
     [array]$importData=@()
     [string]$importFilePath=$NULL
 
@@ -4088,7 +4087,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+"-RenamedDL"
 
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
@@ -4144,7 +4143,7 @@ Function Start-DistributionListMigration
 
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+"-PostMailDisabledGroup"
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
@@ -4205,7 +4204,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop = $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+$global:unDoStatus
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML+"-MoveToOriginalOU"
 
         
 
@@ -5711,7 +5710,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $routingContactConfiguration
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML+$global:unDoStatus
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML+"-PostMailEnabledContact"
 
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
