@@ -3754,7 +3754,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value"-NewO365DL"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-NewO365DL")
             
             #If we made it this far we can end the loop - we were succssful.
 
@@ -3823,7 +3823,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value"-SetMVAtts"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-SetMVAtts")
 
             #Now that we are this far - we can exit the loop.
 
@@ -3891,7 +3891,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value-"-SetSingleValAtts"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-SetSingleValAtts")
 
             #Now that we wrote it - stop the loop.
 
