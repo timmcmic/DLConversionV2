@@ -346,61 +346,51 @@ Function Start-DistributionListMigration
 
     #Define XML files to contain backups.
 
-    [string]$originalDLConfigurationADXML = "originalDLConfigurationADXML" #Export XML file of the group attibutes direct from AD.
-    [string]$originalDLConfigurationUpdatedXML = "originalDLConfigurationUpdatedXML"
-    [string]$originalDLConfigurationObjectXML = "originalDLConfigurationObjectXML" #Export of the ad attributes after selecting objects (allows for NULL objects to be presented as NULL)
-    [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
-    [string]$office365DLConfigurationPostMigrationXML = "office365DLConfigurationPostMigrationXML"
-    [string]$office365DLMembershipPostMigrationXML = "office365DLMembershipPostMigrationXML"
-    [string]$exchangeDLMembershipSMTPXML = "exchangeDLMemberShipSMTPXML"
-    [string]$exchangeRejectMessagesSMTPXML = "exchangeRejectMessagesSMTPXML"
-    [string]$exchangeAcceptMessagesSMTPXML = "exchangeAcceptMessagesSMTPXML"
-    [string]$exchangeManagedBySMTPXML = "exchangeManagedBySMTPXML"
-    [string]$exchangeModeratedBySMTPXML = "exchangeModeratedBYSMTPXML"
-    [string]$exchangeBypassModerationSMTPXML = "exchangeBypassModerationSMTPXML"
-    [string]$exchangeGrantSendOnBehalfToSMTPXML = "exchangeGrantSendOnBehalfToXML"
-    [string]$exchangeSendAsSMTPXML = "exchangeSendASSMTPXML"
-    [string]$allGroupsMemberOfXML = "allGroupsMemberOfXML"
-    [string]$allGroupsRejectXML = "allGroupsRejectXML"
-    [string]$allGroupsAcceptXML = "allGroupsAcceptXML"
-    [string]$allGroupsBypassModerationXML = "allGroupsBypassModerationXML"
-    [string]$allUsersForwardingAddressXML = "allUsersForwardingAddressXML"
-    [string]$allGroupsGrantSendOnBehalfToXML = "allGroupsGrantSendOnBehalfToXML"
-    [string]$allGroupsManagedByXML = "allGroupsManagedByXML"
-    [string]$allGroupsSendAsXML = "allGroupSendAsXML"
-    [string]$allGroupsSendAsNormalizedXML="allGroupsSendAsNormalizedXML"
-    [string]$allGroupsFullMailboxAccessXML = "allGroupsFullMailboxAccessXML"
-    [string]$allMailboxesFolderPermissionsXML = "allMailboxesFolderPermissionsXML"
-    #[string]$allOffice365UniversalAcceptXML="allOffice365UniversalAcceptXML"
-    #[string]$allOffice365UniversalRejectXML="allOffice365UniversalRejectXML"
-    #[string]$allOffice365UniversalGrantSendOnBehalfToXML="allOffice365UniversalGrantSendOnBehalfToXML"
-    [string]$allOffice365MemberOfXML="allOffice365MemberOfXML"
-    [string]$allOffice365AcceptXML="allOffice365AcceptXML"
-    [string]$allOffice365RejectXML="allOffice365RejectXML"
-    [string]$allOffice365BypassModerationXML="allOffice365BypassModerationXML"
-    [string]$allOffice365GrantSendOnBehalfToXML="allOffice365GrantSentOnBehalfToXML"
-    [string]$allOffice365ManagedByXML="allOffice365ManagedByXML"
-    #[string]$allOffice365DynamicAcceptXML="allOffice365DynamicAcceptXML"
-    #[string]$allOffice365DynamicRejectXML="allOffice365DynamicRejectXML"
-    #[string]$allOffice365DynamicBypassModerationXML="allOffice365DynamicBypassModerationXML"
-    #[string]$allOffice365DynamicGrantSendOnBehalfToXML="allOffice365DynamicGrantSentOnBehalfToXML"
-    #[string]$allOffice365DynamicManagedByXML="allOffice365DynamicManagedByXML"
-    [string]$allOffice365ForwardingAddressXML="allOffice365ForwardingAddressXML"
-    [string]$allOffic365SendAsAccessXML = "allOffice365SendAsAccessXML"
-    [string]$allOffice365FullMailboxAccessXML = "allOffice365FullMailboxAccessXML"
-    [string]$allOffice365MailboxesFolderPermissionsXML = 'allOffice365MailboxesFolderPermissionsXML'
-    [string]$allOffice365SendAsAccessOnGroupXML = 'allOffice365SendAsAccessOnGroupXML'
-    [string]$routingContactXML="routingContactXML"
-    [string]$routingDynamicGroupXML="routingDynamicGroupXML"
-    [string]$allGroupsCoManagedByXML="allGroupsCoManagedByXML"
-
-    #Define the retention files.
-
-    [string]$retainOffice365RecipientFullMailboxAccessXML="office365RecipientFullMailboxAccess.xml"
-    [string]$retainMailboxFolderPermsOffice365XML="office365MailboxFolderPermissions.xml"
-    [string]$retainOnPremRecipientFullMailboxAccessXML="onPremRecipientFullMailboxAccess.xml"
-    [string]$retainOnPremMailboxFolderPermissionsXML="onPremailboxFolderPermissions.xml"
-    [string]$retainOnPremRecipientSendAsXML="onPremRecipientSendAs.xml"
+    $xmlFiles = @{
+        originalDLConfigurationADXML = @{ "Value" =  "originalDLConfigurationADXML" ; "Description" = "XML file that exports the original DL configuration"}
+        originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
+        office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
+        office365DLConfigurationPostMigrationXML = @{ "Value" =  "office365DLConfigurationPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
+        office365DLMembershipPostMigrationXML = @{ "Value" =  "office365DLMembershipPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
+        exchangeDLMembershipSMTPXML = @{ "Value" =  "exchangeDLMemberShipSMTPXML" ; "Description" = "XML file that holds the SMTP addresses of the on premises DL membership"}
+        exchangeRejectMessagesSMTPXML = @{ "Value" =  "exchangeRejectMessagesSMTPXML" ; "Description" = "XML file that holds the Reject Messages From Senders or Members property of the on premises DL"}
+        exchangeAcceptMessagesSMTPXML = @{ "Value" =  "exchangeAcceptMessagesSMTPXML" ; "Description" = "XML file that holds the Accept Messages from Senders or Members property of the on premises DL"}
+        exchangeManagedBySMTPXML = @{ "Value" =  "exchangeManagedBySMTPXML" ; "Description" = "XML file that holds the ManagedBy proprty of the on premises DL"}
+        exchangeModeratedBySMTPXML = @{ "Value" =  "exchangeModeratedBYSMTPXML" ; "Description" = "XML file that holds the Moderated By property of the on premises DL"}
+        exchangeBypassModerationSMTPXML = @{ "Value" =  "exchangeBypassModerationSMTPXML" ; "Description" = "XML file that holds the Bypass Moderation From Senders or Members property of the on premises DL"}
+        exchangeGrantSendOnBehalfToSMTPXML = @{ "Value" =  "exchangeGrantSendOnBehalfToXML" ; "Description" = "XML file that holds the Grant Send On Behalf To property of the on premises DL"}
+        exchangeSendAsSMTPXML = @{ "Value" =  "exchangeSendASSMTPXML" ; "Description" = "XML file that holds the Send As rights of the on premises DL"}
+        allGroupsMemberOfXML = @{ "Value" =  "allGroupsMemberOfXML" ; "Description" = "XML file that holds all of on premises groups the migrated group is a member of"}
+        allGroupsRejectXML = @{ "Value" =  "allGroupsRejectXML" ; "Description" = "XML file that holds all of the on premises groups the migrated group has reject rights assigned"}
+        allGroupsAcceptXML = @{ "Value" =  "allGroupsAcceptXML" ; "Description" = "XML file that holds all of the on premises groups the migrated group has accept rights assigned"}
+        allGroupsBypassModerationXML = @{ "Value" =  "allGroupsBypassModerationXML" ; "Description" = "XML file that holds all of the on premises groups that the migrated group has bypass moderation rights assigned"}
+        allUsersForwardingAddressXML = @{ "Value" =  "allUsersForwardingAddressXML" ; "Description" = "XML file that holds all recipients the migrated group hsa forwarding address set on"}
+        allGroupsGrantSendOnBehalfToXML = @{ "Value" =  "allGroupsGrantSendOnBehalfToXML" ; "Description" = "XML file that holds all of the on premises objects that the migrated group hsa grant send on behalf to on"}
+        allGroupsManagedByXML = @{ "Value" =  "allGroupsManagedByXML" ; "Description" = "XML file that holds all of the on premises objects the migrated group has managed by rights assigned"}
+        allGroupsSendAsXML = @{ "Value" =  "allGroupSendAsXML" ; "Description" = "XML file that holds all of the on premises objects that have the migrated group with send as rights assigned"}
+        allGroupsSendAsNormalizedXML= @{ "Value" = "allGroupsSendAsNormalizedXML" ; "Description" = "XML file that holds all normalized send as right"}
+        allGroupsFullMailboxAccessXML = @{ "Value" =  "allGroupsFullMailboxAccessXML" ; "Description" = "XML file that holds all full mailbox access rights assigned to the migrated group"}
+        allMailboxesFolderPermissionsXML = @{ "Value" =  "allMailboxesFolderPermissionsXML" ; "Description" = "XML file that holds all mailbox folder permissions assigned to the migrated group"}
+        allOffice365MemberOfXML= @{ "Value" = "allOffice365MemberOfXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group as a member"}
+        allOffice365AcceptXML= @{ "Value" = "allOffice365AcceptXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned accept messages from senders or members rights"}
+        allOffice365RejectXML= @{ "Value" = "allOffice365RejectXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned reject messages from senders or members rights"}
+        allOffice365BypassModerationXML= @{ "Value" = "allOffice365BypassModerationXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned bypass moderation from senders or members"}
+        allOffice365GrantSendOnBehalfToXML= @{ "Value" = "allOffice365GrantSentOnBehalfToXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned grant send on behalf to rights"}
+        allOffice365ManagedByXML= @{ "Value" = "allOffice365ManagedByXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned managed by rights"}
+        allOffice365ForwardingAddressXML= @{ "Value" = "allOffice365ForwardingAddressXML" ; "Description" = " XML file that holds all cloud only recipients where forwarding is set to the migrated grouop"}
+        allOffic365SendAsAccessXML = @{ "Value" =  "allOffice365SendAsAccessXML" ; "Description" = "XML file that holds all cloud groups where send as rights are assigned to the migrated group"}
+        allOffice365FullMailboxAccessXML = @{ "Value" =  "allOffice365FullMailboxAccessXML" ; "Description" = "XML file that holds all cloud only objects where full mailbox access is assigned to the migrated group"}
+        allOffice365MailboxesFolderPermissionsXML = @{ "Value" =  'allOffice365MailboxesFolderPermissionsXML' ; "Description" = "XML file that holds all cloud only recipients where a mailbox folder permission is assigned to the migrated group"}
+        allOffice365SendAsAccessOnGroupXML = @{ "Value" =  'allOffice365SendAsAccessOnGroupXML' ; "Description" = "XML file that holds all cloud only send as rights assigned to the migrated group"}
+        routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
+        routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
+        allGroupsCoManagedByXML= @{ "Value" = "allGroupsCoManagedByXML" ; "Description" = "XML file holds all on premises objects that the migrated group has managed by rights assigned"}
+        retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
+        retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions.xml" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
+        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
+        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
+        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
+    }
 
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
@@ -680,23 +670,23 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("Exchange on prem powershell configuration = "+$onPremExchangePowershell.exchangeServerConfiguration.value)
     Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$onPremExchangePowershell.exchangeServerAllowRedirection.value)
     Out-LogFile -string ("Exchange on prem powershell URL = "+$onPremExchangePowershell.exchangeServerURI.value)
-    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
-    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
-    Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
-    Out-LogFile -string ("Exchange DL members XML Name - "+$exchangeDLMembershipSMTPXML)
-    Out-LogFile -string ("Exchange Reject members XML Name - "+$exchangeRejectMessagesSMTPXML)
-    Out-LogFile -string ("Exchange Accept members XML Name - "+$exchangeAcceptMessagesSMTPXML)
-    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$exchangeManagedBySMTPXML)
-    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$exchangeModeratedBySMTPXML)
-    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$exchangeBypassModerationSMTPXML)
-    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$exchangeGrantSendOnBehalfToSMTPXML)
-    Out-LogFile -string ("All group members XML Name - "+$allGroupsMemberOfXML)
-    Out-LogFile -string ("All Reject members XML Name - "+$allGroupsRejectXML)
-    Out-LogFile -string ("All Accept members XML Name - "+$allGroupsAcceptXML)
-    Out-Logfile -string ("All Co Managed By BL XML - "+$allGroupsCoManagedByXML)
-    Out-LogFile -string ("All BypassModeration members XML Name - "+$allGroupsBypassModerationXML)
-    out-logfile -string ("All Users Forwarding Address members XML Name - "+$allUsersForwardingAddressXML)
-    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$allGroupsGrantSendOnBehalfToXML)
+    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$xmlFiles.originalDLConfigurationADXML.value)
+    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$xmlFiles.originalDLConfigurationObjectXML.value)
+    Out-LogFile -string ("Office 365 DL configuration XML = "+$xmlFiles.office365DLConfigurationXML.value)
+    Out-LogFile -string ("Exchange DL members XML Name - "+$xmlFiles.exchangeDLMembershipSMTPXML.value)
+    Out-LogFile -string ("Exchange Reject members XML Name - "+$xmlFiles.exchangeRejectMessagesSMTPXML.value)
+    Out-LogFile -string ("Exchange Accept members XML Name - "+$xmlFiles.exchangeAcceptMessagesSMTPXML.value)
+    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$xmlFiles.exchangeManagedBySMTPXML.value)
+    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$xmlFiles.exchangeModeratedBySMTPXML.value)
+    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$xmlFiles.exchangeBypassModerationSMTPXML.value)
+    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$xmlFiles.exchangeGrantSendOnBehalfToSMTPXML.value)
+    Out-LogFile -string ("All group members XML Name - "+$xmlFiles.allGroupsMemberOfXML.value)
+    Out-LogFile -string ("All Reject members XML Name - "+$xmlFiles.allGroupsRejectXML.value)
+    Out-LogFile -string ("All Accept members XML Name - "+$xmlFiles.allGroupsAcceptXML.value)
+    Out-Logfile -string ("All Co Managed By BL XML - "+$xmlFiles.allGroupsCoManagedByXML.value)
+    Out-LogFile -string ("All BypassModeration members XML Name - "+$xmlFiles.allGroupsBypassModerationXML.value)
+    out-logfile -string ("All Users Forwarding Address members XML Name - "+$xmlFiles.allUsersForwardingAddressXML.value)
+    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$xmlFiles.allGroupsGrantSendOnBehalfToXML.value)
     out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
     out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
     out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
@@ -1080,7 +1070,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $originalDLConfigurationADXML
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
@@ -1094,7 +1084,7 @@ Function Start-DistributionListMigration
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
             
-            $importFilePath=Join-path $importFile $retainOnPremRecipientSendAsXML
+            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1134,7 +1124,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectSendAsAccess
 
-        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $allGroupsSendAsXML
+        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $xmlFiles.allGroupsSendAsXML.value
     }
 
     Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
@@ -1148,7 +1138,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
-            $importFilePath=Join-path $importFile $retainOnPremRecipientFullMailboxAccessXML
+            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientFullMailboxAccessXML.value
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1176,7 +1166,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectsFullMailboxAccess
 
-        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $allGroupsFullMailboxAccessXML
+        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $xmlFiles.allGroupsFullMailboxAccessXML.value
     }
 
     out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
@@ -1190,7 +1180,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has selected to import previously gathered permissions."
 
-            $importFilePath=Join-path $importFile $retainOnPremMailboxFolderPermissionsXML
+            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremMailboxFolderPermissionsXML.value
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1220,7 +1210,7 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allMailboxesFolderPermissions
 
-        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $allMailboxesFolderPermissionsXML
+        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $xmlFiles.allMailboxesFolderPermissionsXML.value
     }
 
     #If there are any sendAs or mailbox access permissiosn for the group.
@@ -1264,7 +1254,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
-    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
@@ -2919,12 +2909,12 @@ Function Start-DistributionListMigration
     {
         out-logfile -string $allObjectsSendAsAccessNormalized
 
-        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $allGroupsSendAsNormalizedXML
+        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $xmlFiles.allGroupsSendAsNormalizedXML.value
     }
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
-        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $exchangeDLMembershipSMTPXML
+        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $xmlFiles.exchangeDLMembershipSMTPXML.value
     }
     else 
     {
@@ -2933,7 +2923,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeRejectMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $exchangeRejectMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $xmlFiles.exchangeRejectMessagesSMTPXML.value
     }
     else 
     {
@@ -2942,7 +2932,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeAcceptMessagesSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $exchangeAcceptMessagesSMTPXML
+        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $xmlFiles.exchangeAcceptMessagesSMTPXML.value
     }
     else 
     {
@@ -2951,7 +2941,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $exchangeManagedBySMTPXML
+        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $xmlFiles.exchangeManagedBySMTPXML.value
     }
     else 
     {
@@ -2960,7 +2950,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeModeratedBySMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $exchangeModeratedBySMTPXML
+        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $xmlFiles.exchangeModeratedBySMTPXML.value
     }
     else 
     {
@@ -2969,7 +2959,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeBypassModerationSMTP -ne $NULL)
     {
-        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $exchangeBypassModerationSMTPXML
+        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $xmlFiles.exchangeBypassModerationSMTPXML.value
     }
     else 
     {
@@ -2978,7 +2968,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
     {
-        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $exchangeGrantSendOnBehalfToSMTPXML
+        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $xmlFiles.exchangeGrantSendOnBehalfToSMTPXML.value
     }
     else 
     {
@@ -2987,7 +2977,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeSendAsSMTP -ne $NULL)
     {
-        out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $exchangeSendAsSMTPXML
+        out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $xmlFiles.exchangeSendAsSMTPXML.value
     }
     else 
     {
@@ -2996,7 +2986,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsMemberOf -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $allGroupsMemberOfXML
+        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $xmlFiles.allGroupsMemberOfXML.value
     }
     else 
     {
@@ -3005,7 +2995,7 @@ Function Start-DistributionListMigration
     
     if ($allGroupsReject -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $allGroupsRejectXML
+        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $xmlFiles.allGroupsRejectXML.value
     }
     else 
     {
@@ -3014,7 +3004,7 @@ Function Start-DistributionListMigration
     
     if ($allGroupsAccept -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $allGroupsAcceptXML
+        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $xmlFiles.allGroupsAcceptXML.value
     }
     else 
     {
@@ -3023,7 +3013,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsCoManagedByBL -ne $NULL)
     {
-        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $allGroupsCoManagedByXML
+        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $xmlFiles.allGroupsCoManagedByXML.value
     }
     else 
     {
@@ -3032,7 +3022,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsBypassModeration -ne $NULL)
     {
-        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $allGroupsBypassModerationXML
+        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $xmlFiles.allGroupsBypassModerationXML.value
     }
     else 
     {
@@ -3041,7 +3031,7 @@ Function Start-DistributionListMigration
 
     if ($allUsersForwardingAddress -ne $NULL)
     {
-        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $allUsersForwardingAddressXML
+        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $xmlFiles.allUsersForwardingAddressXML.value
     }
     else 
     {
@@ -3050,7 +3040,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsManagedBy -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $allGroupsManagedByXML
+        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $xmlFiles.allGroupsManagedByXML.value
     }
     else 
     {
@@ -3059,7 +3049,7 @@ Function Start-DistributionListMigration
 
     if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
     {
-        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $allGroupsGrantSendOnBehalfToXML
+        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $xmlFiles.allGroupsGrantSendOnBehalfToXML.value
     }
     else 
     {
@@ -3272,7 +3262,7 @@ Function Start-DistributionListMigration
             }
             elseif ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
             {
-                $importFilePath=Join-path $importFile $retainOffice365RecipientFullMailboxAccessXML
+                $importFilePath=Join-path $importFile $xmlFiles.retainOffice365RecipientFullMailboxAccessXM.valueL
 
                 try {
                     $importData = import-CLIXML -path $importFilePath
@@ -3298,7 +3288,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Administrator has opted to retain folder permissions in Office 365."
 
-            $importFilePath=Join-path $importFile $retainMailboxFolderPermsOffice365XML
+            $importFilePath=Join-path $importFile $xmlFiles.retainMailboxFolderPermsOffice365XML.value
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -3321,7 +3311,7 @@ Function Start-DistributionListMigration
         if ($allOffice365MemberOf -ne $NULL)
         {
             out-logfile -string $allOffice365MemberOf
-            out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $allOffice365MemberofXML
+            out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $xmlFiles.allOffice365MemberOfXML.value
         }
         else 
         {
@@ -3331,7 +3321,7 @@ Function Start-DistributionListMigration
         if ($allOffice365Accept -ne $NULL)
         {
             out-logfile -string $allOffice365Accept
-            out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $allOffice365AcceptXML
+            out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $xmlFiles.allOffice365AcceptXML.value
         }
         else 
         {
@@ -3341,7 +3331,7 @@ Function Start-DistributionListMigration
         if ($allOffice365Reject -ne $NULL)
         {
             out-logfile -string $allOffice365Reject
-            out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $allOffice365RejectXML
+            out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $xmlFiles.allOffice365RejectXML.value
         }
         else 
         {
@@ -3351,7 +3341,7 @@ Function Start-DistributionListMigration
         if ($allOffice365BypassModeration -ne $NULL)
         {
             out-logfile -string $allOffice365BypassModeration
-            out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $allOffice365BypassModerationXML
+            out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $xmlFiles.allOffice365BypassModerationXML.value
         }
         else 
         {
@@ -3361,7 +3351,7 @@ Function Start-DistributionListMigration
         if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
         {
             out-logfile -string $allOffice365GrantSendOnBehalfTo
-            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $allOffice365GrantSendOnBehalfToXML
+            out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.allOffice365GrantSendOnBehalfToXML.value
         }
         else 
         {
@@ -3371,7 +3361,7 @@ Function Start-DistributionListMigration
         if ($allOffice365ManagedBy -ne $NULL)
         {
             out-logfile -string $allOffice365ManagedBy
-            out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $allOffice365ManagedByXML
+            out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
 
             out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
 
@@ -3443,7 +3433,7 @@ Function Start-DistributionListMigration
         if ($allOffice365ForwardingAddress -ne $NULL)
         {
             out-logfile -string $allOffice365ForwardingAddress
-            out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $allOffice365ForwardingAddressXML
+            out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $xmlFiles.allOffice365ForwardingAddressXML.value
         }
         else 
         {
@@ -3487,7 +3477,7 @@ Function Start-DistributionListMigration
         if ($allOffice365SendAsAccess -ne $NULL)
         {
             out-logfile -string $allOffice365SendAsAccess
-            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $allOffic365SendAsAccessXML
+            out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
 
             out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
 
@@ -3501,7 +3491,7 @@ Function Start-DistributionListMigration
         if ($allOffice365SendAsAccessOnGroup -ne $NULL)
         {
             out-logfile -string $allOffice365SendAsAccessOnGroup
-            out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $allOffice365SendAsAccessOnGroupXML
+            out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
         }
         else
         {
@@ -3512,7 +3502,7 @@ Function Start-DistributionListMigration
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
-            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $allOffice365FullMailboxAccessXML
+            out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $xmlFiles.allOffice365FullMailboxAccessXML.value
 
             out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
 
@@ -3526,7 +3516,7 @@ Function Start-DistributionListMigration
         if ($allOffice365MailboxFolderPermissions -ne $NULL)
         {
             out-logfile -string $allOffice365MailboxFolderPermissions
-            out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $allOffice365MailboxesFolderPermissionsXML
+            out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $xmlFiles.allOffice365MailboxesFolderPermissionsXML.value
 
             out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
 
@@ -3645,7 +3635,7 @@ Function Start-DistributionListMigration
     }
 
     out-LogFile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML"-MoveToNoSyncOU"
+    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $xmlFiles.originalDLConfigurationUpdatedXML.value"-MoveToNoSyncOU"
 
     
 
@@ -3833,7 +3823,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML"-NewO365DL"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value"-NewO365DL"
             
             #If we made it this far we can end the loop - we were succssful.
 
@@ -3902,7 +3892,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML"-SetMVAtts"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value"-SetMVAtts"
 
             #Now that we are this far - we can exit the loop.
 
@@ -3970,7 +3960,7 @@ Function Start-DistributionListMigration
             out-LogFile -string "Write new DL configuration to XML."
 
             out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $office365DLConfigurationPostMigrationXML-"-SetSingleValAtts"
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value-"-SetSingleValAtts"
 
             #Now that we wrote it - stop the loop.
 
@@ -4005,7 +3995,7 @@ Function Start-DistributionListMigration
             out-logFile -string "Write the new DL membership to XML."
             out-logfile -string office365DLMembershipPostMigration
 
-            out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $office365DLMembershipPostMigrationXML
+            out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
 
             #Exports complete - stop loop
 
@@ -4085,7 +4075,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML"-RenamedDL"
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $xmlFiles.originalDLConfigurationUpdatedXML.value"-RenamedDL"
 
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
@@ -4141,7 +4131,7 @@ Function Start-DistributionListMigration
 
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML"-PostMailDisabledGroup"
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $xmlFiles.originalDLConfigurationUpdatedXML.value"-PostMailDisabledGroup"
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
 
@@ -4202,7 +4192,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop = $FALSE)
 
         out-logfile -string $originalDLConfigurationUpdated
-        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $originalDLConfigurationUpdatedXML"-MoveToOriginalOU"
+        out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport $xmlFiles.originalDLConfigurationUpdatedXML.value"-MoveToOriginalOU"
 
         
 
@@ -4288,7 +4278,7 @@ Function Start-DistributionListMigration
     } while ($stopLoop -eq $FALSE)
 
     out-logfile -string $routingContactConfiguration
-    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML
+    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
     
 
@@ -5708,7 +5698,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $routingContactConfiguration
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $routingContactXML"-PostMailEnabledContact"
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value"-PostMailEnabledContact"
 
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
@@ -5787,7 +5777,7 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
 
         out-logfile -string $routingDynamicGroupConfig
-        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $routingDynamicGroupXML
+        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
     }
 
 
