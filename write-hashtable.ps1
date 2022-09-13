@@ -22,6 +22,7 @@
     
         foreach ($key in $hashtable.GetEnumerator())
         {
+            out-logfile -string $key.Value.Value
             out-logfile -string ("Key: "+$key.name+" is "+$key.Value.Description+" with value "+$key.Value.Value)
         }      
 
