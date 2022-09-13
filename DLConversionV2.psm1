@@ -3193,7 +3193,7 @@ Function Start-DistributionListMigration
             }
             elseif ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
             {
-                $importFilePath=Join-path $importFile $xmlFiles.retainOffice365RecipientFullMailboxAccessXM.value
+                $importFilePath=Join-path $importFile $xmlFiles.retainOffice365RecipientFullMailboxAccessXML.value
 
                 try {
                     $importData = import-CLIXML -path $importFilePath
