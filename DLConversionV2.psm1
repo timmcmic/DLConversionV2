@@ -322,10 +322,12 @@ Function Start-DistributionListMigration
     [array]$dlPropertiesToClearLegacy='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion'
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+
+    $onPremExchangePowershell = @{
+        exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
+        exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
+        exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+    }
 
     #On premises variables for the distribution list to be migrated.
 
@@ -675,9 +677,9 @@ Function Start-DistributionListMigration
         Out-LogFile -string $dlProperty
     }
 
-    Out-LogFile -string ("Exchange on prem powershell configuration = "+$exchangeServerConfiguration)
-    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$exchangeServerAllowRedirection)
-    Out-LogFile -string ("Exchange on prem powershell URL = "+$exchangeServerURI)
+    Out-LogFile -string ("Exchange on prem powershell configuration = "+$onPremExchangePowershell.exchangeServerConfiguration.value)
+    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$onPremExchangePowershell.exchangeServerAllowRedirection.value)
+    Out-LogFile -string ("Exchange on prem powershell URL = "+$onPremExchangePowershell.exchangeServerURI.value)
     Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$originalDLConfigurationADXML)
     Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$originalDLConfigurationObjectXML)
     Out-LogFile -string ("Office 365 DL configuration XML = "+$office365DLConfigurationXML)
@@ -986,7 +988,7 @@ Function Start-DistributionListMigration
         {
             Out-LogFile -string "Calling New-PowerShellSession"
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
         }
         catch 
         {
@@ -3064,7 +3066,7 @@ Function Start-DistributionListMigration
         $allGroupsGrantSendOnBehalfTo =@()
     }
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
