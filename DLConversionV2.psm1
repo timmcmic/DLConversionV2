@@ -614,14 +614,14 @@ Function Start-DistributionListMigration
         out-logfile -string $property
     }
 
-    out-logfile -string ("Exchang elegacy schema version: "+$exchangeLegacySchemaVersion)
+    out-logfile -string ("Exchange legacy schema version: "+$exchangeLegacySchemaVersion)
 
     out-logfile -string ("Global import file: "+$global:importFile)
     out-logfile -string ("Global staticFolderName: "+$global:staticFolderName)
     out-logfile -string ("Global threadNumber: "+$global:threadNumber)
 
-    out-logfile -string $xmlFiles
-
+    write-hashTable -hashTable $xmlFiles
+    
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
