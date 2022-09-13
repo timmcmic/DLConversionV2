@@ -20,7 +20,7 @@
 
         Out-LogFile -string "********************************************************************************"
     
-        foreach ($key in $hastable)
+        foreach ($key in $hashtable.GetEnumerator())
         {
             out-logfile -string ("Key: "+$key.name+" is "+$key.Value.Description+" with value "+$key.Value.Value)
         }      
