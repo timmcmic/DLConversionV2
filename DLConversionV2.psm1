@@ -251,16 +251,7 @@ Function Start-DistributionListMigration
             #Therefore we override the original log folder path passed in and just use Z.
 
             [string]$networkName=$remoteDriveLetter
-            #[string]$networkRootPath=$logFolderPath
             $logFolderPath = $networkName+":"
-            #[string]$networkDescription = "This is the centralized logging folder for DLMigrations on this machine."
-            #[string]$networkPSProvider = "FileSystem"
-
-            #New-SmbMapping -LocalPath $logFolderPath -remotePath $networkRootPath -userName $activeDirectoryCredential.userName -password $activeDirectoryCredential.password
-
-            #new-psDrive -name $networkName -root $networkRootPath -description $networkDescription -PSProvider $networkPSProvider -errorAction STOP -credential $activeDirectoryCredential
-
-            #$logFolderPath = $networkName+":"
         }
         catch{
             exit
@@ -274,21 +265,26 @@ Function Start-DistributionListMigration
     [string]$global:staticFolderName="\DLMigration\"
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
-    [array]$importData=@()
-    [string]$importFilePath=$NULL
+
+    #Define variables for import data - used for importing data into pre-collect.
+
+    [array]$importData=@() #Empty array for the import data.
+    [string]$importFilePath=$NULL #Import file path where the XML data is located to import (calculated later)
 
     #Define variables utilized in the core function that are not defined by parameters.
 
-    [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
-    [boolean]$useAADConnect=$FALSE #Determines if function will utilize aadConnect during migration.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
-    [string]$aadConnectPowershellSessionName="AADConnect" #Defines universal name for aadConnect powershell session.
-    [string]$ADGlobalCatalogPowershellSessionName="ADGlobalCatalog" #Defines universal name for ADGlobalCatalog powershell session.
-    [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
-    [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
-    [string]$dlConversionPowershellModule="DLConversionV2"
-    [string]$globalCatalogPort=":3268"
-    [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
+    $coreVariables = @{ 
+        useOnPremisesExchange = @{ "Value" = $FALSE ; "Description" = "Boolean determines if Exchange on premises should be utilized" }
+        useAADConnect = @{ "Value" = $FALSE ; "Description" = "Boolean determines if an AADConnect isntance will be utilzied" }
+        exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangeOnPremises" ; "Description" = "Static exchange on premises powershell session name" }
+        aadConnectPowershellSessionName = @{ "Value" = "AADConnect" ; "Description" = "Static AADConnect powershell session name" }
+        ADGlobalCatalogPowershellSessionName = @{ "Value" = "ADGlobalCatalog" ; "Description" = "Static AD Domain controller powershell session name" }
+        exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
+        activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
+        dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
+        globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
+        globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
+    }
 
     #The variables below are utilized to define working parameter sets.
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
@@ -314,6 +310,22 @@ Function Start-DistributionListMigration
         onPremBypassModerationFromDLMembersBL = @{"Value" = "msExchBypassModerationFromDLMembersBL" ; "Description" = "LDAP Backlink Attribute for Bypass Moderation from DL Members"}
         onPremCoManagedByBL = @{"Value" = "msExchCoManagedObjectsBL" ; "Description" = "LDAP Backlink Attribute for Co Managers (Multivalued ManagedBY)"}
         onPremGrantSendOnBehalfToBL = @{"Value" = "publicDelegatesBL" ; "Description" = "LDAP Backlink Attribute for Grant Send On Behalf To"}
+    }
+
+    #Define the Office 365 attributes that will be used for filters.
+
+    $office365Attributes  = @{ 
+        office365AcceptMessagesFrom = @{ "Value" = "AcceptMessagesOnlyFromDLMembers" ; "Description" = "All Office 365 objects that have accept messages from senders or members for the migrated group"}
+        office365BypassModerationFrom = @{ "Value" = "BypassModerationFromDLMembers" ; "Description" = "All Office 365 objects that have bypass moderation from senders or members for the migrated group"}
+        office365CoManagers = @{ "Value" = "CoManagedBy" ; "Description" = "ALl office 365 objects that have managed by set for the migrated group"}
+        office365GrantSendOnBehalfTo = @{ "Value" = "GrantSendOnBehalfTo" ; "Description" = "All Office 365 objects that have grant sent on behalf to for the migrated group"}
+        office365ManagedBy = @{ "Value" = "ManagedBy" ; "Description" = "All Office 365 objects that have managed by set on the group"}
+        office365Members = @{ "Value" = "Members" ; "Description" = "All Office 365 groups that the migrated group is a member of"}
+        office365RejectMessagesFrom = @{ "Value" = "RejectMessagesFromDLMembers" ; "Description" = "All Office 365 groups that have the reject messages from senders or members right assignged to the migrated group"}
+        office365ForwardingAddress = @{ "Value" = "ForwardingAddress" ; "Description" = "All Office 365 objects that have the migrated group set for forwarding"}
+        office365BypassModerationusers = @{ "Value" = "BypassModerationFromSendersOrMembers" ; "Description" = "All Office 365 objects that have bypass moderation for the migrated group"}
+        office365UnifiedAccept = @{ "Value" = "AcceptMessagesOnlyFromSendersOrMembers" ; "Description" = "All Office 365 Unified Groups that the migrated group has accept messages from senders or members rights assigned"}
+        office365UnifiedReject = @{ "Value" = "RejectMessagesFromSendersOrMembers" ; "Description" = "All Office 365 Unified Groups that the migrated group has reject messages from senders or members rights assigned"}
     }
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
@@ -411,63 +423,24 @@ Function Start-DistributionListMigration
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
-    #The following are for standard distribution groups.
-
-    [array]$allOffice365MemberOf=$NULL
-    [array]$allOffice365Accept=$NULL
-    [array]$allOffice365Reject=$NULL
-    [array]$allOffice365BypassModeration=$NULL
-    [array]$allOffice365ManagedBy=$NULL
-    [array]$allOffice365GrantSendOnBehalfTo=$NULL
-
-    #The following are for universal distribution groups.
-
-    #[array]$allOffice365UniversalAccept=$NULL
-    #[array]$allOffice365UniversalReject=$NULL
-    #[array]$allOffice365UniversalGrantSendOnBehalfTo=$NULL
-
-    #The following are for dynamic distribution groups.
-
-    #[array]$allOffice365DynamicAccept=$NULL
-    #[array]$allOffice365DynamicReject=$NULL
-    #[array]$allOffice365DynamicBypassModeration=$NULL
-    #[array]$allOffice365DynamicManagedBy=$NULL
-    #[array]$allOffice365DynamicGrantSendOnBehalfTo=$NULL
-
-    #These are for other mail enabled objects.
-
-    [array]$allOffice365ForwardingAddress=$NULL
-    [array]$allOffice365FullMailboxAccess=$NULL
-    [array]$allOffice365SendAsAccess=$NULL
-    [array]$allOffice365SendAsAccessOnGroup = $NULL 
-    [array]$allOffice365MailboxFolderPermissions=$NULL
-
-    #The following are the cloud parameters we query for to look for dependencies.
-
-    [string]$office365AcceptMessagesFrom="AcceptMessagesOnlyFromDLMembers"
-    [string]$office365BypassModerationFrom="BypassModerationFromDLMembers"
-    [string]$office365CoManagers="CoManagedBy"
-    [string]$office365GrantSendOnBehalfTo="GrantSendOnBehalfTo"
-    [string]$office365ManagedBy="ManagedBy"
-    [string]$office365Members="Members"
-    [string]$office365RejectMessagesFrom="RejectMessagesFromDLMembers"
-    [string]$office365ForwardingAddress="ForwardingAddress"
-
-    #[string]$office365AcceptMessagesUsers="AcceptMessagesOnlyFrom"
-    #[string]$office365RejectMessagesUsers="RejectMessagesFrom"
-    [string]$office365BypassModerationusers="BypassModerationFromSendersOrMembers"
-
-    [string]$office365UnifiedAccept="AcceptMessagesOnlyFromSendersOrMembers"
-    [string]$office365UnifiedReject="RejectMessagesFromSendersOrMembers"
-
-
+    [array]$allOffice365MemberOf=$NULL #All cloud only groups the migrated group is a member of.
+    [array]$allOffice365Accept=$NULL #All cloud only groups the migrated group has accept messages from senders or members.
+    [array]$allOffice365Reject=$NULL #All cloud only groups the migrated group has reject messages from senders or members.
+    [array]$allOffice365BypassModeration=$NULL #All cloud only groups the migrated group has bypass moderation from senders or members.
+    [array]$allOffice365ManagedBy=$NULL #All cloud only groups the migrated group has managed by rights on.
+    [array]$allOffice365GrantSendOnBehalfTo=$NULL #All cloud only groups the migrated group has grant send on behalf to on.
+    [array]$allOffice365ForwardingAddress=$NULL #All cloud only recipients the migrated group has forwarding address 
+    [array]$allOffice365FullMailboxAccess=$NULL #All cloud only recipients the migrated group has full ,amilbox access on.
+    [array]$allOffice365SendAsAccess=$NULL #All cloud only groups the migrated group has send as access on.
+    [array]$allOffice365SendAsAccessOnGroup = $NULL #All send as permissions set on the on premises group that are set in the cloud.
+    [array]$allOffice365MailboxFolderPermissions=$NULL #All cloud only groups the migrated group has mailbox folder permissions on.
     
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
-    $office365DLConfigurationPostMigration = $NULL
-    $office365DLMembershipPostMigration=$NULL
-    $routingContactConfiguraiton=$NULL
+    $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
+    $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
+    $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
 
     #Declare some variables for string processing as items move around.
 
@@ -637,15 +610,15 @@ Function Start-DistributionListMigration
     Out-LogFile -string " RECORD VARIABLES"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
-    out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
-    out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremisesExchange)
-    Out-LogFile -string ("Initial user of ADConnect = "+$useAADConnect)
-    Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
-    Out-LogFile -string ("AADConnect powershell session name = "+$aadConnectPowershellSessionName)
-    Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
-    Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
-    Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
+    out-logfile -string ("Global Catalog Port = "+$corevariables.globalCatalogPort.value)
+    out-logfile -string ("Global catalog string used for function queries ="+$corevariables.globalCatalogWithPort.value)
+    out-logFile -string ("Initial use of Exchange On Prem = "+$coreVariables.useOnPremisesExchange.value)
+    Out-LogFile -string ("Initial user of ADConnect = "+$coreVariables.useAADConnect.value)
+    Out-LogFile -string ("Exchange on prem powershell session name = "+$corevariables.exchangeOnPremisesPowershellSessionName.value)
+    Out-LogFile -string ("AADConnect powershell session name = "+$coreVariables.aadConnectPowershellSessionName.value)
+    Out-LogFile -string ("AD Global catalog powershell session name = "+$coreVariables.ADGlobalCatalogPowershellSessionName.value)
+    Out-LogFile -string ("Exchange powershell module name = "+$corevariables.exchangeOnlinePowershellModuleName.value)
+    Out-LogFile -string ("Active directory powershell modulename = "+$corevariables.activeDirectoryPowershellModuleName.value)
     out-logFile -string ("Static property for accept messages from members = "+$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value)
     out-logFile -string ("Static property for accept messages from members = "+$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value)
     Out-LogFile -string ("DL Properties to collect = ")
@@ -689,14 +662,14 @@ Function Start-DistributionListMigration
     Out-LogFile -string ("All BypassModeration members XML Name - "+$xmlFiles.allGroupsBypassModerationXML.value)
     out-logfile -string ("All Users Forwarding Address members XML Name - "+$xmlFiles.allUsersForwardingAddressXML.value)
     out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$xmlFiles.allGroupsGrantSendOnBehalfToXML.value)
-    out-logfile -string ("Property in office 365 for accept members = "+$office365AcceptMessagesFrom)
-    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365BypassModerationFrom)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365CoManagers)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365GrantSendOnBehalfTo)
-    out-logfile -string ("Property in office 365 for managed by members = "+$office365ManagedBy)
-    out-logfile -string ("Property in office 365 for members = "+$office365Members)
-    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365RejectMessagesFrom)
+    out-logfile -string ("Property in office 365 for accept members = "+$office365Attributes.office365AcceptMessagesFrom.value)
+    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365Attributes.office365BypassModerationFrom.value)
+    out-logfile -string ("Property in office 365 for coManagers members = "+$office365Attributes.office365CoManagers.value)
+    out-logfile -string ("Property in office 365 for coManagers members = "+$office365Attributes.office365GrantSendOnBehalfTo.value)
+    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365Attributes.office365GrantSendOnBehalfTo.value)
+    out-logfile -string ("Property in office 365 for managed by members = "+$office365Attributes.office365ManagedBy.value)
+    out-logfile -string ("Property in office 365 for members = "+$office365Attributes.office365Members.value)
+    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365Attributes.office365RejectMessagesFrom.value)
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
@@ -729,13 +702,13 @@ Function Start-DistributionListMigration
     
         #Set useAADConnect to TRUE since the parameters necessary for use were passed.
         
-        $useAADConnect=$TRUE
+        $coreVariables.useAADConnect.value=$TRUE
 
-        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$useAADConnect)
+        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$coreVariables.useAADConnect.value)
     }
     else
     {
-        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$useAADConnect)
+        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$coreVariables.useAADConnect.value)
     }
 
     #Validate that both the exchange credential and exchange server are presented together.
@@ -762,13 +735,13 @@ Function Start-DistributionListMigration
 
         #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
-        $useOnPremisesExchange=$TRUE
+        $coreVariables.useOnPremisesExchange.value=$TRUE
 
-        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
+        Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$coreVariables.useOnPremisesExchange.value)
     }
     else
     {
-        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
+        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$coreVariables.useOnPremisesExchange.value)
     }
 
     #Validate that only one method of engaging exchange online was specified.
@@ -818,17 +791,17 @@ Function Start-DistributionListMigration
         out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
     }
 
-    if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
+    if (($coreVariables.useOnPremisesExchange.value -eq $False) -and ($enableHybridMailflow -eq $true))
     {
         out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
     }
 
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($useOnPremisesExchange -eq $FALSE))
+    if (($auditSendAsOnPrem -eq $TRUE ) -and ($coreVariables.useOnPremisesExchange.value -eq $FALSE))
     {
         out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
     }
 
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($useOnPremisesExchange -eq $FALSE))
+    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($coreVariables.useOnPremisesExchange.value -eq $FALSE))
     {
         out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
     }
@@ -929,15 +902,15 @@ Function Start-DistributionListMigration
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-   Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
+   Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-   Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
+   Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
 
    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-   Test-PowershellModule -powershellModuleName $dlConversionPowershellModule -powershellVersionTest:$TRUE
+   Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
    #Create the connection to exchange online.
 
@@ -974,13 +947,13 @@ Function Start-DistributionListMigration
    
    Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
 
-    if ($useOnPremisesExchange -eq $TRUE)
+    if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
     {
         try 
         {
             Out-LogFile -string "Calling New-PowerShellSession"
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
         }
         catch 
         {
@@ -1016,13 +989,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Determine if AAD Connect information specified and establish session if necessary."
 
-    if ($useAADConnect -eq $TRUE)
+    if ($coreVariables.useAADConnect.value -eq $TRUE)
     {
         try 
         {
             out-logfile -string "Creating powershell session to the AD Connect server."
 
-            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $aadConnectPowershellSessionName
+            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value
         }
         catch 
         {
@@ -1037,7 +1010,7 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
-        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $ADGlobalCatalogPowershellSessionName
+        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value
     }
     catch 
     {
@@ -1060,7 +1033,7 @@ Function Start-DistributionListMigration
 
     try
     {
-        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
     }
     catch
     {
@@ -1322,7 +1295,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1384,7 +1357,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1433,7 +1406,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1493,7 +1466,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1541,7 +1514,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1603,7 +1576,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1652,7 +1625,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1778,7 +1751,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1840,7 +1813,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1891,7 +1864,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -1949,7 +1922,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName  -errorAction STOP -cn "None"
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -2012,7 +1985,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -errorAction STOP -CN:$permission.Identity
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
@@ -2047,7 +2020,7 @@ Function Start-DistributionListMigration
 
     try 
     {
-        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $globalCatalogWithPort -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $adGlobalCatalogPowershellSessionName
+        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $corevariables.globalCatalogWithPort.value -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value
     }
     catch 
     {
@@ -2664,7 +2637,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsMemberOf += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2693,7 +2666,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allUsersForwardingAddress += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2722,7 +2695,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsReject += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2751,7 +2724,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsAccept += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2778,7 +2751,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
 
             }
             catch {
@@ -2811,7 +2784,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsBypassModeration += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2840,7 +2813,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -2869,7 +2842,7 @@ Function Start-DistributionListMigration
         {
             try 
             {
-                $allGroupsManagedBy += get-canonicalname -globalCatalog $globalCatalogWithPort -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
             }
             catch 
             {
@@ -3077,7 +3050,7 @@ Function Start-DistributionListMigration
         out-logFile -string "Office 365 settings are to be retained."
 
         try {
-            $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Members -errorAction STOP
+            $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365Members.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3086,7 +3059,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL is a member of = "+$allOffice365MemberOf.count)
 
         try {
-            $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -errorAction STOP
+            $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3095,7 +3068,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has accept rights = "+$allOffice365Accept.count)
 
         try {
-            $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -errorAction STOP
+            $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3104,7 +3077,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has reject rights = "+$allOffice365Reject.count)
 
         try {
-            $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom -errorAction STOP
+            $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365BypassModerationFrom.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3113,7 +3086,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365BypassModeration.count)
 
         try {
-            $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -errorAction STOP
+            $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3122,7 +3095,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grantSendOnBehalFto = "+$allOffice365GrantSendOnBehalfTo.count)
 
         try {
-            $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy -errorAction STOP
+            $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ManagedBy.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3135,7 +3108,7 @@ Function Start-DistributionListMigration
         #Process all dynamic distribution groups.
 
         try {
-            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3144,7 +3117,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has accept rights = "+$allOffice365DynamicAccept.count)
 
         try {
-            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3153,7 +3126,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has reject rights = "+$allOffice365DynamicReject.count)
 
         try {
-            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365BypassModerationFrom -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365BypassModerationFrom.value -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3162,7 +3135,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365DynamicBypassModeration.count)
 
         try {
-            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3171,7 +3144,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grantSendOnBehalFto = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
 
         try {
-            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ManagedBy -groupType "Dynamic" -errorAction STOP
+            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ManagedBy.value -groupType "Dynamic" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3182,7 +3155,7 @@ Function Start-DistributionListMigration
         #Process universal groups.
 
         try {
-            $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365AcceptMessagesFrom -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -groupType "Unified" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3191,7 +3164,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalAccept.count)
 
         try{
-            $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365RejectMessagesFrom -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -groupType "Unified" -errorAction STOP
         }
         catch{
             out-logFile -string $_ -isError:$TRUE
@@ -3200,7 +3173,7 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has reject rights on = "+$allOffice365UniversalReject.count)
 
         try {
-            $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365GrantSendOnBehalfTo -groupType "Unified" -errorAction STOP
+            $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -groupType "Unified" -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3213,7 +3186,7 @@ Function Start-DistributionListMigration
         #Process other mail enabled object dependencies.
 
         try {
-            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365ForwardingAddress -errorAction STOP
+            $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ForwardingAddress.value -errorAction STOP
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
@@ -3630,7 +3603,7 @@ Function Start-DistributionListMigration
     #$Capture the moved DL configuration (since attibutes change upon move.)
 
     try {
-        $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
     }
     catch {
         out-logFile -string $_ -isError:$TRUE
@@ -3709,7 +3682,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Invoking AD replication."
 
         try {
-            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+            invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -errorAction STOP
         }
         catch {
             out-logfile -string $_
@@ -3721,13 +3694,13 @@ Function Start-DistributionListMigration
 
     if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
     {
-        if ($useAADConnect -eq $TRUE)
+        if ($coreVariables.useAADConnect.value -eq $TRUE)
         {
             start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
 
             out-logfile -string "Invoking AD Connect."
 
-            invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+            invoke-ADConnect -powerShellSessionName $coreVariables.aadConnectPowershellSessionName.value
 
             start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
         }   
@@ -4058,7 +4031,7 @@ Function Start-DistributionListMigration
 
         do {
             try {
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop=$TRUE
             }
@@ -4087,7 +4060,7 @@ Function Start-DistributionListMigration
         
         do {
             try{
-                Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $useOnPremisesExchange -errorAction STOP
+                Disable-OriginalDL -originalDLConfiguration $originalDLConfigurationUpdated -globalCatalogServer $globalCatalogServer -parameterSet $dlPropertySetToClear -adCredential $activeDirectoryCredential -useOnPremisesExchange $coreVariables.useOnPremisesExchange.value -errorAction STOP
 
                 $stopLoop = $TRUE
             }
@@ -4114,7 +4087,7 @@ Function Start-DistributionListMigration
         
         do {
             try {
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $originalDLConfigurationUpdated.distinguishedName -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -4176,7 +4149,7 @@ Function Start-DistributionListMigration
                 $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
                 $tempNameArray=$originalDLConfigurationUpdated.distinguishedName.split(",")
                 $tempDN=$tempNameArray[0]+","+$tempOU
-                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+                $originalDLConfigurationUpdated = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -4260,7 +4233,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
             $stopLoop=$TRUE
         }
@@ -4294,7 +4267,7 @@ Function Start-DistributionListMigration
     out-logfile -string "Invoking AD replication."
 
     try {
-        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+        invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -errorAction STOP
     }
     catch {
         out-logfile -string $_
@@ -4863,7 +4836,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4919,7 +4892,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -4975,7 +4948,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attrivutes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5031,7 +5004,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5087,7 +5060,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5147,7 +5120,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365AcceptMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365AcceptMessagesFrom.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5202,7 +5175,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365RejectMessagesFrom -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365RejectMessagesFrom.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5258,7 +5231,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365BypassModerationusers -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attrivutes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5314,7 +5287,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5370,7 +5343,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365ManagedBy -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5428,7 +5401,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedAccept -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5484,7 +5457,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365UnifiedReject -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5540,7 +5513,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365GrantSendOnBehalfTo -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -5693,7 +5666,7 @@ Function Start-DistributionListMigration
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
@@ -5748,7 +5721,7 @@ Function Start-DistributionListMigration
 
         do {
             try{
-                $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+                $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
 
                 $stopLoop = $TRUE
             }
@@ -5921,7 +5894,7 @@ Function Start-DistributionListMigration
        out-logfile -string "Invoking AD replication."
 
        try {
-           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $ADGlobalCatalogPowershellSessionName -errorAction STOP
+           invoke-ADReplication -globalCatalogServer $globalCatalogServer -powershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -errorAction STOP
        }
        catch {
            out-logfile -string $_
@@ -5933,13 +5906,13 @@ Function Start-DistributionListMigration
 
    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
    {
-       if ($useAADConnect -eq $TRUE)
+       if ($coreVariables.useAADConnect.value -eq $TRUE)
        {
            start-sleepProgress -sleepString "Starting sleep before invoking AD Connect - one minute." -sleepSeconds 60
 
            out-logfile -string "Invoking AD Connect."
 
-           invoke-ADConnect -powerShellSessionName $aadConnectPowershellSessionName
+           invoke-ADConnect -powerShellSessionName $coreVariables.aadConnectPowershellSessionName.value
 
            start-sleepProgress -sleepString "Starting sleep after invoking AD Connect - one minute." -sleepSeconds 60
 
