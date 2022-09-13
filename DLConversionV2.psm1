@@ -567,20 +567,9 @@ Function Start-DistributionListMigration
     
     $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride   
 
-    if ($aadConnectServer -ne "")
-    {
-        $aadConnectServer = $aadConnectServer -replace '\s',''
-        Out-LogFile -string ("AADConnectServer = "+$aadConnectServer)
-    }
-
     if ($aadConnectCredential -ne $null)
     {
         Out-LogFile -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())
-    }
-
-    if ($exchangeServer -ne "")
-    {
-        Out-LogFile -string ("ExchangeServer = "+$exchangeServer)
     }
 
     if ($exchangecredential -ne $null)
@@ -593,35 +582,11 @@ Function Start-DistributionListMigration
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
-    if ($exchangeOnlineCertificateThumbPrint -ne "")
-    {
-        Out-LogFile -string ("ExchangeOnlineCertificateThumbprint = "+$exchangeOnlineCertificateThumbPrint)
-    }
-
-    Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
-    out-logfile -string ("Retain Office 365 Settings = "+$retainOffice365Settings)
-    out-logfile -string ("OU that does not sync to Office 365 = "+$dnNoSyncOU)
-    out-logfile -string ("Will the original group be retained as part of migration = "+$retainOriginalGroup)
-    out-logfile -string ("Enable hybrid mail flow = "+$enableHybridMailflow)
-    out-logfile -string ("Group type override = "+$groupTypeOverride)
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string " RECORD VARIABLES"
     Out-LogFile -string "********************************************************************************"
-
-    out-logfile -string ("Global Catalog Port = "+$corevariables.globalCatalogPort.value)
-    out-logfile -string ("Global catalog string used for function queries ="+$corevariables.globalCatalogWithPort.value)
-    out-logFile -string ("Initial use of Exchange On Prem = "+$coreVariables.useOnPremisesExchange.value)
-    Out-LogFile -string ("Initial user of ADConnect = "+$coreVariables.useAADConnect.value)
-    Out-LogFile -string ("Exchange on prem powershell session name = "+$corevariables.exchangeOnPremisesPowershellSessionName.value)
-    Out-LogFile -string ("AADConnect powershell session name = "+$coreVariables.aadConnectPowershellSessionName.value)
-    Out-LogFile -string ("AD Global catalog powershell session name = "+$coreVariables.ADGlobalCatalogPowershellSessionName.value)
-    Out-LogFile -string ("Exchange powershell module name = "+$corevariables.exchangeOnlinePowershellModuleName.value)
-    Out-LogFile -string ("Active directory powershell modulename = "+$corevariables.activeDirectoryPowershellModuleName.value)
-    out-logFile -string ("Static property for accept messages from members = "+$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value)
-    out-logFile -string ("Static property for accept messages from members = "+$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value)
-    Out-LogFile -string ("DL Properties to collect = ")
 
     foreach ($dlProperty in $dlPropertySet)
     {
@@ -642,34 +607,21 @@ Function Start-DistributionListMigration
         Out-LogFile -string $dlProperty
     }
 
-    Out-LogFile -string ("Exchange on prem powershell configuration = "+$onPremExchangePowershell.exchangeServerConfiguration.value)
-    Out-LogFile -string ("Exchange on prem powershell allow redirection = "+$onPremExchangePowershell.exchangeServerAllowRedirection.value)
-    Out-LogFile -string ("Exchange on prem powershell URL = "+$onPremExchangePowershell.exchangeServerURI.value)
-    Out-LogFile -string ("Exchange on prem DL active directory configuration XML = "+$xmlFiles.originalDLConfigurationADXML.value)
-    Out-LogFile -string ("Exchange on prem DL object configuration XML = "+$xmlFiles.originalDLConfigurationObjectXML.value)
-    Out-LogFile -string ("Office 365 DL configuration XML = "+$xmlFiles.office365DLConfigurationXML.value)
-    Out-LogFile -string ("Exchange DL members XML Name - "+$xmlFiles.exchangeDLMembershipSMTPXML.value)
-    Out-LogFile -string ("Exchange Reject members XML Name - "+$xmlFiles.exchangeRejectMessagesSMTPXML.value)
-    Out-LogFile -string ("Exchange Accept members XML Name - "+$xmlFiles.exchangeAcceptMessagesSMTPXML.value)
-    Out-LogFile -string ("Exchange ManagedBY members XML Name - "+$xmlFiles.exchangeManagedBySMTPXML.value)
-    Out-LogFile -string ("Exchange ModeratedBY members XML Name - "+$xmlFiles.exchangeModeratedBySMTPXML.value)
-    Out-LogFile -string ("Exchange BypassModeration members XML Name - "+$xmlFiles.exchangeBypassModerationSMTPXML.value)
-    out-logfile -string ("Exchange GrantSendOnBehalfTo members XML name - "+$xmlFiles.exchangeGrantSendOnBehalfToSMTPXML.value)
-    Out-LogFile -string ("All group members XML Name - "+$xmlFiles.allGroupsMemberOfXML.value)
-    Out-LogFile -string ("All Reject members XML Name - "+$xmlFiles.allGroupsRejectXML.value)
-    Out-LogFile -string ("All Accept members XML Name - "+$xmlFiles.allGroupsAcceptXML.value)
-    Out-Logfile -string ("All Co Managed By BL XML - "+$xmlFiles.allGroupsCoManagedByXML.value)
-    Out-LogFile -string ("All BypassModeration members XML Name - "+$xmlFiles.allGroupsBypassModerationXML.value)
-    out-logfile -string ("All Users Forwarding Address members XML Name - "+$xmlFiles.allUsersForwardingAddressXML.value)
-    out-logfile -string ("All groups Grand Send On Behalf To XML Name - "+$xmlFiles.allGroupsGrantSendOnBehalfToXML.value)
-    out-logfile -string ("Property in office 365 for accept members = "+$office365Attributes.office365AcceptMessagesFrom.value)
-    out-logfile -string ("Property in office 365 for bypassmoderation members = "+$office365Attributes.office365BypassModerationFrom.value)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365Attributes.office365CoManagers.value)
-    out-logfile -string ("Property in office 365 for coManagers members = "+$office365Attributes.office365GrantSendOnBehalfTo.value)
-    out-logfile -string ("Property in office 365 for grant send on behalf to members = "+$office365Attributes.office365GrantSendOnBehalfTo.value)
-    out-logfile -string ("Property in office 365 for managed by members = "+$office365Attributes.office365ManagedBy.value)
-    out-logfile -string ("Property in office 365 for members = "+$office365Attributes.office365Members.value)
-    out-logfile -string ("Property in office 365 for reject messages from members = "+$office365Attributes.office365RejectMessagesFrom.value)
+    out-logfile -string ("Predefined thread folders = ")
+
+    foreach ($property in $threadFolder)
+    {
+        out-logfile -string $property
+    }
+
+    out-logfile -string ("Exchang elegacy schema version: "+$exchangeLegacySchemaVersion)
+
+    out-logfile -string ("Global import file: "+$global:importFile)
+    out-logfile -string ("Global staticFolderName: "+$global:staticFolderName)
+    out-logfile -string ("Global threadNumber: "+$global:threadNumber)
+
+    out-logfile -string $xmlFiles
+
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
