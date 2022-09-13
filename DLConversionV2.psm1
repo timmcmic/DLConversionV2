@@ -3637,7 +3637,7 @@ Function Start-DistributionListMigration
     }
 
     out-LogFile -string $originalDLConfigurationUpdated
-    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport (($xmlFiles.originalDLConfigurationUpdatedXML.value)"-MoveToNoSyncOU")
+    out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport (($xmlFiles.originalDLConfigurationUpdatedXML.value)+"-MoveToNoSyncOU")
 
     
 
