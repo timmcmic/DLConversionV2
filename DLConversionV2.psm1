@@ -5700,7 +5700,7 @@ Function Start-DistributionListMigration
         }
 
         out-logfile -string $routingContactConfiguration
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport ($xmlFiles.routingContactXML.value)+"-PostMailEnabledContact"
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport ($xmlFiles.routingContactXML.value+"-PostMailEnabledContact")
 
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
