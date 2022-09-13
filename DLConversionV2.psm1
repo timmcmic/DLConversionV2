@@ -621,7 +621,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("Global threadNumber: "+$global:threadNumber)
 
     write-hashTable -hashTable $xmlFiles
-    write-hastTable -hashTable $onPremExchangePowershell
+    write-hashTable -hashTable $onPremExchangePowershell
     write-hashTable -hashTable $office365Attributes
     write-hashTable -hashTable $onPremADAttributes
     write-hashTable -hashTable $coreVariables
