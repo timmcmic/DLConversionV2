@@ -334,6 +334,7 @@ Function Start-DistributionListMigration
         exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
         exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
         exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+        exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
     }
 
     #Define XML files to contain backups.
@@ -905,16 +906,37 @@ Function Start-DistributionListMigration
 
     if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
     {
-        try 
+        if ($exchangeAuthenticationMethod -eq "Basic")
         {
-            Out-LogFile -string "Calling New-PowerShellSession"
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
         }
-        catch 
+        elseif ($exchangeAuthenticationMethod -eq "Kerberos")
         {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
         }
+        else 
+        {
+            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+        }
+        
         try 
         {
             Out-LogFile -string "Calling import-PowerShellSession"
