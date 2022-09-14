@@ -92,7 +92,6 @@
                     }
 
                     $functionSendAsRights+= invoke-command {$blockName=$args[1];Get-ADPermission -identity $args[0] | where {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false) -and ($_.user -like $blockName)}}-ArgumentList $recipient.identity,$functionQueryName
-                    #$functionSendAsRights+= invoke-command {Get-ADPermission -identity $args[0] | where {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)}}-ArgumentList $recipient.identity,$functionQueryName
                 } 
             }
             catch {
@@ -126,43 +125,6 @@
         }
         elseif ($collectedData -ne $NULL)
         {
-            <#
-            try 
-            {
-                out-logfile -string "Test for send as rights."
-
-                $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
-
-                foreach ($recipient in $collectedData)
-                {
-                    $MbxNumber++
-
-                    write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
-
-                    $PercentComplete += $ProgressDelta
-
-                    if ($recipient.user.tostring() -notlike "*S-1-5-21*")
-                    {
-                        #Need to ignore anything that looks like a SID / orphaned entry.
-                        $stringTest = $recipient.user.split("\")
-
-                        if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
-                        {
-                            out-logfile -string ("Send as permission matching group found - recording."+$recipient.identity)
-                            $functionSendAsIdentities+=$recipient
-                        }
-                    } 
-                }
-            }
-            catch 
-            {
-                out-logfile -string "Error attempting to invoke command to gather all send as permissions."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            write-progress -Activity "Processing Recipient" -Completed
-            #>
-
             out-logfile -string "Test for send as rights."
 
             $functionSendAsIdentities = $collectedData | where {$_.user.contains($originalDLConfiguration.samaccountname)}

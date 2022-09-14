@@ -62,12 +62,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-ADObjectConfiguration"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        OUt-LogFile -string ("Parameter Set:")
         
         foreach ($parameterIncluded in $parameterSet)
         {

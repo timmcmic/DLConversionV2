@@ -44,10 +44,6 @@
         Out-LogFile -string "BEGIN TEST-CLOUDDLPRESENT"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        out-Logfile -string ("Group SMTP Address = "+$groupSMTPAddress)
-
         do 
         {
             if ($firstLoopProcessing -eq $TRUE)

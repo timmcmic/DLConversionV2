@@ -62,15 +62,6 @@
         Out-LogFile -string "BEGIN new-RoutingContact"
         Out-LogFile -string "********************************************************************************"
 
-        #write out parameters utilized to log file.
-        
-        out-logfile -string ("Original DL Configuration = "+$originalDLConfiguration)
-        out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
-        out-logfile -string ("Global catalog server = "+$globalCatalogServer)
-        out-logfile -string ("AD User Name = "+$adCredential.UserName)
-        out-logfile -string ("Is Retry Status = "+$isRetry)
-        out-logfile -string ("Is Retry OU = "+$isRetryOU)
-
         #Declare function variables and output to screen.
 
         [string]$functionCustomAttribute1="MigratedByScript"

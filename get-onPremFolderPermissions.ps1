@@ -45,45 +45,6 @@
         Out-LogFile -string "BEGIN get-onPremFolderPermissions"
         Out-LogFile -string "********************************************************************************"
 
-        <#
-        try 
-        {
-            
-            out-logfile -string "Test for folder permissions."
-
-            <#
-                        
-            $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
-
-            foreach ($recipient in $collectedData)
-            {
-                $MbxNumber++
-
-                write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
-
-                $PercentComplete += $ProgressDelta
-
-                if ($recipient.user.tostring() -notlike "*S-1-5-21*")
-                {
-                    write-host $recipient.user
-                    write-host $originalDLConfiguration.samAccountName
-
-                    if ($recipient.user.ADRecipient.SamAccountName.tostring() -eq $originalDLConfiguration.samAccountName)
-                    {
-                        out-logfile -string ("Mailbox folder permission found - recording."+$recipient.identity)
-                        $functionFolderRightsUsers+=$recipient
-                    }
-                } 
-            }
-        }
-        catch 
-        {
-            out-logfile -string "Error attempting to invoke command to gather all send as permissions."
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        #>
-
         out-logfile -string "Test for folder permissions."
 
         out-logfile -string "Filter all permissions for objects that are no longer vaild"

@@ -61,14 +61,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-NormalizedDN"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        OUt-LogFile -string ("DN Set = "+$DN)
-        out-logfile -string ("CN Set = "+$CN)
-        out-logfile -string ("Credential user name = "+$adCredential.UserName)
-        out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
         #Get the specific user using ad providers.
 

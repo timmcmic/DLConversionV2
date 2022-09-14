@@ -45,8 +45,6 @@
 
         #Test to see if the DN contains an OU.
 
-        out-logfile -string $originalDLConfiguration.distinguishedname
-
         $testOUSubstringLocation = $originalDLConfiguration.distinguishedName.indexof(",OU=")
         out-logfile -string ("The location of ,OU= is:"+$testOUSubstringLocation)
 
@@ -77,8 +75,6 @@
             out-logfile -string "Temp OU Substring Substring ="
             out-logfile -string $tempOUSubstring
         }
-
-        
 
         $returnOU = $tempOUSubstring
 

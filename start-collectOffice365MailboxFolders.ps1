@@ -91,6 +91,10 @@ function start-collectOffice365MailboxFolders
 
     #Validate that only one method of engaging exchange online was specified.
 
+    out-logfile -string ("Office 365 Mailbox Permissions XML: "+$office365MailboxFolderPermissions)
+    out-logfile -string ("Office 365 Mailbox List: "+$office365MailboxList)
+    out-logfile -string ("Office 365 Mailbox Processed"+$office365MailboxProcessed)
+
     Out-LogFile -string "Validating Exchange Online Credentials."
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))

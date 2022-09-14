@@ -38,10 +38,6 @@
         Out-LogFile -string "BEGIN TEST-POWERSHELLMODULE"
         Out-LogFile -string "********************************************************************************"
 
-        #Write function parameter information and variables to a log file.
-
-        Out-LogFile -string ("PowerShellModuleName = "+$powershellModuleName)
-
         try 
         {
             $commandsArray = get-command -module $powershellModuleName -errorAction STOP

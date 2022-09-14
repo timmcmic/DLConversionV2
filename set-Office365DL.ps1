@@ -72,12 +72,6 @@
         Out-LogFile -string "BEGIN SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = ")
-        out-logfile -string $originalDLConfiguration
-        out-logfile -string ("Group Type Override = "+$groupTypeOverride)
-
         #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
         #The exchange commandlets abstract this by performing a conversion or filling the values in.
         #Since we use ldap to get these values now - we must reverse engineer these and / or set them.
