@@ -56,21 +56,20 @@
             [string]$OU=$NULL
         )
 
-        #Output all parameters bound or unbound and their associated values.
-
-        write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
-
         #Declare function variables.
 
         $global:logFile=$NULL #This is the global variable for the calculated log file name
         [string]$global:staticFolderName="\DLMigration\"
 
-        [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
-        [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
-        [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
-        [string]$dlConversionPowershellModule="DLConversionV2"
-        [string]$globalCatalogPort=":3268"
-        [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
+        $coreVariables = @{ 
+            useOnPremisesExchange = @{ "Value" = $FALSE ; "Description" = "Boolean determines if Exchange on premises should be utilized" }
+            exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangeOnPremises" ; "Description" = "Static exchange on premises powershell session name" }
+            exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
+            activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
+            dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
+            globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
+            globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
+        }
 
         #Static variables utilized for the Exchange On-Premsies Powershell.
 
@@ -108,6 +107,7 @@
 
         write-hashTable -hashTable $xmlFiles
         write-hashTable -hashTable $onPremExchangePowershell
+        write-hashTable -hashTable $coreVariables
 
         #Start function processing.
 
@@ -182,13 +182,13 @@
 
             #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
-            $useOnPremisesExchange=$TRUE
+            $coreVariables.useOnPremisesExchange.value=$TRUE
 
-            Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
+            Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$coreVariables.useOnPremisesExchange.value)
         }
         else
         {
-            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
+            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$coreVariables.useOnPremisesExchange.value)
         }
 
         #Validate that only one method of engaging exchange online was specified.
@@ -227,7 +227,7 @@
             out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
         }
 
-        if ($useOnPremisesExchange -eq $False)
+        if ($coreVariables.useOnPremisesExchange.value -eq $False)
         {
             out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
         }
@@ -246,15 +246,15 @@
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-        Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
+        Test-PowershellModule -powershellModuleName $coreVariables.exchangeOnPremisesPowershellSessionName.value -powershellVersionTest:$TRUE
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-        Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
+        Test-PowershellModule -powershellModuleName $coreVariables.activeDirectoryPowershellModuleName.value
 
         out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-        Test-PowershellModule -powershellModuleName $dlConversionPowershellModule -powershellVersionTest:$TRUE
+        Test-PowershellModule -powershellModuleName $coreVariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
         #Create the connection to exchange online.
 
@@ -289,7 +289,7 @@
    
         Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
 
-        if ($useOnPremisesExchange -eq $TRUE)
+        if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
         {
             if ($exchangeAuthenticationMethod -eq "Basic")
             {
@@ -323,7 +323,7 @@
             {
                 out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
             }
-            
+
             try 
             {
                 Out-LogFile -string "Calling import-PowerShellSession"
@@ -402,7 +402,7 @@
         out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
 
         try {
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
             out-logfile -string "Overriding OU selection by adminsitrator - contact already exists.  Must be the same as contact."
 
@@ -436,7 +436,7 @@
             try {
                 out-logfile -string "Re-obtaining the routing contact configuration."
     
-                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -472,7 +472,7 @@
         try{
             out-logfile -string "Re-obtaining the routing contact configuration."
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_
@@ -496,7 +496,7 @@
         try{
             out-logfile -string "Re-obtaining the routing contact configuration."
 
-            $routingDynamicGroup = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingDynamicGroup = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_
