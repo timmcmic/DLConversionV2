@@ -125,6 +125,7 @@ function start-collectOnPremFullMailboxAccess
         }
         catch 
         {
+            out-logfile -string $_
             Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
         }
     }
@@ -138,6 +139,7 @@ function start-collectOnPremFullMailboxAccess
         }
         catch 
         {
+            out-logfile -string $_
             Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
         }
     }
