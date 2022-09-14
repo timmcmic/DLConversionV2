@@ -95,6 +95,7 @@ function start-collectOnPremMailboxFolders
     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+    [string]$exchangeServerURIKerberos = "http://"+$exchangeServer+"/powershell"
 
     new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
 
@@ -138,7 +139,7 @@ function start-collectOnPremMailboxFolders
     {
         out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
     }
-    
+
     try 
     {
         out-logFile -string "Attempting to import powershell session."

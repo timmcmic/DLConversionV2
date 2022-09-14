@@ -92,6 +92,7 @@ function start-collectOnPremSendAs
     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+    [string]$exchangeServerURIKerberos = "http://"+$exchangeServer+"/powershell"
 
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
@@ -135,7 +136,7 @@ function start-collectOnPremSendAs
     {
         out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
     }
-    
+
     try 
     {
         out-logFile -string "Attempting to import powershell session."
