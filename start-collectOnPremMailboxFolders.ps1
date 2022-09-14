@@ -95,7 +95,6 @@ function start-collectOnPremMailboxFolders
     [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
     [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
     [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
-    [string]$exchangeServerURIKerberos = "http://"+$exchangeServer+"/powershell"
 
     new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
 
@@ -109,37 +108,17 @@ function start-collectOnPremMailboxFolders
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    if ($exchangeAuthenticationMethod -eq "Basic")
+    try 
     {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
+        out-logFile -string "Creating session to import."
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
-        }
-        catch 
-        {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
+        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
     }
-    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+    catch 
     {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
-
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURIKerberos -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
-        }
-        catch 
-        {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
+        out-logFile -string "Unable to create session to import."
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
-    else 
-    {
-        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-    }
-
     try 
     {
         out-logFile -string "Attempting to import powershell session."

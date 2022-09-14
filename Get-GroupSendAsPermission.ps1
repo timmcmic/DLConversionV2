@@ -283,7 +283,7 @@
 
                 try 
                 {
-                    $functionSendAsObjects+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
+                    $functionSendAsObjects+=get-normalizedDN -globalCatalogServer $globalCatalogWithPort -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
                 }
                 catch 
                 {
