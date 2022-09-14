@@ -78,6 +78,7 @@
         [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
         [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
         [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+        [string]$exchangeServerURIKerberos = "http://"+$exchangeServer+"/powershell"
 
         #Declare logging variables.
 
@@ -319,15 +320,35 @@
 
         if ($useOnPremisesExchange -eq $TRUE)
         {
-            try 
+            if ($exchangeAuthenticationMethod -eq "Basic")
             {
-                Out-LogFile -string "Calling New-PowerShellSession"
+                try 
+                {
+                    Out-LogFile -string "Calling New-PowerShellSession"
 
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                }
             }
-            catch 
+            elseif ($exchangeAuthenticationMethod -eq "Kerberos")
             {
-                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                try 
+                {
+                    Out-LogFile -string "Calling New-PowerShellSession"
+
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURIKerberos -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
             }
             try 
             {
