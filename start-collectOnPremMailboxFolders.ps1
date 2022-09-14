@@ -108,17 +108,37 @@ function start-collectOnPremMailboxFolders
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    try 
+    if ($exchangeAuthenticationMethod -eq "Basic")
     {
-        out-logFile -string "Creating session to import."
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
 
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        }
+        catch 
+        {
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
-    catch 
+    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
     {
-        out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
+
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURIKerberos -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
+        }
+        catch 
+        {
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
+    else 
+    {
+        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+    }
+    
     try 
     {
         out-logFile -string "Attempting to import powershell session."
