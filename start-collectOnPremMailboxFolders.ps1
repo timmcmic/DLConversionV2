@@ -109,6 +109,9 @@ function start-collectOnPremMailboxFolders
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
+    write-hashTable -hashTable $onPremExchangePowershell
+    write-hashTable -hashTable $xmlFiles
+
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
