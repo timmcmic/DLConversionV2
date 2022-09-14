@@ -99,6 +99,43 @@
         }
         elseif ($collectedData -ne $NULL)
         {
+            <#
+            try 
+            {
+                out-logfile -string "Testing for full mailbo access rights.."
+
+                $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
+
+                foreach ($recipient in $collectedData)
+                {
+                    $MbxNumber++
+                    write-progress -activity "Processing Recipient" -status $recipient.identity -PercentComplete $PercentComplete
+
+                    $PercentComplete += $ProgressDelta
+
+                    if ($recipient.user.tostring() -notlike "*S-1-5-21*")
+                    {
+                        #Need to ignore anything that looks like a SID / orphaned entry.
+                        $stringTest = $recipient.user.split("\")
+
+                        if ($stringTest[1] -eq $originalDLConfiguration.samAccountName)
+                        {
+                            out-logfile -string ("Full mailbox access permission found - recording."+$recipient.identity)
+                            $functionPermissions+=$recipient
+                        }
+                    } 
+                }
+            }
+            catch 
+            {
+                out-logfile -string "Error attempting to invoke command to gather all send as permissions."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            write-progress -Activity "Processing Recipient" -Completed
+
+            #>
+
             out-logfile -string "Testing for full mailbo access rights.."
 
             $functionPermissions = $collectedData | where {$_.user.contains($originalDLConfiguration.samAccountName)}

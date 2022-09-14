@@ -65,41 +65,27 @@
         $global:logFile=$NULL #This is the global variable for the calculated log file name
         [string]$global:staticFolderName="\DLMigration\"
 
-        #Define variables utilized in the core function that are not defined by parameters.
-
-        $coreVariables = @{ 
-            useOnPremisesExchange = @{ "Value" = $FALSE ; "Description" = "Boolean determines if Exchange on premises should be utilized" }
-            exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangeOnPremises" ; "Description" = "Static exchange on premises powershell session name" }
-            exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
-            activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
-            dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
-            globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
-            globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
-        }
+        [boolean]$useOnPremisesExchange=$FALSE #Determines if function will utilize onpremises exchange during migration.
+        [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+        [string]$exchangeOnlinePowershellModuleName="ExchangeOnlineManagement" #Defines the exchage management shell name to test for.
+        [string]$activeDirectoryPowershellModuleName="ActiveDirectory" #Defines the active directory shell name to test for.
+        [string]$dlConversionPowershellModule="DLConversionV2"
+        [string]$globalCatalogPort=":3268"
+        [string]$globalCatalogWithPort=$globalCatalogServer+$globalCatalogPort
 
         #Static variables utilized for the Exchange On-Premsies Powershell.
-
-        $onPremExchangePowershell = @{
-            exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
-            exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
-            exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
-            exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
-        }
+   
+        [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
+        [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
+        [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
 
         #Declare logging variables.
 
-        $xmlFiles = @{
-            office365DLConfigurationXML = @{ "Value" = "office365DLConfigurationXML" ; "Description" = "Office 365 DL Configuration XML Name"}
-            routingContactXML = @{ "Value" = "routingContactXML" ; "Description" = "Routing contact XML output for preservation"}
-            routingDynamicGroup = @{ "Value" = "routingDynamicGroupXML" ; "Description" = "Dynamic group XML for preservation"}
-        }
-
-        [string]$xmlFiles.office365DLConfigurationXML.value = "office365DLConfigurationXML"
-        [string]$xmlFiles.routingContactXML.value="routingContactXML"
+        [string]$office365DLConfigurationXML = "office365DLConfigurationXML"
+        [string]$routingContactXML="routingContactXML"
         [string]$routingDynamicGroupXML="routingDynamicGroupXML"
 
         $routingContactConfig=$NULL
-        $dynamicGroupConfig=$NULL
         $office365DLConfiguration = $NULL
 
         #Create the log file.
@@ -192,13 +178,13 @@
         Out-LogFile -string " RECORD VARIABLES"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string ("Global Catalog Port = "+$coreVariables.globalCatalogPort.value)
-        out-logfile -string ("Global catalog string used for function queries ="+$coreVariables.globalCatalogWithPort.value)
-        out-logFile -string ("Initial use of Exchange On Prem = "+$coreVariables.useOnPremisesExchange.value)
-        Out-LogFile -string ("Exchange on prem powershell session name = "+$coreVariables.exchangeOnPremisesPowershellName.value)
+        out-logfile -string ("Global Catalog Port = "+$globalCatalogPort)
+        out-logfile -string ("Global catalog string used for function queries ="+$globalCatalogWithPort)
+        out-logFile -string ("Initial use of Exchange On Prem = "+$useOnPremisesExchange)
+        Out-LogFile -string ("Exchange on prem powershell session name = "+$exchangeOnPremisesPowershellSessionName)
         Out-LogFile -string ("AD Global catalog powershell session name = "+$ADGlobalCatalogPowershellSessionName)
-        Out-LogFile -string ("Exchange powershell module name = "+$coreVariables.exchangeOnlinePowershellModuleName.value)
-        Out-LogFile -string ("Active directory powershell modulename = "+$coreVariables.activeDirectoryPowershellModuleName.value)
+        Out-LogFile -string ("Exchange powershell module name = "+$exchangeOnlinePowershellModuleName)
+        Out-LogFile -string ("Active directory powershell modulename = "+$activeDirectoryPowershellModuleName)
 
         #Validate that both the exchange credential and exchange server are presented together.
 
@@ -224,13 +210,13 @@
 
             #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
 
-            $coreVariables.useOnPremisesExchange.value=$TRUE
+            $useOnPremisesExchange=$TRUE
 
-            Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$coreVariables.useOnPremisesExchange.value)
+            Out-LogFile -string ("Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "+$useOnPremisesExchange)
         }
         else
         {
-            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$coreVariables.useOnPremisesExchange.value)
+            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
         }
 
         #Validate that only one method of engaging exchange online was specified.
@@ -269,7 +255,7 @@
             out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
         }
 
-        if ($coreVariables.useOnPremisesExchange.value -eq $False)
+        if ($useOnPremisesExchange -eq $False)
         {
             out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
         }
@@ -288,15 +274,15 @@
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-        Test-PowershellModule -powershellModuleName $coreVariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
+        Test-PowershellModule -powershellModuleName $exchangeOnlinePowershellModuleName -powershellVersionTest:$TRUE
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-        Test-PowershellModule -powershellModuleName $coreVariables.activeDirectoryPowershellModuleName.value
+        Test-PowershellModule -powershellModuleName $activeDirectoryPowershellModuleName
 
         out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-        Test-PowershellModule -powershellModuleName $coreVariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+        Test-PowershellModule -powershellModuleName $dlConversionPowershellModule -powershellVersionTest:$TRUE
 
         #Create the connection to exchange online.
 
@@ -331,39 +317,18 @@
    
         Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
 
-        if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
+        if ($useOnPremisesExchange -eq $TRUE)
         {
-            if ($exchangeAuthenticationMethod -eq "Basic")
+            try 
             {
-                try 
-                {
-                    Out-LogFile -string "Calling New-PowerShellSession"
-    
-                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-                }
-                catch 
-                {
-                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-                }
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE
             }
-            elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+            catch 
             {
-                try 
-                {
-                    Out-LogFile -string "Calling New-PowerShellSession"
-    
-                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-                }
-                catch 
-                {
-                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-                }
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
             }
-            else 
-            {
-                out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-            }
-            
             try 
             {
                 Out-LogFile -string "Calling import-PowerShellSession"
@@ -407,7 +372,7 @@
             out-logfile -string $_ -isError:$TRUE
         }
 
-        out-xmlFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
+        out-xmlFile -itemToExport $office365DLConfiguration -itemNameToExport $office365DLConfigurationXML
 
         #Now that we have the configuration - we need to ensure dir sync is set to false.
 
@@ -442,7 +407,7 @@
         out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
 
         try {
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
             out-logfile -string "Overriding OU selection by adminsitrator - contact already exists.  Must be the same as contact."
 
@@ -450,7 +415,7 @@
 
             out-logfile -string "The routing contact was found and recorded."
 
-            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-FoundContact")
+            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+0
         }
         catch {
             out-logfile -string "The routing contact is not present - create the routing contact."
@@ -476,7 +441,7 @@
             try {
                 out-logfile -string "Re-obtaining the routing contact configuration."
     
-                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
                 $stopLoop = $TRUE
             }
@@ -495,7 +460,7 @@
             }
         } until ($stopLoop -eq $TRUE)       
 
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-UpdatedRoutingContact")
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+1
 
         #At this time the mail contact needs to be mail enabled.
 
@@ -512,14 +477,14 @@
         try{
             out-logfile -string "Re-obtaining the routing contact configuration."
 
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $globalCatalogWithPort -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_
             out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
         }
 
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-MailEnabled")
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $routingContactXML+2
 
         #The routing contact is now mail enabled.  Create the dynamic distribution group.
 
@@ -532,18 +497,6 @@
             out-logfile -string "Unable to create the dynamic distribution group."
             out-logfile -string $_ -isError:$TRUE
         }
-
-        try{
-            out-logfile -string "Obtaining the dynamic distribution group information."
-
-            $dynamicGroupConfig = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch{
-            out-logfile -string $_
-            out-logfile -string "Unable to obtain the dynamic distribution group."
-        }
-
-        out-xmlFile -itemToExport $dynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
 
         disable-allPowerShellSessions
 

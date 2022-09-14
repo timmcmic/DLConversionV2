@@ -42,6 +42,10 @@
         Out-LogFile -string "BEGIN start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
 
+        #Log the parameters and variables for the function.
+
+        out-logfile -string ("Group SMTP Address = "+$groupSMTPAddress)
+
         #Call the command to begin the upgrade process.
 
         out-logFile -string "Calling command to being the upgrade process."

@@ -257,6 +257,26 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "Please run powershell as administrator." -isError:$TRUE
     }
 
+    #Output parameters to the log file for recording.
+    #For parameters that are optional if statements determine if they are populated for recording.
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "PARAMETERS"
+    Out-LogFile -string "********************************************************************************"
+    out-logfile -string "SMTP Addresses:"
+    foreach ($smtpAddress in $groupSMTPAddresses)
+    {
+        Out-LogFile -string $smtpAddress
+    }
+    out-logfile -string "Servers to Excute On:"
+    foreach ($server in $serverNames)
+    {
+        Out-LogFile -string $server
+    }
+    Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
+    #Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
+    Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
+
     if ($aadConnectServer -ne "")
     {
         Out-LogFile -string ("AADConnectServer = "+$aadConnectServer)

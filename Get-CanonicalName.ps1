@@ -53,6 +53,12 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-CanoicalName"
         Out-LogFile -string "********************************************************************************"
+
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
+        OUt-LogFile -string ("DN Set = "+$DN)
+        out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Get the specific user using ad providers.
 

@@ -58,7 +58,7 @@
 
         [string]$exchangeOnlineCommandPrefix="O365"
         [boolean]$isCertAuth=$false
-        
+        #$exchangeOnlineCommands=@('get-ExoRecipient','new-distributionGroup','get-recipient','set-distributionGroup','get-distributionGroupMember','get-mailbox','get-unifiedGroup','set-UnifiedGroup')
         #Initiate the session.
         
         Out-LogFile -string "********************************************************************************"
@@ -66,9 +66,6 @@
         Out-LogFile -string "********************************************************************************"
 
         #Log the parameters and variables for the function.
-
-        out-logfile -string ("Exchange Online Command Prefix: "+$exchangeOnlineCommandPrefix)
-        out-logfile -string ("Is using cert auth: "+$isCertAuth)
 
         if ($exchangeOnlineCredentials -ne $NULL)
         {

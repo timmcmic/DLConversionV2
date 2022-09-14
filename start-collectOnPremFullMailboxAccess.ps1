@@ -87,14 +87,11 @@ function start-collectOnPremFullMailboxAccess
     [string]$onPremRecipientProcessed="onPremRecipientProcessed.xml"
 
     #Static variables utilized for the Exchange On-Premsies Powershell.
-
-    $onPremExchangePowershell = @{
-        exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
-        exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
-        exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
-        exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
-        exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangeOnPremises" ; "Description" = "The powershell session name for reference"}
-    }
+   
+    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
+    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
+    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
+    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
 
     new-LogFile -groupSMTPAddress OnPremFullMailboxAccessPermissions -logFolderPath $logFolderPath
 
@@ -102,14 +99,7 @@ function start-collectOnPremFullMailboxAccess
 
    #Output all parameters bound or unbound and their associated values.
 
-    write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
-
-    write-hashTable -hashTable $onPremExchangePowershell
-
-    out-logfile -string ("On Prem Recipient Full Mailbox Access XML: "+$onPremRecipientFullMailboxAccess)
-    out-logfile -string ("On Prem Mailbox List: "+ $onPremMailboxList)
-    out-logfile -string ("On Prem Recipient Processed: " +$onPremRecipientProcessed)
-   
+   write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
@@ -117,39 +107,17 @@ function start-collectOnPremFullMailboxAccess
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    if ($exchangeAuthenticationMethod -eq "Basic")
+    try 
     {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
+        out-logFile -string "Creating session to import."
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-        }
-        catch 
-        {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
+        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
     }
-    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+    catch 
     {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
-
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-        }
-        catch 
-        {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
+        out-logFile -string "Unable to create session to import."
+        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
-    else 
-    {
-        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-    }
-
     try 
     {
         out-logFile -string "Attempting to import powershell session."

@@ -57,8 +57,12 @@
 
         #Log the parameters and variables for the function.
 
-        out-logfile -string ("functionName: "+$functionName)
-        
+        Out-LogFile -string ("OriginalDLConfiguration = ")
+        out-logfile -string $originalDLConfiguration
+        out-logfile -string ("Office365DLConfiguration = ")
+        out-logfile -string $office365DLConfiguration
+        out-logfile -string ("Group Type Override = "+$groupTypeOverride)
+
         #Calculate the group type to be utilized.
         #Three values - either NULL,Security,or Distribution.
 

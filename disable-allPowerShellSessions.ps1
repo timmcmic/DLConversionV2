@@ -63,6 +63,18 @@
                 Get-PSSession | remove-pssession
             }
         }
+        <#
+        out-logfile -string "Remove all other PSSessions"
+
+        try{
+            Get-PSSession | remove-pssession
+        }
+        catch{
+            out-logfile -string "Error removing other PS Sessions.  Hard exit as this function is called in error code."
+            exit
+        }
+
+        #>
 
         Out-LogFile -string "END disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"

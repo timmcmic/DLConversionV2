@@ -48,6 +48,10 @@
         Out-LogFile -string "BEGIN Get-O365DLFullMaiboxAccess"
         Out-LogFile -string "********************************************************************************"
 
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
+
         #Get the recipient using the exchange online powershell session.
 
         if ($collectedData -eq $NULL)
@@ -106,6 +110,31 @@
             catch {
                 out-logfile -string $_ -isError:$TRUE
             }
+
+            <#
+
+            $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
+
+            out-logfile -string "Processing full mailbox access based on imported data."
+
+            foreach ($mailbox in $collectedData)
+            {
+                $MbxNumber++
+    
+                write-progress -activity "Processing Recipient" -status $mailbox.identity -PercentComplete $PercentComplete
+
+                $PercentComplete += $ProgressDelta
+
+                if ($mailbox.user.tostring() -notlike "*S-1-5-21*")
+                {
+                    if ($mailbox.user.tostring() -eq $functionRecipient.Identity )
+                    {
+                        $functionFullMailboxAccess+=$mailbox
+                    }
+                }
+            }
+
+            #>
 
             out-logfile "Obtaining all full mailbox access permissions in Office 365."
 

@@ -103,9 +103,6 @@ function start-collectOffice365FullMailboxAccess
 
     #Validate that only one method of engaging exchange online was specified.
 
-    out-logfile -string ("Office365 Mailbox List XML: "+$office365MailboxList)
-    out-logfile -string ("Office 365 Recipient Processed XML: "+$office365RecipientProcessed)
-
     Out-LogFile -string "Validating Exchange Online Credentials."
 
     if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))

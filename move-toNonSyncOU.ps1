@@ -55,6 +55,12 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START MOVE-TONONSYNCOU"
         Out-LogFile -string "********************************************************************************"
+
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
+        out-logfile -string ("DN = "+$dn)
+        out-logfile -string ("OU = "+$OU)
         
         try 
         {

@@ -48,8 +48,9 @@
         Out-LogFile -string "BEGIN GET-O365DLCONFIGURATION"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string ("Function mail security group name ="+$functionMailSecurity)
-        out-logfile -string ("Function mail distribution group name ="+$functionMailDistribution)
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the recipient using the exchange online powershell session.
         

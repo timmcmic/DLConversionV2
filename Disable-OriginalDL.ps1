@@ -57,19 +57,33 @@
         #Declare function variables.
 
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
+        [string]$functionCustomAttribute1="MigratedByScript"
+        [string]$functionCustomAttribute2=$originalDLConfiguration.mail
 
-        $functionVariables = @{
-            functionCustomAttribute1 =@{ "Value" = "MigratedByScript" ; "Description" = "Custom attribute 1 is migrated by script on mail contacts for migrated DLs"}
-            functionCustomAttribute2 = @{ "Value" = $originalDLConfiguration.mail ; "Description" = "Custom attribute 2 is the migrated DL primary SMTP Address"}
-        }
-        
+
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
 
-        write-HasTable -hasTable $functionVariables
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
+        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
+        out-logfile -string ("Use Exchange On Premises ="+$useOnPremisesExchange)
+        out-logfile -string ("DN of object to modify / disable "+$originalDLConfiguration.distinguishedName)
+
+        OUt-LogFile -string ("Parameter Set:")
+        
+        foreach ($parameterIncluded in $parameterSet)
+        {
+            Out-Logfile -string $parameterIncluded
+        }
+
+        out-logfile -string ("Disalbed DL Custom Attribute 1 = "+$functionCustomAttribute1)
+        out-logfile -string ("Disabled DL Custom Attribute 2 = "+$functionCustomAttribute2)
 
         #Get the group using LDAP / AD providers.
         
@@ -88,7 +102,7 @@
         out-logfile -string "The group has been migrated and is retained - set custom attributes with original information for other migration dependencies."
         
         try {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionVariables.functionCustomAttribute1.value;extensionAttribute2=$functionVariables.functionCustomAttribute2.value} -server $globalCatalogServer -credential $adCredential
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer -credential $adCredential
         }
         catch {
             out-logfile -string $_ -isError:$TRUE

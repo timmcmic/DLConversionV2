@@ -30,9 +30,6 @@
         Out-LogFile -string "BEGIN Get-MailOnMicrosoftComDomain"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string ("Mail.onmicrosoft.com name: "+$functionDomainNameString0)
-        out-logfile -string ("Alternate routing domain for older tenants: "+$functionDomainString1)
-
         $functionAcceptedDomains = get-o365acceptedDomain
 
         foreach ($domain in $functionAcceptedDomains)

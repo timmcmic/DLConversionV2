@@ -46,6 +46,10 @@
         Out-LogFile -string "BEGIN INVOKE-ADCONNECT"
         Out-LogFile -string "********************************************************************************"
 
+        #Log the parameters and variables for the function.
+
+        Out-LogFile -string ("PowershellSessionName = "+$PowershellSessionName)
+
         #Obtain the powershell session to work with.
 
         try 
