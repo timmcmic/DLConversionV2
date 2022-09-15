@@ -84,17 +84,24 @@ function start-collectOnPremMailboxFolders
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
-    [string]$onPremMailboxFolderPermissions="onPremailboxFolderPermissions.xml"
-    [string]$onPremMailboxList="onPremMailboxList.xml"
-    [string]$onPremMailboxProcessed="onPremMailboxProcessed.xml"
     [int]$auditPermissionsFound=0
 
+
     #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+
+    $onPremExchangePowershell = @{
+        exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
+        exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
+        exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+        exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+        exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangePowershell" ; "Description" = "Exchange On-Premises powershell session name."}
+    }
+
+    $xmlFiles = @{
+        onPremMailboxFolderPermissions= @{"Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "XML file to hold exported folder permissions"}
+        onPremMailboxList= @{"Value" = "onPremMailboxList.xml" ; "Description" = "XML file to hold recipients to be processed"}
+        onPremMailboxProcessed= @{"Value" = "onPremMailboxProcessed.xml" ;"Description" = "XML file to hold the last recipient processed"}
+    }
 
     new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath
 
@@ -102,23 +109,48 @@ function start-collectOnPremMailboxFolders
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
+    write-hashTable -hashTable $onPremExchangePowershell
+    write-hashTable -hashTable $xmlFiles
+
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    try 
+    if ($exchangeAuthenticationMethod -eq "Basic")
     {
-        out-logFile -string "Creating session to import."
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
 
-        $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+        }
+        catch 
+        {
+            out-logfile -string $_
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
-    catch 
+    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
     {
-        out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
+
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+        }
+        catch 
+        {
+            out-logfile -string $_
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
+    else 
+    {
+        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+    }
+
     try 
     {
         out-logFile -string "Attempting to import powershell session."
@@ -158,7 +190,7 @@ function start-collectOnPremMailboxFolders
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-                $fileName = $onPremMailboxList
+                $fileName = $xmlFiles.onPremMailboxList.value
                 $exportFile=Join-path $logFolderPath $fileName
                 
                 $auditMailboxes | export-clixml -path $exportFile
@@ -171,7 +203,7 @@ function start-collectOnPremMailboxFolders
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-                $fileName = $onPremMailboxList
+                $fileName = $xmlFiles.onPremMailboxList.value
                 $exportFile=Join-path $logFolderPath $fileName
                 
                 $auditMailboxes | export-clixml -path $exportFile
@@ -183,7 +215,7 @@ function start-collectOnPremMailboxFolders
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = $onPremMailboxList
+                $fileName = $xmlFiles.onPremMailboxList.value
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditMailboxes = import-clixml -path $importFile
@@ -196,7 +228,7 @@ function start-collectOnPremMailboxFolders
             out-logfile -string "Import the count of the last mailbox processed."
 
             try {
-                $fileName = $onPremMailboxProcessed
+                $fileName = $xmlFiles.onPremMailboxProcessed.value
                 $importFile=Join-path $logFolderPath $fileName
 
                 $mailboxCounter=Import-Clixml -path $importFile
@@ -217,7 +249,7 @@ function start-collectOnPremMailboxFolders
 
             try {
 
-                $fileName=$onPremMailboxFolderPermissions
+                $fileName=$xmlFiles.onPremMailboxFolderPermissions.value
                 $importFile=Join-path $logFolderPath $fileName
     
                 $auditFolderPermissions = import-clixml -Path $importFile
@@ -386,12 +418,12 @@ function start-collectOnPremMailboxFolders
 
         #At this time write out the permissions.
 
-        $fileName = $onPremMailboxFolderPermissions
+        $fileName = $xmlFiles.onPremMailboxFolderPermissions.value
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditFolderPermissions | Export-Clixml -Path $exportFile
         
-        $fileName = $onPremMailboxProcessed
+        $fileName = $xmlFiles.onPremMailboxProcessed.value
         $exportFile=Join-path $logFolderPath $fileName
 
         $mailboxCounter | export-clixml -path $exportFile

@@ -82,16 +82,20 @@ function start-collectOnPremSendAs
     [int]$forCounter=0
     [int]$recipientCounter=0
     [int]$totalRecipients=0
-    [string]$onPremRecipientSendAs="onPremRecipientSendAs.xml"
-    [string]$onPremRecipientList="onPremRecipientList.xml"
-    [string]$onPremRecipientProcessed="onPremRecipientProcessed.xml"
 
-    #Static variables utilized for the Exchange On-Premsies Powershell.
-   
-    [string]$exchangeServerConfiguration = "Microsoft.Exchange" #Powershell configuration.
-    [boolean]$exchangeServerAllowRedirection = $TRUE #Allow redirection of URI call.
-    [string]$exchangeServerURI = "https://"+$exchangeServer+"/powershell" #Full URL to the on premises powershell instance based off name specified parameter.
-    [string]$exchangeOnPremisesPowershellSessionName="ExchangeOnPremises" #Defines universal name for on premises Exchange Powershell session.
+    $xmlFiles = @{
+        onPremRecipientSendAs= @{"Value" = "onPremRecipientSendAs.xml" ; "Description" = "XML file that holds send as permissions from on premises"}
+        onPremRecipientList= @{"Value" = "onPremRecipientList.xml" ; "Description" = "XML file that holds recipients to process for send as rights"}
+        onPremRecipientProcessed= @{"Value" = "onPremRecipientProcessed.xml" ; "Description" = "XML file that holds the last processed recipient"}
+    }
+
+    $onPremExchangePowershell = @{
+        exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
+        exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
+        exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+        exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
+        exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangePowershell" ; "Description" = "Exchange On-Premises powershell session name."}
+    }
 
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
@@ -105,17 +109,39 @@ function start-collectOnPremSendAs
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    try 
+    if ($exchangeAuthenticationMethod -eq "Basic")
     {
-        out-logFile -string "Creating session to import."
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
 
-        $sessionToImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $exchangeOnPremisesPowershellSessionName -connectionURI $exchangeServerURI -authenticationType $exchangeAuthenticationMethod -configurationName $exchangeServerConfiguration -allowredirection $exchangeServerAllowRedirection -requiresImport:$TRUE -isAudit:$TRUE
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+        }
+        catch 
+        {
+            out-logfile -string $_
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
-    catch 
+    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
     {
-        out-logFile -string "Unable to create session to import."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+        try 
+        {
+            Out-LogFile -string "Calling New-PowerShellSession"
+
+            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+        }
+        catch 
+        {
+            out-logfile -string $_
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
     }
+    else 
+    {
+        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+    }
+
     try 
     {
         out-logFile -string "Attempting to import powershell session."
@@ -155,7 +181,7 @@ function start-collectOnPremSendAs
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
-                $fileName = $onPremRecipientList
+                $fileName = $xmlFiles.onPremRecipientList.value
                 $exportFile=Join-path $logFolderPath $fileName
                 
                 $auditRecipients | export-clixml -path $exportFile
@@ -168,7 +194,7 @@ function start-collectOnPremSendAs
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
-                $fileName = $onPremRecipientList
+                $fileName = $xmlFiles.onPremRecipientList.value
                 $exportFile=Join-path $logFolderPath $fileName
                 
                 $auditRecipients | export-clixml -path $exportFile
@@ -179,7 +205,7 @@ function start-collectOnPremSendAs
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = $onPremRecipientList
+                $fileName = $xmlFiles.onPremRecipientList.value
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditRecipients = import-clixml -path $importFile
@@ -192,7 +218,7 @@ function start-collectOnPremSendAs
             out-logfile -string "Import the count of the last mailbox processed."
 
             try {
-                $fileName = $onPremRecipientProcessed
+                $fileName = $xmlFiles.onPremRecipientProcessed.value
                 $importFile=Join-path $logFolderPath $fileName
 
                 $recipientCounter=Import-Clixml -path $importFile
@@ -213,7 +239,7 @@ function start-collectOnPremSendAs
 
             try {
 
-                $fileName=$onPremRecipientSendAs
+                $fileName=$xmlFiles.onPremRecipientSendAs.value
                 $importFile=Join-path $logFolderPath $fileName
     
                 $auditSendAs = import-clixml -Path $importFile
@@ -274,12 +300,12 @@ function start-collectOnPremSendAs
             out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
-        $fileName = $onPremRecipientSendAs
+        $fileName = $xmlFiles.onPremRecipientSendAs.value
         $exportFile=Join-path $logFolderPath $fileName
 
         $auditSendAs | Export-Clixml -Path $exportFile
         
-        $fileName = $onPremRecipientProcessed
+        $fileName = $xmlFiles.onPremRecipientProcessed.value
         $exportFile=Join-path $logFolderPath $fileName
 
         $recipientCounter | export-clixml -path $exportFile
