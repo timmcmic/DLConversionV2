@@ -47,8 +47,8 @@
             [Parameter(Mandatory = $TRUE,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
             $adCredential,
-            [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
-            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
+            [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
             [boolean]$isValidTest=$FALSE
         )
 
