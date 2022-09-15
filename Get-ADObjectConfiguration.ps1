@@ -46,7 +46,10 @@
             [array]$parameterSet,
             [Parameter(Mandatory = $TRUE,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $true,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $true,ParameterSetName = "ByDN")]
+            [boolean]$isValidTest=$FALSE
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -97,7 +100,7 @@
             {
                 out-logfile -string ("Searching by distinguished name "+$dn)
 
-                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential
+                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
             }
             else 
             {
@@ -107,9 +110,14 @@
 
             #If the ad provider command cannot find the group - the variable is NULL.  An error is not thrown.
 
-            if ($functionDLConfiguration -eq $NULL)
+            if (($functionDLConfiguration -eq $NULL)  -and ($isValidTest -eq $FALSE))
             {
                 throw "The group cannot be found in Active Directory by email address."
+            }
+            elseif (($functionDLConfiguration -eq $NULL)  -and ($isValidTest -eq $TRUE)) 
+            {
+                out-logfile -string "Function called to validate recipient - not found."
+                out-logfile -string "Returning as this is not an error in this function"
             }
 
             Out-LogFile -string "Original DL configuration found and recorded."
@@ -147,5 +155,8 @@
             out-logfile -string "Single object detected - returning DL configuration."
         }
         
-        return $functionDLConfiguration
+        if ($functionDLConfiguration -ne $NULL)
+        {
+            return $functionDLConfiguration
+        } 
     }
