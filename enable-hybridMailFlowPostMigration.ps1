@@ -227,6 +227,11 @@
             out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
         }
 
+        if (Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential )
+        {
+            out-logfile -string "An object exists with the same mail address as the migrated group.  Please review before proceeding." -isError:$TRUE
+        }
+
         Out-LogFile -string "END PARAMETER VALIDATION"
         Out-LogFile -string "********************************************************************************"
         
