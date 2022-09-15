@@ -246,7 +246,7 @@
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-        Test-PowershellModule -powershellModuleName $coreVariables.exchangeOnPremisesPowershellSessionName.value -powershellVersionTest:$TRUE
+        Test-PowershellModule -powershellModuleName $coreVariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
 
         Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
