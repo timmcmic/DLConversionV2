@@ -89,11 +89,6 @@
             routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
             routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
         }
-    
-
-        [string]$xmlFiles.office365DLConfigurationXML.value = "office365DLConfigurationXML"
-        [string]$xmlFiles.routingContactXML.value="routingContactXML"
-        [string]$xmlFiles.routingDynamicGroupXML.value="routingDynamicGroupXML"
 
         $routingContactConfig=$NULL
         $routingDynamicGroup=$NULL
@@ -410,7 +405,7 @@
 
             out-logfile -string "The routing contact was found and recorded."
 
-            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $xmlFiles.routingContactXML.value+0
+            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $xmlFiles.routingContactXML.value
         }
         catch {
             out-logfile -string "The routing contact is not present - create the routing contact."
@@ -455,7 +450,7 @@
             }
         } until ($stopLoop -eq $TRUE)       
 
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $xmlFiles.routingContactXML.value+1
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-Updated")
 
         #At this time the mail contact needs to be mail enabled.
 
@@ -479,7 +474,7 @@
             out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
         }
 
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport $xmlFiles.routingContactXML.value+2
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-Updated2")
 
         #The routing contact is now mail enabled.  Create the dynamic distribution group.
 
