@@ -45,12 +45,9 @@
         try{
             $functionDLConfiguration = get-AzureADGroup -objectID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
         }
-        try {
+        catch {
             out-logfile -string $_
             out-logfile -string "Unable to obtain group configuration from Azure Active Directory"
-        }
-        catch {
-            {1:<#Do this if a terminating exception happens#>}
         }
 
         Out-LogFile -string "END GET-AzureADDlConfiguration"
