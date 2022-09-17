@@ -957,7 +957,7 @@ Function Start-DistributionListMigration
       #User specified non-certifate authentication credentials.
 
         try {
-            New-newAzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
         }
         catch {
             out-logfile -string "Unable to create the Azure AD powershell session using credentials."
