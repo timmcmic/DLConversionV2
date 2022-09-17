@@ -222,16 +222,16 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE,
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$FALSE,
+        [pscredential]$azureADCredential,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
         [Parameter(Mandatory=$false)]
-        [string]$azureTenantID=$FALSE,
+        [string]$azureTenantID="",
         [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint=$FALSE,
+        [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID=$FALSE
+        [string]$azureApplicationID=""
     )
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
