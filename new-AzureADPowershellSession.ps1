@@ -41,7 +41,7 @@
             [string]$azureApplicationID,
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
-            [string]$azureEnvironment,
+            [string]$azureEnvironmentName,
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $false)]
             [boolean]$isAudit=$FALSE
@@ -96,6 +96,6 @@
                
         Out-LogFile -string "The exchange online powershell session was created successfully."
 
-        Out-LogFile -string "END NEW-EXCHANGEONLINEPOWERSHELLSESSION"
+        Out-LogFile -string "END NEW-AZUREADPOWERSHELL SESSION"
         Out-LogFile -string "********************************************************************************"
     }
