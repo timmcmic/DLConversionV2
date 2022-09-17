@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $o365dlconfiguration
+            $o365dlconfiguration,
+            [Parameter(Mandatory = $true)]
+            $azureADDLConfiguration
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -46,7 +48,12 @@
 
             if ($o365dlconfiguration.isDirSynced -eq $FALSE)
             {
-                Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
+                out-logfile -string "Exchange Online is reporting that the distribution list is not directory synced.  Testing azure..."
+
+                if ($azureADDLConfiguration.dirSyncEnabled -eq $FALSE)
+                {
+                    Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
+                }
             }
             else 
             {

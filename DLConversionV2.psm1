@@ -453,6 +453,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
+    $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
@@ -977,7 +978,7 @@ Function Start-DistributionListMigration
         }
    }
 
-   exit #Debug Exit
+   #exit #Debug Exit
 
    #Create the connection to exchange online.
 
@@ -1319,6 +1320,25 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    out-logfile -string "Capture the original Azure AD distribution list informaiton"
+
+    if ($allowNonSyncGroup -eq $FALSE)
+    {
+        try{
+            $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+        }
+    }
+
+    out-logfile -string $azureADDlConfiguraiton
+
+    out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+    out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -1329,7 +1349,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
         }
         catch 
         {
