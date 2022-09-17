@@ -1322,7 +1322,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
-    if ($allowNonSyncGroup -eq $FALSE)
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         try{
             $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
