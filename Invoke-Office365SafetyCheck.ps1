@@ -54,6 +54,10 @@
                 {
                     Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
                 }
+                else 
+                {
+                    out-logfile -string "Azure is reporting the list is directory syncrhonized.  Allow the migration to proceed."
+                }
             }
             else 
             {
