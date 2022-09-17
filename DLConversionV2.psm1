@@ -969,7 +969,7 @@ Function Start-DistributionListMigration
       #User specified thumbprint authentication.
 
         try {
-            new-AzureADPowershellSession.ps1 -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
+            new-AzureADPowershellSession -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using certificate."
