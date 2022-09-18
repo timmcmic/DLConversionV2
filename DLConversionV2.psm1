@@ -220,7 +220,18 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
-        [boolean]$allowNonSyncedGroup=$FALSE
+        [boolean]$allowNonSyncedGroup=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [pscredential]$azureADCredential,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
+        [string]$azureEnvironmentName="AzureCloud",
+        [Parameter(Mandatory=$false)]
+        [string]$azureTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$azureCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$azureApplicationID=""
     )
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -281,6 +292,7 @@ Function Start-DistributionListMigration
         ADGlobalCatalogPowershellSessionName = @{ "Value" = "ADGlobalCatalog" ; "Description" = "Static AD Domain controller powershell session name" }
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
         activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
+        azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
         globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
         globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
@@ -383,6 +395,7 @@ Function Start-DistributionListMigration
         retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
         retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
         retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
+        azureDLConfigurationXML = @{"Value" = "azureADDL.xml" ; "Description" = "Export XML file holding the configuration from azure active directory"}
     }
 
     #Define the property sets that will be cleared on the on premises object.
@@ -395,6 +408,7 @@ Function Start-DistributionListMigration
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    $originalAzureADConfiguration=$NULL #This holds the azure ad DL configuration
     $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
     $routingContactConfig=$NULL #Holds the mail routing contact configuration.
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
@@ -439,6 +453,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
+    $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
@@ -566,7 +581,27 @@ Function Start-DistributionListMigration
     
     $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
     
-    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride   
+    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
+    
+    if ($azureTenantID -ne $NULL)
+    {
+        $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
+    }
+
+    if ($azureCertificateThumbprint -ne $NULL)
+    {
+        $azureCertificateThumbprint = remove-StringSpace -stringToFix $azureCertificateThumbPrint
+    }
+
+    if ($azureEnvironmentName -ne $NULL)
+    {
+        $azureEnvironmentName = remove-StringSpace -stringToFix $azureEnvironmentName
+    }
+
+    if ($azureApplicationID -ne $NULL)
+    {
+        $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
+    }
 
     if ($aadConnectCredential -ne $null)
     {
@@ -581,6 +616,11 @@ Function Start-DistributionListMigration
     if ($exchangeOnlineCredential -ne $null)
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
+    }
+
+    if ($azureADCreential -ne $NULL)
+    {
+        out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
 
     Out-LogFile -string "********************************************************************************"
@@ -718,6 +758,23 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Only one method of Exchange Online authentication specified."
     }
 
+    #Validate that only one method of engaging exchange online was specified.
+
+    Out-LogFile -string "Validating Azure AD Credentials."
+
+    if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
+    {
+        Out-LogFile -string "ERROR:  Only one method of azure cloud authentication can be specified.  Use either azure cloud credentials or azure cloud certificate thumbprint." -isError:$TRUE
+    }
+    elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
+    {
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -string "Only one method of Exchange Online authentication specified."
+    }
+
     #Validate that all information for the certificate connection has been provieed.
 
     if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
@@ -729,6 +786,25 @@ Function Start-DistributionListMigration
         out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
     }
     elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
+    {
+        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+    }
+
+    #Validate that all information for the certificate connection has been provieed.
+
+    if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
+    {
+        out-logfile -string "The azure tenant ID and Azure App ID are required when using certificate authentication to Azure." -isError:$TRUE
+    }
+    elseif (($azureCertificateThumbprint -ne "") -and ($AzureTenantID -ne "") -and ($azureApplicationID -eq ""))
+    {
+        out-logfile -string "The azure app id is required to use certificate authentication to Azure." -isError:$TRUE
+    }
+    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
     {
         out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
     }
@@ -868,6 +944,41 @@ Function Start-DistributionListMigration
    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
    Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
+
+   Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #Create the azure ad connection
+
+   Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
+
+   if ($azureADCredential -ne $NULL)
+   {
+      #User specified non-certifate authentication credentials.
+
+        try {
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the Azure AD powershell session using credentials."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($azureCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-AzureADPowershellSession -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+
+   #exit #Debug Exit
 
    #Create the connection to exchange online.
 
@@ -1209,6 +1320,25 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    out-logfile -string "Capture the original Azure AD distribution list informaiton"
+
+    if ($allowNonSyncedGroup -eq $FALSE)
+    {
+        try{
+            $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+        }
+    }
+
+    out-logfile -string $azureADDlConfiguraiton
+
+    out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+    out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -1219,7 +1349,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -errorAction STOP
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
         }
         catch 
         {
