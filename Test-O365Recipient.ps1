@@ -65,7 +65,8 @@
             out-logfile -string $functionDirectoryObjectID[1]
 
             try {
-                get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                #get-exoRecipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                get-o365Recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
                 $isTestError="No"
             }
             catch {
@@ -81,7 +82,8 @@
             out-logfile -string $member.recipientOrUser
 
             try {
-                get-exoRecipient -identity $member.PrimarySMTPAddressOrUPN -errorAction Stop
+                #get-exoRecipient -identity $member.PrimarySMTPAddressOrUPN -errorAction Stop
+                get-o365Recipient -identity $member.PrimarySMTPAddressOrUPN -errorAction Stop
                 $isTestError="No"
             }
             catch {

@@ -185,7 +185,8 @@ function start-collectOffice365FullMailboxAccess
             {
                 out-logFile -string "Obtaining all Office 365 mailboxes."
 
-                $auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
+                #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -198,7 +199,8 @@ function start-collectOffice365FullMailboxAccess
             {
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
-                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                    #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                    $auditMailboxes += get-o365ailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                 }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -312,7 +314,8 @@ function start-collectOffice365FullMailboxAccess
                 $forCounter++    
             }
 
-            $auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | where {$_.user -notlike "NT Authority\Self"}
+            #$auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | where {$_.user -notlike "NT Authority\Self"}
+            $auditFullMailboxAccess+=get-o365mailboxPermission -identity $mailbox.identity | where {$_.user -notlike "NT Authority\Self"}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."

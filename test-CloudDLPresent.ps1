@@ -60,7 +60,7 @@
                 start-sleepProgress -sleepString "Group found in Office 365 - sleep for 30 seconds - try again." -sleepSeconds 30
             }
 
-        } while (get-exoRecipient -identity $groupSMTPAddress)
+        } while (get-o365Recipient -identity $groupSMTPAddress)
 
         Out-LogFile -string "END TEST-CLOUDDLPRESENT"
         Out-LogFile -string "********************************************************************************"
