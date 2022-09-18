@@ -175,7 +175,8 @@ function start-collectOffice365MailboxFolders
             {
                 out-logFile -string "Obtaining all office 365 mailboxes."
 
-                $auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
+                #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -191,7 +192,8 @@ function start-collectOffice365MailboxFolders
 
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
-                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
+                    #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
+                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
                 }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
@@ -309,7 +311,8 @@ function start-collectOffice365MailboxFolders
                 {
                     out-logfile -string "Pulling mailbox folder statistics."
     
-                    $auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -UserPrincipalName $mailbox.userPrincipalName -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                    #$auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -UserPrincipalName $mailbox.userPrincipalName -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                    $auditFolders=get-o365mailboxFolderStatistics -identity $mailbox.identity -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
     
                     out-logfile -string "Mailbox folder statistics obtained."
 
@@ -408,7 +411,8 @@ function start-collectOffice365MailboxFolders
                     do {
                         try {
                             out-logfile -string "Obtaining folder permissions..."
-                            $forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -UserPrincipalName $mailbox.userPrincipalName  -ErrorAction Stop
+                            #$forPermissions = Get-exomailboxFolderPermission -Identity $FolderName -UserPrincipalName $mailbox.userPrincipalName  -ErrorAction Stop
+                            $forPermissions = Get-o365mailboxFolderPermission -Identity $FolderName -ErrorAction Stop
                             out-logfile -string "Folder permissions obtained..."
 
                             $stopLoop=$TRUE

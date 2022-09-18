@@ -70,7 +70,8 @@
             try {
                 out-logfile -string "Getting all Office 365 mailboxes."
     
-                $functionMailboxes = get-exomailbox -resultsize unlimited
+                #$functionMailboxes = get-exomailbox -resultsize unlimited
+                $functionMailboxes = get-o365mailbox -resultsize unlimited
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
@@ -90,7 +91,8 @@
     
                     $PercentComplete += $ProgressDelta
     
-                    $functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
+                    #$functionFullMailboxAccess+=get-exoMailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
+                    $functionFullMailboxAccess+=get-o365MailboxPermission -identity $mailbox.identity | where {$_.user -eq $functionRecipient.identity}
                 }
             }
             catch 
@@ -105,7 +107,8 @@
             try {
                 out-logfile -string "Getting recipient..."
     
-                $functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
+                #$functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
+                $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE
