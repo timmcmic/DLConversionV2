@@ -150,20 +150,25 @@ Function Start-DistributionListMigration
     (
         [Parameter(Mandatory = $true)]
         [string]$groupSMTPAddress,
+        #Local Active Director Domain Controller Parameters
         [Parameter(Mandatory = $true)]
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
-        [Parameter(Mandatory = $true)]
-        [string]$logFolderPath,
+        #Azure Active Directory Connect Parameters
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$aadConnectCredential=$NULL,
+        #Exchange On-Premises Parameters
         [Parameter(Mandatory = $false)]
         [string]$exchangeServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        [string]$exchangeAuthenticationMethod="Basic",
+        #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
@@ -175,52 +180,7 @@ Function Start-DistributionListMigration
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        [string]$exchangeAuthenticationMethod="Basic",
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainOffice365Settings=$true,
-        [Parameter(Mandatory = $true)]
-        [string]$dnNoSyncOU = "NotSet",
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainOriginalGroup = $TRUE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$enableHybridMailflow = $FALSE,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution","None")]
-        [string]$groupTypeOverride="None",
-        [Parameter(Mandatory = $false)]
-        [boolean]$triggerUpgradeToOffice365Group=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainFullMailboxAccessOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainSendAsOffice365=$TRUE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [int]$threadNumberAssigned=0,
-        [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0,
-        [Parameter(Mandatory = $FALSE)]
-        [boolean]$isMultiMachine=$FALSE,
-        [Parameter(Mandatory = $FALSE)]
-        [string]$remoteDriveLetter=$NULL,
-        [Parameter(Mandatory=$false)]
-        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
-        [Parameter(Mandatory=$false)]
-        [boolean]$allowNonSyncedGroup=$FALSE,
+        #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
         [pscredential]$azureADCredential,
         [Parameter(Mandatory = $false)]
@@ -231,7 +191,46 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID=""
+        [string]$azureApplicationID="",
+        #Define other mandatory parameters
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath,
+        [Parameter(Mandatory = $true)]
+        [string]$dnNoSyncOU = "NotSet",
+        #Defining optional parameters for retention and upgrade
+        [Parameter(Mandatory = $false)]
+        [boolean]$retainOriginalGroup = $TRUE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$enableHybridMailflow = $FALSE,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Security","Distribution","None")]
+        [string]$groupTypeOverride="None",
+        [Parameter(Mandatory = $false)]
+        [boolean]$triggerUpgradeToOffice365Group=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [boolean]$allowNonSyncedGroup=$FALSE,
+        #Definte parameters for pre-collected permissions
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedSendAsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        #Define parameters for multi-threaded operations
+        [Parameter(Mandatory = $false)]
+        [int]$threadNumberAssigned=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0,
+        [Parameter(Mandatory = $FALSE)]
+        [boolean]$isMultiMachine=$FALSE,
+        [Parameter(Mandatory = $FALSE)]
+        [string]$remoteDriveLetter=$NULL
     )
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -253,6 +252,11 @@ Function Start-DistributionListMigration
     
     [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
     [boolean]$retainMailboxFolderPermsOffice365=$FALSE
+    [boolean]$retainOffice365Settings=$true
+    [boolean]$retainFullMailboxAccessOnPrem=$FALSE
+    [boolean]$retainSendAsOnPrem=$FALSE
+    [boolean]$retainFullMailboxAccessOffice365=$FALSE
+    [boolean]$retainSendAsOffice365=$TRUE
 
     if ($isMultiMachine -eq $TRUE)
     {
