@@ -48,6 +48,11 @@
         }
         catch 
         {
+            if ($powershellModuleName -eq "AzureAD")
+            {
+                out-logfile -string "Please see https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/ for more information on a new requirement."
+            }
+
             Out-LogFile -string $_ -isError:$TRUE
         }
 
