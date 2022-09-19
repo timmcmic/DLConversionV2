@@ -58,6 +58,11 @@
                     out-logfile -string $azureADDLConfiguration.dirSyncEnabled
                     Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
                 }
+                elseif ($azureADDLConfiguration.dirSyncEnabled -eq $null)
+                {
+                    out-logfile -string "DirSyncEnabled NULL in AzureAD - not synced."
+                    out-logfile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
+                }
                 else 
                 {
                     out-logfile -string $azureADDLConfiguration.dirSyncEnabled
