@@ -78,8 +78,6 @@
             out-logfile -string $tempOUSubstring
         }
 
-        
-
         $returnOU = $tempOUSubstring
 
         Out-LogFile -string "********************************************************************************"

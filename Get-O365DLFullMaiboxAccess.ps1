@@ -115,31 +115,6 @@
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            <#
-
-            $ProgressDelta = 100/($collectedData.count); $PercentComplete = 0; $MbxNumber = 0
-
-            out-logfile -string "Processing full mailbox access based on imported data."
-
-            foreach ($mailbox in $collectedData)
-            {
-                $MbxNumber++
-    
-                write-progress -activity "Processing Recipient" -status $mailbox.identity -PercentComplete $PercentComplete
-
-                $PercentComplete += $ProgressDelta
-
-                if ($mailbox.user.tostring() -notlike "*S-1-5-21*")
-                {
-                    if ($mailbox.user.tostring() -eq $functionRecipient.Identity )
-                    {
-                        $functionFullMailboxAccess+=$mailbox
-                    }
-                }
-            }
-
-            #>
-
             out-logfile "Obtaining all full mailbox access permissions in Office 365."
 
             $functionFullMailboxAccess = $collectedData | where {$_.user.contains($functionRecipient.identity)}

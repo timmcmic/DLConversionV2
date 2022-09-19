@@ -3215,88 +3215,6 @@ Function Start-DistributionListMigration
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has managedBY = "+$allOffice365ManagedBy.count)
 
-        <#
-
-        #Process all dynamic distribution groups.
-
-        try {
-            $allOffice365DynamicAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -groupType "Dynamic" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has accept rights = "+$allOffice365DynamicAccept.count)
-
-        try {
-            $allOffice365DynamicReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -groupType "Dynamic" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has reject rights = "+$allOffice365DynamicReject.count)
-
-        try {
-            $allOffice365DynamicBypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365BypassModerationFrom.value -groupType "Dynamic" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365DynamicBypassModeration.count)
-
-        try {
-            $allOffice365DynamicGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -groupType "Dynamic" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has grantSendOnBehalFto = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
-
-        try {
-            $allOffice365DynamicManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ManagedBy.value -groupType "Dynamic" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of groups in Office 365 dynamic cloud only that the DL has managedBY = "+$allOffice365DynamicManagedBy.count)
-
-        #Process universal groups.
-
-        try {
-            $allOffice365UniversalAccept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -groupType "Unified" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has accept rights on = "+$allOffice365UniversalAccept.count)
-
-        try{
-            $allOffice365UniversalReject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -groupType "Unified" -errorAction STOP
-        }
-        catch{
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has reject rights on = "+$allOffice365UniversalReject.count)
-
-        try {
-            $allOffice365UniversalGrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -groupType "Unified" -errorAction STOP
-        }
-        catch {
-            out-logFile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string ("The number of universal groups in the Office 365 cloud that the DL has grant send on behalf rights on = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
-
-        #>
-
-        #Process other mail enabled object dependencies.
-
         try {
             $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ForwardingAddress.value -errorAction STOP
         }
@@ -3459,64 +3377,6 @@ Function Start-DistributionListMigration
             $allOffice365ManagedBy=@()    
         }
 
-        <#
-
-        if ($allOffice365DynamicAccept -ne $NULL)
-        {
-            out-logfile -string $allOffice365DynamicAccept
-            out-xmlFile -itemToExport $allOffice365DynamicAccept -itemNameToExport $allOffice365DynamicAcceptXML
-        }
-        else 
-        {
-            $allOffice365DynamicAccept=@()    
-        }
-
-        if ($allOffice365DynamicReject -ne $NULL)
-        {
-            out-logfile -string $allOffice365DynamicReject
-            out-xmlFile -itemToExport $allOffice365DynamicReject -itemNameToExport $allOffice365DynamicRejectXML
-        }
-        else 
-        {
-            $allOffice365DynamicReject=@()    
-        }
-        
-        if ($allOffice365DynamicBypassModeration -ne $NULL)
-        {
-            out-logfile -string $allOffice365DynamicBypassModeration
-            out-xmlFile -itemToExport $allOffice365DynamicBypassModeration -itemNameToExport $allOffice365DynamicBypassModerationXML
-        }
-        else 
-        {
-            $allOffice365DynamicBypassModeration=@()    
-        }
-
-        if ($allOffice365DynamicGrantSendOnBehalfTo -ne $NULL)
-        {
-            out-logfile -string $allOffice365DynamicGrantSendOnBehalfTo
-            out-xmlfile -itemToExport $allOffice365DynamicGrantSendOnBehalfTo -itemNameToExport $allOffice365DynamicGrantSendOnBehalfToXML
-        }
-        else 
-        {
-            $allOffice365DynamicGrantSendOnBehalfTo=@()    
-        }
-
-        if ($allOffice365DynamicManagedBy -ne $NULL)
-        {
-            out-logfile -string $allOffice365DynamicManagedBy
-            out-xmlFile -itemToExport $allOffice365DynamicManagedBy -itemNameToExport $allOffice365DynamicManagedByXML
-
-            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
-
-            $groupTypeOverride="Security"
-        }
-        else 
-        {
-            $allOffice365DynamicManagedBy=@()    
-        }
-
-        #>
-
         if ($allOffice365ForwardingAddress -ne $NULL)
         {
             out-logfile -string $allOffice365ForwardingAddress
@@ -3526,40 +3386,6 @@ Function Start-DistributionListMigration
         {
             $allOffice365ForwardingAddress=@()    
         }
-
-        <#
-
-        if ($allOffice365UniversalAccept -ne $NULL)
-        {
-            out-logfile -string $allOffice365UniversalAccept
-            out-xmlfile -itemToExport $allOffice365UniversalAccept -itemNameToExport $allOffice365UniversalAcceptXML
-        }
-        else 
-        {
-            $allOffice365UniversalAccept=@()    
-        }
-
-        if ($allOffice365UniversalReject -ne $NULL)
-        {
-            out-logfile -string $allOffice365UniversalReject
-            out-xmlFIle -itemToExport $allOffice365UniversalReject -itemNameToExport $allOffice365UniversalRejectXML
-        }
-        else 
-        {
-            $allOffice365UniversalReject=@()    
-        }
-
-        if ($allOffice365UniversalGrantSendOnBehalfTo -ne $NULL)
-        {
-            out-logfile -string $allOffice365UniversalGrantSendOnBehalfTo
-            out-xmlFile -itemToExport $allOffice365UniversalGrantSendOnBehalfTo -itemNameToExport $allOffice365UniversalGrantSendOnBehalfToXML
-        }
-        else 
-        {
-            $allOffice365UniversalGrantSendOnBehalfTo=@()    
-        }
-
-        #>
 
         if ($allOffice365SendAsAccess -ne $NULL)
         {
@@ -3628,18 +3454,10 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
     out-logfile -string ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
     out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
-    #out-logfile -string ("The number of office 365 unified groups with accept permissions = "+$allOffice365UniversalAccept.count)
-    #out-logfile -string ("The number of office 365 unified groups with grant send on behalf to permissions = "+$allOffice365UniversalGrantSendOnBehalfTo.count)
-    #out-logfile -string ("The number of office 365 unified groups with reject permissions = "+$allOffice365UniversalReject.count)
     out-logfile -string ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
     out-logfile -string ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
     out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
     out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
-    #out-logfile -string ("The number of office 365 dynamic groups that this group is a manager of: = "+$allOffice365DynamicManagedBy.count)
-    #out-logfile -string ("The number of office 365 dynamic groups with accept permissions = "+$allOffice365DynamicAccept.count)
-    #out-logfile -string ("The number of office 365 dynamic groups with reject permissions = "+$allOffice365DynamicReject.count)
-    #out-logfile -string ("The number of office 365 dynamic groups that have this group as bypass moderation = "+$allOffice365DynamicBypassModeration.count)
-    #out-logfile -string ("The number of office 365 dynamic groups that this group has grant send on behalf to = "+$allOffice365DynamicGrantSendOnBehalfTo.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #EXIT #Debug Exit
@@ -3723,10 +3541,6 @@ Function Start-DistributionListMigration
 
     out-LogFile -string $originalDLConfigurationUpdated
     out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport (($xmlFiles.originalDLConfigurationUpdatedXML.value)+"-MoveToNoSyncOU")
-
-    
-
-    
 
     #If there are multiple threads and we've reached this point - we're ready to write a status file.
 
@@ -4001,10 +3815,6 @@ Function Start-DistributionListMigration
         
     } while ($stopLoop -eq $FALSE)
 
-    
-
-    
-
     #The distribution list has now been created.  There are single value attributes that we're now ready to update.
 
     $stopLoop = $FALSE
@@ -4190,10 +4000,6 @@ Function Start-DistributionListMigration
             }
         } while ($stopLoop -eq $false)
 
-        
-
-        
-
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
         
@@ -4280,10 +4086,6 @@ Function Start-DistributionListMigration
 
         out-logfile -string $originalDLConfigurationUpdated
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport (($xmlFiles.originalDLConfigurationUpdatedXML.value)+"-MoveToOriginalOU")
-
-        
-
-        
     }
 
     #Now it is time to create the routing contact.
@@ -4315,21 +4117,6 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            <#
-            $tempOU=get-OULocation -originalDLConfiguration $originalDLConfiguration
-            out-logfile -string $tempOU
-            $tempName=$originalDLConfiguration.cn
-            out-logfile -string $tempName
-            $tempName=$tempname.replace(' ','')
-            out-logfile -string $tempname
-            $tempName=$tempName+"-MigratedByScript"
-            out-logfile -string $tempName
-            $tempName="CN="+$tempName
-            out-logfile -string $tempName
-            $tempDN=$tempName+","+$tempOU
-            out-logfile -string $tempDN
-            #>
-
             $tempMailArray = $originalDLConfiguration.mail.split("@")
 
             foreach ($member in $tempMailArray)
@@ -4366,10 +4153,6 @@ Function Start-DistributionListMigration
 
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
-
-    
-
-    
 
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
@@ -4453,10 +4236,6 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premises group memberships to process."    
     }
 
-    
-
-    
-
     out-logfile -string ("Starting on premises reject messages from.")
 
     if ($allGroupsReject.Count -gt 0)
@@ -4517,10 +4296,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premises reject permission to evaluate."    
     }
-
-    
-
-    
 
     out-logfile -string ("Starting on premises accept messages from.")
 
@@ -4583,10 +4358,6 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    
-
-    
-
     out-logfile -string ("Starting on premises co managed by BL.")
 
     if ($allGroupsCoManagedByBL.Count -gt 0)
@@ -4647,11 +4418,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
-
-    
-
-    
-
 
     out-logfile -string ("Starting on premises bypass moderation.")
 
@@ -4714,10 +4480,6 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies accept permissions to evaluate."    
     }
 
-    
-
-    
-    
     out-logfile -string ("Starting on premises grant send on behalf to.")
 
     if ($allGroupsGrantSendOnBehalfTo.Count -gt 0)
@@ -4778,10 +4540,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
-
-    
-
-    
 
     #Managed by is a unique animal.
     #Managed by is represented by the single valued AD attribute and the multi-evalued exchange attribute.
@@ -4865,10 +4623,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
-
-    
-
-    
 
     #Forwarding address is a single value replacemet.
     #Created separate function for single values and have called that function here.
@@ -4981,10 +4735,6 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with accept permissions."    
     }
 
-    
-
-    
-
     out-logfile -string "Processing Office 365 Reject Messages From"
 
     if ($allOffice365Reject.count -gt 0)
@@ -5036,10 +4786,6 @@ Function Start-DistributionListMigration
     {
         out-LogFile -string "There were no Office 365 groups with reject permissions."    
     }
-
-    
-
-    
 
     out-logfile -string "Processing Office 365 Bypass Moderation From Users"
 
@@ -5093,10 +4839,6 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with bypass moderation permissions."    
     }
 
-    
-
-    
-
     out-logfile -string "Processing Office 365 Grant Send On Behalf To Users"
 
     if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
@@ -5149,10 +4891,6 @@ Function Start-DistributionListMigration
         out-LogFile -string "There were no Office 365 groups with grant send on behalf to permissions."    
     }
 
-    
-
-    
-
     out-logfile -string "Processing Office 365 Managed By"
 
     if ($allOffice365ManagedBy.count -gt 0)
@@ -5204,462 +4942,6 @@ Function Start-DistributionListMigration
     {
         out-LogFile -string "There were no Office 365 managed by permissions."    
     }
-
-    
-
-    <#
-
-    #Start the process of updating any dynamic distribution groups.
-
-    $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
-
-    out-logfile -string "Processing Office 365 Dynamic Accept Messages From"
-
-    if ($allOffice365DynamicAccept.count -gt 0)
-    {
-        foreach ($member in $allOffice365DynamicAccept)
-        {
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365AcceptMessagesFrom.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List AcceptMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 Dynamic groups with accept permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Dynamic Reject Messages From"
-
-    if ($allOffice365DynamicReject.count -gt 0)
-    {
-        foreach ($member in $allOffice365DynamicReject)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365RejectMessagesFrom.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 Dynamic groups with reject permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Dynamic Bypass Moderation From Users"
-
-    if ($allOffice365DynamicBypassModeration.count -gt 0)
-    {
-        foreach ($member in $allOffice365DynamicBypassModeration)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attrivutes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List BypassModerationFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 Dynamic groups with bypass moderation permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Dynamic Grant Send On Behalf To Users"
-
-    if ($allOffice365DynamicGrantSendOnBehalfTo.count -gt 0)
-    {
-        foreach ($member in $allOffice365DynamicGrantSendOnBehalfTo)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 Dynamic groups with grant send on behalf to permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Dynamic Managed By"
-
-    if ($allOffice365DynamicManagedBy.count -gt 0)
-    {
-        foreach ($member in $allOffice365DynamicManagedBy)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Dynamic -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Dynamic DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List ManagedBy"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 Dynamic managed by permissions."    
-    }
-
-    #>
-
-    <#
-
-    #Start the process of updating the unified group dependencies.
-
-    out-logfile -string "Processing Office 365 Unified Accept From"
-
-    if ($allOffice365UniversalAccept.count -gt 0)
-    {
-        foreach ($member in $allOffice365UniversalAccept)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List AcceptMessagesOnlyFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 accept from permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Unified Reject From"
-
-    if ($allOffice365UniversalReject.count -gt 0)
-    {
-        foreach ($member in $allOffice365UniversalReject)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-                $isTestError="Yes"
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List RejectMessagesFromSendersOrMembers"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 reject from permissions."    
-    }
-
-    
-
-    
-
-    out-logfile -string "Processing Office 365 Grant Send On Behalf To"
-
-    if ($allOffice365UniversalGrantSendOnBehalfTo.count -gt 0)
-    {
-        foreach ($member in $allOffice365UniversalGrantSendOnBehalfTo)
-        {
-            $isTestError="No" #Reset error tracking.
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try{
-                $isTestError=start-ReplaceOffice365Unified -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-            }
-            catch{
-                out-logfile -string $_
-                $isTestErrorDetail = $_
-            }
-
-            if ($isTestError -eq "Yes")
-            {
-                out-logfile -string "Error adding routing contact to Office 365 Universal Modern DL resource."
-
-                $isErrorObject = new-Object psObject -property @{
-                    distinguishedName = $member.distinguishedName
-                    primarySMTPAddress = $member.primarySMTPAddress
-                    alias = $member.Alias
-                    displayName = $member.displayName
-                    attribute = "Distribution List GrantSendOnBehalfTo"
-                    errorMessage = "Unable to add the migrated distribution list to Office 365 distribution group.  Manual add required."
-                    erroMessageDetail = $isTestErrorDetail
-                }
-
-                out-logfile -string $isErrorObject
-
-                $office365ReplaceErrors+=$isErrorObject
-            }
-        }
-    }
-    else 
-    {
-        out-LogFile -string "There were no Office 365 grant send on behalf to permissions."    
-    }
-
-    #>
-
-    
 
     #Process any group memberships to the service.
 
@@ -5773,8 +5055,6 @@ Function Start-DistributionListMigration
             $generalErrors+=$isErrorObject
         }
 
-        
-
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
@@ -5867,7 +5147,6 @@ Function Start-DistributionListMigration
         out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
     }
 
-
     #At this time the group has been migrated.
     #All on premises settings have been reconciled.
     #All cloud settings have been reconciled.
@@ -5893,7 +5172,6 @@ Function Start-DistributionListMigration
     {
         $isTestError="No"
     }
-
 
     if ($isTestError -eq "Yes")
     {
@@ -5922,7 +5200,6 @@ Function Start-DistributionListMigration
         $isTestError = "No"
     }
 
-
     if ($isTestError -eq "Yes")
     {
         $isErrorObject = new-Object psObject -property @{
@@ -5934,10 +5211,6 @@ Function Start-DistributionListMigration
 
         $generalErrors+=$isErrorObject
     }
-
-    
-
-   
 
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
 

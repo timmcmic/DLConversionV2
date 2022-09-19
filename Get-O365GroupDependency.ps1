@@ -128,55 +128,6 @@
             }
             else
             {
-                #The attribute type is a property of the DL - attempt to obtain.
-
-                <#
-
-                Out-LogFile -string "Entering query office 365 for DL to be set on property."
-
-                if ($groupType -eq "Standard")
-                {
-                    out-logfile -string "The group type is standard - querying distribution groups."
-                    
-                    $functionCommand = "Get-o365DistributionGroup -Filter { ($attributeType -eq `"$dn`") -and (isDirSynced -eq '$FALSE') } -errorAction 'STOP'"
-
-                    $scriptBlock=[scriptBlock]::create($functionCommand)
-
-                    $functiontest += invoke-command -scriptBlock $scriptBlock
-                    
-                    out-logfile -string ("The function command executed = "+$functionCommand)
-                }
-                elseif ($groupType -eq "Unified")
-                {
-                    out-logfile -string "The group type is unified - querying distribution groups."
-                    
-                    $functionCommand = "Get-o365UnifiedGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
-
-                    $scriptBlock=[scriptBlock]::create($functionCommand)
-
-                    $functiontest += invoke-command -scriptBlock $scriptBlock
-                    
-                    out-logfile -string ("The function command executed = "+$functionCommand)
-                }
-                elseif ($groupType -eq "Dynamic")
-                {
-                    out-logfile -string "The group type is dynamic - querying distribution groups."
-                    
-                    $functionCommand = "Get-o365DynamicDistributionGroup -Filter { $attributeType -eq `"$dn`" } -errorAction 'STOP'"
-
-                    $scriptBlock=[scriptBlock]::create($functionCommand)
-
-                    $functiontest += invoke-command -scriptBlock $scriptBlock
-                    
-                    out-logfile -string ("The function command executed = "+$functionCommand)
-                }
-                else 
-                {
-                    throw "Invalid group type specified in function call.  Acceptable Standard or Universal"    
-                } 
-
-                #>
-
                 out-logfile -string "Starting to gather attribute for all recipient types."
                 out-logfile -string "Starting collection of distribution groups."
 
