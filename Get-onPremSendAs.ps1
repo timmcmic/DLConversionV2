@@ -11,13 +11,15 @@
 
     The mail attribute of the group to search.
 
+    .PARAMETER collectedData
+
     .OUTPUTS
 
     Returns a list of all objects with send-As rights and exports them.
 
     .EXAMPLE
 
-    get-o365dlconfiguration -groupSMTPAddress Address
+    get-o365dlconfiguration -groupSMTPAddress Address -collectedData DATA
 
     #>
     Function Get-onPremSendAs

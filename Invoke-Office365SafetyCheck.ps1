@@ -11,13 +11,15 @@
 
     The DL configuration obtained by the service.
 
+    .PARAMETER azureADDLConfiguration
+
     .OUTPUTS
 
     No returns.
 
     .EXAMPLE
 
-    invoke-office365safetycheck -o365dlconfiguration o365dlconfiguration
+    invoke-office365safetycheck -o365dlconfiguration o365dlconfiguration -azureADDLConfiguration azureDLConfiguration
 
     #>
     Function Invoke-Office365SafetyCheck

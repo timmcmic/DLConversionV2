@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    new-Office365DL -groupTypeOverride "Security" -originalDLConfiguration adConfigVariable.
+    new-Office365DL -groupTypeOverride "Security" -originalDLConfiguration adConfigVariable -office365DLConfiguration CONFIG
 
     #>
     Function new-office365dl

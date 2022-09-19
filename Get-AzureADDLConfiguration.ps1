@@ -1,23 +1,23 @@
 <#
     .SYNOPSIS
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function gathers the group information from Azure Active Directory.
 
     .DESCRIPTION
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function gathers the group information from Azure Active Directory.
 
-    .PARAMETER GroupSMTPAddress
+    .PARAMETER office365DLConfiguration
 
-    The mail attribute of the group to search.
+    The Office 365 DL configuration for the group.
 
     .OUTPUTS
 
-    Returns the PS object associated with the recipient from get-o365recipient
+    Returns the information from the associated group from Azure AD>
 
     .EXAMPLE
 
-    get-o365dlconfiguration -groupSMTPAddress Address
+    get-AzureADDLConfiguration -office365DLConfiguration $configuration
 
     #>
     Function Get-AzureADDLConfiguration

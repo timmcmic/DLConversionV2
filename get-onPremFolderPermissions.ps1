@@ -1,23 +1,25 @@
 <#
     .SYNOPSIS
 
-    This function utilizes exchange on premises and searches for all send as rights across all recipients.
+    This function utilizes the collected data to search for mailbox folder permissions on the migrated DL.
 
     .DESCRIPTION
 
-    This function utilizes exchange on premises and searches for all send as rights across all recipients.
+    This function utilizes the collected data to search for mailbox folder permissions on the migrated DL.
 
     .PARAMETER originalDLConfiguration
 
     The mail attribute of the group to search.
 
+    .PARAMETER collectedData
+
     .OUTPUTS
 
-    Returns a list of all objects with send-As rights and exports them.
+    Returns all default or user created mailbox folder permissions.
 
     .EXAMPLE
 
-    get-o365dlconfiguration -groupSMTPAddress Address
+    get-o365dlconfiguration -groupSMTPAddress Address -collectedData Data
 
     #>
     Function get-onPremFolderPermissions

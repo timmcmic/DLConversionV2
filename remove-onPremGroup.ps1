@@ -7,13 +7,25 @@
 
     This function disables all open powershell sessions.
 
+    .PARAMETER globalCatalogServer
+
+    The global catalog server to run operations on.
+
+    .PARAMETER originalDLConfiguration
+
+    The original DL configuration
+
+    .PARAMETER adCredential
+
+    The active directory credential
+
     .OUTPUTS
 
     No return.
 
     .EXAMPLE
 
-    disable-allPowerShellSessions
+    disable-allPowerShellSessions -globalCatalogServer $GC -originalDLConfiguration $config -adCredential $CRED
 
     #>
     Function remove-onPremGroup

@@ -7,13 +7,25 @@
 
     This function uses the exchange management shell v2 to utilize modern authentication to connect to exchange online.
 
-    .PARAMETER exchangeOnlineThumbprint
+    .PARAMETER exchangeOnlineCertificateThumbprint
 
     The user specified thumbprint if using certificate authentication for exchange online.
 
     .PARAMETER exchangeOnlineCredential
 
     The user specified credential for exchange online.
+
+    .PARAMETER exchangeOnlineOrganiationName
+
+    The onmicrosoft.com organization name.
+
+    .PARAMETER exchangeOnlineAppID 
+
+    The appilcation ID created in Azure for exchange online management.
+
+    .PARAMETER exchangeOnlineEnvironmentName
+
+    The Exchange online environment name if a non-commercial tenant is required.
 
 	.OUTPUTS
 

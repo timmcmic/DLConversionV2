@@ -1,23 +1,27 @@
 <#
     .SYNOPSIS
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function searches the collected data for all Office 365 full mailbox access permissions.
 
     .DESCRIPTION
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+     This function searches the collected data for all Office 365 full mailbox access permissions.
 
     .PARAMETER GroupSMTPAddress
 
     The mail attribute of the group to search.
 
+    .PARAMETER collectedData
+
+    The precollected data utilized for evaluation.
+
     .OUTPUTS
 
-    Returns the PS object associated with the recipient from get-o365recipient
+    Returns all full mailbox access permissions for the migrated group.
 
     .EXAMPLE
 
-    Get-O365DLFullMaiboxAccess -groupSMTPAddress Address
+    Get-O365DLFullMaiboxAccess -groupSMTPAddress Address -collectedData DataArray
 
     #>
     Function Get-O365DLFullMaiboxAccess

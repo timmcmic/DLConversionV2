@@ -23,13 +23,21 @@
 
     The active directory credential.
 
+    .PARAMETER isRetry
+
+    Determines if this operation is being retried.
+
+    .PARAMETER isRetryOU
+
+    The OU that will be utilized when the operation is retried.
+
     .OUTPUTS
 
     No return.
 
     .EXAMPLE
 
-    Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
+    new-routingContact -originalDLConfiguration $config -office365DLConfiguration $configo365 -globalCatalogServer $GC -adCredential $cred
 
     #>
     Function new-routingContact

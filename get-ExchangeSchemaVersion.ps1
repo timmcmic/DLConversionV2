@@ -13,7 +13,7 @@
 
     .EXAMPLE
 
-    get-ExchangeSchemaVersion
+    get-ExchangeSchemaVersion -globalCatalogServer $GC -adCredential $cred
 
     #>
     Function get-ExchangeSchemaVersion

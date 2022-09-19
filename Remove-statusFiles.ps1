@@ -6,6 +6,14 @@
     .DESCRIPTION
 
     This function removes all status files in the status file directory.
+    
+    .PARAMETER functionThreadNumber
+
+    The thread number of the status file to remove.
+
+    .PARAMETER fullCleanup
+
+    Determines if all status files should be removed.
 
 	.OUTPUTS
 
@@ -13,7 +21,7 @@
 
     .EXAMPLE
 
-    remove-statusFiles
+    remove-statusFiles -functionThreadNumber 1
 
     #>
     Function remove-statusFiles

@@ -23,6 +23,8 @@
 
     The original DN of the object.
 
+    .PARAMETER adCredential
+
     .OUTPUTS
 
     None

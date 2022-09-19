@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    set-Office365DL -originalDLConfiguration DLConfiguration -groupTypeOverride TYPEOVERRIDE.
+    set-Office365DL -originalDLConfiguration DLConfiguration -groupTypeOverride TYPEOVERRIDE -office365DLConfigurationPostMigration OFFICE365DLCONFIGURATION
 
     #>
     Function set-Office365DL

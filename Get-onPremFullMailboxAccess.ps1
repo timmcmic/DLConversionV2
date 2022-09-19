@@ -11,13 +11,17 @@
 
     The mail attribute of the group to search.
 
+    .PARAMETER collectedData
+
+    The precollected data to search for full mailbox access permissions.
+
     .OUTPUTS
 
-    Returns a list of all objects with send-As rights and exports them.
+    Returns a list of all mailboxes where the migrated DL has full mailbox accesses.
 
     .EXAMPLE
 
-    Get-onPremFullMailboxAccess -originalDLConfiguration DLConfig
+    Get-onPremFullMailboxAccess -originalDLConfiguration DLConfig -collectedData Data
 
     #>
     Function Get-onPremFullMailboxAccess

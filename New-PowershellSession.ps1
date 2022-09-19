@@ -19,6 +19,26 @@
 
     This is the name of the powershell session that will be created.
 
+    .PARAMETER connectionURI
+
+    The web address for remote powershell sessions.
+
+    .PARAMETER authenticationType
+
+    Specifies to user kerberos or basic authentication is auth type is required.
+
+    .PARAMETER configurationName
+
+    The configuration name for the remote winRM sessions.
+
+    .PARAMETER allowRedirection
+
+    Determines if redirection is allowed on the winRM connection.
+
+    .PARAMETER requiresImport
+
+    Returns the PS session to the caller if import is required.
+
 	.OUTPUTS
 
     Powershell session to use for aad connect commands.

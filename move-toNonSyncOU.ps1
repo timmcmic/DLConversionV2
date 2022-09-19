@@ -19,13 +19,17 @@
 
     This is the OU that is set to not synchonize in AD Connect.
 
+    .PARAMETER adCredential
+
+    This is the credential for active directory operations.
+
     .OUTPUTS
 
     None
 
     .EXAMPLE
 
-    move-toNonSyncOU -globalCatalogServer GC -OU NonSyncOU -DN groupDN
+    move-toNonSyncOU -globalCatalogServer GC -OU NonSyncOU -DN groupDN -adCredential CRED
 
     #>
     Function move-toNonSyncOU

@@ -17,7 +17,7 @@
 
     .EXAMPLE
 
-    get-o365dlconfiguration -groupSMTPAddress Address
+    get-o365dlconfiguration -groupSMTPAddress Address -groupTypeOverride 
 
     #>
     Function Get-o365DLConfiguration

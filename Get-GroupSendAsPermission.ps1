@@ -29,7 +29,7 @@
 
     .EXAMPLE
 
-    get-GroupSendAsPermissions -DN DN -globalCatalog GC
+    get-GroupSendAsPermissions -DN DN -globalCatalog GC -adGlobalCatalogPowershellSessionName NAME -adCredential $cred
 
     #>
     Function get-GroupSendAsPermissions

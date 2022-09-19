@@ -48,15 +48,6 @@
 
     set-Office365DLMV -originalDLConfiguration -exchangeDLMembership -exchangeRejectMessage -exchangeAcceptMessage -exchangeManagedBy -exchangeModeratedBy -exchangeBypassMOderation -exchangeGrantSendOnBehalfTo.
 
-    [array$exchangeDLMembershipSMTP=$NULL
-    [array]$exchangeRejectMessagesSMTP=$NULL
-    [array]$exchangeAcceptMessageSMTP=$NULL
-    [array]$exchangeManagedBySMTP=$NULL
-    [array]$exchangeModeratedBySMTP=
-    [array]$exchangeBypassModerationSMTP=$NULL 
-    [array]$exchangeGrantSendOnBehalfToSMTP
-
-
 
     #>
     Function set-Office365DLMV

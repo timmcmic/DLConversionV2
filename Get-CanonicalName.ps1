@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    get-canonicalName -globalCatalog GC -DN DN
+    get-canonicalName -globalCatalog GC -DN DN -adCredential $cred
 
     #>
     Function get-canonicalName

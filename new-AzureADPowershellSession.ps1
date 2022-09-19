@@ -1,19 +1,31 @@
 <#
     .SYNOPSIS
 
-    This function creates the powershell session to Exchange Online.
+    This function creates the powershell session to Azure AD.
 
     .DESCRIPTION
 
-    This function uses the exchange management shell v2 to utilize modern authentication to connect to exchange online.
+    This function creates the powershell session to Azure AD.
 
-    .PARAMETER exchangeOnlineThumbprint
+    .PARAMETER azureADCredential
 
-    The user specified thumbprint if using certificate authentication for exchange online.
+    The credential utilized to connect to azure ad.
 
-    .PARAMETER exchangeOnlineCredential
+    .PARAMETER azureCertificateThumbprint
 
-    The user specified credential for exchange online.
+    The certificate thumbprint for the associated azure application.
+
+    .PARAMETER azureTenantID
+
+    The tenant ID associated with the azure application.
+
+    .PARAMETER azureApplicationID
+
+    The application ID for azure management.
+
+    .PARAMETER azureEnvironmentName
+
+    The azure environment for the connection to azure ad.
 
 	.OUTPUTS
 
@@ -21,8 +33,7 @@
 
     .EXAMPLE
 
-    New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $cred
-    New-ExchangeOnlinePowershellSession -exchangeOnlineCertificate $thumbprint
+    new-AzureADPowershellSession -AzureADCredential $CRED -azureEnvironmentName NAME
 
     #>
     Function New-AzureADPowershellSession
