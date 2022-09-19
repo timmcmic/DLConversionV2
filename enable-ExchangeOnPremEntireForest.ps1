@@ -13,7 +13,7 @@
 
     .EXAMPLE
 
-    enable-ExchangeOnPremEntireForest
+    enable-ExchangeOnPremEntireForest -isAudit:$TRUE
 
     #>
     Function enable-ExchangeOnPremEntireForest

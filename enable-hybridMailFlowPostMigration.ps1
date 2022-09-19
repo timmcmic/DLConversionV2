@@ -7,9 +7,78 @@
 
     This function enables the administrator to create the hybrid mail flow objects post migration.
 
-    .PARAMETER GroupSMTPAddress
+    .PARAMETER GROUPSMTPADDRESS
 
-    The mail attribute of the group to search.
+    *REQUIRED*
+    This attribute specifies the windows mail address of the group to be migrated.
+
+    .PARAMETER GLOBALCATALOGSERVER
+
+    *REQUIRED*
+    This attribute specifies the global catalog server that will be utilized to process Active Directory commands.
+
+    .PARAMETER ACIVEDIRECTORYCREDENTIAL
+
+    *REQUIRED*
+    This attribute specifies the credentials for Active Directory connections.
+    Domain admin credentials are required if the group does not have resorces outside of the domain where the group resides.
+    Enterprise admin credentials are required if the group has resources across multiple domains in the forest.
+
+    .PARAMETER EXCHANGESERVER
+
+    *OPTIONAL*
+    *REQUIRED with enableHybridMailFlow:TRUE*
+    This parameter specifies that local Exchange on premises installation utilized for hybrid mail flow enablement.
+    Exchange server is no required for migrations unlss enable hyrbid mail flow is required.
+
+    .PARAMETER EXCHANGECREDENTIAL
+
+    *OPTIONAL*
+    *REQUIRED with ExchangeServer specified*
+    This is the credential utilized to connect to the Exchange server remote powershell instance.
+    Exchange Organization Adminitrator rights are recommended.
+
+    .PARAMETER EXCHANGEAUTHENTICATIONMETHOD
+
+    *OPTIONAL*
+    *DEFAULT:  BASIC*
+    This specifies the authentication method for the Exchage on-premsies remote powershell session.
+
+    .PARAMETER EXCHANGEONLINECREDENTIAL
+
+    *REQUIRED if ExchangeOnlineCertificateThumbprint not specified*
+    *NOT ALLOWED if ExchangeCertificateThubprint is specified*
+    The credential utilized to connect to Exchange Online.
+    This account cannot have interactive logon requirements such as multi-factored authentication.
+    Exchange Organization Administrator rights recommened.
+
+    .PARAMETER EXCHANGEONLINECERTIFICATETHUMBPRINT
+
+    *REQUIRED if ExchangeOnlineCredential is not specified*
+    *NOT ALLOWED if ExchangeCredential is specified*
+    This is the thumbprint of the certificate utilized to authenticate to the Azure application created for Exchange Certificate Authentication
+
+    .PARAMETER EXCHANGEONLINEORGANIZATIONNAME
+
+    *REQUIRED only with ExchangeCertificateThumbpint*
+    This specifies the Exchange Online oragnization name in domain.onmicroosft.com format.
+
+    .PARAMETER EXCHANGEONLINEENVIRONMENTNAME
+
+    *OPTIONAL*
+    *DEFAULT:  O365DEFAULT
+    This specifies the Exchange Online environment to connect to if a non-commercial forest is utilized.
+
+    .PARAMETER EXCHANGEONLINEAPPID
+
+    *REQUIRED with ExchangeCertificateThumbprint*
+    This specifies the application ID of the Azure application for Exchange certificate authentication.
+
+    .PARAMETER LOGFOLDERPATH
+
+    *REQUIRED*
+    This is the logging directory for storing the migration log and all backup XML files.
+    If running multiple SINGLE instance migrations use different logging directories.
 
     .OUTPUTS
 
@@ -28,16 +97,20 @@
         (
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress,
+            #Local Active Director Domain Controller Parameters
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [pscredential]$activeDirectoryCredential,
-            [Parameter(Mandatory = $true)]
-            [string]$logFolderPath,
+            #Exchange On-Premises Parameters
             [Parameter(Mandatory = $false)]
             [string]$exchangeServer=$NULL,
             [Parameter(Mandatory = $false)]
             [pscredential]$exchangeCredential=$NULL,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Kerberos")]
+            [string]$exchangeAuthenticationMethod="Basic",
+            #Exchange Online Parameters
             [Parameter(Mandatory = $false)]
             [pscredential]$exchangeOnlineCredential=$NULL,
             [Parameter(Mandatory = $false)]
@@ -49,11 +122,11 @@
             [string]$exchangeOnlineEnvironmentName="O365Default",
             [Parameter(Mandatory = $false)]
             [string]$exchangeOnlineAppID="",
-            [Parameter(Mandatory = $false)]
-            [ValidateSet("Basic","Kerberos")]
-            [string]$exchangeAuthenticationMethod="Basic",
+            #Define other mandatory parameters
             [Parameter(Mandatory = $true)]
-            [string]$OU=$NULL
+            [string]$logFolderPath,
+            [Parameter(Mandatory = $true)]
+            [string]$dnNoSyncOU = "NotSet"
         )
 
         #Declare function variables.
