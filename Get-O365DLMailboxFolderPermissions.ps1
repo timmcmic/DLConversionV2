@@ -50,10 +50,6 @@
         Out-LogFile -string "BEGIN Get-O365DLMailboxFolderPermissions"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-
         #Get the recipient using the exchange online powershell session.
 
         if ($collectedData -eq $NULL)

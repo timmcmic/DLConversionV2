@@ -30,7 +30,14 @@
         Out-LogFile -string "BEGIN Get-MailOnMicrosoftComDomain"
         Out-LogFile -string "********************************************************************************"
 
-        $functionAcceptedDomains = get-o365acceptedDomain
+        try{
+            $functionAcceptedDomains = get-o365acceptedDomain -errorAction STOP
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Error obtaining accepted domains." -isError:$TRUE
+        }
+        
 
         foreach ($domain in $functionAcceptedDomains)
         {

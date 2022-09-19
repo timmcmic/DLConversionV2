@@ -58,9 +58,6 @@
 
         $functionCommand=$NULL
 
-        Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
-        out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
-
         #Declare function variables.
 
         out-Logfile -string "Processing operation..."

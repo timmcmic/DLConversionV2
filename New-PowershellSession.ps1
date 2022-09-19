@@ -90,40 +90,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN NEW-POWERSHELLSESSION"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        if ($server -ne "")
-        {
-            Out-LogFile -string ("Server = "+$Server)
-        }
-        Out-LogFile -string ("Credential = "+$Credentials.userName.tostring())
-        Out-LogFile -string ("PowershellSessionName = "+$PowershellSessionName)
-
-        if ($connectionURI -ne "")
-        {
-            Out-LogFile -string ("ConnectionURI = "+$connectionURI)
-        }
-
-        if ($authenticationType -ne "")
-        {
-            Out-LogFile -string ("AuthenticationType = "+$authenticationType)
-        }
-
-        if ($configurationName -ne "")
-        {
-            Out-LogFile -string ("ConfigurationName = "+$configurationName)
-        }
-    
-        if ($allowRedirection -ne $FALSE)
-        {
-            Out-LogFile -string ("AllowRedirection = "+$allowRedirection)
-        }
-        
-        if ($requiresImport -ne $FALSE)
-        {
-            Out-LogFile -string ("RequireImport = "+$requiresImport)
-        }
         
         try 
         {

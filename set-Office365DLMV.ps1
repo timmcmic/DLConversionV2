@@ -6,7 +6,7 @@
     .DESCRIPTION
 
     This function sets the multi valued attributes of the DL.
-    For each of use - I've combined these into a single function instead of splitting them out.dddd
+    For each of use - I've combined these into a single function instead of splitting them out.
 
     .OUTPUTS
 
@@ -91,17 +91,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = ")
-        out-logfile -string $originalDLConfiguration
-
-        out-logfile -string ("Office 365 DL Configuration:")
-        out-logfile -string $office365DLConfiguration
-
-        out-logfile -string ("Office 365 DL Configuration Post Migration")
-        out-logfile -string $office365DLConfigurationPostMigration
 
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 

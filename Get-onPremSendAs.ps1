@@ -50,8 +50,6 @@
         Out-LogFile -string "BEGIN Get-onPremSendAs"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string ("DL query name = "+$functionQueryName)
-
         if ($collectedData -eq $NULL)
         {
             #Start function processing.

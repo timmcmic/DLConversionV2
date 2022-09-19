@@ -51,10 +51,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-O365GroupDependency"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        OUt-LogFile -string ("DN Original Set = "+$DN)
         
         #Escape double quotes if present in the DN.
 
