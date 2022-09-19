@@ -29,7 +29,7 @@
 
     .EXAMPLE
 
-    get-GroupSendAsPermissions -DN DN -globalCatalog GC
+    get-GroupSendAsPermissions -DN DN -globalCatalog GC -adGlobalCatalogPowershellSessionName NAME -adCredential $cred
 
     #>
     Function get-GroupSendAsPermissions
@@ -67,13 +67,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        out-logFile -string ("ADGlobalCatalogPowershellSessionName = "+$adGlobalCatalogPowershellSessionName)
-        OUt-LogFile -string ("DN Set = "+$DN)
-        out-logfile -string ("Credential user name = "+$adCredential.UserName)
         
         #Getting the working powershell session for commands that do not support specifying domain controllers.
 

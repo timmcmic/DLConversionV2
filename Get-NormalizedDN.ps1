@@ -15,13 +15,29 @@
 
     The DN of the object to pass to normalize.
 
+    .PARAMETER CN
+
+    THe canonical name of an object to normalize.
+
+    .PARAMETER adCredential
+
+    The AD credential for global catalog connections.
+
+    .PARAMETER originalGroupDN
+
+    The DN of the original group on premises.
+
+    .PARAMETER isMember
+
+    Boolean if the object to be tested is a member.
+
     .OUTPUTS
 
     Selects the mail address of the user by DN and returns the mail address.
 
     .EXAMPLE
 
-    get-normalizedDN -globalCatalog GC -DN DN
+    get-normalizedDN -globalCatalog GC -DN DN -adCredential CRED -isMember FALSE
 
     #>
     Function Get-NormalizedDN
@@ -61,14 +77,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-NormalizedDN"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        OUt-LogFile -string ("DN Set = "+$DN)
-        out-logfile -string ("CN Set = "+$CN)
-        out-logfile -string ("Credential user name = "+$adCredential.UserName)
-        out-logfile -string ("Original Group DN = "+$originalGroupDN)
         
         #Get the specific user using ad providers.
 

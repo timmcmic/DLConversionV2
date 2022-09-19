@@ -44,10 +44,6 @@
         Out-LogFile -string "BEGIN GET-O365DLMEMBERSHIP"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
-
         #Get the recipient using the exchange online powershell session.
         
         try 

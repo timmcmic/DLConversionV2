@@ -7,7 +7,7 @@
 
     This function resets the on premises dependencies of the group that was mirgated.
 
-    .PARAMETER routingContactDN
+    .PARAMETER routingContact
 
     The original configuration of the DL on premises.
 
@@ -22,6 +22,10 @@
     .PARAMETER adCredential
 
     The active directory credential
+
+    .PARAMETER globalCatalogServer
+
+    The global catalog server.
 
     .OUTPUTS
 
@@ -61,13 +65,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN start-ReplaceOnPrem"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("Routing Contact DN = "+$routingContact)
-        out-logfile -string ("Attribute Operation = "+$attributeOperation)
-        out-logfile -string ("Canonical Object = "+$canonicalObject)
-        out-logfile -string ("AD Credential = "+$adCredential.userName)
 
         #Declare function variables.
 

@@ -23,6 +23,8 @@
 
     The original DN of the object.
 
+    .PARAMETER adCredential
+
     .OUTPUTS
 
     None
@@ -64,13 +66,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-NEWDLNAME"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        OUt-LogFile -string ("DLName = "+$dlName)
-        out-logfile -string ("DLSamAccontName = "+$dlSAMAccountName)
-        out-logfile -string ("DN = "+$dn)
 
         #Establish new names
 

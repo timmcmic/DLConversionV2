@@ -17,7 +17,7 @@
 
     .EXAMPLE
 
-    get-o365dlconfiguration -groupSMTPAddress Address
+    get-o365dlconfiguration -groupSMTPAddress Address -groupTypeOverride 
 
     #>
     Function Get-o365DLConfiguration
@@ -47,10 +47,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-O365DLCONFIGURATION"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the recipient using the exchange online powershell session.
         

@@ -9,6 +9,8 @@
 
     .PARAMETER groupSMTPAddress
 
+    THe SMTP address of the group to trigger the upgrade on.
+
     .OUTPUTS
 
     None
@@ -41,10 +43,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN start-upgradeToOffice365Group"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        out-logfile -string ("Group SMTP Address = "+$groupSMTPAddress)
 
         #Call the command to begin the upgrade process.
 

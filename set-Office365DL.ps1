@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    set-Office365DL -originalDLConfiguration DLConfiguration -groupTypeOverride TYPEOVERRIDE.
+    set-Office365DL -originalDLConfiguration DLConfiguration -groupTypeOverride TYPEOVERRIDE -office365DLConfigurationPostMigration OFFICE365DLCONFIGURATION
 
     #>
     Function set-Office365DL
@@ -71,12 +71,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = ")
-        out-logfile -string $originalDLConfiguration
-        out-logfile -string ("Group Type Override = "+$groupTypeOverride)
 
         #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
         #The exchange commandlets abstract this by performing a conversion or filling the values in.

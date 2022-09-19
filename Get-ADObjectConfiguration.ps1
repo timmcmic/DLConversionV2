@@ -19,13 +19,21 @@
 
     The global catalog to utilize for the query.
 
+    .PARAMETER ADCredential
+
+    The credential utilized to connect to the global catalog server.
+
+    .PARAMETER isValidTest
+
+    Signifies if the function is being called to validate the existance of a recipient
+
     .OUTPUTS
 
     Returns the DL configuration from the LDAP / AD call to the calling function.
 
     .EXAMPLE
 
-    Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
+    Get-ADObjectConfiguration -groupSMTPAddress $address -DN $DN -globalCatalogServer $GC -adCredential $cred -parameterSet $parameterArray 
 
     #>
     Function Get-ADObjectConfiguration

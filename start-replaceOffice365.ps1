@@ -64,14 +64,7 @@
         $functionMailContactRecipientType = "MailContact"
         $functionUniveralRecipientDisplayType = "GroupMailbox"
         $functionDynamicDistributionGroupRecipientType = "DynamicDistributionGroup"
-
         $functionForwarding = "ForwardingAddress"
-
-        Out-LogFile -string ("Office 365 Attribute = "+$office365Attribute)
-        out-logfile -string ("Office 365 Member = "+$office365Member.primarySMTPAddress)
-        out-logfile -string ("office 365 Member = "+$office365Member.externalDirectoryObjectID)
-        out-logfile -string ("Office 365 Recipient Type = "+$office365Member.recipientType)
-        out-logfile -string ("Office 365 Recipient Display Type Details ="+$office365Member.recipientTypeDetails)
 
         $functionExternalDirectoryObjectID = $office365Member.externalDirectoryObjectID
 

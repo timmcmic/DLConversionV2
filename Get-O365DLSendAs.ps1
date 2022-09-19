@@ -1,23 +1,27 @@
 <#
     .SYNOPSIS
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function gathers all Office 365 Send as permissions for the migrated DLs.
 
     .DESCRIPTION
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function gathers all Office 365 Send as permissions for the migrated DLs.
 
     .PARAMETER GroupSMTPAddress
 
     The mail attribute of the group to search.
 
+    .PARAMETER isTrustee
+
+    Determines if we're searching for permissions on the group itself or permissions for the migrated DL on other objects.
+
     .OUTPUTS
 
-    Returns the PS object associated with the recipient from get-o365recipient
+    Returns either send as permissions on the migrated DL or all objects that the migrated DL has send as permissions on.
 
     .EXAMPLE
 
-    Get-O365DLSendAs -groupSMTPAddress Address
+    Get-O365DLSendAs -groupSMTPAddress Address -isTrustee:$TRUE
 
     #>
     Function Get-O365DLSendAs
@@ -45,10 +49,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-O365DLSendAs"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the recipient using the exchange online powershell session.
 

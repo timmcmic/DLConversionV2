@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    new-Office365DL -groupTypeOverride "Security" -originalDLConfiguration adConfigVariable.
+    new-Office365DL -groupTypeOverride "Security" -originalDLConfiguration adConfigVariable -office365DLConfiguration CONFIG
 
     #>
     Function new-office365dl
@@ -54,14 +54,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN New-Office365DL"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = ")
-        out-logfile -string $originalDLConfiguration
-        out-logfile -string ("Office365DLConfiguration = ")
-        out-logfile -string $office365DLConfiguration
-        out-logfile -string ("Group Type Override = "+$groupTypeOverride)
 
         #Calculate the group type to be utilized.
         #Three values - either NULL,Security,or Distribution.

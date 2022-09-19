@@ -18,8 +18,6 @@ function  Get-DistinguishedName {
     Out-LogFile -string "BEGIN GET-DistinguishedName"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string ("Canonical name to convert: "+$CanonicalName)
-
     foreach ($cn in $CanonicalName) 
     {
         $arr = $cn -split '/'

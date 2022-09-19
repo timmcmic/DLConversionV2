@@ -19,6 +19,10 @@
 
     The original DN of the object.
 
+    .PARAMETER isRetry
+
+    This specifies if the operation is being retried after a failure.
+
     .OUTPUTS
 
     None

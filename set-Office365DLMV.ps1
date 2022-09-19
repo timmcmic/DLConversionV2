@@ -6,39 +6,7 @@
     .DESCRIPTION
 
     This function sets the multi valued attributes of the DL.
-    For each of use - I've combined these into a single function instead of splitting them out.dddd
-
-    .PARAMETER originalDLConfiguration
-
-    The original configuration of the DL on premises.
-
-    .PARAMETER exchangeDLMembership
-
-    The array of members of the group.
-
-    .PARAMETER exchangeRejectMessages
-
-    The array of objects with reject message permissions.
-
-    .PARAMETER exchangeAcceptMessages
-
-    The array of users with accept message permissions.
-
-    .PARAMETER exchangeManagedBy
-
-    The array of objects with managedBY permissions.
-
-    .PARAMETER exchangeModeratedBy
-
-    The array of moderators.
-
-    .PARAMETER exchangeBypassModeration
-
-    The list of users / groups that have bypass moderation rights.
-
-    .PARAMETER exchangeFrantSendOnBehalfTo
-
-    The list of objecst that have grant send on behalf to rights.
+    For each of use - I've combined these into a single function instead of splitting them out.
 
     .OUTPUTS
 
@@ -47,15 +15,6 @@
     .EXAMPLE
 
     set-Office365DLMV -originalDLConfiguration -exchangeDLMembership -exchangeRejectMessage -exchangeAcceptMessage -exchangeManagedBy -exchangeModeratedBy -exchangeBypassMOderation -exchangeGrantSendOnBehalfTo.
-
-    [array$exchangeDLMembershipSMTP=$NULL
-    [array]$exchangeRejectMessagesSMTP=$NULL
-    [array]$exchangeAcceptMessageSMTP=$NULL
-    [array]$exchangeManagedBySMTP=$NULL
-    [array]$exchangeModeratedBySMTP=
-    [array]$exchangeBypassModerationSMTP=$NULL 
-    [array]$exchangeGrantSendOnBehalfToSMTP
-
 
 
     #>
@@ -132,17 +91,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = ")
-        out-logfile -string $originalDLConfiguration
-
-        out-logfile -string ("Office 365 DL Configuration:")
-        out-logfile -string $office365DLConfiguration
-
-        out-logfile -string ("Office 365 DL Configuration Post Migration")
-        out-logfile -string $office365DLConfigurationPostMigration
 
         out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 

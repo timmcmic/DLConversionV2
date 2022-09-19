@@ -51,11 +51,6 @@
         Out-LogFile -string "BEGIN INVOKE-ADREPLICATION"
         Out-LogFile -string "********************************************************************************"
 
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("PowershellSessionName = "+$PowershellSessionName)
-        out-logfile -string ("Global CatalogServer = "+$globalCatalogServer)
-
         #Obtain the powershell session to work with.
 
         try 

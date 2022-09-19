@@ -23,13 +23,21 @@
 
     The active directory credential.
 
+    .PARAMETER isRetry
+
+    Determines if this operation is being retried.
+
+    .PARAMETER isRetryOU
+
+    The OU that will be utilized when the operation is retried.
+
     .OUTPUTS
 
     No return.
 
     .EXAMPLE
 
-    Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
+    new-routingContact -originalDLConfiguration $config -office365DLConfiguration $configo365 -globalCatalogServer $GC -adCredential $cred
 
     #>
     Function new-routingContact
@@ -61,15 +69,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN new-RoutingContact"
         Out-LogFile -string "********************************************************************************"
-
-        #write out parameters utilized to log file.
-        
-        out-logfile -string ("Original DL Configuration = "+$originalDLConfiguration)
-        out-logfile -string ("Office 365 DL Configuration = "+$office365DLConfiguration)
-        out-logfile -string ("Global catalog server = "+$globalCatalogServer)
-        out-logfile -string ("AD User Name = "+$adCredential.UserName)
-        out-logfile -string ("Is Retry Status = "+$isRetry)
-        out-logfile -string ("Is Retry OU = "+$isRetryOU)
 
         #Declare function variables and output to screen.
 

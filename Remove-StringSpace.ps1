@@ -7,13 +7,17 @@
 
     This function removes all spaces from any user inputted string.  Prevents trianing and leading spaces.
 
+    .PARAMETER stringToFix
+
+    The string to remove all spaces from.
+
 	.OUTPUTS
 
     Empty status file directory.
 
     .EXAMPLE
 
-    remove-statusFiles
+    remove-StringSpace -stringToFix STRING
 
     #>
     Function remove-StringSpace

@@ -9,15 +9,15 @@
 
     .PARAMETER threadNumber
 
-    Boolean value to signify exception / log it / terminate script.
+    Thread number for the associated status file.
 
 	.OUTPUTS
 
-    Logs all activities and backs up all original data to the log folder directory.
+    Creates a text file to allow for tracking multi-threaded operations.
 
     .EXAMPLE
 
-    Out-LogFile -string "MESSAGE" -isError BOOLEAN
+    Out-StatusFile -threadNumber 0
 
     #>
     Function Out-StatusFile

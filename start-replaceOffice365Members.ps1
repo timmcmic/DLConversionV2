@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    sstart-replaceOffice365 -office365Attribute Attribute -office365Member groupMember -groupSMTPAddress smtpAddess
+    sstart-replaceOffice365Members -office365Group $group -groupSMTPAddress $address
 
     #>
     Function start-replaceOffice365Members
@@ -51,9 +51,6 @@
         #Log the parameters and variables for the function.
 
         $functionCommand=$NULL
-
-        Out-LogFile -string ("Office 365 Attribute = "+$office365Group)
-        out-logfile -string ("Office 365 Member = "+$groupSMTPAddress)
 
         #Declare function variables.
 

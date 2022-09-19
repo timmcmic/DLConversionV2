@@ -1,19 +1,23 @@
 <#
     .SYNOPSIS
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function evaluates all Office 365 Mailbox Folder permissions for the migrated distriution groups.
 
     .DESCRIPTION
 
-    This function uses the exchange online powershell session to gather the office 365 distribution list configuration.
+    This function evaluates all Office 365 Mailbox Folder permissions for the migrated distriution groups.
 
     .PARAMETER GroupSMTPAddress
 
     The mail attribute of the group to search.
 
+    .PARAMETER collectedData
+
+    The precollected data to search for the group.
+
     .OUTPUTS
 
-    Returns the PS object associated with the recipient from get-o365recipient
+    Returns any mailbox folder permissions for the migrated DL.
 
     .EXAMPLE
 
@@ -45,10 +49,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Get-O365DLMailboxFolderPermissions"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("GroupSMTPAddress = "+$groupSMTPAddress)
 
         #Get the recipient using the exchange online powershell session.
 

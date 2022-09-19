@@ -15,6 +15,14 @@
 
     Seconds to sleep.
 
+    .PARAMETER sleepID
+
+    The sleep id for text display.
+    
+    .PARAMETER sleepParentID
+
+    The status message parent ID for sub progress status.
+
     .OUTPUTS
 
     No return.
@@ -47,9 +55,6 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN  start-sleepProgess"
         Out-LogFile -string "********************************************************************************"
-
-        out-logfile -string $sleepString
-        out-logfile -string $sleepSeconds.tostring()
 
         if(($sleepId -eq 0)-and ($sleepParentID -eq 0))
         {

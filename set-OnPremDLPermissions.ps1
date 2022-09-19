@@ -1,20 +1,25 @@
 <#
     .SYNOPSIS
 
-    This function sets the multi valued attributes of the DL
+    Resets the permissions for the on premises DL.
 
     .DESCRIPTION
 
-    This function sets the multi valued attributes of the DL.
-    For each of use - I've combined these into a single function instead of splitting them out.
+    Resets the permissions for the on premises DL.
 
-    .PARAMETER allSendAs
+    .PARAMETER allOnPremSendAs
 
-    All of the send as permissions for other objects in Office 365.
+    All of the send as permissions for other objects on prem.
 
-    .PARAMETER allFullMailboxAccess
+    .PARAMETER allOnPremFullMailboxAccess
 
-    All of the full mailbox access permissions for other objects in Office 365.
+    All of the full mailbox access permissions for other objects on prem.
+
+    .PARAMETER allOnPremFolderPermissions
+
+    All of the mailbox folder permissions.
+
+    .PARAMETER all
 
     .OUTPUTS
 
@@ -22,7 +27,7 @@
 
     .EXAMPLE
 
-    set-Office365DLPermissions -allSendAs SENDAS -allFullMailboxAccess FULLMAILBOXACCESS
+    set-onPremDLPermissions -allOnPremSendAs $onPremSendAs -allOnPremFullMailboxAccess $onPremFullMailboxAccess -allOnPremFolderPermissions $folderPermissions
 
     #>
     Function set-OnPremDLPermissions
