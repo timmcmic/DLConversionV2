@@ -1,15 +1,15 @@
 <#
     .SYNOPSIS
 
-    This function tests each accepted domain on the group to ensure it appears in Office 365.
+    This function tests all outbound connectors for centralized mail transport.
 
     .DESCRIPTION
 
-    This function tests each accepted domain on the group to ensure it appears in Office 365.
+    This function tests all outbound connectors for centralized mail transport.
 
     .EXAMPLE
 
-    Test-AcceptedDomain -originalDLConfiguration $originalDLConfiguration
+    Test-OutboundConnector -overrideCentralizedMailTransportEnabled:$TRUE
 
     #>
     Function Test-OutboundConnector

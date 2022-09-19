@@ -14,24 +14,35 @@ function start-collectOffice365FullMailboxAccess
     *REQUIRED*
     The location where logging for the migration should occur including all XML outputs for backups.
 
-    .PARAMETER exchangeServer
+   .PARAMETER EXCHANGEONLINECREDENTIAL
 
-    *REQUIRED IF HYBRID MAIL FLOW ENALBED*
-    This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
-    If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
-    If using a single server (direct connection) then kerberos authentication may be utilized.
-    
-    .PARAMETER exchangeCredential
+    *REQUIRED if ExchangeOnlineCertificateThumbprint not specified*
+    *NOT ALLOWED if ExchangeCertificateThubprint is specified*
+    The credential utilized to connect to Exchange Online.
+    This account cannot have interactive logon requirements such as multi-factored authentication.
+    Exchange Organization Administrator rights recommened.
 
-    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
-    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
-    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
+    .PARAMETER EXCHANGEONLINECERTIFICATETHUMBPRINT
 
-    .PARAMETER exchangeAuthenticationMethod
+    *REQUIRED if ExchangeOnlineCredential is not specified*
+    *NOT ALLOWED if ExchangeCredential is specified*
+    This is the thumbprint of the certificate utilized to authenticate to the Azure application created for Exchange Certificate Authentication
+
+    .PARAMETER EXCHANGEONLINEORGANIZATIONNAME
+
+    *REQUIRED only with ExchangeCertificateThumbpint*
+    This specifies the Exchange Online oragnization name in domain.onmicroosft.com format.
+
+    .PARAMETER EXCHANGEONLINEENVIRONMENTNAME
 
     *OPTIONAL*
-    This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
-    Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
+    *DEFAULT:  O365DEFAULT
+    This specifies the Exchange Online environment to connect to if a non-commercial forest is utilized.
+
+    .PARAMETER EXCHANGEONLINEAPPID
+
+    *REQUIRED with ExchangeCertificateThumbprint*
+    This specifies the application ID of the Azure application for Exchange certificate authentication.
 
     .OUTPUTS
 

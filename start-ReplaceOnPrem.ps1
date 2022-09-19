@@ -7,7 +7,7 @@
 
     This function resets the on premises dependencies of the group that was mirgated.
 
-    .PARAMETER routingContactDN
+    .PARAMETER routingContact
 
     The original configuration of the DL on premises.
 
@@ -22,6 +22,10 @@
     .PARAMETER adCredential
 
     The active directory credential
+
+    .PARAMETER globalCatalogServer
+
+    The global catalog server.
 
     .OUTPUTS
 

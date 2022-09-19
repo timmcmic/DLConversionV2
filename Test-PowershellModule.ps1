@@ -7,9 +7,17 @@
 
     This function tests to see if a powershell module necessary for script execution is present.
 
+    .PARAMETER powershellModuleName
+
+    The module name to test for.
+
+    .PARAMETER powershellVersionTest
+
+    Determines if a version test should be performed.
+
     .EXAMPLE
 
-    Test-PowershellModule
+    Test-PowershellModule -powershellModuleName NAME -powershellVersionTest TRUE
 
     #>
     Function Test-PowershellModule

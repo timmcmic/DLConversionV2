@@ -14,24 +14,31 @@ function start-collectOnPremMailboxFolders
     *REQUIRED*
     The location where logging for the migration should occur including all XML outputs for backups.
 
-    .PARAMETER exchangeServer
-
-    *REQUIRED IF HYBRID MAIL FLOW ENALBED*
-    This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
-    If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
-    If using a single server (direct connection) then kerberos authentication may be utilized.
-    
-    .PARAMETER exchangeCredential
-
-    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
-    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
-    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
-
-    .PARAMETER exchangeAuthenticationMethod
+        .PARAMETER EXCHANGESERVER
 
     *OPTIONAL*
-    This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
-    Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
+    *REQUIRED with enableHybridMailFlow:TRUE*
+    This parameter specifies that local Exchange on premises installation utilized for hybrid mail flow enablement.
+    Exchange server is no required for migrations unlss enable hyrbid mail flow is required.
+
+    .PARAMETER EXCHANGECREDENTIAL
+
+    *OPTIONAL*
+    *REQUIRED with ExchangeServer specified*
+    This is the credential utilized to connect to the Exchange server remote powershell instance.
+    Exchange Organization Adminitrator rights are recommended.
+
+    .PARAMETER EXCHANGEAUTHENTICATIONMETHOD
+
+    *OPTIONAL*
+    *DEFAULT:  BASIC*
+    This specifies the authentication method for the Exchage on-premsies remote powershell session.
+
+    .PARAMETER LOGFOLDERPATH
+
+    *REQUIRED*
+    This is the logging directory for storing the migration log and all backup XML files.
+    If running multiple SINGLE instance migrations use different logging directories..
 
     .OUTPUTS
 

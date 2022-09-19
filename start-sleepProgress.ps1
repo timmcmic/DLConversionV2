@@ -15,6 +15,14 @@
 
     Seconds to sleep.
 
+    .PARAMETER sleepID
+
+    The sleep id for text display.
+    
+    .PARAMETER sleepParentID
+
+    The status message parent ID for sub progress status.
+
     .OUTPUTS
 
     No return.

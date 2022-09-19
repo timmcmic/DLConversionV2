@@ -16,13 +16,21 @@
 
     All of the full mailbox access permissions for other objects in Office 365.
 
+    .PARAMETER allOnPremSendAs
+
+    The array of on prem send as permissions that need to be set in the cloud.
+
+    .PARAMETER allFolderPermissions
+
+    The folder permissions.
+
     .OUTPUTS
 
     None
 
     .EXAMPLE
 
-    set-Office365DLPermissions -allSendAs SENDAS -allFullMailboxAccess FULLMAILBOXACCESS
+    set-Office365DLPermissions -allSendAs SENDAS -allFullMailboxAccess FULLMAILBOXACCESS -allOnPremSendAs $onPremSendAs -allFolderPermissions $permissions.
 
     #>
     Function set-Office365DLPermissions

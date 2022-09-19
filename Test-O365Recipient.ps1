@@ -7,13 +7,9 @@
 
     This function tests to ensure a recipient is found in Office 365.
 
-    .PARAMETER recipientSMTPAddress
+    .PARAMETER member
 
-    The address of the recipient to look for.
-
-    .PARAMETER externalDirectoryObjectID
-
-    The external directory objectID of the object.
+    The member to test for.
 
     .OUTPUTS
 
@@ -21,8 +17,7 @@
 
     .EXAMPLE
 
-    test-O365Recipient -recipientSMTPAddress address
-    test-O365Recipient -externalDirectoryObjectID
+    test-o365Recipient -member $member
 
     #>
     Function Test-O365Recipient

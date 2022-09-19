@@ -14,11 +14,35 @@ function start-collectOffice365MailboxFolders
     *REQUIRED*
     The location where logging for the migration should occur including all XML outputs for backups.
    
-    .PARAMETER exchangeCredential
+    .PARAMETER EXCHANGEONLINECREDENTIAL
 
-    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
-    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
-    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
+    *REQUIRED if ExchangeOnlineCertificateThumbprint not specified*
+    *NOT ALLOWED if ExchangeCertificateThubprint is specified*
+    The credential utilized to connect to Exchange Online.
+    This account cannot have interactive logon requirements such as multi-factored authentication.
+    Exchange Organization Administrator rights recommened.
+
+    .PARAMETER EXCHANGEONLINECERTIFICATETHUMBPRINT
+
+    *REQUIRED if ExchangeOnlineCredential is not specified*
+    *NOT ALLOWED if ExchangeCredential is specified*
+    This is the thumbprint of the certificate utilized to authenticate to the Azure application created for Exchange Certificate Authentication
+
+    .PARAMETER EXCHANGEONLINEORGANIZATIONNAME
+
+    *REQUIRED only with ExchangeCertificateThumbpint*
+    This specifies the Exchange Online oragnization name in domain.onmicroosft.com format.
+
+    .PARAMETER EXCHANGEONLINEENVIRONMENTNAME
+
+    *OPTIONAL*
+    *DEFAULT:  O365DEFAULT
+    This specifies the Exchange Online environment to connect to if a non-commercial forest is utilized.
+
+    .PARAMETER EXCHANGEONLINEAPPID
+
+    *REQUIRED with ExchangeCertificateThumbprint*
+    This specifies the application ID of the Azure application for Exchange certificate authentication.
 
     .OUTPUTS
 

@@ -9,6 +9,8 @@
 
     .PARAMETER groupSMTPAddress
 
+    THe SMTP address of the group to trigger the upgrade on.
+
     .OUTPUTS
 
     None

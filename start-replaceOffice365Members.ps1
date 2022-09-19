@@ -21,7 +21,7 @@
 
     .EXAMPLE
 
-    sstart-replaceOffice365 -office365Attribute Attribute -office365Member groupMember -groupSMTPAddress smtpAddess
+    sstart-replaceOffice365Members -office365Group $group -groupSMTPAddress $address
 
     #>
     Function start-replaceOffice365Members

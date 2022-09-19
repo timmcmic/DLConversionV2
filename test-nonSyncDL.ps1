@@ -7,7 +7,7 @@
 
     This function loops until we detect that the cloud DL is no longer present.
 
-    .PARAMETER groupSMTPAddress
+    .PARAMETER originalDLConfiguration
 
     The SMTP Address of the group.
 
@@ -17,7 +17,7 @@
 
     .EXAMPLE
 
-    test-CloudDLPresent -groupSMTPAddress SMTPAddress
+    test-CloudDLPresent -originalDLConfiguration $config
 
     #>
     Function test-nonSyncDL
