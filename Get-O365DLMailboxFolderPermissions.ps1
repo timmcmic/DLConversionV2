@@ -58,6 +58,7 @@
         }
         elseif ($collectedData -ne $NULL)
         {
+            <#
             out-logfile -string "Filter all entries for objects that have been removed."
             out-logfile -string ("Pre count: "+$collectedData.count)
 
@@ -66,6 +67,20 @@
             out-logfile -string ("Post count: "+$collectedData.count)
 
             $functionFolderAccess = $collectedData | where {$_.user.tostring() -eq $groupSMTPAddress}
+            #>
+
+            #Moving back from the EXO function changes the output of the gathered permissions.
+            #This new code section should address it.
+            #Retaining the original in case it becomes necessary to revert.
+
+            out-logfile -string "Filter all entries for objects that have been removed."
+            out-logfile -string ("Pre count: "+$collectedData.count)
+
+            $collectedData = $collectedData | where {$_.user.RecipientPrincipal.primarySMTPAddress -ne $NULL}
+
+            out-logfile -string ("Post count: "+$collectedData.count)
+
+            $functionFolderAccess = $collectedData | where {$_.user.RecipientPrincipal.primarySMTPAddress.tostring() -eq $groupSMTPAddress}
         }
 
         write-progress -activity "Processing Recipient" -completed
