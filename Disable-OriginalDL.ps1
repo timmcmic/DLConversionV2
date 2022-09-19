@@ -29,7 +29,7 @@
 
     .EXAMPLE
 
-    Get-ADObjectConfiguration -powershellsessionname NAME -groupSMTPAddress Address
+    Disable-OriginalDL -originalDLConfiguration $configuration -globalCatalogServer $GC -parameterSet $parameterArray -adCredential $cred
 
     #>
     Function Disable-OriginalDL
@@ -60,27 +60,11 @@
         [string]$functionCustomAttribute1="MigratedByScript"
         [string]$functionCustomAttribute2=$originalDLConfiguration.mail
 
-
-
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
-
-        #Log the parameters and variables for the function.
-
-        Out-LogFile -string ("OriginalDLConfiguration = "+$originalDLConfiguration)
-        Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-        out-logfile -string ("Use Exchange On Premises ="+$useOnPremisesExchange)
-        out-logfile -string ("DN of object to modify / disable "+$originalDLConfiguration.distinguishedName)
-
-        OUt-LogFile -string ("Parameter Set:")
-        
-        foreach ($parameterIncluded in $parameterSet)
-        {
-            Out-Logfile -string $parameterIncluded
-        }
 
         out-logfile -string ("Disalbed DL Custom Attribute 1 = "+$functionCustomAttribute1)
         out-logfile -string ("Disabled DL Custom Attribute 2 = "+$functionCustomAttribute2)

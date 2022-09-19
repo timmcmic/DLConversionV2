@@ -28,122 +28,294 @@ Function Start-DistributionListMigration
 
     Trigger function.
 
-    .PARAMETER groupSMTPAddress
+    .PARAMETER GROUPSMTPADDRESS
 
     *REQUIRED*
-    The SMTP address of the distribution list to be migrated.
+    This attribute specifies the windows mail address of the group to be migrated.
 
-    .PARAMETER globalCatalogServer
-
-    *REQUIRED*
-    A global catalog server in the domain where the group to be migrated resides.
-
-
-    .PARAMETER activeDirectoryCredential
+    .PARAMETER GLOBALCATALOGSERVER
 
     *REQUIRED*
-    This is the credential that will be utilized to perform operations against the global catalog server.
-    If the group and all it's dependencies reside in a single domain - a domain administrator is acceptable.
-    If the group and it's dependencies span multiple domains in a forest - enterprise administrator is required.
-      
-    .PARAMETER logFolder
+    This attribute specifies the global catalog server that will be utilized to process Active Directory commands.
+
+    .PARAMETER ACIVEDIRECTORYCREDENTIAL
 
     *REQUIRED*
-    The location where logging for the migration should occur including all XML outputs for backups.
+    This attribute specifies the credentials for Active Directory connections.
+    Domain admin credentials are required if the group does not have resorces outside of the domain where the group resides.
+    Enterprise admin credentials are required if the group has resources across multiple domains in the forest.
 
-    .PARAMETER aadConnectServer
-
-    *OPTIONAL*
-    This is the AADConnect server that automated sycn attempts will be attempted.
-    If specified with an AADConnect credential - delta syncs will be triggered automatically in attempts to service the move.
-    This requires WINRM be enabled on the ADConnect server and may have additional WINRM dependencies / configuration.
-    Name should be specified in fully qualified domain format.
-
-    .PARAMETER aadConnectCredential
+    .PARAMETER AADCONNECTSERVER
 
     *OPTIONAL*
-    The credential specified to perform remote powershell / winrm sessions to the AADConnect server.
+    This parameter specifies the FQDN of the Azure Active Directory Connect Server.
+    When specified the server is utilized to trigger delta syncs to provide timely migrations.
+    If not specified the script will wait for standard sync cycles to run.
 
-    .PARAMETER exchangeServer
-
-    *REQUIRED IF HYBRID MAIL FLOW ENALBED*
-    This is the on-premises Exchange server that is required for enabling hybrid mail flow if the option is specified.
-    If using a load balanced namespace - basic authentication on powershell must be enabled on all powersell virtual directories.
-    If using a single server (direct connection) then kerberos authentication may be utilized.
-    
-    .PARAMETER exchangeCredential
-
-    *REQUIRED IF HYBRID MAIL FLOW ENABLED*
-    This is the credential utilized to establish remote powershell sessions to Exchange on-premises.
-    This acccount requires Exchange Organization Management rights in order to enable hybrid mail flow.
-
-    .PARAMETER exchangeOnlineCredential
-
-    *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
-    This is the credential utilized for Exchange Online connections.  
-    The credential must be specified if certificate based authentication is not configured.
-    The account requires global administration rights / exchange organization management rights.
-    An exchange online credential cannot be combined with an exchangeOnlineCertificateThumbprint.
-
-    .PARAMETER exchangeOnlineCertificateThumbprint
-
-    *REQUIRED IF NO OTHER CREDENTIALS SPECIFIED*
-    This is the certificate thumbprint that will be utilzied for certificate authentication to Exchange Online.
-    This requires all the pre-requists be established and configured prior to access.
-    A certificate thumbprint cannot be specified with exchange online credentials.
-
-    .PARAMETER exchangeAuthenticationMethod
+    .PARAMETER AADCONNECTCREDENTIAL
 
     *OPTIONAL*
-    This allows the administrator to specify either Kerberos or Basic authentication for on premises Exchange Powershell.
-    Basic is the assumed default and requires basic authentication be enabled on the powershell virtual directory of the specified exchange server.
+    *MANDATORY with AADConnectServer specified*
+    This parameter specifies the credentials used to connect to the AADConnect server.
+    The account specified must be a member of the local administrators sync group of the AADConnect Server
 
-    .PARAMETER retainOffice365Settings
-
-    *OPTIONAL*
-    It is possible over the course of migrations that cloud only resources could have dependencies on objects that still remain on premises.
-    The administrator can choose to scan office 365 to capture any cloud only dependencies that may exist.
-    The default is true.
-
-    .PARAMETER doNoSyncOU
-
-    *REQUIRED IF RETAIN GROUP FALSE*
-    This is the administrator specified organizational unit that is NOT configured to sync in AD Connect.
-    When the administrator specifies to NOT retain the group the group is moved to this OU to allow for deletion from Office 365.
-    A doNOSyncOU must be specified if the administrator specifies to NOT retain the group.
-
-    .PARAMETER retainOriginalGroup
+    .PARAMETER EXCHANGESERVER
 
     *OPTIONAL*
-    Allows the administrator to retain the group - for example if the group also has on premises security dependencies.
-    This triggers a mail disable of the group resulting in group deletion from Office 365.
-    The name of the group is randomized with a character ! to ensure no conflict with hybird mail flow - if hybrid mail flow enabled.
+    *REQUIRED with enableHybridMailFlow:TRUE*
+    This parameter specifies that local Exchange on premises installation utilized for hybrid mail flow enablement.
+    Exchange server is no required for migrations unlss enable hyrbid mail flow is required.
 
-    .PARAMETER enableHybridMailFlow
-
-    *OPTIONAL*
-    Allows the administrator to decide that they want mail flow from on premises to cloud to work for the migrated DL.
-    This involves provisioning a mail contact and a dynamic distribution group.
-    The dynamic distribution group is intentionally choosen to prevent soft matching of a group and an undo of the migration.
-    This option requires on premises Exchange be specified and configured.
-
-    .PARAMETER groupTypeOverride
+    .PARAMETER EXCHANGECREDENTIAL
 
     *OPTIONAL*
-    This allows the administrator to override the group type created in the cloud from on premises.
-    For example - if the group was provisioned on premises as security but does not require security rights in Office 365 - the administrator can override to DISTRIBUTION.
-    Mandatory types -> SECURITY or DISTRIBUTION
+    *REQUIRED with ExchangeServer specified*
+    This is the credential utilized to connect to the Exchange server remote powershell instance.
+    Exchange Organization Adminitrator rights are recommended.
+
+    .PARAMETER EXCHANGEAUTHENTICATIONMETHOD
+
+    *OPTIONAL*
+    *DEFAULT:  BASIC*
+    This specifies the authentication method for the Exchage on-premsies remote powershell session.
+
+    .PARAMETER EXCHANGEONLINECREDENTIAL
+
+    *REQUIRED if ExchangeOnlineCertificateThumbprint not specified*
+    *NOT ALLOWED if ExchangeCertificateThubprint is specified*
+    The credential utilized to connect to Exchange Online.
+    This account cannot have interactive logon requirements such as multi-factored authentication.
+    Exchange Organization Administrator rights recommened.
+
+    .PARAMETER EXCHANGEONLINECERTIFICATETHUMBPRINT
+
+    *REQUIRED if ExchangeOnlineCredential is not specified*
+    *NOT ALLOWED if ExchangeCredential is specified*
+    This is the thumbprint of the certificate utilized to authenticate to the Azure application created for Exchange Certificate Authentication
+
+    .PARAMETER EXCHANGEONLINEORGANIZATIONNAME
+
+    *REQUIRED only with ExchangeCertificateThumbpint*
+    This specifies the Exchange Online oragnization name in domain.onmicroosft.com format.
+
+    .PARAMETER EXCHANGEONLINEENVIRONMENTNAME
+
+    *OPTIONAL*
+    *DEFAULT:  O365DEFAULT
+    This specifies the Exchange Online environment to connect to if a non-commercial forest is utilized.
+
+    .PARAMETER EXCHANGEONLINEAPPID
+
+    *REQUIRED with ExchangeCertificateThumbprint*
+    This specifies the application ID of the Azure application for Exchange certificate authentication.
+
+    .PARAMETER AZUREADCREDENTIAL
+
+    *REQUIRED if AzureCertificateThumbprint is not specified*
+    This is the credential utilized to connect to Azure Active Directory.
+    Global administrator is the tested permissions set / minimum permissions to execute get-azureADGroup
+
+    .PARAMETER AZUREENVRONMENTNAME
+
+    *OPTIONAL*
+    *DEFAULT:  AzureCloud*
+    This is the Azure tenant type to connect to if a non-commercial tenant is used.
+
+    .PARAMETER AZURETENANTID
+
+    *REQUIRED if AzureCertificateThumbprint is specified*
+    This is the Azure tenant ID / GUID utilized for Azure certificate authentication.
+
+    .PARAMETER AZURECERTIFICATETHUMBPRINT
+
+    *REQUIRED if AzureADCredential is not specified*
+    This is the certificate thumbprint associated with the Azure app id for Azure certificate authentication
+
+    .PARAMETER AZUREAPPLICATIONID
+
+    *REQUIRED if AzureCertificateThumbprint is specified*
+    This is the application ID assocaited with the Azure application created for certificate authentication.
+
+    .PARAMETER LOGFOLDERPATH
+
+    *REQUIRED*
+    This is the logging directory for storing the migration log and all backup XML files.
+    If running multiple SINGLE instance migrations use different logging directories.
+
+    .PARAMETER DONOTSYNCOU
+
+    *REQUIRED*
+    This is the organizational unit configured in Azure AD Connect to not sync.
+    This is utilize for temporary group storage to process the deletion of the group from Office 365.
+
+    .PARAMETER RETAINORIGINALGROUP
+
+    *OPTIONAL*
+    By default the original group is retained, mail disabled, and renamed with an !.
+    If the group should be deleted post migration set this value to TRUE.
+
+    .PARAMETER ENBABLEHYBRIDMAILFLOW
+
+    *OPTIONAL*
+    *REQUIRES use of ExchangeServer and ExchangeCredential*
+    This option enables mail flow objects in the on-premises Active Directory post migration.
+    This supports relay scenarios through the onpremises Exchange organization.
+
+    .PARAMETER GROUPTYPEOVERRIDE
+
+    *OPTIONAL*
+    This allows the administrator to override the group creation type in Office 365.
+    For example, an on premises security group may be migrated to Office 365 as a distribution only list.
+    If any security dependencies are discovered during the migration this option is always overridden to preserve security and the settings.
+
+    .PARAMETER TRIGGERUPGRADETOOFFICE365GROUP
+
+    *OPTIONAL*
+    This settings triggers the migrated group to be upgraded to the modern Office 365 Group / Universal Group experience.
+
+    .PARAMETER OVERRIDECENTRALIZEDMAILTRANSPORTENABLED
+
+    *OPTIONAL*
+    If centralied transport enabled is detected during migration this switch is required.
+    This is an administrator acknowledgement that emails may flow externally in certain mail flow scenarios for migrated groups.
+
+    .PARAMETER ALLOWNONSYNCEDGROUP
+
+    *OPTIONAL*
+    Allows for on-premises group creation in Office 365 from forests that are not directory syncrhonized for some reason.
+
+    .PARAMETER USECOLLECTEDFULLMAILBOXACCESSONPREM
+
+    *OPTIONAL*
+    *Requires us of start-collectOnPremFullMailboxAccess*
+    This switch will import pre-collected full mailbox access data for the on premises organization and detect permissions for migrated DLs.
+
+    .PARAMETER USECOLLECTEDFULLMAILBOXACCESSOFFICE365
+
+    *OPTIONAL*
+    *Requires use of start-collectOffice365FullMailboxAccess
+    THis switch will import pre-collected full mailbox access data from the Office 365 organiation and detect permissions for migrated DLs.
+
+    .PARAMETER USERCOLLECTEDSENDASONPREM
+
+    *OPTIONAL*
+    *Requires use of start-collectOnPremSendAs*
+    This switch will import pre-collected send as data from the on premsies Exchange organization and detect dependencies on the migrated DLs.
+
+    .PARAMETER USECOLLECTEDFOLDERPERMISSIONSONPREM
+
+    *OPTIONAL*
+    *Requires use of start-collectOnPremMailboxFolderPermissions*
+    This switch will import pre-collected mailbox folder permissions for any default or user created folders within mailboxes.
+    The data is searched to discover any dependencies on the migrated DL.
+
+    .PARAMETER USECOLLECTEDFOLDERPERMISSIONSOFFICE365
+
+    *OPTIONAL*
+    *Requires use of start-collectOffice365MailboxFolderPermissions*
+    This switch will import pre-collected mailbox folder permissions for any default or user created folders within mailboxes.
+    The data is searched to discover any dependencies on the migrated DL.
+
+    .PARAMETER THREADNUMBERASSIGNED
+
+    *RESERVED*
+
+    .PARAMETER TOTALTHREADCOUNT
+
+    *RESERVED*
+
+    .PARAMETER ISMULTIMACHINE
+
+    *RESERVED*
+
+    .PARAMETER REMOTEDRIVELETTER
+
+    *RESERVED*
 
 	.OUTPUTS
 
     Logs all activities and backs up all original data to the log folder directory.
     Moves the distribution group from on premieses source of authority to office 365 source of authority.
 
+    .NOTES
+
+    The following blog posts maintain documentation regarding this module.
+
+    Introduction to the Distribution List Migration Module version 2.0
+    https://timmcmic.wordpress.com/2021/04/25/4116/
+
+    Preparing to use the distribution list migration v2 module.
+    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-2/
+
+    Using the distribution list migration module v2 for simple migrations
+    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-3-2/
+
+    Retaining the original distribution group post migration…
+    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-4/
+
+    Gathering advanced dependencies for a group to be migrated…
+    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-5/
+
+    How does the module track distribution lists that have been migrated?
+    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-6/
+
+    Enabling hybrid mail flow for migrated distribution lists.
+    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-7/
+
+    https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration-version-2-0-part-8/
+
+    Introduction to batch migrations.
+    https://timmcmic.wordpress.com/2021/09/02/office-365-distribution-list-migrations-version-2-0-part-9/
+
+    https://timmcmic.wordpress.com/2021/09/27/office-365-distribution-list-migration-version-2-0-part-10/
+
+    Improvements in Error Handling in version 2.4.8.x
+    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-11/
+
+    Announcing multiple migration machine support.
+    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-12/
+
+    Enabling support for partially mail enabled distribution groups.
+    https://timmcmic.wordpress.com/2022/03/07/office-365-distribution-list-migration-version-2-0-part-13/
+
+    Enabling hybrid mail flow post group migration.
+    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-14/
+
+    Enabling migration support for non-synchronized groups.
+    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-15/
+
+    Mail flow issues with centralized mail transport enabled and migrated distribution groups.
+    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-16/
+
+    I need assistance with the migration module, have a suggestion, or want to request a feature?
+    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-17/
+
+    New handling of recipient restrictions assigned to the migrated distribution group.
+    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-18/
+
+    New handling of distribution group creation during migration to eliminate ambiguous references.
+    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-19/
+
+    Adding a new method of verifying the distribution list is directory synchronized.
+    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/
+
+    Preparing for the deprecation and disablement of Basic Authentication.
+    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-21/
+
     .EXAMPLE
 
-    Start-DistributionListMigration
+    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
+
+    .EXAMPLE
+
+    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE
+
+    .EXAMPLE
+
+    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE -useCollectedOnPremMailboxFolderPermissions:$TRUE -useCollectedOffice365MailboxFolderPermissions:$TRUE -useCollectedOnPremSendAs:$TRUE -useCollectedOnPremFullMailboxAccess:$TRUE -useCollectedOffice365FullMailboxAccess:$TRUE
 
     #>
+
     [cmdletbinding()]
 
     Param
