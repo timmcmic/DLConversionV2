@@ -944,7 +944,7 @@ Function Start-DistributionListMigration
     }
     elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
     {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+        out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." -isError:$TRUE
     }
     else
     {
