@@ -408,6 +408,19 @@ Function Start-DistributionListMigration
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
+    #Define global variables.
+
+    $global:threadNumber=$threadNumberAssigned
+    $global:logFile=$NULL #This is the global variable for the calculated log file name
+    [string]$global:staticFolderName="\DLMigration\"
+    [string]$global:staticAuditFolderName="\AuditData\"
+    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
+
+    #Define variables for import data - used for importing data into pre-collect.
+
+    [array]$importData=@() #Empty array for the import data.
+    [string]$importFilePath=$NULL #Import file path where the XML data is located to import (calculated later)
+
     #Define the sub folders for multi-threading.
 
     [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
@@ -448,19 +461,6 @@ Function Start-DistributionListMigration
             exit
         }
     }
-
-    #Define global variables.
-
-    $global:threadNumber=$threadNumberAssigned
-    $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration\"
-    [string]$global:staticAuditFolderName="\AuditData\"
-    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
-
-    #Define variables for import data - used for importing data into pre-collect.
-
-    [array]$importData=@() #Empty array for the import data.
-    [string]$importFilePath=$NULL #Import file path where the XML data is located to import (calculated later)
 
     #Define variables utilized in the core function that are not defined by parameters.
 
