@@ -408,6 +408,12 @@ Function Start-DistributionListMigration
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
+     #Define the status directory.
+
+     [string]$global:statusPath="\Status\"
+     [string]$global:fullStatusPath=$NULL
+     [int]$statusFileCount=0
+
     #Define global variables.
 
     $global:threadNumber=$threadNumberAssigned
@@ -667,12 +673,6 @@ Function Start-DistributionListMigration
 
 
     [int]$forLoopTrigger=1000
-
-    #Define the status directory.
-
-    [string]$global:statusPath="\Status\"
-    [string]$global:fullStatusPath=$NULL
-    [int]$statusFileCount=0
 
     #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
     #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
