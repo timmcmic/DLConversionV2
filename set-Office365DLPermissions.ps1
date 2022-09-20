@@ -228,9 +228,11 @@
 
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
-                    out-logfile -string ("Processing permission trustee = "+$permission.user.userPrincipalName)
+                    #out-logfile -string ("Processing permission trustee = "+$permission.user.userPrincipalName)
+                    out-logfile -string ("Processing permission trustee = "+$permission.user.RecipientPrincipal.primarySMTPAddress)
 
-                    remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -confirm:$FALSE -errorAction STOP
+                    #remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -confirm:$FALSE -errorAction STOP
+                    remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.RecipientPrincipal.primarySMTPAddress -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to remove the existing folder permission in Office 365."
@@ -267,7 +269,8 @@
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
                     out-logfile -string ("Processing permission sharing flags = "+$permission.sharingPermissionFlags)
 
-                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
+                    #add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
+                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.RecipientPrincipal.primarySMTPAddress -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to add the folder access permission in Office 365."

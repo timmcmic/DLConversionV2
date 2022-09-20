@@ -1509,7 +1509,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    out-logfile -string $azureADDlConfiguraiton
+    out-logfile -string $azureADDLConfiguration
 
     out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
 
