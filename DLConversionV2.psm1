@@ -481,7 +481,7 @@ Function Start-DistributionListMigration
         onPremAcceptMessagesFromDLMembers = @{"Value" = "dlMemSubmitPerms" ; "Description" = "LDAP Attribute for Accept Messages from DL Members" }
         onPremRejectMessagesFromDLMembers = @{"Value" = "dlMemRejectPerms" ; "Description" = "LDAP Attribute for Reject Messages from DL Members"}
         onPremBypassModerationFromDL = @{"Value" = "msExchBypassModerationFromDLMembersLink" ; "Description" = "LDAP Attribute for Bypass Moderation from DL Members"}
-        onPremForwardingAddress = @{"Value" = "alRecipient" ; "Description" = "LDAP Attribute for ForwardingAddress"}
+        onPremForwardingAddress = @{"Value" = "altRecipient" ; "Description" = "LDAP Attribute for ForwardingAddress"}
         onPremGrantSendOnBehalfTo = @{"Value" = "publicDelegates" ; "Description" = "LDAP Attribute for Grant Send on Behalf To"}
         onPremRejectMessagesFromSenders = @{"Value" = "unauthorig" ; "Description" = "LDAP Attribute for Reject Messages from Sender"}
         onPremAcceptMessagesFromSenders = @{"Value" = "authOrig" ; "Description" = "LDAp Attribute for Accept Messages From Sender"} 
@@ -4662,7 +4662,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing member = "+$member.canonicalName)
             out-logfile -string ("Routing contact DN = "+$routingContactConfiguration.distinguishedName)
-            out-logfile -string ("Attribute Operation = "+$onPremPublicDelegate)
+            out-logfile -string ("Attribute Operation = "+$onPremADAttributes.onPremSendOnBehalfTo.value)
 
             if ($forLoopCounter -eq $forLoopTrigger)
             {
@@ -4677,7 +4677,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremPublicDelegate -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremADAttributes.onPremSendOnBehalfTo.value -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4978,7 +4978,7 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attrivutes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
             }
             catch{
                 out-logfile -string $_
