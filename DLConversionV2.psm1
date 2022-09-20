@@ -408,6 +408,10 @@ Function Start-DistributionListMigration
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
+    #Define the sub folders for multi-threading.
+
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+
     #If multi threaded - the log directory needs to be created for each thread.
     #Create the log folder path for status before changing the log folder path.
 
@@ -663,10 +667,6 @@ Function Start-DistributionListMigration
 
 
     [int]$forLoopTrigger=1000
-
-    #Define the sub folders for multi-threading.
-
-    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
 
     #Define the status directory.
 
@@ -5388,7 +5388,7 @@ Function Start-DistributionListMigration
     if ($isTestError -eq "Yes")
     {
         $isTestErrorDetail = $_
-        
+
         $isErrorObject = new-Object psObject -property @{
             errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
             erroMessageDetail = $isTestErrorDetail
