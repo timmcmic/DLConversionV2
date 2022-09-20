@@ -4376,6 +4376,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4437,6 +4438,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4498,6 +4500,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4559,6 +4562,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4620,6 +4624,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4681,6 +4686,7 @@ Function Start-DistributionListMigration
                 }
                 catch{
                     out-logfile -string $_
+                    $isTestErrorDetail = $_
                     $isTestError="Yes"
                 }
 
@@ -4754,6 +4760,7 @@ Function Start-DistributionListMigration
                     }
                     catch{
                         out-logfile -string $_
+                        $isTestErrorDetail = $_
                         $isTestError="Yes"
                     }
 
@@ -4826,6 +4833,7 @@ Function Start-DistributionListMigration
             }
             catch{
                 out-logfile -string $_
+                $isTestErrorDetail = $_
                 $isTestError="Yes"
             }
 
@@ -5265,6 +5273,7 @@ Function Start-DistributionListMigration
         }
         catch{
             out-logfile -string $_
+            $isTestErrorDetail = $_
             $isTestError="Yes"
         }
 
@@ -5293,6 +5302,8 @@ Function Start-DistributionListMigration
                 if($loopCounter -gt 10)
                 {
                     out-logfile -string "Unable to obtain the routing group after multiple tries."
+
+                    $isTestErrorDetail = $_
 
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "Unable to obtain the routing group after multiple tries."
@@ -5347,6 +5358,8 @@ Function Start-DistributionListMigration
 
     if ($isTestError -eq "Yes")
     {
+        $isTestErrorDetail = $_
+
         $isErrorObject = new-Object psObject -property @{
             errorMessage = "Unable to trigger upgrade to Office 365 Unified / Modern group.  Administrator may need to manually perform the operation."
             erroMessageDetail = $isTestErrorDetail
@@ -5374,6 +5387,8 @@ Function Start-DistributionListMigration
 
     if ($isTestError -eq "Yes")
     {
+        $isTestErrorDetail = $_
+        
         $isErrorObject = new-Object psObject -property @{
             errorMessage = "Uanble to remove the on premises group at request of administrator.  Group may need to be manually removed."
             erroMessageDetail = $isTestErrorDetail
