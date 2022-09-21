@@ -427,6 +427,21 @@ Function Start-DistributionListMigration
     [array]$importData=@() #Empty array for the import data.
     [string]$importFilePath=$NULL #Import file path where the XML data is located to import (calculated later)
 
+    if ($isMultiMachine -eq $TRUE)
+    {
+        try{
+            #At this point we know that multiple machines was in use.
+            #For multiple machines - the local controller instance mapped the drive Z for us in windows.
+            #Therefore we override the original log folder path passed in and just use Z.
+
+            [string]$networkName=$remoteDriveLetter
+            $logFolderPath = $networkName+":"
+        }
+        catch{
+            exit
+        }
+    }
+
     #Define the sub folders for multi-threading.
 
     [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
@@ -452,21 +467,6 @@ Function Start-DistributionListMigration
     [boolean]$retainSendAsOnPrem=$FALSE
     [boolean]$retainFullMailboxAccessOffice365=$FALSE
     [boolean]$retainSendAsOffice365=$TRUE
-
-    if ($isMultiMachine -eq $TRUE)
-    {
-        try{
-            #At this point we know that multiple machines was in use.
-            #For multiple machines - the local controller instance mapped the drive Z for us in windows.
-            #Therefore we override the original log folder path passed in and just use Z.
-
-            [string]$networkName=$remoteDriveLetter
-            $logFolderPath = $networkName+":"
-        }
-        catch{
-            exit
-        }
-    }
 
     #Define variables utilized in the core function that are not defined by parameters.
 
