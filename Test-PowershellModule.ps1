@@ -98,8 +98,14 @@
 
                     if ($commandsArray[0].version -lt $exchangeOnlineManagementMinimumVersion)
                     {
+                        out-logfile -string ("Gallery Module "+$galleryModule.version)
+                        out-logfile -string ("Installed Module "+$commandsArray[0].version)
                         out-logfile -string "Exchange Online Management Module minimum version 3.0.0 required to proceed."
                         out-logfile -string "See https://timmcmic.wordpress.com/2022/09/30/office-365-distribution-list-migration-version-2-0-part-22/" -isError:$true
+                    }
+                    else
+                    {
+                        out-logfile -string "Minimum version for Exchange Online Management Powershell satisfied."
                     }
                 }
 
