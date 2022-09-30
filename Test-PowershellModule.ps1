@@ -40,6 +40,8 @@
 
         [array]$commandsArray=$NULL
         [string]$azureADModuleName = "AzureAD"
+        [string]$exchangeOnlineManagementModuleName = "ExchangeOnlineManagement"
+        [string]$exchangeOnlineManagementMinimumVersion ="3.0.0"
 
         #Initiate the test.
         
@@ -89,13 +91,31 @@
 
                 $galleryModule = Find-Module -name $powershellModuleName -ErrorAction Continue
 
+                if ($powershellModuleName -eq $exchangeOnlineManagementModuleName)
+                {
+                    out-logfile -string "Enfocring new version requirement for Exchange Online Management - minimum v3.0.0"
+                    out-logfile -string ("Testing Exchange Online Management Module Version: "+$exchangeOnlineManagementMinimumVersion)
+
+                    if ($commandsArray[0].version -lt $exchangeOnlineManagementMinimumVersion)
+                    {
+                        out-logfile -string ("Gallery Module "+$galleryModule.version)
+                        out-logfile -string ("Installed Module "+$commandsArray[0].version)
+                        out-logfile -string "Exchange Online Management Module minimum version 3.0.0 required to proceed."
+                        out-logfile -string "See https://timmcmic.wordpress.com/2022/09/30/office-365-distribution-list-migration-version-2-0-part-22/" -isError:$true
+                    }
+                    else
+                    {
+                        out-logfile -string "Minimum version for Exchange Online Management Powershell satisfied."
+                    }
+                }
+
                 if ($galleryModule.version -eq $commandsArray[0].version)
                 {
                     out-logfile -string "The version of the installed module is current."
                     out-logfile -string ("Gallery Module "+$galleryModule.version)
                     out-logfile -string ("Installed Module "+$commandsArray[0].version)
                 }
-                else 
+                elseif ($galleryModule.version -gt $commandsArray[0].version)
                 {
                     out-logfile -string "*******************"
                     out-logfile -string "*******************"   
@@ -104,7 +124,12 @@
                     out-logfile -string ("Installed Module "+$commandsArray[0].version)
                     out-logfile -string "RECOMMEND MODULE UPGRADE FOR FUTURE MIGRATIONS"   
                     out-logfile -string "*******************"
-                    out-logfile -string "*******************"  
+                    out-logfile -string "*******************" 
+                }
+                else 
+                {
+                    out-logfile -string "The version you are using is newer than the gallery module."
+                    out-logfile -string "Have fun trying something new :-)"
                 }
             }
             else 
