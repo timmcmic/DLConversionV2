@@ -944,11 +944,12 @@ Function Start-DistributionListMigration
     }
     elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
     {
-        out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." -isError:$TRUE
+        out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." 
+        out-logfile -string "https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/" -isError:$TRUE
     }
     else
     {
-        Out-LogFile -string "Only one method of Exchange Online authentication specified."
+        Out-LogFile -string "Only one method of Azure AD specified."
     }
 
     #Validate that all information for the certificate connection has been provieed.
