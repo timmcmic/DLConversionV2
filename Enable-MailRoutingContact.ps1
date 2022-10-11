@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            $routingContactConfig
+            $routingContactConfig,
+            [Parameter(Mandatory = $true)]
+            $routingXMLFile
         )
 
         #Output all parameters bound or unbound and their associated values.

@@ -5216,7 +5216,7 @@ Function Start-DistributionListMigration
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
         try{
-            $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration
+            $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
         }
         catch{
             out-logfile -string $_
