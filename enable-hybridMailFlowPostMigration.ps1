@@ -126,7 +126,7 @@
             [Parameter(Mandatory = $true)]
             [string]$logFolderPath,
             [Parameter(Mandatory = $true)]
-            [string]$dnNoSyncOU = "NotSet"
+            [string]$OU = "NotSet"
         )
 
         #Declare function variables.
