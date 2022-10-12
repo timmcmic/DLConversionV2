@@ -533,7 +533,7 @@
         #At this time the mail contact needs to be mail enabled.
 
         try {
-            enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -errorAction STOP
+            enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingcontactxml.Value -errorAction STOP
         }
         catch {
             out-logfile -string $_
