@@ -63,7 +63,7 @@
         try{
             out-logfile -string "Updating the mail contact..."
 
-            update-recipient -identity $routingContactConfig.distinguishsedName -domainController $globalCatalogServer -errorAction STOP
+            update-recipient -identity $routingContactConfig.distinguishedName -domainController $globalCatalogServer -errorAction STOP
         }
         catch{
             out-logfile -string $_
