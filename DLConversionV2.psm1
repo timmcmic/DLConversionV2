@@ -673,6 +673,7 @@ Function Start-DistributionListMigration
 
 
     [int]$forLoopTrigger=1000
+    [int]$createMailContactDelay=5
 
     #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
     #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
@@ -5215,13 +5216,33 @@ Function Start-DistributionListMigration
 
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
-        try{
-            $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
+        if ($global:threadNumber -eq 1)
+        {
+            out-logfile -string "Enable mail contact:  Thread 1."
+
+            try{
+                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
+            }
+            catch{
+                out-logfile -string $_
+                $isTestError="Yes"
+                $errorMessageDetail=$_
+            }
         }
-        catch{
-            out-logfile -string $_
-            $isTestError="Yes"
-            $errorMessageDetail=$_
+        elseif($global:threadNumber -gt 1)
+        {
+            out-logfile -string "Enable mail contact:  Not thread 1 delay"
+
+            start-sleepProgress -sleepstring "Sleep before attempting enable mail contact." -sleepSeconds ($global:threadNumber * $createMailContactDelay)
+
+            try{
+                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
+            }
+            catch{
+                out-logfile -string $_
+                $isTestError="Yes"
+                $errorMessageDetail=$_
+            }
         }
 
         if ($isTestError -eq "Yes")
