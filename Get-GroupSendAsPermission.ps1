@@ -298,7 +298,7 @@
                     }
                     else 
                     {
-                        $functionSendAsTest+=$normalizedTest
+                        $functionSendAsObjects+=$normalizedTest
                     }
                 }
                 catch 
@@ -324,9 +324,7 @@
 
         Out-LogFile -string "END GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
-
-        $functionSendAsObjects = $functionSendAsObjects
-
+        
         return $functionSendAsObjects
         
         #This function is designed to open local and remote powershell sessions.
