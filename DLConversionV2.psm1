@@ -662,7 +662,7 @@ Function Start-DistributionListMigration
 
     #Define new arrays to check for errors instead of failing.
 
-    [array]$preCreateErrors=@()
+    [array]$global:preCreateErrors=@()
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
@@ -1596,7 +1596,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1659,7 +1659,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1708,7 +1708,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else {
                     $exchangeRejectMessagesSMTP+=$normalizedTest
@@ -1768,7 +1768,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else {
                     $exchangeAcceptMessagesSMTP+=$normalizedTest
@@ -1816,7 +1816,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1878,7 +1878,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1927,7 +1927,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -1966,7 +1966,7 @@ Function Start-DistributionListMigration
 
                 out-logfile -string $isErrorObject
 
-                $preCreateErrors+=$isErrorObject
+                $global:preCreateErrors+=$isErrorObject
 
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
                 out-logfile -string "The group must be converted to security or removed from managed by."
@@ -1997,7 +1997,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
     
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
         
                     out-logfile -string "A security group has managed by rights on the distribution list."
                     out-logfile -string "The administrator has specified to override the group type."
@@ -2053,7 +2053,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -2115,7 +2115,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -2166,7 +2166,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -2224,7 +2224,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else 
                 {
@@ -2287,7 +2287,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
                 else {
                     $allObjectsSendAsAccessNormalized+=$normalizedTest
@@ -2421,7 +2421,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2476,7 +2476,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2531,7 +2531,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2586,7 +2586,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2641,7 +2641,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2696,7 +2696,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2749,7 +2749,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2804,7 +2804,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2859,7 +2859,7 @@ Function Start-DistributionListMigration
 
                     out-logfile -string $isErrorObject
 
-                    $preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$isErrorObject
                 }
             }
             catch{
@@ -2882,14 +2882,14 @@ Function Start-DistributionListMigration
     #At this time we have validated the on premises pre-requisits for group migration.
     #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
 
-    if ($preCreateErrors.count -gt 0)
+    if ($global:preCreateErrors.count -gt 0)
     {
         out-logfile -string "+++++"
         out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        foreach ($preReq in $preCreateErrors)
+        foreach ($preReq in $global:preCreateErrors)
         {
             out-logfile -string "====="
             out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
