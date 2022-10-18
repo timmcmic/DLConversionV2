@@ -287,7 +287,8 @@
                             externalDirectoryObjectID = $NULL
                             alias=$normalizedTest.alias
                             name=$normalizedTest.name
-                            attribute = "SendAs On Group"
+                            attributeCommanName = "SendAs"
+                            ADAttributeName = "SendAsOnGroupToBeMigrated"
                             errorMessage = $normalizedTest.isErrorMessage
                             errorMessageDetail = ""
                         }
