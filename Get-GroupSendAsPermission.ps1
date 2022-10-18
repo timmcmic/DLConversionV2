@@ -276,7 +276,31 @@
 
                 try 
                 {
-                    $functionSendAsObjects+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
+                    #$functionSendAsTest+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
+
+                    $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
+
+                    if ($normalizedTest.isError -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            primarySMTPAddressOrUPN = $normalizedTest.name
+                            externalDirectoryObjectID = $NULL
+                            alias=$normalizedTest.alias
+                            name=$normalizedTest.name
+                            attributeCommanName = "SendAs"
+                            ADAttributeName = "SendAsOnGroupToBeMigrated"
+                            errorMessage = $normalizedTest.isErrorMessage
+                            errorMessageDetail = ""
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $global:preCreateErrors+=$isErrorObject
+                    }
+                    else 
+                    {
+                        $functionSendAsObjects+=$normalizedTest
+                    }
                 }
                 catch 
                 {
@@ -301,9 +325,7 @@
 
         Out-LogFile -string "END GET-GroupSendAsPermissions"
         Out-LogFile -string "********************************************************************************"
-
-        $functionSendAsObjects = $functionSendAsObjects
-
+        
         return $functionSendAsObjects
         
         #This function is designed to open local and remote powershell sessions.
