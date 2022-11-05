@@ -583,13 +583,13 @@ Function Start-DistributionListMigration
         routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
         routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
         allGroupsCoManagedByXML= @{ "Value" = "allGroupsCoManagedByXML" ; "Description" = "XML file holds all on premises objects that the migrated group has managed by rights assigned"}
-        retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
-        retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions.xml" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
-        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
-        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
-        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
-        azureDLConfigurationXML = @{"Value" = "azureADDL.xml" ; "Description" = "Export XML file holding the configuration from azure active directory"}
-        preCreateErrorsXML = @{"value" = "preCreateErrors.xml" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
+        retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
+        retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
+        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
+        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions" ; "Description" = "Import XML file for mailbox folder permissions"}
+        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs" ; "Description" = "Import XML file for send as permissions"}
+        azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
     }
 
     #Define the property sets that will be cleared on the on premises object.
