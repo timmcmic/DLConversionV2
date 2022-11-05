@@ -2907,38 +2907,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    #It is possible that this group was a member of - or other groups have a dependency on this group.
-    #We will implement a function to track those dependen$ocies.
-
-    #At this time we have validated the on premises pre-requisits for group migration.
-    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
-
-    if ($global:preCreateErrors.count -gt 0)
-    {
-        out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-                
-        out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
-        out-logfile -string "+++++"
-        out-logfile -string ""
-
-        foreach ($preReq in $global:preCreateErrors)
-        {
-            out-logfile -string "====="
-            out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
-            out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
-            out-logfile -string ("Name: "+$preReq.name)
-            out-logfile -string ("Alias: "+$preReq.Alias)
-            out-logfile -string ("Attribute Common Name in Error: "+$preReq.attributeCommonName)
-            out-logfile -string ("Attribute AD Name in Error: "+$preReq.ADAttributeName)
-            out-logfile -string ("Error Message: "+$preReq.errorMessage)
-            out-logfile -string ("Error Message Detail: "+$preReq.errorMessageDetail)
-            out-logfile -string "====="
-        }
-
-        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
-    }
-
     #Exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
@@ -3193,10 +3161,11 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
+
+
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
 
@@ -3352,6 +3321,35 @@ Function Start-DistributionListMigration
     }
 
     #EXIT #Debug Exit
+
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if ($global:preCreateErrors.count -gt 0)
+    {
+        out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+                
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        foreach ($preReq in $global:preCreateErrors)
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
+            out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
+            out-logfile -string ("Name: "+$preReq.name)
+            out-logfile -string ("Alias: "+$preReq.Alias)
+            out-logfile -string ("Attribute Common Name in Error: "+$preReq.attributeCommonName)
+            out-logfile -string ("Attribute AD Name in Error: "+$preReq.ADAttributeName)
+            out-logfile -string ("Error Message: "+$preReq.errorMessage)
+            out-logfile -string ("Error Message Detail: "+$preReq.errorMessageDetail)
+            out-logfile -string "====="
+        }
+
+        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+    }
 
     #Ok so at this point we have preserved all of the information regarding the on premises DL.
     #It is possible that there could be cloud only objects that this group was made dependent on.
