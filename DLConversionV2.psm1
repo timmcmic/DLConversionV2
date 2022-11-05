@@ -327,7 +327,7 @@ Function Start-DistributionListMigration
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
         $activeDirectoryAuthenticationMethod="Kerberos",
         #Azure Active Directory Connect Parameters
@@ -335,7 +335,7 @@ Function Start-DistributionListMigration
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$aadConnectCredential=$NULL,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Kerberos")]
         $aadConnectAuthenticationMethod="Kerberos",
         #Exchange On-Premises Parameters
