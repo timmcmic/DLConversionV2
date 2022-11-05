@@ -327,11 +327,17 @@ Function Start-DistributionListMigration
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Basic","Kerberos")]
+        $activeDirectoryAuthenticationMethod="Kerberos",
         #Azure Active Directory Connect Parameters
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$aadConnectCredential=$NULL,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Basic","Kerberos")]
+        $aadConnectAuthenticationMethod="Kerberos",
         #Exchange On-Premises Parameters
         [Parameter(Mandatory = $false)]
         [string]$exchangeServer=$NULL,
@@ -1264,7 +1270,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Creating powershell session to the AD Connect server."
 
-            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value
+            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -authenticationType $aadConnectAuthenticationMethod
         }
         catch 
         {
@@ -1279,7 +1285,7 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
-        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value
+        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value -authenticationType $activeDirectoryAuthenticationMethod
     }
     catch 
     {
