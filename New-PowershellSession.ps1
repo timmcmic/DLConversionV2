@@ -65,6 +65,7 @@
             [Parameter(ParameterSetName="Online",Mandatory = $true)]
             [string]$connectionURI,
             [Parameter(ParameterSetName="Online",Mandatory = $true)]
+            [Parameter(ParameterSetName="NotOnline",Mandatory = $true)]
             [string]$authenticationType,
             [Parameter(ParameterSetName="Online",Mandatory = $true)]
             [string]$configurationName,
@@ -99,7 +100,7 @@
                 #This would usually be reserved for things like Exchange On Premises / Exchange Online
 
                 Out-LogFile -string "Creating the powershell to server." 
-                New-PSSession -computername $Server -credential $Credentials -name $PowershellSessionName -errorAction STOP
+                New-PSSession -computername $Server -credential $Credentials -name $PowershellSessionName -authentication $authenticationType -errorAction STOP
             }
             elseif ($requiresImport -eq $TRUE)
             {

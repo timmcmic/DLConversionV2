@@ -327,11 +327,17 @@ Function Start-DistributionListMigration
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        $activeDirectoryAuthenticationMethod="Kerberos",
         #Azure Active Directory Connect Parameters
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
         [Parameter(Mandatory = $false)]
         [pscredential]$aadConnectCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        $aadConnectAuthenticationMethod="Kerberos",
         #Exchange On-Premises Parameters
         [Parameter(Mandatory = $false)]
         [string]$exchangeServer=$NULL,
@@ -577,13 +583,13 @@ Function Start-DistributionListMigration
         routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
         routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
         allGroupsCoManagedByXML= @{ "Value" = "allGroupsCoManagedByXML" ; "Description" = "XML file holds all on premises objects that the migrated group has managed by rights assigned"}
-        retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
-        retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions.xml" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
-        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
-        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
-        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
-        azureDLConfigurationXML = @{"Value" = "azureADDL.xml" ; "Description" = "Export XML file holding the configuration from azure active directory"}
-        preCreateErrorsXML = @{"value" = "preCreateErrors.xml" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
+        retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
+        retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
+        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
+        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions" ; "Description" = "Import XML file for mailbox folder permissions"}
+        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs" ; "Description" = "Import XML file for send as permissions"}
+        azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
     }
 
     #Define the property sets that will be cleared on the on premises object.
@@ -1264,7 +1270,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Creating powershell session to the AD Connect server."
 
-            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value
+            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -authenticationType $aadConnectAuthenticationMethod
         }
         catch 
         {
@@ -1279,7 +1285,7 @@ Function Start-DistributionListMigration
     {
         Out-LogFile -string "Establish powershell session to the global catalog server specified."
 
-        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value
+        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value -authenticationType $activeDirectoryAuthenticationMethod
     }
     catch 
     {
@@ -2900,9 +2906,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
-
-    #It is possible that this group was a member of - or other groups have a dependency on this group.
-    #We will implement a function to track those dependen$ocies.
 
     #At this time we have validated the on premises pre-requisits for group migration.
     #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
