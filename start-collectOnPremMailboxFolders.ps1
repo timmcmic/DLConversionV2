@@ -106,8 +106,8 @@ function start-collectOnPremMailboxFolders
 
     $xmlFiles = @{
         onPremMailboxFolderPermissions= @{"Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "XML file to hold exported folder permissions"}
-        onPremMailboxList= @{"Value" = "onPremMailboxList.xml" ; "Description" = "XML file to hold recipients to be processed"}
-        onPremMailboxProcessed= @{"Value" = "onPremMailboxProcessed.xml" ;"Description" = "XML file to hold the last recipient processed"}
+        onPremMailboxList= @{"Value" = "onPremMailboxListMailboxFolderPerms.xml" ; "Description" = "XML file to hold recipients to be processed"}
+        onPremMailboxProcessed= @{"Value" = "onPremMailboxProcessedMailboxFolderPerms.xml" ;"Description" = "XML file to hold the last recipient processed"}
     }
 
     new-LogFile -groupSMTPAddress OnPremMailboxFolderPermissions -logFolderPath $logFolderPath

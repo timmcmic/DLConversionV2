@@ -101,8 +101,8 @@ function start-collectOffice365MailboxFolders
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
     [string]$office365MailboxFolderPermissions="office365MailboxFolderPermissions.xml"
-    [string]$office365MailboxList="office365MailboxList.xml"
-    [string]$office365MailboxProcessed="office365MailboxProcessed.xml"
+    [string]$office365MailboxList="office365MailboxListMailboxFolderPerms.xml"
+    [string]$office365MailboxProcessed="office365MailboxProcessedMailboxFolderPerms.xml"
     [int]$auditPermissionsFound=0
 
     new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath

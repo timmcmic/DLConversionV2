@@ -101,8 +101,8 @@ function start-collectOffice365FullMailboxAccess
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
     [string]$office365RecipientFullMailboxAccess="office365RecipientFullMailboxAccess.xml"
-    [string]$office365MailboxList="office365MailboxList.xml"
-    [string]$office365RecipientProcessed="office365RecipientProcessed.xml"
+    [string]$office365MailboxList="office365MailboxListFullMailboxAccess.xml"
+    [string]$office365RecipientProcessed="office365RecipientProcessedFullMailboxAccess.xml"
 
     new-LogFile -groupSMTPAddress Office365FullMailboxAccessPermissions -logFolderPath $logFolderPath
 
