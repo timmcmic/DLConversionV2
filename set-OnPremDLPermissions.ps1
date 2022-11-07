@@ -110,8 +110,8 @@
                 $isErrorObject = new-Object psObject -property @{
                     permissionIdentity = $permission.Identity
                     attribute = "Send As Permission"
-                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective. Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
-                    errorMessageDetail = $errorMessageDetail
+                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective." 
+                    errorMessageDetail = "Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
                 }
     
                 out-logfile -string $isErrorObject
@@ -175,8 +175,8 @@
                 $isErrorObject = new-Object psObject -property @{
                     permissionIdentity = $permission.Identity
                     attribute = "Full Mailbox Access Permission"
-                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective. Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
-                    errorMessageDetail = $errorMessageDetail
+                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective." 
+                    errorMessageDetail = "Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
                 }
     
                 out-logfile -string $isErrorObject
@@ -237,8 +237,8 @@
                 $isErrorObject = new-Object psObject -property @{
                     permissionIdentity = $permission.Identity
                     attribute = "Mailbox Folder Permission"
-                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective. Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
-                    errorMessageDetail = $errorMessageDetail
+                    errorMessage = "Administrator Notice:  The mitrated mail contact was sucessfully added but the permission is not effective." 
+                    errorMessageDetail = "Mail contacts are not security principals therefore the permission will not continue to work on premises. Mail contact added only to faciliate the migration of other distribution lists that may depend on the discovery of this object."
                 }
     
                 out-logfile -string $isErrorObject
