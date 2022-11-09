@@ -1110,7 +1110,7 @@
         {
             out-logfile -string "Setting extension custom attribute 1 of the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1   -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute1 $originalDLConfiguration.msExchExtensionCustomAttribute1   -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
@@ -1135,7 +1135,7 @@
         {
             out-logfile -string "Setting extension custom attribute 2 of the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2   -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute2 $originalDLConfiguration.msExchExtensionCustomAttribute2   -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
@@ -1160,7 +1160,7 @@
         {
             out-logfile -string "Setting extension custom attribute 3 of the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3   -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute3 $originalDLConfiguration.msExchExtensionCustomAttribute3   -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
@@ -1185,7 +1185,7 @@
         {
             out-logfile -string "Setting extension custom attribute 4 of the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4   -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute4 $originalDLConfiguration.msExchExtensionCustomAttribute4   -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
@@ -1210,7 +1210,7 @@
         {
             out-logfile -string "Setting extension custom attribute 5 of the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5   -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute5 $originalDLConfiguration.msExchExtensionCustomAttribute5  -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
