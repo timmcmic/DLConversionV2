@@ -232,7 +232,7 @@
                     out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
 
                     #remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -confirm:$FALSE -errorAction STOP
-                    remove-o365MailboxFolderPermission -identity $permission.identity -user $originalGroupPrimarySMTPAddress -confirm:$FALSE -errorAction STOP
+                    remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.RecipientPrincipal.primarySMTPAddress -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to remove the existing folder permission in Office 365."
