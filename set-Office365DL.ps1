@@ -321,11 +321,13 @@
             $functionSimpleDisplayName = $office365DLConfiguration.simpleDisplayName    
         }
 
+        out-logfile -string "Setting core single values for the distribution group."
+
         try 
         {
-            out-logfile -string "Setting core single values for the distribution group."
-
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -name $originalDLConfiguration.cn -Alias $functionMailNickName -DisplayName $functionDisplayName -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -SimpleDisplayName $functionSimpleDisplayName -WindowsEmailAddress $originalDLConfiguration.mail -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -BypassSecurityGroupManagerCheck -errorAction STOP
+            out-logfile -string "Setting distribution group name for the migrated group."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -name $originalDLConfiguration.cn -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch 
         {
@@ -338,8 +340,8 @@
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
-                Attribute = "Cloud distribution list:  Alias / DisplayName / HiddenFromAddressList / RequireSenderAuthenticaiton / SimpleDisplayName / WindowsEmailAddress / MailTipTranslations / Name"
-                ErrorMessage = "Error setting single valued attribute of the migrated distribution list."
+                Attribute = "Cloud distribution list:  Name"
+                ErrorMessage = "Error setting name on the migrated distribution group.  Administrator action required."
                 ErrorMessageDetail = $_
             }
 
@@ -348,9 +350,186 @@
 
         try 
         {
-            out-logfile -string "Setting single valued moderation propeties for the group.."
+            out-logfile -string "Setting distribution group alias."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -Alias $functionMailNickName -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -BypassNestedModerationEnabled $functionModerationFlags -ModerationEnabled $functionModerationEnabled -SendModerationNotifications $functionSendModerationNotifications -BypassSecurityGroupManagerCheck -errorAction STOP
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  Alias"
+                ErrorMessage = "Error setting alias on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting distribution group display name."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -DisplayName $functionDisplayName -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  DisplayName"
+                ErrorMessage = "Error setting display name on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting distribution group hidden from address list."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -HiddenFromAddressListsEnabled $functionHiddenFromAddressList -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  HiddenFromAddressListsEnabled"
+                ErrorMessage = "Error setting hide from address book on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting distribution group require sender authentication enabled."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -RequireSenderAuthenticationEnabled $functionRequireAuthToSendTo -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  RequireAuthenticationEnabled"
+                ErrorMessage = "Error setting require sender authentication on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting distribution group simple display name."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -SimpleDisplayName $functionSimpleDisplayName -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  SimpleDisplayName"
+                ErrorMessage = "Error setting simple display name on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting distribution windows email address."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -WindowsEmailAddress $originalDLConfiguration.mail -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  WindowsEmailAddress"
+                ErrorMessage = "Error setting windows email address on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting mail tip translations."
+            
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MailTipTranslations $originalDLConfiguration.msExchSenderHintTranslations -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting core single valued attributes."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  MailTipTranslations"
+                ErrorMessage = "Error setting mail tip translations on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        out-logfile -string "Setting single valued moderation propeties for the group."
+
+        try 
+        {
+            out-logfile -string "Setting bypass nested moderation enabled."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -BypassNestedModerationEnabled $functionModerationFlags -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch 
         {
@@ -363,8 +542,8 @@
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
-                Attribute = "Cloud distribution list:  BypassNedstedModerationEnabled / ModerationEnabled / SendModerationNotifications"
-                ErrorMessage = "Error setting additional single valued attribute of the migrated distribution group."
+                Attribute = "Cloud distribution list:  BypassNestedModerationEnabled"
+                ErrorMessage = "Error setting bypass nested moderation enabled on the migrated distribution group.  Administrator action required."
                 ErrorMessageDetail = $_
             }
 
@@ -373,9 +552,61 @@
 
         try 
         {
-            out-logfile -string "Setting member join depart restritions on the group.."
+            out-logfile -string "Setting moderation enabled for the group."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberJoinRestriction $functionMemberJoinRestriction -MemberDepartRestriction $functionMemberDepartRestriction -BypassSecurityGroupManagerCheck -errorAction STOP
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ModerationEnabled $functionModerationEnabled -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting moderation properties of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ModerationEnabled"
+                ErrorMessage = "Error setting moderation enabled on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting send moderation notifications for the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -SendModerationNotifications $functionSendModerationNotifications -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting moderation properties of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  SendModerationNotifications"
+                ErrorMessage = "Error setting send moderation notifications on the migrated distribution group.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        out-logfile -string "Setting member join and depart restrictions on the group."
+
+        try 
+        {
+            out-logfile -string "Setting member join restritions on the group.."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberJoinRestriction $functionMemberJoinRestriction -errorAction STOP -BypassSecurityGroupManagerCheck
         }
         catch 
         {
@@ -388,8 +619,8 @@
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
-                Attribute = "Cloud distribution list:  MemberJoinRestriction / MemberDepartRestriction"
-                ErrorMessage = "Error setting join or depart restrictions."
+                Attribute = "Cloud distribution list:  MemberJoinRestriction"
+                ErrorMessage = "Error setting member join restriction on the group.  Administrator action required"
                 ErrorMessageDetail = $_
             }
 
@@ -398,9 +629,36 @@
 
         try 
         {
-            out-logfile -string "Setting the single valued report to settings.."
+            out-logfile -string "Setting member depart restritions on the group.."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ReportToManagerEnabled $functionreportToOwner -ReportToOriginatorEnabled $functionReportToOriginator -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberDepartRestriction $functionMemberDepartRestriction -errorAction STOP -BypassSecurityGroupManagerCheck
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting member join depart restritions on the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  MemberDepartRestriction"
+                ErrorMessage = "Error setting member depart restriction on the group.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        out-logfile -string "Setting the single valued report to settings.."
+
+        try 
+        {
+            out-logfile -string "Setting the report to manager enabled.."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ReportToManagerEnabled $functionreportToOwner -BypassSecurityGroupManagerCheck -errorAction STOP       
         }
         catch 
         {
@@ -413,8 +671,8 @@
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
-                Attribute = "Cloud distribution list:  ReportToManagerEnabled / ReportToOriginatorEnabled / SendOOFMessageToOriginatorEnabled"
-                ErrorMessage = "Error setting report to attributes."
+                Attribute = "Cloud distribution list:  ReportToManagerEnabled"
+                ErrorMessage = "Error setting report to manager enabled.  Administrator action required."
                 ErrorMessageDetail = $_
             }
 
@@ -423,9 +681,61 @@
 
         try 
         {
-            out-logfile -string "Setting the custom and extension attributes of the group."
+            out-logfile -string "Setting the report to originator enabled.."
 
-            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -CustomAttribute11 $originalDLConfiguration.extensionAttribute11 -CustomAttribute12 $originalDLConfiguration.extensionAttribute12 -CustomAttribute13 $originalDLConfiguration.extensionAttribute13 -CustomAttribute14 $originalDLConfiguration.extensionAttribute14 -CustomAttribute15 $originalDLConfiguration.extensionAttribute15 -CustomAttribute2 $originalDLConfiguration.extensionAttribute2 -CustomAttribute3 $originalDLConfiguration.extensionAttribute3 -CustomAttribute4 $originalDLConfiguration.extensionAttribute4 -CustomAttribute5 $originalDLConfiguration.extensionAttribute5 -CustomAttribute6 $originalDLConfiguration.extensionAttribute6 -CustomAttribute7 $originalDLConfiguration.extensionAttribute7 -CustomAttribute8 $originalDLConfiguration.extensionAttribute8 -CustomAttribute9 $originalDLConfiguration.extensionAttribute9 -ExtensionCustomAttribute1 $originalDLConfiguration.msExtensionCustomAttribute1 -ExtensionCustomAttribute2 $originalDLConfiguration.msExtensionCustomAttribute2 -ExtensionCustomAttribute3 $originalDLConfiguration.msExtensionCustomAttribute3 -ExtensionCustomAttribute4 $originalDLConfiguration.msExtensionCustomAttribute4 -ExtensionCustomAttribute5 $originalDLConfiguration.msExtensionCustomAttribute5 -BypassSecurityGroupManagerCheck -errorAction STOP        
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ReportToOriginatorEnabled $functionReportToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting single valued report to settings on the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ReporToOriginatorEnabled"
+                ErrorMessage = "Error setting report to originator enabled.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting the send oof messages to originator enabled.."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -SendOofMessageToOriginatorEnabled $functionoofReplyToOriginator -BypassSecurityGroupManagerCheck -errorAction STOP       
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting single valued report to settings on the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  SendOOFMessagesToOriginatorEnabled"
+                ErrorMessage = "Error setting send off messages to originator enabled.  Administrator action required."
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        out-logfile -string "Setting the custom and extension attributes of the group."
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 1 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute1 $originalDLConfiguration.extensionAttribute1 -BypassSecurityGroupManagerCheck -errorAction STOP        
         }
         catch 
         {
@@ -438,8 +748,483 @@
                 ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                 Alias = $functionMailNickName
                 Name = $originalDLConfiguration.name
-                Attribute = "Cloud distribution list:  CustomAttributeX / ExtensionAttributeX"
-                ErrorMessage = "Error setting custom or extension attributes."
+                Attribute = "Cloud distribution list:  CustomAttribute1"
+                ErrorMessage = "Error setting custom attribute 1.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 10 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute10 $originalDLConfiguration.extensionAttribute10 -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute10"
+                ErrorMessage = "Error setting custom attribute 10.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 11 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID  -CustomAttribute11 $originalDLConfiguration.extensionAttribute11  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute11"
+                ErrorMessage = "Error setting custom attribute 11.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 12 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute12 $originalDLConfiguration.extensionAttribute12  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute12"
+                ErrorMessage = "Error setting custom attribute 12.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 13 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute13 $originalDLConfiguration.extensionAttribute13  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute13"
+                ErrorMessage = "Error setting custom attribute 13.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 14 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute14 $originalDLConfiguration.extensionAttribute14  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute14"
+                ErrorMessage = "Error setting custom attribute 14.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 1 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute15 $originalDLConfiguration.extensionAttribute15  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute15"
+                ErrorMessage = "Error setting custom attribute 15.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 2 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute2 $originalDLConfiguration.extensionAttribute2   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute2"
+                ErrorMessage = "Error setting custom attribute 2.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 3 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute3 $originalDLConfiguration.extensionAttribute3   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute3"
+                ErrorMessage = "Error setting custom attribute 3.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 4 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute4 $originalDLConfiguration.extensionAttribute4   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute4"
+                ErrorMessage = "Error setting custom attribute 4.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 5 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID  -CustomAttribute5 $originalDLConfiguration.extensionAttribute5   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute5"
+                ErrorMessage = "Error setting custom attribute 5.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 6 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID  -CustomAttribute6 $originalDLConfiguration.extensionAttribute6   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute6"
+                ErrorMessage = "Error setting custom attribute 6.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 7 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID  -CustomAttribute7 $originalDLConfiguration.extensionAttribute7   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute7"
+                ErrorMessage = "Error setting custom attribute 7.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 8 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID  -CustomAttribute8 $originalDLConfiguration.extensionAttribute8   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute8"
+                ErrorMessage = "Error setting custom attribute 8.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension attribute 9 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute9 $originalDLConfiguration.extensionAttribute9   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  CustomAttribute9"
+                ErrorMessage = "Error setting custom attribute 9.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+        
+        try 
+        {
+            out-logfile -string "Setting extension custom attribute 1 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute1 $originalDLConfiguration.msExchExtensionCustomAttribute1   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ExtensionCustomAttribute1"
+                ErrorMessage = "Error setting extension custom attribute 1.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension custom attribute 2 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute2 $originalDLConfiguration.msExchExtensionCustomAttribute2   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ExtensionCustomAttribute2"
+                ErrorMessage = "Error setting extension custom attribute 2.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension custom attribute 3 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute3 $originalDLConfiguration.msExchExtensionCustomAttribute3   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ExtensionCustomAttribute3"
+                ErrorMessage = "Error setting extension custom attribute 3.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension custom attribute 4 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute4 $originalDLConfiguration.msExchExtensionCustomAttribute4   -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ExtensionCustomAttribute4"
+                ErrorMessage = "Error setting extension custom attribute 4.  Administrator action required"
+                ErrorMessageDetail = $_
+            }
+
+            $functionErrors+=$isErrorObject
+        }
+
+        try 
+        {
+            out-logfile -string "Setting extension custom attribute 5 of the group."
+
+            Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -ExtensionCustomAttribute5 $originalDLConfiguration.msExchExtensionCustomAttribute5  -BypassSecurityGroupManagerCheck -errorAction STOP        
+        }
+        catch 
+        {
+            out-logfile "Error encountered setting custom and extension attributes of the group...."
+
+            out-logfile -string $_
+
+            $isErrorObject = new-Object psObject -property @{
+                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                Alias = $functionMailNickName
+                Name = $originalDLConfiguration.name
+                Attribute = "Cloud distribution list:  ExtensionCustomAttribute5"
+                ErrorMessage = "Error setting extension custom attribute 5.  Administrator action required"
                 ErrorMessageDetail = $_
             }
 
