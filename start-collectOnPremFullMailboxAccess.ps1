@@ -87,8 +87,8 @@ function start-collectOnPremFullMailboxAccess
 
     $xmlFiles = @{
         onPremRecipientFullMailboxAccess= @{"Value" = "onPremRecipientFullMailboxAccess.xml" ; "Desscription" = "XML file of discovered permissions"}
-        onPremMailboxList= @{"Value" = "onPremMailboxList.xml" ; "Description" = "XML file of all mailboxes to be processed"}
-        onPremRecipientProcessed= @{"Value" = "onPremRecipientProcessed.xml" ; "Description" = "XML file of the last mailbox processed"}
+        onPremMailboxList= @{"Value" = "onPremMailboxListFullMailboxAccess.xml" ; "Description" = "XML file of all mailboxes to be processed"}
+        onPremRecipientProcessed= @{"Value" = "onPremRecipientProcessedFullMailboxAccess.xml" ; "Description" = "XML file of the last mailbox processed"}
     }
 
     #Static variables utilized for the Exchange On-Premsies Powershell.

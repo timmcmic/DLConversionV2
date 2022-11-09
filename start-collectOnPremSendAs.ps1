@@ -85,8 +85,8 @@ function start-collectOnPremSendAs
 
     $xmlFiles = @{
         onPremRecipientSendAs= @{"Value" = "onPremRecipientSendAs.xml" ; "Description" = "XML file that holds send as permissions from on premises"}
-        onPremRecipientList= @{"Value" = "onPremRecipientList.xml" ; "Description" = "XML file that holds recipients to process for send as rights"}
-        onPremRecipientProcessed= @{"Value" = "onPremRecipientProcessed.xml" ; "Description" = "XML file that holds the last processed recipient"}
+        onPremRecipientList= @{"Value" = "onPremRecipientListSendAs.xml" ; "Description" = "XML file that holds recipients to process for send as rights"}
+        onPremRecipientProcessed= @{"Value" = "onPremRecipientProcessedSendAs.xml" ; "Description" = "XML file that holds the last processed recipient"}
     }
 
     $onPremExchangePowershell = @{

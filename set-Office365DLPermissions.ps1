@@ -130,11 +130,11 @@
                 $isTestError="No" #Reset error tracking.
 
                 out-logfile -string ("Processing permission identity = "+$permission.identity)
-                out-logfile -string ("Processing permission trustee = "+$permission.trustee)
+                out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 try {
-                    add-o365RecipientPermission -identity $permission.identity -trustee $permission.trustee -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                    add-o365RecipientPermission -identity $permission.identity -trustee $originalGroupPrimarySMTPAddress -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Unable to add the recipient permission in office 365."
@@ -180,10 +180,10 @@
                     $isTestError="No" #Reset error tracking.
 
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
-                    out-logfile -string ("Processing permission trustee = "+$permission.user)
+                    out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxPermission -identity $permission.identity -user $permission.user -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                    add-o365MailboxPermission -identity $permission.identity -user $originalGroupPrimarySMTPAddress -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
             }
             catch {
@@ -229,7 +229,7 @@
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
                     #out-logfile -string ("Processing permission trustee = "+$permission.user.userPrincipalName)
-                    out-logfile -string ("Processing permission trustee = "+$permission.user.RecipientPrincipal.primarySMTPAddress)
+                    out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
 
                     #remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -confirm:$FALSE -errorAction STOP
                     remove-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.RecipientPrincipal.primarySMTPAddress -confirm:$FALSE -errorAction STOP
@@ -265,12 +265,12 @@
 
                 try {
                     out-logfile -string ("Processing permission identity = "+$permission.identity)
-                    out-logfile -string ("Processing permission trustee = "+$permission.user)
+                    out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
                     out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
                     out-logfile -string ("Processing permission sharing flags = "+$permission.sharingPermissionFlags)
 
                     #add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.userPrincipalName -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
-                    add-o365MailboxFolderPermission -identity $permission.identity -user $permission.user.RecipientPrincipal.primarySMTPAddress -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
+                    add-o365MailboxFolderPermission -identity $permission.identity -user $originalGroupPrimarySMTPAddress -accessRights $permission.AccessRights -sharingPermissionFlags $permission.sharingPermissionFlags -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to add the folder access permission in Office 365."
