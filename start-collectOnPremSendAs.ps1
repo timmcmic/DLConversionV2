@@ -310,6 +310,8 @@ function start-collectOnPremSendAs
 
         $recipientCounter | export-clixml -path $exportFile
     }
+
+    write-shamelessPlug
     
     disable-allPowerShellSessions
 }

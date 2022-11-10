@@ -441,5 +441,7 @@ function start-collectOnPremMailboxFolders
         $auditFolders=@()
     }
 
+    write-shamelessPlug
+
     disable-allPowerShellSessions
 }

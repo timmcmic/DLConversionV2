@@ -326,5 +326,7 @@ function start-collectOnPremFullMailboxAccess
         $mailboxCounter | export-clixml -path $exportFile
     }
 
+    write-shamelessPlug
+
     disable-allPowerShellSessions
 }

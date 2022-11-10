@@ -1125,6 +1125,8 @@ Function Start-MultipleMachineDistributionListMigration
 
     get-migrationSummary -logFolderPath $logFolderPath
 
+    write-shamelessPlug
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END start-MultipleMachineDistributionListMigration"
     Out-LogFile -string "================================================================================"

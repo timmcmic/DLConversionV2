@@ -344,5 +344,7 @@ function start-collectOffice365FullMailboxAccess
         $mailboxCounter | export-clixml -path $exportFile
     }
 
+    write-shamelessPlug
+
     disable-allPowerShellSessions
 }

@@ -735,6 +735,8 @@ Function Start-MultipleDistributionListMigration
 
     [system.gc]::Collect()
 
+    write-shamelessPlug
+
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
