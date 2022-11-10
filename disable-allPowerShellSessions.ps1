@@ -64,7 +64,7 @@
         }
 
         try {
-            Disconnect-ExchangeOnline -ErrorAction Stop
+            Disconnect-ExchangeOnline -ErrorAction Stop -confirm:$false
         }
         catch {
             out-logfile -string "Error getting PSSessions - hard abort since this is called in exit code."

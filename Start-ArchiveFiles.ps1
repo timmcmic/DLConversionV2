@@ -49,6 +49,8 @@
 
         if ($isSuccess -eq $TRUE)
         {
+            write-shamelessPlug
+
             out-logfile -string "Success - renaming directory."
 
             $functionFolderName = $functionNameSplit[0]+"-Success"
@@ -62,6 +64,8 @@
         }
         else 
         {
+            write-shamelessPlug
+            
             out-logfile -string "FAILED - renaming directory."
 
             $functionFolderName = $functionNameSplit[0]+"-FAILED"
@@ -92,8 +96,5 @@
                     }
                 }
             } until ($stopLoop -eq $TRUE)
-            
-           
-            
         }
     }

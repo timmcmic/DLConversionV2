@@ -5698,7 +5698,5 @@ Function Start-DistributionListMigration
 
     #Archive the files into a date time success folder.
 
-    write-shamelessPlug
-
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
