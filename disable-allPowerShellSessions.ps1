@@ -31,7 +31,6 @@
         catch
         {
             out-logfile -string "Error getting PSSessions - hard abort since this is called in exit code."
-            EXIT
         }
 
         out-logFile -string "Disconnecting Exchange Online Session"
@@ -49,7 +48,7 @@
                 }
                 catch{
                     out-logfile -string "Error removing Exchange Online Session - Hard Exit since this function is called in error code."
-                    EXIT
+                    #EXIT
                 }
             }
             else 
@@ -63,6 +62,15 @@
                 Get-PSSession | remove-pssession
             }
         }
+
+        try {
+            Disconnect-ExchangeOnline -ErrorAction Stop
+        }
+        catch {
+            out-logfile -string "Error getting PSSessions - hard abort since this is called in exit code."
+        }
+
+        out-logfile -string "***IT MAY BE NECESSARY TO EXIT THIS POWERSHELL WINDOW AND REOPEN TO RESTART FROM A FAILED MIGRATION***"
 
         Out-LogFile -string "END disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
