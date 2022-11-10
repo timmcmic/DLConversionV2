@@ -992,7 +992,7 @@ Function Start-DistributionListMigration
     }
     elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
     {
-        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+        out-logfile -string "The azure tenant ID is required to use certificate authentication to Azure." -isError:$TRUE
     }
     else 
     {
