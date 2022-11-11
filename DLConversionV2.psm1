@@ -418,10 +418,7 @@ Function Start-DistributionListMigration
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversionV2"
 
-    start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
-
-    Get-THTelemetryConfiguration -ModuleName DLConversionV2
-    Get-THTelemetryConfiguration -moduleName TelemetryHelper
+    start-telemetryConfiguration
 
     exit
 
