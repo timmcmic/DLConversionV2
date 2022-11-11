@@ -32,7 +32,7 @@
             $eventProperties,
             [Parameter(Mandatory = $TRUE)]
             $eventMetrics,
-            [Paramter(Mandatory = $TRUE)]
+            [Parameter(Mandatory = $TRUE)]
             $eventName
         )
 
