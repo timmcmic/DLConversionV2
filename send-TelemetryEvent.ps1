@@ -17,10 +17,10 @@
 
     .EXAMPLE
 
-    start-telemetryConfiguration -allowTelemetryConfiguration $TRUE
+    
 
     #>
-    Function start-telemetryConfiguration
+    Function send-TelemetryEvent
      {
         [cmdletbinding()]
 

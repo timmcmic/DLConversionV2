@@ -5719,7 +5719,7 @@ Function Start-DistributionListMigration
 
     #Archive the files into a date time success folder.
 
-    $telemetryEndTime = (get-date).toUniveralTime()
+    $telemetryEndTime = (get-date).ToUniversalTime()
     $telemetryElapsedSeconds = ($telemetryEndTime - $telemetryStartTime).seconds
 
     # build the properties and metrics #
