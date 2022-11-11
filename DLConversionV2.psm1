@@ -408,8 +408,17 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $FALSE)]
         [boolean]$isMultiMachine=$FALSE,
         [Parameter(Mandatory = $FALSE)]
-        [string]$remoteDriveLetter=$NULL
+        [string]$remoteDriveLetter=$NULL,
+        [Parameter(Mandatory =$TRUE)]
+        [boolean]$allowTelemetryCollection=$TRUE
     )
+
+    #Initialize telemetry collection.
+
+    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
+    $traceModuleName = "DLConversionV2"
+
+    start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
