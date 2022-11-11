@@ -47,7 +47,7 @@
         Set-PSFConfig -Module $functionModuleName -Name $functionRemovePII -VAlue $true -Initialize -Validation bool -Description "Whether information like the computer name should be stripped from the data that is sent"
 
 
-        # build the properties and metrics
+        # build the properties and metrics #
         $eventProperties = @{
             PSVersion = $PSVersionTable.PSVersion.ToString()
             PSEdition = $PSVersionTable.PSEdition
