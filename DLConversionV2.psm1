@@ -409,7 +409,7 @@ Function Start-DistributionListMigration
         [boolean]$isMultiMachine=$FALSE,
         [Parameter(Mandatory = $FALSE)]
         [string]$remoteDriveLetter=$NULL,
-        [Parameter(Mandatory =$TRUE)]
+        [Parameter(Mandatory = $FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE
     )
 
