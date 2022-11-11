@@ -34,9 +34,32 @@
             [string]$traceModuleName
         )
 
-        Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.ApplicationInsights.InstrumentationKey' -Value $appInsightAPIKey -Initialize -Validation string -Description 'Your ApplicationInsights instrumentation key' -Hidden
+        $functionInstrumentationKey = $traceModuleName+".ApplicationInsights.InstrumentationKey"
+        $functionOptIn = $traceModuleName+".OptIn"
+        $functionIgnoreGDPR = $traceModuleName+".IgnoreGDPR"
+        $functionRemovePII = $traceModuleName+".RemovePII"
+        $functionModuleName = "TelemetryHelper"
+
+        Set-PSFConfig -Module $functionModuleName -Name $functionInstrumentationKey -Value $appInsightAPIKey -Initialize -Validation string -Description 'Your ApplicationInsights instrumentation key' -Hidden
         #Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.OptInVariable' -Value 'TelemetryHelperTelemetryOptIn' -Initialize -Validation string -Description 'The name of the environment variable used to indicate that telemetry should be sent'
-        Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.OptIn' -Value $allowTelemetryCollection -Initialize -Validation bool -Description 'Whether user opts into telemetry or not'
-        Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.IgnoreGdpr' -Value $false -Initialize -Validation bool -Description 'Whether telemetry client should ignore user settings, e.g. if you are not bound by GDPR or other regulations'
-        Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.RemovePII' -VAlue $true -Initialize -Validation bool -Description "Whether information like the computer name should be stripped from the data that is sent"
+        Set-PSFConfig -Module $functionModuleName -Name $functionOptIn -Value $allowTelemetryCollection -Initialize -Validation bool -Description 'Whether user opts into telemetry or not'
+        Set-PSFConfig -Module $functionModuleName -Name $functionIgnoreGDPR -Value $false -Initialize -Validation bool -Description 'Whether telemetry client should ignore user settings, e.g. if you are not bound by GDPR or other regulations'
+        Set-PSFConfig -Module $functionModuleName -Name $functionRemovePII -VAlue $true -Initialize -Validation bool -Description "Whether information like the computer name should be stripped from the data that is sent"
+
+
+        # build the properties and metrics
+        $eventProperties = @{
+            PSVersion = $PSVersionTable.PSVersion.ToString()
+            PSEdition = $PSVersionTable.PSEdition
+            ModuleVersion = '1.2.3.4'
+        }
+
+        $eventMetrics = @{
+            ModuleImportTicks = 41238181
+        }
+
+        # Sending the first metric will create an instance of a TelemetryClient
+        # subsequent calls will simply reuse the client
+        Send-THEvent -EventName ModuleImportEvent -PropertiesHash $eventProperties -MetricsHash $eventMetrics -ModuleName $traceModuleName -Verbose
+        Send-THEvent -EventName ModuleImportEvent -MetricsHash $eventMetrics -ModuleName $traceModuleName -Verbose
      }
