@@ -427,7 +427,7 @@ Function Start-DistributionListMigration
     $telemetryAzureADVersion = $NULL
     $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
-    $telemetryStartTime = (Get-Data).toUniversalTime()
+    $telemetryStartTime = (Get-Date).toUniversalTime()
     $telemetryEndTime = $NULL
     $telemetryElapsedSeconds = $NULL
     $telemetryEventName = "Start-DistributionListMigration"
