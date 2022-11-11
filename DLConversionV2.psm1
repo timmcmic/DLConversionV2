@@ -420,6 +420,8 @@ Function Start-DistributionListMigration
 
     start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
 
+    Get-THTelemetryConfiguration -ModuleName "TelemetryHelper"
+
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
