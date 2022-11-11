@@ -425,10 +425,12 @@ Function Start-DistributionListMigration
     $telemetryDLConversionV2Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
     $telemetryAzureADVersion = $NULL
+    $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
     $telemetryStartTime = (Get-Data).toUniversalTime()
     $telemetryEndTime = $NULL
     $telemetryElapsedSeconds = $NULL
+    $telemetryEventName = "Start-DistributionListMigration"
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
@@ -1140,19 +1142,19 @@ Function Start-DistributionListMigration
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-   Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
+   $telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-   Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
+   $telemetryActiveDirectoryVersion = Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
 
    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-   Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+   $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
    out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
 
-   Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+   $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
 
    #Create the azure ad connection
 
@@ -5719,6 +5721,22 @@ Function Start-DistributionListMigration
 
     $telemetryEndTime = (get-date).toUniveralTime()
     $telemetryElapsedSeconds = ($telemetryEndTime - $telemetryStartTime).seconds
+
+    # build the properties and metrics #
+    $telemetryEventProperties = @{
+        DLConversionV2Version = $telemetryDLConversionV2Version
+        ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        AzureADVersion = $telemetryAzureADVersion
+        OSVersion = $telemetryOSVersion
+    }
+
+    $telmetryEventMetrics = @{
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telementryEndTime
+        MigrationElapsedSeconds = $telemetryElapsedSeconds
+    }
+
+    send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
