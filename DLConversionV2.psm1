@@ -5724,13 +5724,14 @@ Function Start-DistributionListMigration
 
     # build the properties and metrics #
     $telemetryEventProperties = @{
+        DLConversionV2Command = $telemetryEventName
         DLConversionV2Version = $telemetryDLConversionV2Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
     }
 
-    $telmetryEventMetrics = @{
+    $telemetryEventMetrics = @{
         MigrationStartTimeUTC = $telemetryStartTime
         MigrationEndTimeUTC = $telementryEndTime
         MigrationElapsedSeconds = $telemetryElapsedSeconds
