@@ -420,6 +420,9 @@ Function Start-DistributionListMigration
 
     start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
 
+    Get-THTelemetryConfiguration -ModuleName DLConversionV2
+    Get-THTelemetryConfiguration -moduleName TelemetryHelper
+
     exit
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
