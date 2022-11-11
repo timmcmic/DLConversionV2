@@ -420,7 +420,15 @@ Function Start-DistributionListMigration
 
     start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
 
-    Get-THTelemetryConfiguration -ModuleName "TelemetryHelper"
+    #Create telemetry values.
+
+    $telemetryDLConversionV2Version = $NULL
+    $telemetryExchangeOnlineVersion = $NULL
+    $telemetryAzureADVersion = $NULL
+    $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
+    $telemetryStartTime = (Get-Data).toUniversalTime()
+    $telemetryEndTime = $NULL
+    $telemetryElapsedSeconds = $NULL
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
@@ -5708,6 +5716,9 @@ Function Start-DistributionListMigration
     }
 
     #Archive the files into a date time success folder.
+
+    $telemetryEndTime = (get-date).toUniveralTime()
+    $telemetryElapsedSeconds = ($telemetryEndTime - $telemetryStartTime).seconds
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
