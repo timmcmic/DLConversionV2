@@ -427,10 +427,21 @@ Function Start-DistributionListMigration
     $telemetryAzureADVersion = $NULL
     $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
-    $telemetryStartTime = (Get-Date).toUniversalTime()
+    $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
     $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryFunctionStartTime=$NULL
+    $telemetryFunctionEndTime=$NULL
+    [double]$telemetryNormalizeDN=0
+    [double]$telemetryValidateCloudRecipients=0
+    [double]$telemetryDependencyOnPrem=0
+    [double]$telemetryCollectOffice365Dependency=0
+    [double]$telemetryTimeToRemoveDL=0
+    [double]$telemetryCreateOffice365DL=0
+    [double]$telemetryReplaceOnPremDependency=0
+    [double]$telemetryReplaceOffice365Dependency=0
+
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
@@ -736,6 +747,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "================================================================================"
 
     out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
+
+    out-logfile -string ("Runtime start UTC: " + $telemetryStartTime.ToString())
 
     if ($errorActionPreference -ne "Continue")
     {
@@ -1583,6 +1596,8 @@ Function Start-DistributionListMigration
 
     #Start with DL membership and normallize.
 
+    $telemetryFunctionStartTime = get-universalDateTime
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
@@ -2370,6 +2385,12 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryNormalizeDN = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time to Normalize DNs: "+$telemetryNormalizeDN.toString())
+
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
     out-logFile -string "Summary of group information:"
     out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
@@ -2391,6 +2412,8 @@ Function Start-DistributionListMigration
     #Validate that the discovered dependencies are valid in Office 365.
 
     $forLoopCounter=0 #Resetting counter at next set of queries.
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -2928,6 +2951,12 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
+
     #At this time we have validated the on premises pre-requisits for group migration.
     #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
 
@@ -2962,6 +2991,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
 
@@ -3199,6 +3230,12 @@ Function Start-DistributionListMigration
         out-logfile -string "The group is not a manager on any other groups."
     }
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryDependencyOnPrem = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
+
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
     out-logfile -string ("Summary of dependencies found:")
     out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
@@ -3380,6 +3417,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "START RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     #Process normal mail enabled groups.
 
@@ -3671,6 +3710,12 @@ Function Start-DistributionListMigration
         out-logfile -string "Administrator opted out of recording Office 365 dependencies."
     }
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryCollectOffice365Dependency = ($telemetryFunctionEndTime - $telemetryFunctionStartTime).seconds
+
+    out-logfile -string ("Time to gather Office 365 dependencies: "+$telemetryCollectOffice365Dependency.tostring())
+
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
     out-logfile -string ("Summary of dependencies found:")
     out-logfile -string ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
@@ -3892,6 +3937,8 @@ Function Start-DistributionListMigration
     #At this time we have processed the deletion to azure.
     #We need to wait for that deletion to occur in Exchange Online.
 
+    $telemetryFunctionStartTime = get-universalDateTime
+
     out-logfile -string "Monitoring Exchange Online for distribution list deletion."
 
     try {
@@ -3901,8 +3948,16 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryTimeToRemoveDL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telmetryFunctionEndTime
+
+    out-logfile -string ("Elapsed time to remove the Office 365 Distribution List: "+$telemetryTimeToRemoveDL.tostring())
+
     #At this point we have validated that the group is gone from office 365.
     #We can begin the process of recreating the distribution group in Exchange Online.
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile "Attempting to create the DL in Office 365."
 
@@ -4138,6 +4193,12 @@ Function Start-DistributionListMigration
             }
         }
     } while ($stopLoop -eq $FALSE)
+
+    $telemetryFunctionEndTime = get-univeralDateTime
+
+    $telemetryCreateOffice365DL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time elapsed to fully create Office 365 DL: "+$telemetryCreateOffice365DL.toString())
 
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
@@ -4397,6 +4458,8 @@ Function Start-DistributionListMigration
     $forLoopCounter=0 #Restting loop counter for next series of operations.
 
     #At this time we are ready to begin resetting the on premises dependencies.
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     $isTestError = "No" #Reset error tracking.
 
@@ -4915,7 +4978,15 @@ Function Start-DistributionListMigration
         out-logfile -string "No on premsies grant send on behalf to evaluate."    
     }
 
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryReplaceOnPremDependency = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telmetryFunctionEndTime
+
+    out-logfile -string ("Time elapsed resetting on premises dependencies: "+$telemetryReplaceOnPremDependency.toString())
+
     $forLoopCounter=0 #Resetting loop counter now that we're switching to cloud operations.
+
+    $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Processing Office 365 Accept Messages From"
 
@@ -5258,7 +5329,13 @@ Function Start-DistributionListMigration
 
             $global:office365ReplacePermissionsErrors+=$isErrorObject
         }
-    }    
+    }
+    
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryReplaceOffice365Dependency = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time elapsed replacing Office 365 dependencies: "+$telemetryReplaceOffice365Dependency.toString())
 
     if ($enableHybridMailflow -eq $TRUE)
     {
@@ -5719,8 +5796,8 @@ Function Start-DistributionListMigration
 
     #Archive the files into a date time success folder.
 
-    $telemetryEndTime = (get-date).ToUniversalTime()
-    $telemetryElapsedSeconds = (($telemetryEndTime - $telemetryStartTime).seconds)
+    $telemetryEndTime = get-universalDateTime
+    $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
 
     # build the properties and metrics #
     $telemetryEventProperties = @{
@@ -5730,11 +5807,19 @@ Function Start-DistributionListMigration
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime
-        MigrationEndTimeUTC = $telementryEndTime
+        MigrationEndTimeUTC = $telemetryEndTime
     }
 
     $telemetryEventMetrics = @{
         MigrationElapsedSeconds = $telemetryElapsedSeconds
+        TimeToNormalizeDNs = $telemetryNormalizeDN
+        TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
+        TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
+        TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
+        TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
+        TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+        TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
+        TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
     }
 
     send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
