@@ -10,7 +10,7 @@ Function get-elapsedTime
             $EndTime
         )
 
-        $functionElapsedTime = ($endTime - $startTime).seconds
+        $functionElapsedTime = ($endTime - $startTime).totalSeconds
 
         return $functionElapsedTime
      }
