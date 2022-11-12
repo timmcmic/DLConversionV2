@@ -429,7 +429,7 @@ Function Start-DistributionListMigration
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
     $telemetryStartTime = (Get-Date).toUniversalTime()
     $telemetryEndTime = $NULL
-    $telemetryElapsedSeconds = $NULL
+    [double]$telemetryElapsedSeconds = 0
     $telemetryEventName = "Start-DistributionListMigration"
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -5720,7 +5720,7 @@ Function Start-DistributionListMigration
     #Archive the files into a date time success folder.
 
     $telemetryEndTime = (get-date).ToUniversalTime()
-    $telemetryElapsedSeconds = ($telemetryEndTime - $telemetryStartTime).seconds
+    $telemetryElapsedSeconds = (($telemetryEndTime - $telemetryStartTime).seconds)
 
     # build the properties and metrics #
     $telemetryEventProperties = @{
@@ -5729,11 +5729,11 @@ Function Start-DistributionListMigration
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telementryEndTime
     }
 
     $telemetryEventMetrics = @{
-        MigrationStartTimeUTC = $telemetryStartTime
-        MigrationEndTimeUTC = $telementryEndTime
         MigrationElapsedSeconds = $telemetryElapsedSeconds
     }
 
