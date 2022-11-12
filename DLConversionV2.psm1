@@ -3950,7 +3950,7 @@ Function Start-DistributionListMigration
 
     $telemetryFunctionEndTime = get-universalDateTime
 
-    $telemetryTimeToRemoveDL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telmetryFunctionEndTime
+    $telemetryTimeToRemoveDL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Elapsed time to remove the Office 365 Distribution List: "+$telemetryTimeToRemoveDL.tostring())
 
@@ -4980,7 +4980,7 @@ Function Start-DistributionListMigration
 
     $telemetryFunctionEndTime = get-universalDateTime
 
-    $telemetryReplaceOnPremDependency = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telmetryFunctionEndTime
+    $telemetryReplaceOnPremDependency = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time elapsed resetting on premises dependencies: "+$telemetryReplaceOnPremDependency.toString())
 
