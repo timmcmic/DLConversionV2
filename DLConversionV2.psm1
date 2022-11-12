@@ -4194,7 +4194,7 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
-    $telemetryFunctionEndTime = get-univeralDateTime
+    $telemetryFunctionEndTime = get-universalDateTime
 
     $telemetryCreateOffice365DL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
