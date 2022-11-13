@@ -410,7 +410,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $FALSE)]
         [string]$remoteDriveLetter=$NULL,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowTelemetryCollection=$TRUE
+        [boolean]$allowTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
     #Initialize telemetry collection.
@@ -441,7 +443,7 @@ Function Start-DistributionListMigration
     [double]$telemetryCreateOffice365DL=0
     [double]$telemetryReplaceOnPremDependency=0
     [double]$telemetryReplaceOffice365Dependency=0
-    [boolean]$telemetryError=$FALSE
+    [boolean]$telemetryError=$TRUE
 
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -5792,7 +5794,7 @@ Function Start-DistributionListMigration
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
 
-        $telemetryError = $TRUE
+        $telemetryError = $false
     }
 
     #Archive the files into a date time success folder.
@@ -5812,16 +5814,41 @@ Function Start-DistributionListMigration
         MigrationSuccessful = $telemetryError
     }
 
-    $telemetryEventMetrics = @{
-        MigrationElapsedSeconds = $telemetryElapsedSeconds
-        TimeToNormalizeDNs = $telemetryNormalizeDN
-        TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
-        TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
-        TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
-        TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
-        TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
-        TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
-        TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+    if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+            TimeToNormalizeDNs = $telemetryNormalizeDN
+            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
+            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
+            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
+            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+        }
+    }
+    elseif (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $TRUE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+            TimeToNormalizeDNs = $telemetryNormalizeDN
+            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
+            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
+            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
+            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+            NumberOfGroupMembers = $exchangeDLMembershipSMTP.count
+            NumberofGroupRejectSenders = $exchangeRejectMessagesSMTP.count
+            NumberofGgroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
+            NumberofGroupManagedBy = $exchangeManagedBySMTP=.count
+            NumberofGroupModeratedBy = $exchangeModeratedBySMTP.count
+            NumberofGroupBypassModerators = $exchangeBypassModerationSMTP.count
+            NumberofGroupGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
+            NumberofGroupSendAsOnGroup = $exchangeSendAsSMTP.Count
+        }
     }
 
     send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
