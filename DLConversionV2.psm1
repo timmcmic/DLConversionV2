@@ -441,6 +441,7 @@ Function Start-DistributionListMigration
     [double]$telemetryCreateOffice365DL=0
     [double]$telemetryReplaceOnPremDependency=0
     [double]$telemetryReplaceOffice365Dependency=0
+    [boolean]$telemetryError=$FALSE
 
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -5790,8 +5791,8 @@ Function Start-DistributionListMigration
         out-logfile -string "Although the migration may have been successful - manual actions may need to be taken to full complete the migration."
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
-        out-logfile -string "" -isError:$TRUE
 
+        $telemetryError = $TRUE
     }
 
     #Archive the files into a date time success folder.
@@ -5808,6 +5809,7 @@ Function Start-DistributionListMigration
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime
         MigrationEndTimeUTC = $telemetryEndTime
+        MigrationSuccessful = $telemetryError
     }
 
     $telemetryEventMetrics = @{
@@ -5823,6 +5825,11 @@ Function Start-DistributionListMigration
     }
 
     send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+
+    if ($telemetryError -eq $TRUE)
+    {
+        out-logfile -string "" -isError:$TRUE
+    }
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
