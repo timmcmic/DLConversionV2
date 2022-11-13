@@ -5842,12 +5842,34 @@ Function Start-DistributionListMigration
             TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
             NumberOfGroupMembers = $exchangeDLMembershipSMTP.count
             NumberofGroupRejectSenders = $exchangeRejectMessagesSMTP.count
-            NumberofGgroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
+            NumberofGroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
             NumberofGroupManagedBy = $exchangeManagedBySMTP=.count
             NumberofGroupModeratedBy = $exchangeModeratedBySMTP.count
             NumberofGroupBypassModerators = $exchangeBypassModerationSMTP.count
             NumberofGroupGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
             NumberofGroupSendAsOnGroup = $exchangeSendAsSMTP.Count
+            NumberofOnPremsiesMemberOf = $allGroupsMemberOf.Count
+            NumberofOnPremisesRejectSenders = $allGroupsReject.Count
+            NumberofOnPremisesAcceptSenders = $allGroupsAccept.Count
+            NumberofOnPremisesBypassModeration = $allGroupsBypassModeration.Count
+            NumberofOnPremisesMailboxForwarding = $allUsersForwardingAddress.Count
+            NumberofOnPrmiesesGrantSendBehalfTo = $allGroupsGrantSendOnBehalfTo.Count
+            NumberofOnPremisesManagedBy = $allGroupsManagedBy.Count
+            NumberofOnPremisesFullMailboxAccess = $allObjectsFullMailboxAccess.Count
+            NumberofOnPremsiesSendAs = $allObjectSendAsAccess.Count
+            NumberofOnPremisesFolderPermissions = $allMailboxesFolderPermissions.Count
+            NumberofOnPremisesCoManagers = $allGroupsCoManagedByBL.Count
+            NumberofOffice365Members = $allOffice365MemberOf.Count
+            NumberofOffice365AcceptSenders = $allOffice365Accept.Count
+            NumberofOffice365RejectSenders = $allOffice365Reject.Count
+            NumberofOffice365BypassModeration = $allOffice365BypassModeration.Count
+            NumberofOffice365ManagedBy = $allOffice365ManagedBy.Count
+            NumberofOffice365GrantSendOnBehalf = $allOffice365GrantSendOnBehalfTo.Count
+            NumberofOffice365ForwardingMailboxes= $allOffice365ForwardingAddress.Count
+            NumberofOffice365FullMailboxAccess = $allOffice365FullMailboxAccess.Count
+            NumberofOffice365SendAs = $allOffice365SendAsAccess.Count
+            NumberofOffice365SendAsAccessOnGroup = $allOffice365SendAsAccessOnGroup.Count
+            NumberofOffice365MailboxFolderPermissions = $allOffice365MailboxFolderPermissions.Count
         }
     }
 
