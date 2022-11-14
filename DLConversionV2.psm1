@@ -443,7 +443,7 @@ Function Start-DistributionListMigration
     [double]$telemetryCreateOffice365DL=0
     [double]$telemetryReplaceOnPremDependency=0
     [double]$telemetryReplaceOffice365Dependency=0
-    [boolean]$telemetryError=$TRUE
+    [boolean]$telemetryError=$FALSE
 
 
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
@@ -5794,7 +5794,7 @@ Function Start-DistributionListMigration
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
 
-        $telemetryError = $false
+        $telemetryError = $TRUE
     }
 
     #Archive the files into a date time success folder.
