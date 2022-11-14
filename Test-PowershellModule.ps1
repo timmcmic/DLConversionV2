@@ -140,4 +140,6 @@
 
         Out-LogFile -string "END TEST-POWERSHELLMODULE"
         Out-LogFile -string "********************************************************************************"
+
+        return $commandsArray[0].version
     }
