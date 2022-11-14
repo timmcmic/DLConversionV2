@@ -5811,7 +5811,7 @@ Function Start-DistributionListMigration
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime
         MigrationEndTimeUTC = $telemetryEndTime
-        MigrationSuccessful = $telemetryError
+        MigrationErrors = $telemetryError
     }
 
     if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
