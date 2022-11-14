@@ -5843,7 +5843,7 @@ Function Start-DistributionListMigration
             NumberOfGroupMembers = $exchangeDLMembershipSMTP.count
             NumberofGroupRejectSenders = $exchangeRejectMessagesSMTP.count
             NumberofGroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
-            NumberofGroupManagedBy = $exchangeManagedBySMTP=.count
+            NumberofGroupManagedBy = $exchangeManagedBySMTP.count
             NumberofGroupModeratedBy = $exchangeModeratedBySMTP.count
             NumberofGroupBypassModerators = $exchangeBypassModerationSMTP.count
             NumberofGroupGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
