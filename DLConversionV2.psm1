@@ -420,7 +420,6 @@ Function Start-DistributionListMigration
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversion"
 
-
     if ($allowTelemetryCollection -eq $TRUE)
     {
         start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
@@ -5877,7 +5876,10 @@ Function Start-DistributionListMigration
         }
     }
 
-    send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    }
 
     if ($telemetryError -eq $TRUE)
     {
