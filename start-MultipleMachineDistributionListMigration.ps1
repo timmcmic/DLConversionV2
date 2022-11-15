@@ -277,6 +277,11 @@ Function Start-MultipleMachineDistributionListMigration
 
     [string]$localHostName=$NULL
 
+    #If certificate authentication is being utilized - there is no reason to check for a server count for credential.
+
+    [boolean]$isExchangeCertAuth = $FALSE
+    [boolean]$isAzureCertAuth = $false
+
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
@@ -535,8 +540,47 @@ Function Start-MultipleMachineDistributionListMigration
     }
     else 
     {
+        $isExchangeCertAuth = $TRUE
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
+
+    #Validate that only one method of engaging exchange online was specified.
+thumbprint
+    Out-LogFile -string "Valdating azure credentials."
+
+    if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
+    {
+        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+    }
+    elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
+    {
+        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+    }
+    else
+    {
+        Out-LogFile -string "Only one method of Exchange Online authentication specified."
+    }
+
+       #Validate that all information for the certificate connection has been provieed.
+
+       if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
+       {
+           out-logfile -string "The azure tenant ID and application ID are required when using certificate thumbprint authentication to Azure AD." -isError:$TRUE
+       }
+       elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -ne "") -and ($azureApplicationID -eq ""))
+       {
+           out-logfile -string "The azure application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+       }
+       elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
+       {
+           out-logfile -string "The azure tenant ID is required when using certificate thumbprint authentication." -isError:$TRUE
+       }
+       else 
+       {
+           $isAzureCertAuth = $TRUE
+           out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+       }
+ 
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
@@ -629,13 +673,22 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "The number of active directory credentials matches the server count."
     }
 
-    if ($exchangeOnlineCredential.count -lt $serverNames.count)
+    if (($exchangeOnlineCredential.count -lt $serverNames.count) -and ($isExchangeCertAuth -eq $FALSE))
     {
         out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
     }
     else 
     {
         out-logfile -string "The number of exchange online credentials matches the server count."    
+    }
+
+    if (($azureADCredential.count -lt $serverNames.count) -and ($isAzureCertAuth -eq $FALSE))
+    {
+        out-logfile -string "ERROR:  Must specify one azure credential for each migratione server." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The number of azure credentials matches the server count."    
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
