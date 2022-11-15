@@ -621,13 +621,18 @@ Function Start-MultipleDistributionListMigration
         $retainMailboxFolderPermsOffice365=$TRUE
     }
 
-    if ($exchangeOnlineCredential -eq "None")
+    #Ok so this is the other half of the hokie code.
+    #This checks to see if the multi machine is the caller.
+    #If it is - and cert auth is used - then we know that this array contains bogus users.
+    #Set the credential back to NULL before calling the migration.
+
+    if ($exchangeOnlineCredential.userName -eq "BogusUserName")
     {
         out-logfile -string "Exchange certificate authentication in use - null out credential"
         $exchangeOnlineCredential = $NULL
     }
     
-    if ($azureADCredential -eq "None")
+    if ($azureADCredential.userName -eq "BogusUserName")
     {
         out-logfile -string "Azure AD certificate authentication in use - null out credential."
         $azureADCredential = $NULL

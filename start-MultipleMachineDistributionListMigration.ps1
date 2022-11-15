@@ -1093,18 +1093,38 @@ Function Start-MultipleMachineDistributionListMigration
         $forEnd = $serverNames.count 
     }
 
-    if ($isExchangeCertAuth -eq $TRUE)
-    {
-        out-logfile -string "Creating empty Exchange credentials array."
+    #Ok so the below code is hokie.  Here is what we're doing.
+    #It is very possible that certificate authentication is used for either exchange online or azure ad.
+    #If cert auth is utilized then there are no arrays of user names.
+    #In the invoke code below I go ahead and invoke the start-multiple with a full switch set.
+    #If the credential array is null - then you get a null index array error.  
+    #This creates a bogus username and password and stuffs the array.
+    #If bogus user name is found in the other ps1 - it sets it back to null.
 
-        $exchangeOnlineCredential += "None","None","None","None","None"
-    }
-
-    if ($isAzureCertAuth -eq $TRUE)
+    if (($isExchangeCertAuth -eq $TRUE) -or ($isAzureCertAuth -eq $TRUE))
     {
-        out-logfile -string "Creating empty Azure credentials array"
-        
-        $azureADCredential += "None","None","None","None","None"
+        # Define clear text string for username and password
+        [string]$bogusUserName = 'BogusUserName'
+        [string]$bogusUserPassword = 'BogusPassword'
+
+#       Convert to SecureString
+        [securestring]$bogusSecStringPassword = ConvertTo-SecureString $bogusUserPassword -AsPlainText -Force
+
+        [pscredential]$bogusCredObject = New-Object System.Management.Automation.PSCredential ($userName, $secStringPassword)
+
+        if ($isExchangeCertAuth -eq $TRUE)
+        {
+            out-logfile -string "Creating empty Exchange credentials array."
+
+            $exchangeOnlineCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
+        }
+
+        if ($isAzureCertAuth -eq $TRUE)
+        {
+            out-logfile -string "Creating empty Azure credentials array"
+            
+            $azureADCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
+        }
     }
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
