@@ -1110,7 +1110,7 @@ Function Start-MultipleMachineDistributionListMigration
 #       Convert to SecureString
         [securestring]$bogusSecStringPassword = ConvertTo-SecureString $bogusUserPassword -AsPlainText -Force
 
-        [pscredential]$bogusCredObject = New-Object System.Management.Automation.PSCredential ($userName, $secStringPassword)
+        [pscredential]$bogusCredObject = New-Object System.Management.Automation.PSCredential ($bogusUserName, $bogusSecStringPassword)
 
         if ($isExchangeCertAuth -eq $TRUE)
         {
