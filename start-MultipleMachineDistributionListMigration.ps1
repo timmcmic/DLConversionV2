@@ -231,6 +231,23 @@ Function Start-MultipleMachineDistributionListMigration
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    #Initialize telemetry collection.
+
+    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
+    $traceModuleName = "DLConversion"
+
+    $telemetryStartTime = get-universalDateTime
+    $telemetryEndTime = $NULL
+    [double]$telemetryElapsedSeconds = 0
+    $telemetryEventName = "Start-MultipleMachineDistributionListMigration"
+    [double]$telemetryGroupCount = $groupSMTPAddresses.Count
+    [double]$telemtryMachineCount = $servernames.count
+    
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
+    }
+
     $windowTitle = "Start-MultipleMachineDistributionListMigration Controller"
     $host.ui.RawUI.WindowTitle = $windowTitle
 
@@ -1137,6 +1154,28 @@ Function Start-MultipleMachineDistributionListMigration
     get-migrationSummary -logFolderPath $logFolderPath
 
     write-shamelessPlug
+
+    $telemetryEndTime = get-universalDateTime
+    $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
+
+    # build the properties and metrics #
+    $telemetryEventProperties = @{
+        DLConversionV2Command = $telemetryEventName
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telemetryEndTime
+    }
+
+    $telemetryEventMetrics = @{
+        MigrationElapsedSeconds = $telemetryElapsedSeconds
+        TotalGroups = $telemetryGroupCount
+        TotalMachines = $telemetryMachineCount
+    }
+
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    }
+
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END start-MultipleMachineDistributionListMigration"

@@ -235,6 +235,23 @@ Function Start-MultipleDistributionListMigration
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    #Initialize telemetry collection.
+
+    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
+    $traceModuleName = "DLConversion"
+
+    $telemetryStartTime = get-universalDateTime
+    $telemetryEndTime = $NULL
+    [double]$telemetryElapsedSeconds = 0
+    $telemetryEventName = "Start-MultipleDistributionListMigration"
+    [double]$telemetryGroupCount = 0
+    [boolean]$telemetryMultipleMachine = $isMultiMachine
+    
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
+    }
+
     $windowTitle = "Start-MultipleDistributionListMigration Controller"
     $host.ui.RawUI.WindowTitle = $windowTitle
 
@@ -257,6 +274,7 @@ Function Start-MultipleDistributionListMigration
     [array]$jobOutput=@()
 
     [int]$totalAddressCount = $groupSMTPAddresses.Count
+    $telemetryGroupCount = $totalAddressCount   
     [int]$maxThreadCount = 5
 
     [string]$jobName="MultipleMigration"
@@ -747,6 +765,27 @@ Function Start-MultipleDistributionListMigration
     [system.gc]::Collect()
 
     write-shamelessPlug
+
+    $telemetryEndTime = get-universalDateTime
+    $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
+
+    # build the properties and metrics #
+    $telemetryEventProperties = @{
+        DLConversionV2Command = $telemetryEventName
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telemetryEndTime
+        MultipleMachineMigration = $telemetryMultipleMachine
+    }
+
+    $telemetryEventMetrics = @{
+        MigrationElapsedSeconds = $telemetryElapsedSeconds
+        TotalGroups = $telemetryGroupCount
+    }
+
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    }
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
