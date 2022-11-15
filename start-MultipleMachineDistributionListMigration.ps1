@@ -544,7 +544,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
     }
 
-    #Validate that only one method of engaging exchange online was specified.
+    #Validate that only one method of engaging azure was specified.
 
     Out-LogFile -string "Valdating azure credentials."
 
@@ -561,25 +561,25 @@ Function Start-MultipleMachineDistributionListMigration
         Out-LogFile -string "Only one method of Exchange Online authentication specified."
     }
 
-       #Validate that all information for the certificate connection has been provieed.
+    #Validate that all information for the certificate connection has been provieed.
 
-       if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
-       {
-           out-logfile -string "The azure tenant ID and application ID are required when using certificate thumbprint authentication to Azure AD." -isError:$TRUE
-       }
-       elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -ne "") -and ($azureApplicationID -eq ""))
-       {
-           out-logfile -string "The azure application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-       }
-       elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
-       {
-           out-logfile -string "The azure tenant ID is required when using certificate thumbprint authentication." -isError:$TRUE
-       }
-       else 
-       {
-           $isAzureCertAuth = $TRUE
-           out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-       }
+    if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
+    {
+        out-logfile -string "The azure tenant ID and application ID are required when using certificate thumbprint authentication to Azure AD." -isError:$TRUE
+    }
+    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -ne "") -and ($azureApplicationID -eq ""))
+    {
+        out-logfile -string "The azure application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
+    {
+        out-logfile -string "The azure tenant ID is required when using certificate thumbprint authentication." -isError:$TRUE
+    }
+    else 
+    {
+        $isAzureCertAuth = $TRUE
+        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+    }
  
 
     #Validate that an OU was specified <if> retain group is not set to true.
@@ -1091,6 +1091,20 @@ Function Start-MultipleMachineDistributionListMigration
     else 
     {
         $forEnd = $serverNames.count 
+    }
+
+    if ($isExchangeCertAuth -eq $TRUE)
+    {
+        out-logfile -string "Creating empty Exchange credentials array."
+
+        $exchangeOnlineCredential += "None","None","None","None","None"
+    }
+
+    if ($isAzureCertAuth -eq $TRUE)
+    {
+        out-logfile -string "Creating empty Azure credentials array"
+        
+        $azureADCredential += "None","None","None","None","None"
     }
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
