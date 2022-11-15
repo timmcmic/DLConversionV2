@@ -545,7 +545,7 @@ Function Start-MultipleMachineDistributionListMigration
     }
 
     #Validate that only one method of engaging exchange online was specified.
-thumbprint
+
     Out-LogFile -string "Valdating azure credentials."
 
     if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
