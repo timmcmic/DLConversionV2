@@ -241,7 +241,7 @@ Function Start-MultipleMachineDistributionListMigration
     [double]$telemetryElapsedSeconds = 0
     $telemetryEventName = "Start-MultipleMachineDistributionListMigration"
     [double]$telemetryGroupCount = $groupSMTPAddresses.Count
-    [double]$telemtryMachineCount = $servernames.count
+    [double]$telemetryMachineCount = $servernames.count
     
     if ($allowTelemetryCollection -eq $TRUE)
     {
