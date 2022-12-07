@@ -61,7 +61,7 @@
         [string]$functionSimpleDisplayName=""
         [string]$functionWindowsEmailAddress=""
         [boolean]$functionReportToOriginator=$FALSE
-        [string]$functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        [string]$functionExternalDirectoryObjectID = ""
 
         [boolean]$isTestError=$FALSE
         [array]$functionErrors=@()
@@ -71,6 +71,15 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
+
+        if ($office365DLConfigurationPostMigration.externalDirectoryObjectID -eq "")
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.GUID
+        }
+        else
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        }
 
         #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
         #The exchange commandlets abstract this by performing a conversion or filling the values in.
