@@ -4029,7 +4029,7 @@ Function Start-DistributionListMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
-                $stopLoop -eq $TRUE
+                $stopLoop = $TRUE
             }
             else 
             {
@@ -4098,7 +4098,7 @@ Function Start-DistributionListMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
-                $stopLoop -eq $TRUE
+                $stopLoop = $TRUE
             }
             else 
             {
@@ -4162,7 +4162,7 @@ Function Start-DistributionListMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
-                $stopLoop -eq $TRUE
+                $stopLoop = $TRUE
             }
             else 
             {
@@ -4197,7 +4197,7 @@ Function Start-DistributionListMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
-                $stopLoop -eq $TRUE
+                $stopLoop = $TRUE
             }
             else 
             {
