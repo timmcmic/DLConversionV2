@@ -124,7 +124,14 @@
 
         out-logfile -string $functionEmailAddresses
 
-        $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        if ($office365DLConfigurationPostMigration.externalDirectoryObjectID -eq "")
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.GUID
+        }
+        else
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        }
         
         out-logfile -string "External directory object ID utilized for set commands:"
         out-logfile -string $functionExternalDirectoryObjectID

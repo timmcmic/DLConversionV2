@@ -48,6 +48,7 @@
         [string]$functionMailNickName = ""
         [string]$functionName = ((Get-Date -Format FileDateTime)+(Get-Random)).tostring()
         $functionDL = $NULL
+        $functionIsRoom = $FALSE
 
         #Start function processing.
 
@@ -100,15 +101,38 @@
 
         out-logfile -string ("Random DL name: "+$functionName)
 
+        #Test to determine if the distribution group is a room distribution group.
+
+        if ($originalDLConfiguration.msExchRecipientTypeDetails -eq "268435456")
+        {
+            out-logfile -string "The group is a room distribution list."
+            $functionIsRoom = $TRUE
+        }
+        else 
+        {
+            out-logfile -string "The group is not a room distribution list."
+        }
+
         #Create the distribution group in office 365.
         
         try 
         {
-            out-logfile -string "Creating the distribution group in Office 365."
+            if ($functionIsRoom -eq $FALSE)
+            {
+                out-logfile -string "Creating the distribution group in Office 365."
 
-            $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+                $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -errorAction STOP 
+    
+                out-logfile -string $functionDL
+            }
+            else 
+            {
+                out-logfile -string "Creating the distribution group in Office 365 as a room list."
 
-            out-logfile -string $functionDL
+                $functionDL = new-o365distributionGroup -name $functionName -type $functionGroupType -ignoreNamingPolicy:$TRUE -roomList -errorAction STOP 
+    
+                out-logfile -string $functionDL
+            }
         }
         catch 
         {
