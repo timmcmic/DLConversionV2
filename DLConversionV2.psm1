@@ -4081,7 +4081,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
@@ -4145,7 +4145,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
@@ -4180,7 +4180,7 @@ Function Start-DistributionListMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP
 
             #Membership obtained - export.
 
