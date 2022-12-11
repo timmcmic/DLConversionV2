@@ -162,26 +162,9 @@
 
         if ($functionParameterSetName -eq $activeDirectoryParameterSetName)
         {
-            foreach ($credential in $activeDirectoryCredential)
-            {
-                if ($credential.gettype().name -eq "PSCredential")
-                {
-                    out-logfile -string ("Tested credential: "+$credential.userName)
-                }
-                else 
-                {
-                    out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
-                }
-            }
+            test-credentials -credentialsToTest $activeDirectoryCredential
 
-            if ($activeDirectoryCredential.count -lt $serverNames.count)
-            {
-                out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
-            }
-            else
-            {
-                out-logfile -string "The number of active directory credentials matches the server count."
-            }
+            test-itemCount -itemsToCount $activeDirectoryCredential -itemsToCompareCount $serverNames
         }
 
         if ($functionParameterSetName -eq $hybridMailFLowParameterSetName)
@@ -240,26 +223,9 @@
                 {
                     out-logfile -string "Validating the exchange online credential array"
 
-                    foreach ($credential in $azureADCredential)
-                    {
-                        if ($credential.gettype().name -eq "PSCredential")
-                        {
-                            out-logfile -string ("Tested credential: "+$credential.userName)
-                        }
-                        else 
-                        {
-                            out-logfile -string "Azure AD credentials not valid.  All credentials must be PSCredential types." -isError:$TRUE    
-                        }
-                    }
+                    test-credentials -credentialsToTest $azureADCredential
 
-                    if (($azureADCredential.count -lt $serverNames.count) -and ($isAzureCertAuth -eq $FALSE))
-                    {
-                        out-logfile -string "ERROR:  Must specify one azure credential for each migratione server." -isError:$TRUE
-                    }
-                    else 
-                    {
-                        out-logfile -string "The number of azure credentials matches the server count."    
-                    }
+                    test-itemCount -itemsToCount $azureADCredential -itemsToCompareCount $serverNames
                 }
             }
         }
@@ -302,26 +268,9 @@
                 {
                     out-logfile -string "Validating the exchange online credential array"
 
-                    foreach ($credential in $exchangeOnlineCredential)
-                    {
-                        if ($credential.gettype().name -eq "PSCredential")
-                        {
-                            out-logfile -string ("Tested credential: "+$credential.userName)
-                        }
-                        else 
-                        {
-                            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-                        }
-                    }
+                    test-credentials -credentialsToTest $exchangeOnlineCredential
 
-                    if ($exchangeOnlineCredential.count -lt $serverNames.count)
-                    {
-                        out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
-                    }
-                    else 
-                    {
-                        out-logfile -string "The number of exchange online credentials matches the server count."    
-                    }
+                    test-itemCount -itemsToCount $exchangeOnlineCredential -itemsToCompareCount $serverNames
                 }
             } 
         }
@@ -352,26 +301,9 @@
 
                 if ($functionParamterSetName -eq $exchangeParameterSetNameMulti)
                 {
-                    foreach ($credential in $exchangecredential)
-                    {
-                        if ($credential.gettype().name -eq "PSCredential")
-                        {
-                            out-logfile -string ("Tested credential: "+$credential.userName)
-                        }
-                        else 
-                        {
-                            out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-                        }
-                    }
-                    
-                    if ($exchangeCredential.count -lt $serverNames.count)
-                    {
-                        out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
-                    }
-                    else 
-                    {
-                        out-logfile -string "The number of exchange credentials matches the server count."    
-                    }
+                    test-credentials -credentialsToTest $exchangeCredential
+
+                    test-itemCount -itemsToCount $exchangeCredential -itemsToCompareCount $serverNames
                 }
 
                 Out-LogFile -string "Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "
@@ -410,26 +342,9 @@
                 {
                     Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
 
-                    foreach ($credential in $aadConnectCredential)
-                    {
-                        if ($credential.gettype().name -eq "PSCredential")
-                        {
-                            out-logfile -string ("Tested credential: "+$credential.userName)
-                        }
-                        else 
-                        {
-                            out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-                        }
-                    }
+                    test-credentials -credentialsToTest $aadConnectCredential
 
-                    if ($aadConnectCredential.count -lt $serverNames.count)
-                    {
-                        out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
-                    }
-                    else 
-                    {
-                        out-logfile -string "The number of ad connect credentials matches the server count."    
-                    }
+                    test-itemCount -itemsToCount $aadConnectCredential -itemsToCompareCount $serverNames
                 }
             }
             else
