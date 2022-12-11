@@ -63,10 +63,10 @@
             $azureADCertificateThumbprint,
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
             [AllowNull()]
-            $azureTenantID,
+            $azureADTenantID,
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
             [AllowNull()]
-            $azureApplicationID,
+            $azureADApplicationID,
             [Parameter(Mandatory = $true,ParameterSetName = 'NoSyncOU')]
             [AllowNull()]
             $retainOriginalGroup,
