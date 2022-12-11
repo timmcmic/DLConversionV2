@@ -417,70 +417,13 @@ Function Start-MultipleMachineDistributionListMigration
     
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
-    try
-    {
-        start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
-    }
-    catch 
-    {
-        out-logfile -string "Error attempting to validate AADConnect credentials." -isError:$TRUE
-    }
+    start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
 
     #Validate that both the exchange credential and exchange server are presented together.
 
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-    try {
-        start-parameterValidation -exchangeServer $exchangeServer -exchagneCredential $exchangeCredential -errorAction STOP
-    }
-    catch {
-        out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together."
-    }
-
-    if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
-    {
-        #The exchange credential was specified but the exchange server was not specified.
-
-        Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
-    }
-    elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
-    {
-        #The exchange server was specified but the exchange credential was not.
-
-        Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
-    }
-    elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
-    {
-        #The server name and credential were specified for Exchange.
-
-        Out-LogFile -string "The server name and credential were specified for Exchange."
-
-        foreach ($credential in $exchangecredential)
-        {
-            if ($credential.gettype().name -eq "PSCredential")
-            {
-                out-logfile -string ("Tested credential: "+$credential.userName)
-            }
-            else 
-            {
-                out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-            }
-        }
-        
-        if ($exchangeCredential.count -lt $serverNames.count)
-        {
-            out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "The number of exchange credentials matches the server count."    
-        }
-    
-    }
-    else
-    {
-        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
-    }
+    start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
 
     #Validate that only one method of engaging exchange online was specified.
 

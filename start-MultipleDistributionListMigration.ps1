@@ -453,25 +453,13 @@ Function Start-MultipleDistributionListMigration
 
         Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
-        try
-        {
-            start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
-        }
-        catch 
-        {
-            out-logfile -string "Error attempting to validate AADConnect credentials." -isError:$TRUE
-        }
+        start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
 
         #Validate that both the exchange credential and exchange server are presented together.
 
         Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-        try {
-            start-parameterValidation -exchangeServer $exchangeServer -exchagneCredential $exchangeCredential -errorAction STOP
-        }
-        catch {
-            out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together."
-        }
+        start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
 
         #Validate that only one method of engaging exchange online was specified.
 
