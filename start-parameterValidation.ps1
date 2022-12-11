@@ -61,19 +61,19 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
             [AllowNull()]
-            $azureADCertificateThumbprint,
+            $azureCertificateThumbprint,
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
             [AllowNull()]
-            $azureADTenantID,
+            $azureTenantID,
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
             [AllowNull()]
-            $azureADApplicationID,
+            $azureApplicationID,
             [Parameter(Mandatory = $true,ParameterSetName = 'NoSyncOU')]
             [AllowNull()]
             $retainOriginalGroup,
             [Parameter(Mandatory = $true,ParameterSetName = 'NoSyncOU')]
             [AllowNull()]
-            $doNotSyncOU,
+            $doNoSyncOU,
             [Parameter(Mandatory = $true,ParameterSetName = 'HybridMailFlow')]
             [AllowNull()]
             $useOnPremisesExchange,
