@@ -14,18 +14,16 @@
 
         Param
         (
-            [Parameter(Mandatory = $true)]
-            [Parameter(ParameterSetName = 'AADConnect')]
-            [Parameter(ParameterSetName = 'AADConnectMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnect')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [AllowNull()]
             $aadConnectServer,
-            [Parameter(Mandatory = $true)]
-            [Parameter(ParameterSetName = 'AADConnect')]
-            [Parameter(ParameterSetName = 'AADConnectMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnect')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [AllowNull()]
             $aadConnectCredential,
-            [Parameter(Mandatory = $true)]
-            [Parameter(ParameterSetName = 'AADConnectMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnect')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [AllowNull()]
             $serverNames
         )
