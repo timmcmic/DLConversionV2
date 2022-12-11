@@ -924,8 +924,6 @@ Function Start-DistributionListMigration
    
     #Validate that both the exchange credential and exchange server are presented together.
 
-    $coreVariables.useOnPremisesExchange.value=start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
-
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
     try {
