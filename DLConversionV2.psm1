@@ -912,9 +912,11 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
+    $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
+
     try
     {
-        $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
+        
     }
     catch 
     {
