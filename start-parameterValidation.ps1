@@ -27,6 +27,7 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'MaxThreadCount')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ActiveDirectory')]
             [AllowNull()]
             $serverNames,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
