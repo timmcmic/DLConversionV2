@@ -452,25 +452,8 @@ Function Start-MultipleDistributionListMigration
         #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
         Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
-    
-        if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
-        {
-            #The credential was specified but the server name was not.
 
-            Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
-        }
-        elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
-        {
-            #The server name was specified but the credential was not.
-
-            Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
-        }
-        elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
-        {
-            #The server name and credential were specified for AADConnect.
-
-            Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-        }
+        start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
 
         #Validate that both the exchange credential and exchange server are presented together.
 

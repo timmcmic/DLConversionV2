@@ -9,17 +9,22 @@
 
     #>
     Function start-parameterValidation
-     {
+    {
         [cmdletbinding()]
 
         Param
         (
-            [Parameter(Mandatory = $true,
-            ParameterSetName = 'AADConnect')]
+            [Parameter(Mandatory = $true)]
+            [Parameter(ParameterSetName = 'AADConnect')]
+            [Parameter(ParameterSetName = 'AADConnectMulti')]
             $aadConnectServer,
-            [Parameter(Mandatory = $true,
-            ParameterSetName = 'AADConnect')]
-            $aadConnectCredential
+            [Parameter(Mandatory = $true)]
+            [Parameter(ParameterSetName = 'AADConnect')]
+            [Parameter(ParameterSetName = 'AADConnectMulti')]
+            $aadConnectCredential,
+            [Parameter(Mandatory = $true)]
+            [Parameter(ParameterSetName = 'AADConnectMulti')]
+            $serverNames
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -28,6 +33,7 @@
 
         $functionParameterSetName = $PsCmdlet.ParameterSetName
         $aadConnectParameterSetName = 'AADConnect'
+        $aadConnectParameterSetNameMulti = 'AADConnectMulti'
         $functionTrueFalse = $false
 
         #Start function processing.
@@ -38,7 +44,7 @@
 
         out-logfile -string ("The parameter set name for validation: "+$functionParameterSetName)
 
-        if ($functionParameterSetName -eq $aadConnectParameterSetName)
+        if (($functionParameterSetName -eq $aadConnectParameterSetName) -or ($functionParameterSetName -eq $aadConnectParameterSetNameMulti))
         {
             if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
             {
@@ -69,6 +75,33 @@
                 Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$coreVariables.useAADConnect.value)
             }
         }
+
+        if ($functionParameterSetName -eq $aadConnectParameterSetNameMulti)
+        {
+            Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
+
+            foreach ($credential in $aadConnectCredential)
+            {
+                if ($credential.gettype().name -eq "PSCredential")
+                {
+                    out-logfile -string ("Tested credential: "+$credential.userName)
+                }
+                else 
+                {
+                    out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+                }
+            }
+
+            if ($aadConnectCredential.count -lt $serverNames.count)
+            {
+                out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "The number of ad connect credentials matches the server count."    
+            }
+        }
+    }
         
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidation"
