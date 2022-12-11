@@ -66,7 +66,7 @@
 
                 Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
             }
-            elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
+            elseif (($exchangeCredential -ne $NULL) -and ($exchangeServer -ne ""))
             {
                 #The server name and credential were specified for Exchange.
 
