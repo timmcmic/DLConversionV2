@@ -276,7 +276,7 @@
             } 
         }
 
-        if (($functionParameterSetName -eq $exchangeParameterSetName) -or ($functionParameterSetName -eq $exchangeParamterSetNameMulti))
+        if (($functionParameterSetName -eq $exchangeParameterSetName) -or ($functionParameterSetName -eq $exchangeParameterSetNameMulti))
         {
             if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
             {
