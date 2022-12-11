@@ -23,12 +23,15 @@
             [AllowNull()]
             $aadConnectCredential,
             [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [AllowNull()]
             $serverNames,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [AllowNull()]
             $exchangeServer,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [AllowNull()]
             $exchangeCredential
         )

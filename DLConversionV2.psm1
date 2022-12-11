@@ -912,13 +912,13 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
-    $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
+    $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
 
     #Validate that both the exchange credential and exchange server are presented together.
 
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-    $coreVariables.useOnPremisesExchange.value = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
+    $coreVariables.useOnPremisesExchange.value = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential
 
     #Validate that only one method of engaging exchange online was specified.
 
