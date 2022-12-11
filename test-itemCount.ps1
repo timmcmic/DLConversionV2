@@ -17,7 +17,7 @@
             [Parameter(Mandatory = $true)]
             $itemsToCount,
             [Parameter(Mandatory = $true)]
-            $itemsToCompareCount,
+            $itemsToCompareCount
         )
 
         #Output all parameters bound or unbound and their associated values.
