@@ -926,10 +926,10 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
     try {
-        $coreVariables.useOnPremisesExchange.value=start-parameterValidation -exchangeServer $exchangeServer -exchagneCredential $exchangeCredential -errorAction STOP
+        $coreVariables.useOnPremisesExchange.value=start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
     }
     catch {
-        out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together."
+        out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together." -isError:$TRUE
     }
 
     #Validate that only one method of engaging exchange online was specified.
