@@ -101,7 +101,6 @@
                 out-logfile -string "The number of ad connect credentials matches the server count."    
             }
         }
-    }
         
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidation"
