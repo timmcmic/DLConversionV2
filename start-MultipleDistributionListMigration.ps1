@@ -452,148 +452,44 @@ Function Start-MultipleDistributionListMigration
         #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
         Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
-    
-        if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
-        {
-            #The credential was specified but the server name was not.
 
-            Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
-        }
-        elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
-        {
-            #The server name was specified but the credential was not.
-
-            Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
-        }
-        elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
-        {
-            #The server name and credential were specified for AADConnect.
-
-            Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-        }
+        start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
 
         #Validate that both the exchange credential and exchange server are presented together.
 
         Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-        if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
-        {
-            #The exchange credential was specified but the exchange server was not specified.
-
-            Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
-        }
-        elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
-        {
-            #The exchange server was specified but the exchange credential was not.
-
-            Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
-        }
-        elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
-        {
-            #The server name and credential were specified for Exchange.
-
-            Out-LogFile -string "The server name and credential were specified for Exchange."
-        }
-        else
-        {
-            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
-        }
+        $useOnPremisesExchange = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential
 
         #Validate that only one method of engaging exchange online was specified.
 
         Out-LogFile -string "Validating Exchange Online Credentials."
 
-        if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
-        {
-            Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-        }
-        elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
-        {
-            out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-        }
-        else
-        {
-            Out-LogFile -string "Only one method of Exchange Online authentication specified."
-        }
+        start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
 
-        #Validate that all information for the certificate connection has been provieed.
+        #Validating that all portions for exchange certificate auth are present.
 
-        if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
-        {
-            out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
-        }
-        elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
-        {
-            out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-        }
-        elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
-        {
-            out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-        }
+        out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
+
+        start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
         #Validate that only one method of engaging azure was specified.
 
         Out-LogFile -string "Valdating azure credentials."
 
-        if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
-        {
-            Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-        }
-        elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
-        {
-            out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-        }
-        else
-        {
-            Out-LogFile -string "Only one method of Exchange Online authentication specified."
-        }
+        start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
 
         #Validate that all information for the certificate connection has been provieed.
 
-        if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
-        {
-            out-logfile -string "The azure tenant ID and application ID are required when using certificate thumbprint authentication to Azure AD." -isError:$TRUE
-        }
-        elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -ne "") -and ($azureApplicationID -eq ""))
-        {
-            out-logfile -string "The azure application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-        }
-        elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
-        {
-            out-logfile -string "The azure tenant ID is required when using certificate thumbprint authentication." -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-        }
+        start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
         #Validate that an OU was specified <if> retain group is not set to true.
 
         Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-        if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
-        {
-            out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
-        }
+        start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
-        if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
-        {
-            out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-        }
-
-        if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
-        {
-            out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-        }
-
-        if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
-        {
-            out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-        }
+        out-logfile -string "Validating that on premises Exchange support is enabled for enabling hybrid mail flow."
     }
 
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)

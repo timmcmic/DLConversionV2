@@ -390,211 +390,57 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Validating that the remote network drive passed is a single valid drive letter"
 
-    if ($remoteDriveLetter -eq $NULL)
-    {
-        out-logfile -string "A remote drive letter is required - specify S for example." -isError:$TRUE
-    }
-    else 
-    {
-        if ($remoteDriveLetter.count -gt 1)
-        {
-            out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "Drive letter specified is a single character."
-            
-            if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
-            {
-                out-logfile -string "Drive letter specified is single and is a valid drive character."
-            }
-            else 
-            {
-                out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
-            }
-        }
-    }
+    start-parameterValidation -remoteDriveLetter $remoteDriveLetter
     
-
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
-   
-    if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
-    {
-        #The credential was specified but the server name was not.
 
-        Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
-    }
-    elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
-    {
-        #The server name was specified but the credential was not.
-
-        Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
-    }
-    elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
-    {
-        #The server name and credential were specified for AADConnect.
-
-        Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-
-        foreach ($credential in $aadConnectCredential)
-        {
-            if ($credential.gettype().name -eq "PSCredential")
-            {
-                out-logfile -string ("Tested credential: "+$credential.userName)
-            }
-            else 
-            {
-                out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-            }
-        }
-
-        if ($aadConnectCredential.count -lt $serverNames.count)
-        {
-            out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "The number of ad connect credentials matches the server count."    
-        }
-    }
+    start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
 
     #Validate that both the exchange credential and exchange server are presented together.
 
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-    if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
-    {
-        #The exchange credential was specified but the exchange server was not specified.
-
-        Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
-    }
-    elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
-    {
-        #The exchange server was specified but the exchange credential was not.
-
-        Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
-    }
-    elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
-    {
-        #The server name and credential were specified for Exchange.
-
-        Out-LogFile -string "The server name and credential were specified for Exchange."
-
-        foreach ($credential in $exchangecredential)
-        {
-            if ($credential.gettype().name -eq "PSCredential")
-            {
-                out-logfile -string ("Tested credential: "+$credential.userName)
-            }
-            else 
-            {
-                out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-            }
-        }
-        
-        if ($exchangeCredential.count -lt $serverNames.count)
-        {
-            out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "The number of exchange credentials matches the server count."    
-        }
-    
-    }
-    else
-    {
-        Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
-    }
+    $useOnPremisesExchange = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -serverNames $serverNames
 
     #Validate that only one method of engaging exchange online was specified.
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
-    {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
-    {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-    }
-    else
-    {
-        Out-LogFile -string "Only one method of Exchange Online authentication specified."
-    }
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -serverNames $serverNames
 
-    #Validate that all information for the certificate connection has been provieed.
+    #Validating that all portions for exchange certificate auth are present.
 
-    if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
-    {
-        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
-    {
-        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
-    {
-        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    else 
-    {
-        $isExchangeCertAuth = $TRUE
-        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-    }
+    out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
+
+    start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
     #Validate that only one method of engaging azure was specified.
 
     Out-LogFile -string "Valdating azure credentials."
 
-    if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
-    {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-    }
-    elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
-    {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-    }
-    else
-    {
-        Out-LogFile -string "Only one method of Exchange Online authentication specified."
-    }
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -serverNames $serverNames
 
     #Validate that all information for the certificate connection has been provieed.
 
-    if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
-    {
-        out-logfile -string "The azure tenant ID and application ID are required when using certificate thumbprint authentication to Azure AD." -isError:$TRUE
-    }
-    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -ne "") -and ($azureApplicationID -eq ""))
-    {
-        out-logfile -string "The azure application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
-    {
-        out-logfile -string "The azure tenant ID is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    else 
-    {
-        $isAzureCertAuth = $TRUE
-        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-    }
- 
+    start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-    if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
-    {
-        out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
-    }
+    start-parameterValidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
-    if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
-    {
-        out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-    }
+    out-logfile -string "Validating that on premises exchange is enabled to support hybrid mail flow enablement."
+
+    start-parametervalidation -useOnPremisesExchange $useOnPremisesExchange -enableHybridMailFlow $enableHybridMailFlow
+
+    out-logfile -string "Validating the active directory credential array contains all PSCredentials."
+
+    start-parameterValidation -activeDirectoryCredential $activeDirectoryCredential -serverNames $serverNames
+
+    out-logfile -string "Validating that server names provided is not greater than max supported."
+
+    start-parametervalidation -serverNames $serverNames -maxThreadCount $maxThreadCount
 
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
     {
@@ -619,76 +465,6 @@ Function Start-MultipleMachineDistributionListMigration
     if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
     {
         $retainMailboxFolderPermsOffice365=$TRUE
-    }
-
-    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
-    if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
-       out-logfile -string "Validating the active directory credential array contains all PSCredentials."
-
-    foreach ($credential in $activeDirectoryCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
-    out-logfile -string "Validating the exchange online credential array"
-
-    foreach ($credential in $exchangeOnlineCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
-    if ($serverNames.count -gt 5)
-    {
-        out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
-    }
-
-    if ($activeDirectoryCredential.count -lt $serverNames.count)
-    {
-        out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
-    }
-    else
-    {
-        out-logfile -string "The number of active directory credentials matches the server count."
-    }
-
-    if (($exchangeOnlineCredential.count -lt $serverNames.count) -and ($isExchangeCertAuth -eq $FALSE))
-    {
-        out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "The number of exchange online credentials matches the server count."    
-    }
-
-    if (($azureADCredential.count -lt $serverNames.count) -and ($isAzureCertAuth -eq $FALSE))
-    {
-        out-logfile -string "ERROR:  Must specify one azure credential for each migratione server." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "The number of azure credentials matches the server count."    
     }
 
     Out-LogFile -string "END PARAMETER VALIDATION"
