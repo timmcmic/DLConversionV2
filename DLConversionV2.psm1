@@ -911,36 +911,9 @@ Function Start-DistributionListMigration
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
+
+    $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
    
-    if (($aadConnectServer -eq "") -and ($aadConnectCredential -ne $null))
-    {
-        #The credential was specified but the server name was not.
-
-        Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
-    }
-    elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
-    {
-        #The server name was specified but the credential was not.
-
-        Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
-    }
-    elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
-    {
-        #The server name and credential were specified for AADConnect.
-
-        Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-    
-        #Set useAADConnect to TRUE since the parameters necessary for use were passed.
-        
-        $coreVariables.useAADConnect.value=$TRUE
-
-        Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$coreVariables.useAADConnect.value)
-    }
-    else
-    {
-        Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$coreVariables.useAADConnect.value)
-    }
-
     #Validate that both the exchange credential and exchange server are presented together.
 
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
