@@ -436,7 +436,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Validating the active directory credential array contains all PSCredentials."
 
-    start-parameterValidation -activeDirectoryCredential $activeDirectoryCredential
+    start-parameterValidation -activeDirectoryCredential $activeDirectoryCredential -serverNames $serverNames
 
     out-logfile -string "Validating that server names provided is not greater than max supported."
 
