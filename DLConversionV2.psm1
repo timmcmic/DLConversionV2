@@ -936,7 +936,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertifcateThumbPrint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
 
     #Validate that all information for the certificate connection has been provieed.
 
