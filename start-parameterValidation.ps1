@@ -24,6 +24,7 @@
             $aadConnectCredential,
             [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
             [AllowNull()]
             $serverNames,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
@@ -33,7 +34,15 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [AllowNull()]
-            $exchangeCredential
+            $exchangeCredential,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [AllowNull()]
+            $exchangeOnlineCredential,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [AllowNull()]
+            $exchangeOnlineCertificateThumbprint
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -45,6 +54,8 @@
         $aadConnectParameterSetNameMulti = 'AADConnectMulti'
         $exchangeParameterSetName = "Exchange"
         $exchangeParameterSetNameMulti = "ExchangeMulti"
+        $exchangeOnlineParameterSetName = "ExchangeOnline"
+        $exchangeOnlineParameterSetNameMulti = "ExchangeOnlineMulti"
         $functionTrueFalse = $false
 
         #Start function processing.
@@ -54,6 +65,48 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The parameter set name for validation: "+$functionParameterSetName)
+
+        if (($functionParameterSetName -eq $exchangeOnlineParameterSetName) -or ($functionParameterSetName -eq $exchangeOnlineParameterSetNameMulti))
+        {
+            if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
+            {
+                Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
+            }
+            elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
+            {
+                out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
+            }
+            else
+            {
+                Out-LogFile -string "Only one method of Exchange Online authentication specified."
+
+                if ($functionParamterSetName -eq $exchangeOnlineParameterSetNameMulti)
+                {
+                    out-logfile -string "Validating the exchange online credential array"
+
+                    foreach ($credential in $exchangeOnlineCredential)
+                    {
+                        if ($credential.gettype().name -eq "PSCredential")
+                        {
+                            out-logfile -string ("Tested credential: "+$credential.userName)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+                        }
+                    }
+
+                    if ($exchangeOnlineCredential.count -lt $serverNames.count)
+                    {
+                        out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "The number of exchange online credentials matches the server count."    
+                    }
+                }
+            } 
+        }
 
         if (($functionParameterSetName -eq $exchangeParameterSetName) -or ($functionParameterSetName -eq $exchangeParamterSetNameMulti))
         {

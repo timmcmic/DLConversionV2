@@ -924,18 +924,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
-    {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
-    {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-    }
-    else
-    {
-        Out-LogFile -string "Only one method of Exchange Online authentication specified."
-    }
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
 
     #Validate that only one method of engaging exchange online was specified.
 

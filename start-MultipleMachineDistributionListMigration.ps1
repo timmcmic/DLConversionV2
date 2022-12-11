@@ -429,18 +429,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    if (($exchangeOnlineCredential -ne $NULL) -and ($exchangeOnlineCertificateThumbPrint -ne ""))
-    {
-        Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
-    {
-        out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
-    }
-    else
-    {
-        Out-LogFile -string "Only one method of Exchange Online authentication specified."
-    }
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -serverNames $serverNames
 
     #Validate that all information for the certificate connection has been provieed.
 
@@ -563,19 +552,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
     }
 
-    out-logfile -string "Validating the exchange online credential array"
 
-    foreach ($credential in $exchangeOnlineCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Exchange online credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
 
     if ($serverNames.count -gt 5)
     {
@@ -591,14 +568,7 @@ Function Start-MultipleMachineDistributionListMigration
         out-logfile -string "The number of active directory credentials matches the server count."
     }
 
-    if (($exchangeOnlineCredential.count -lt $serverNames.count) -and ($isExchangeCertAuth -eq $FALSE))
-    {
-        out-logfile -string "ERROR:  Must specify one exchange online credential for each migratione server." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "The number of exchange online credentials matches the server count."    
-    }
+    
 
     if (($azureADCredential.count -lt $serverNames.count) -and ($isAzureCertAuth -eq $FALSE))
     {
