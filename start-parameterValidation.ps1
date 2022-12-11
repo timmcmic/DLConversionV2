@@ -199,6 +199,10 @@
             {
                 out-logfile -string "The azure tenant ID is required to use certificate authentication to Azure." -isError:$TRUE
             }
+            elseif (($azureCertificateThumbprint -eq "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
+            {
+                out-logfile -string "No componets of Azure AD Cert Authentication were provided - this is not necessarily an issue."
+            }
             else 
             {
                 out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
@@ -244,6 +248,10 @@
             elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
             {
                 out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+            }
+            elseif (($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
+            {
+                out-logfile -string "No components of certificate authentication were specified.  This is not necessary an error."
             }
             else 
             {
