@@ -142,7 +142,7 @@ Function Start-DistributionListMigration
     This is the logging directory for storing the migration log and all backup XML files.
     If running multiple SINGLE instance migrations use different logging directories.
 
-    .PARAMETER DONOTSYNCOU
+    .PARAMETER doNoSyncOU
 
     *REQUIRED*
     This is the organizational unit configured in Azure AD Connect to not sync.
@@ -950,7 +950,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNotSyncOU $doNotSyncOU
+    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
     out-logfile -string "Testing for enable hybrid mail flow enablement."
 

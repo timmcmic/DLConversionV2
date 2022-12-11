@@ -106,7 +106,7 @@
         $azureADParameterSetName = "AzureAD"
         $azureADParameterSetNameMulti = "AzureADMulti"
         $azureADParameterSetNameCertAuth = "AzureCertAuth"
-        $doNotSyncOUParameterSetName = "NoSyncOU"
+        $doNoSyncOUParameterSetName = "NoSyncOU"
         $hybridMailFlowParameterSetName = "HybridMailFlow"
         $activeDirectoryParameterSetName = "ActiveDirectory"
         $maxThreadCountParameterSetName = "MaxThreadCount"
@@ -177,7 +177,7 @@
      
         }
 
-        if ($functionParameterSetName -eq $doNotSyncOUParameterSetName)
+        if ($functionParameterSetName -eq $doNoSyncOUParameterSetName)
         {
             if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
             {

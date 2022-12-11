@@ -487,7 +487,7 @@ Function Start-MultipleDistributionListMigration
 
         Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-        start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNotSyncOU $doNotSyncOU
+        start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
         out-logfile -string "Validating that on premises Exchange support is enabled for enabling hybrid mail flow."
     }
