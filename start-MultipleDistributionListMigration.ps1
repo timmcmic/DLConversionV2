@@ -453,33 +453,24 @@ Function Start-MultipleDistributionListMigration
 
         Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
-        start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
+        try
+        {
+            start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential -errorAction STOP
+        }
+        catch 
+        {
+            out-logfile -string "Error attempting to validate AADConnect credentials." -isError:$TRUE
+        }
 
         #Validate that both the exchange credential and exchange server are presented together.
 
         Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-        if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
-        {
-            #The exchange credential was specified but the exchange server was not specified.
-
-            Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
+        try {
+            start-parameterValidation -exchangeServer $exchangeServer -exchagneCredential $exchangeCredential -errorAction STOP
         }
-        elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
-        {
-            #The exchange server was specified but the exchange credential was not.
-
-            Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
-        }
-        elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
-        {
-            #The server name and credential were specified for Exchange.
-
-            Out-LogFile -string "The server name and credential were specified for Exchange."
-        }
-        else
-        {
-            Out-LogFile -string ("Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "+$useOnPremisesExchange)
+        catch {
+            out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together."
         }
 
         #Validate that only one method of engaging exchange online was specified.

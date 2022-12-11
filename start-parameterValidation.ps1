@@ -24,7 +24,13 @@
             $aadConnectCredential,
             [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [AllowNull()]
-            $serverNames
+            $serverNames,
+            [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
+            [AllowNull()]
+            $exchangeServer,
+            [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
+            [AllowNull()]
+            $exchangeCredential
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -34,6 +40,8 @@
         $functionParameterSetName = $PsCmdlet.ParameterSetName
         $aadConnectParameterSetName = 'AADConnect'
         $aadConnectParameterSetNameMulti = 'AADConnectMulti'
+        $exchangeParameterSetName = "Exchange"
+        $exchangeParameterSetNameMulti = "ExchangeMulti"
         $functionTrueFalse = $false
 
         #Start function processing.
@@ -43,6 +51,62 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The parameter set name for validation: "+$functionParameterSetName)
+
+        if (($functionParameterSetName -eq $exchangeParameterSetName) -or ($functionParameterSetName -eq $exchangeParamterSetNameMulti))
+        {
+            if (($exchangeServer -eq "") -and ($exchangeCredential -ne $null))
+            {
+                #The exchange credential was specified but the exchange server was not specified.
+
+                Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
+            }
+            elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
+            {
+                #The exchange server was specified but the exchange credential was not.
+
+                Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
+            }
+            elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
+            {
+                #The server name and credential were specified for Exchange.
+
+                Out-LogFile -string "The server name and credential were specified for Exchange."
+
+                #Set useOnPremisesExchange to TRUE since the parameters necessary for use were passed.
+
+                $functionTrueFalse=$TRUE
+
+                if ($functionParamterSetName -eq $exchangeParameterSetNameMulti)
+                {
+                    foreach ($credential in $exchangecredential)
+                    {
+                        if ($credential.gettype().name -eq "PSCredential")
+                        {
+                            out-logfile -string ("Tested credential: "+$credential.userName)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Exchange credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+                        }
+                    }
+                    
+                    if ($exchangeCredential.count -lt $serverNames.count)
+                    {
+                        out-logfile -string "ERROR:  Must specify one exchange credential for each migratione server." -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "The number of exchange credentials matches the server count."    
+                    }
+                }
+
+                Out-LogFile -string "Set useOnPremsiesExchanget to TRUE since the parameters necessary for use were passed - "
+            }
+            else
+            {
+                Out-LogFile -string "Neither Exchange Server or Exchange Credentials specified - retain useOnPremisesExchange FALSE - "
+            }
+        }
 
         if (($functionParameterSetName -eq $aadConnectParameterSetName) -or ($functionParameterSetName -eq $aadConnectParameterSetNameMulti))
         {
@@ -68,37 +132,35 @@
                 
                 $functionTrueFalse=$TRUE
 
-                Out-LogFile -string ("Set useAADConnect to TRUE since the parameters necessary for use were passed. - "+$coreVariables.useAADConnect.value)
+                if ($functionParameterSetName -eq $aadConnectParameterSetNameMulti)
+                {
+                    Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
+
+                    foreach ($credential in $aadConnectCredential)
+                    {
+                        if ($credential.gettype().name -eq "PSCredential")
+                        {
+                            out-logfile -string ("Tested credential: "+$credential.userName)
+                        }
+                        else 
+                        {
+                            out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
+                        }
+                    }
+
+                    if ($aadConnectCredential.count -lt $serverNames.count)
+                    {
+                        out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "The number of ad connect credentials matches the server count."    
+                    }
+                }
             }
             else
             {
-                Out-LogFile -string ("Neither AADConnect Server or AADConnect Credentials specified - retain useAADConnect FALSE - "+$coreVariables.useAADConnect.value)
-            }
-        }
-
-        if ($functionParameterSetName -eq $aadConnectParameterSetNameMulti)
-        {
-            Out-LogFile -string "AADConnectServer and AADConnectCredential were both specified." 
-
-            foreach ($credential in $aadConnectCredential)
-            {
-                if ($credential.gettype().name -eq "PSCredential")
-                {
-                    out-logfile -string ("Tested credential: "+$credential.userName)
-                }
-                else 
-                {
-                    out-logfile -string "ADConnect credential not valid..  All credentials must be PSCredential types." -isError:$TRUE    
-                }
-            }
-
-            if ($aadConnectCredential.count -lt $serverNames.count)
-            {
-                out-logfile -string "ERROR:  Must specify one ad connect credential for each migratione server." -isError:$TRUE
-            }
-            else 
-            {
-                out-logfile -string "The number of ad connect credentials matches the server count."    
+                Out-LogFile -string "Neither AADConnect Server or AADConnect Credentials specified." 
             }
         }
         
@@ -106,8 +168,5 @@
         Out-LogFile -string "END start-parameterValidation"
         Out-LogFile -string "********************************************************************************"
 
-        if ($functionTrueFalse -eq $TRUE)
-        {
-            return $functionTrueFalse
-        }
+        return $functionTrueFalse
     }
