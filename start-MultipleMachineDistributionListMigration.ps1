@@ -390,30 +390,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Validating that the remote network drive passed is a single valid drive letter"
 
-    if ($remoteDriveLetter -eq $NULL)
-    {
-        out-logfile -string "A remote drive letter is required - specify S for example." -isError:$TRUE
-    }
-    else 
-    {
-        if ($remoteDriveLetter.count -gt 1)
-        {
-            out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
-        }
-        else 
-        {
-            out-logfile -string "Drive letter specified is a single character."
-            
-            if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
-            {
-                out-logfile -string "Drive letter specified is single and is a valid drive character."
-            }
-            else 
-            {
-                out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
-            }
-        }
-    }
+    start-parameterValidation -remoteDriveLetter $remoteDriveLetter
     
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
@@ -457,6 +434,14 @@ Function Start-MultipleMachineDistributionListMigration
 
     start-parametervalidation -useOnPremisesExchange $useOnPremisesExchange -enableHybridMailFlow $enableHybridMailFlow
 
+    out-logfile -string "Validating the active directory credential array contains all PSCredentials."
+
+    start-parameterValidation -activeDirectoryCredential $activeDirectoryCredential
+
+    out-logfile -string "Validating that server names provided is not greater than max supported."
+
+    start-parametervalidation -serverNames $serverNames -maxThreadCount $maxThreadCount
+
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
     {
         $retainFullMailboxAccessOnPrem=$TRUE
@@ -481,50 +466,6 @@ Function Start-MultipleMachineDistributionListMigration
     {
         $retainMailboxFolderPermsOffice365=$TRUE
     }
-
-    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
-    if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
-       out-logfile -string "Validating the active directory credential array contains all PSCredentials."
-
-    foreach ($credential in $activeDirectoryCredential)
-    {
-        if ($credential.gettype().name -eq "PSCredential")
-        {
-            out-logfile -string ("Tested credential: "+$credential.userName)
-        }
-        else 
-        {
-            out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
-        }
-    }
-
-
-
-    if ($serverNames.count -gt 5)
-    {
-        out-logfile -string "More than 5 migration servers were specified.  The current limit is 5 servers." -isError:$TRUE
-    }
-
-    if ($activeDirectoryCredential.count -lt $serverNames.count)
-    {
-        out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
-    }
-    else
-    {
-        out-logfile -string "The number of active directory credentials matches the server count."
-    }
-
-    
-
-
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"

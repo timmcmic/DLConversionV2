@@ -26,6 +26,7 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'MaxThreadCount')]
             [AllowNull()]
             $serverNames,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
@@ -77,7 +78,16 @@
             $useOnPremisesExchange,
             [Parameter(Mandatory = $true,ParameterSetName = 'HybridMailFlow')]
             [AllowNull()]
-            $enableHybridMailFlow
+            $enableHybridMailFlow,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ActiveDirectory')]
+            [AllowNull()]
+            $activeDirectoryCredential,
+            [Parameter(Mandatory = $true,ParameterSetName = 'MaxThreadCount')]
+            [AllowNull()]
+            $maxThreadCount,
+            [Parameter(Mandatory = $true,ParameterSetName = 'RemoteDriveLetter')]
+            [AllowNull()]
+            $remoteDriveLetter
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -97,6 +107,9 @@
         $azureADParameterSetNameCertAuth = "AzureCertAuth"
         $doNotSyncOUParameterSetName = "NoSyncOU"
         $hybridMailFlowParameterSetName = "HybridMailFlow"
+        $activeDirectoryParameterSetName = "ActiveDirectory"
+        $maxThreadCountParameterSetName = "MaxThreadCount"
+        $remoteDriveLetterParameterSetName = "RemoteDriveLetter"
         $functionTrueFalse = $false
 
         #Start function processing.
@@ -106,6 +119,70 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The parameter set name for validation: "+$functionParameterSetName)
+
+        if ($functionParameterSetName -eq $remoteDriveLetterParameterSetName)
+        {
+            if ($remoteDriveLetter -eq $NULL)
+            {
+                out-logfile -string "A remote drive letter is required - specify S for example." -isError:$TRUE
+            }
+            else 
+            {
+                if ($remoteDriveLetter.count -gt 1)
+                {
+                    out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Drive letter specified is a single character."
+                    
+                    if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
+                    {
+                        out-logfile -string "Drive letter specified is single and is a valid drive character."
+                    }
+                    else 
+                    {
+                        out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
+                    }
+                }
+            }
+        }
+
+        if ($functionParameterSetName -eq $maxThreadCountParameterSetName)
+        {
+            if ($serverNames.count -gt $maxThreadCount)
+            {
+                out-logfile -string ("More servers were specified than the hard coded thread count which is = "+$maxThreadCount.tostring()) -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "The number of servers provided is less than the max thread count."
+            }
+        }
+
+        if ($functionParameterSetName -eq $activeDirectoryParameterSetName)
+        {
+            foreach ($credential in $activeDirectoryCredential)
+            {
+                if ($credential.gettype().name -eq "PSCredential")
+                {
+                    out-logfile -string ("Tested credential: "+$credential.userName)
+                }
+                else 
+                {
+                    out-logfile -string "Active directory credential not valid.  All credentials must be PSCredential types." -isError:$TRUE    
+                }
+            }
+
+            if ($activeDirectoryCredential.count -lt $serverNames.count)
+            {
+                out-logfile -string "ERROR:  Must specify one active directory credential for each migration server." -isError:$TRUE
+            }
+            else
+            {
+                out-logfile -string "The number of active directory credentials matches the server count."
+            }
+        }
 
         if ($functionParameterSetName -eq $hybridMailFLowParameterSetName)
         {

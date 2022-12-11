@@ -459,7 +459,7 @@ Function Start-MultipleDistributionListMigration
 
         Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
-        start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential
+        $useOnPremisesExchange = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential
 
         #Validate that only one method of engaging exchange online was specified.
 
@@ -489,20 +489,7 @@ Function Start-MultipleDistributionListMigration
 
         start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNotSyncOU $doNotSyncOU
 
-        if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
-        {
-            out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-        }
-
-        if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
-        {
-            out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-        }
-
-        if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
-        {
-            out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-        }
+        out-logfile -string "Validating that on premises Exchange support is enabled for enabling hybrid mail flow."
     }
 
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
