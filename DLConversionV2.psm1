@@ -956,31 +956,6 @@ Function Start-DistributionListMigration
 
     start-parametervalidation -useOnPremisesExchange $coreVariables.useOnPremisesExchange.value -enableHybridMailFlow $enableHybridMailFlow
 
-    if (($auditSendAsOnPrem -eq $TRUE ) -and ($coreVariables.useOnPremisesExchange.value -eq $FALSE))
-    {
-        out-logfile -string "In order to audit send as on premsies an Exchange Server must be specified." -isError:$TRUE
-    }
-
-    if (($auditFullMailboxAccessOnPrem -eq $TRUE) -and ($coreVariables.useOnPremisesExchange.value -eq $FALSE))
-    {
-        out-logfile -string "In order to audit full mailboxes access on premsies an Exchange Server must be specified." -isError:$TRUE
-    }
-
-    if (($retainSendAsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Send As you must retain Office 365 settings." -isError:$TRUE
-    }
-
-    if (($retainFullMailboxAccessOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Full Mailbox Access you must retain Office 365 settings." -isError:$TRUE
-    }
-
-    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($retainOffice365Settings -eq $FALSE))
-    {
-        out-logfile -string "When retaining Office 365 Mailbox Folder Permissions you must retain Office 365 settings." -isError:$TRUE
-    }
-
     if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
     {
         $retainFullMailboxAccessOnPrem=$TRUE
@@ -1005,17 +980,6 @@ Function Start-DistributionListMigration
     {
         $retainMailboxFolderPermsOffice365=$TRUE
     }
-
-    if (($retainMailboxFolderPermsOffice365 -eq $TRUE) -and ($useCollectedFolderPermissionsOffice365 -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
-    if (($retainOnPremMailboxFolderPermissions -eq $TRUE) -and ($useCollectedFolderPermissionsOnPrem -eq $FALSE))
-    {
-        out-logfile -string "In order to retain folder permissions of migrated distribution lists the collection functions / files must first exist and be utilized." -isError:$TRUE
-    }
-
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
