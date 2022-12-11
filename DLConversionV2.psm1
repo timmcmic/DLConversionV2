@@ -927,7 +927,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
 
     try {
-        $coreVariables.useOnPremisesExchange.value=start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
+        $coreVariables.useOnPremisesExchange.value = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
     }
     catch {
         out-logfile -string $_
