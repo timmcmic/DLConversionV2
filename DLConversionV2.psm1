@@ -926,61 +926,23 @@ Function Start-DistributionListMigration
 
     start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
 
+    #Validating that all portions for exchange certificate auth are present.
+
+    out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
+
+    start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
+
     #Validate that only one method of engaging exchange online was specified.
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
-    {
-        Out-LogFile -string "ERROR:  Only one method of azure cloud authentication can be specified.  Use either azure cloud credentials or azure cloud certificate thumbprint." -isError:$TRUE
-    }
-    elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
-    {
-        out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." 
-        out-logfile -string "https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/" -isError:$TRUE
-    }
-    else
-    {
-        Out-LogFile -string "Only one method of Azure AD specified."
-    }
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertifcateThumbPrint
 
     #Validate that all information for the certificate connection has been provieed.
 
-    if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
-    {
-        out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
-    {
-        out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
-    {
-        out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-    }
+    out-logfile -string "Validation all components available for AzureAD Cert Authentication"
 
-    #Validate that all information for the certificate connection has been provieed.
-
-    if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
-    {
-        out-logfile -string "The azure tenant ID and Azure App ID are required when using certificate authentication to Azure." -isError:$TRUE
-    }
-    elseif (($azureCertificateThumbprint -ne "") -and ($AzureTenantID -ne "") -and ($azureApplicationID -eq ""))
-    {
-        out-logfile -string "The azure app id is required to use certificate authentication to Azure." -isError:$TRUE
-    }
-    elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
-    {
-        out-logfile -string "The azure tenant ID is required to use certificate authentication to Azure." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-    }
+    start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
     #exit #Debug exit.
 
@@ -988,15 +950,11 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
 
-    if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
-    {
-        out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
-    }
+    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNotSyncOU $doNotSyncOU
 
-    if (($coreVariables.useOnPremisesExchange.value -eq $False) -and ($enableHybridMailflow -eq $true))
-    {
-        out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
-    }
+    out-logfile -string "Testing for enable hybrid mail flow enablement."
+
+    start-parametervalidation -useOnPremisesExchange $coreVariables.useOnPremisesExchange.value -enableHybridMailFlow $enableHybridMailFlow
 
     if (($auditSendAsOnPrem -eq $TRUE ) -and ($coreVariables.useOnPremisesExchange.value -eq $FALSE))
     {

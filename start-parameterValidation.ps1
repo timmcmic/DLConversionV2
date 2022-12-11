@@ -25,6 +25,7 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'AADConnectMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
             [AllowNull()]
             $serverNames,
             [Parameter(Mandatory = $true,ParameterSetName = 'Exchange')]
@@ -41,8 +42,42 @@
             $exchangeOnlineCredential,
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineCertAuth')]
             [AllowNull()]
-            $exchangeOnlineCertificateThumbprint
+            $exchangeOnlineCertificateThumbprint,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineCertAuth')]
+            [AllowNull()]
+            $exchangeOnlineOrganizationName,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineCertAuth')]
+            [AllowNull()]
+            $exchangeOnlineAppID,
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
+            [AllowNull()]
+            $azureADCredential,
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
+            [AllowNull()]
+            $azureADCertificateThumbprint,
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
+            [AllowNull()]
+            $azureTenantID,
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureADCertAuth')]
+            [AllowNull()]
+            $azureApplicationID,
+            [Parameter(Mandatory = $true,ParameterSetName = 'NoSyncOU')]
+            [AllowNull()]
+            $retainOriginalGroup,
+            [Parameter(Mandatory = $true,ParameterSetName = 'NoSyncOU')]
+            [AllowNull()]
+            $doNotSyncOU,
+            [Parameter(Mandatory = $true,ParameterSetName = 'HybridMailFlow')]
+            [AllowNull()]
+            $useOnPremisesExchange,
+            [Parameter(Mandatory = $true,ParameterSetName = 'HybridMailFlow')]
+            [AllowNull()]
+            $enableHybridMailFlow
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -56,6 +91,12 @@
         $exchangeParameterSetNameMulti = "ExchangeMulti"
         $exchangeOnlineParameterSetName = "ExchangeOnline"
         $exchangeOnlineParameterSetNameMulti = "ExchangeOnlineMulti"
+        $exchangeOnlineParameterSetNameCertAuth = "ExchangeOnlineCertAuth"
+        $azureADParameterSetName = "AzureAD"
+        $azureADParameterSetNameMulti = "AzureADMulti"
+        $azureADParameterSetNameCertAuth = "AzureCertAuth"
+        $doNotSyncOUParameterSetName = "NoSyncOU"
+        $hybridMailFlowParameterSetName = "HybridMailFlow"
         $functionTrueFalse = $false
 
         #Start function processing.
@@ -65,6 +106,106 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("The parameter set name for validation: "+$functionParameterSetName)
+
+        if ($functionParameterSetName -eq $hybridMailFLowParameterSetName)
+        {
+            if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
+            {
+                out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
+            }
+     
+        }
+
+        if ($functionParameterSetName -eq $doNotSyncOUParameterSetName)
+        {
+            if (($retainOriginalGroup -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
+            {
+                out-LogFile -string "A no SYNC OU is required if retain original group is false." -isError:$TRUE
+            }
+        }
+
+        if ($functionParamterSetName -eq $azureADParameterSetNameCertAuth)
+        {
+            if (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -eq ""))
+            {
+                out-logfile -string "The azure tenant ID and Azure App ID are required when using certificate authentication to Azure." -isError:$TRUE
+            }
+            elseif (($azureCertificateThumbprint -ne "") -and ($AzureTenantID -ne "") -and ($azureApplicationID -eq ""))
+            {
+                out-logfile -string "The azure app id is required to use certificate authentication to Azure." -isError:$TRUE
+            }
+            elseif (($azureCertificateThumbprint -ne "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
+            {
+                out-logfile -string "The azure tenant ID is required to use certificate authentication to Azure." -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+            }
+        }
+
+        if ($functionParameterSetName -eq $azureADParameterSetName)
+        {
+            if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
+            {
+                Out-LogFile -string "ERROR:  Only one method of azure cloud authentication can be specified.  Use either azure cloud credentials or azure cloud certificate thumbprint." -isError:$TRUE
+            }
+            elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
+            {
+                out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." 
+                out-logfile -string "https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/" -isError:$TRUE
+            }
+            else
+            {
+                Out-LogFile -string "Only one method of Azure AD specified."
+
+                if ($functionParamterSetName -eq $azureADParameterSetNameMulti)
+                {
+                    out-logfile -string "Validating the exchange online credential array"
+
+                    foreach ($credential in $azureADCredential)
+                    {
+                        if ($credential.gettype().name -eq "PSCredential")
+                        {
+                            out-logfile -string ("Tested credential: "+$credential.userName)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Azure AD credentials not valid.  All credentials must be PSCredential types." -isError:$TRUE    
+                        }
+                    }
+
+                    if (($azureADCredential.count -lt $serverNames.count) -and ($isAzureCertAuth -eq $FALSE))
+                    {
+                        out-logfile -string "ERROR:  Must specify one azure credential for each migratione server." -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "The number of azure credentials matches the server count."    
+                    }
+                }
+            }
+        }
+
+        if ($functionParameterSetName -eq $exchangeOnlineParameterSetNameCertAuth)
+        {
+            if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
+            {
+                out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+            }
+            elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
+            {
+                out-logfile -string "The exchange application ID is required when using certificate thumbprint authentication." -isError:$TRUE
+            }
+            elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -ne ""))
+            {
+                out-logfile -string "The exchange organization name is required when using certificate thumbprint authentication." -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+            }
+        }
 
         if (($functionParameterSetName -eq $exchangeOnlineParameterSetName) -or ($functionParameterSetName -eq $exchangeOnlineParameterSetNameMulti))
         {
