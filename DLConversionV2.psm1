@@ -918,6 +918,7 @@ Function Start-DistributionListMigration
     }
     catch 
     {
+        out-logfile -string $_
         out-logfile -string "Error attempting to validate AADConnect credentials." -isError:$TRUE
     }
    
@@ -929,6 +930,7 @@ Function Start-DistributionListMigration
         $coreVariables.useOnPremisesExchange.value=start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential -errorAction STOP
     }
     catch {
+        out-logfile -string $_
         out-logfile -string "Unable to validation ExchangeServer and ExchangeCredentials specified together." -isError:$TRUE
     }
 
