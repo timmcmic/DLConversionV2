@@ -418,7 +418,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     Out-LogFile -string "Valdating azure credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertifcateThumbPrint -serverNames $serverNames
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -serverNames $serverNames
 
     #Validate that all information for the certificate connection has been provieed.
 
