@@ -233,6 +233,9 @@ Function Test-PreMigration
     #If multi threaded - the log directory needs to be created for each thread.
     #Create the log folder path for status before changing the log folder path.
 
+    write-host $totalThreadCount
+    exit
+
     if ($totalThreadCount -gt 0)
     {
         $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
