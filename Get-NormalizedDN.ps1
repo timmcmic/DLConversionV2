@@ -59,7 +59,7 @@
             [Parameter(Mandatory = $false)]
             [boolean]$isMember=$FALSE,
             [Parameter(Mandatory = $true)]
-            [boolean]$activeDirectoryAttribute
+            [string]$activeDirectoryAttribute
         )
 
         #Output all parameters bound or unbound and their associated values.
