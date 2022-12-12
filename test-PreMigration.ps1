@@ -235,8 +235,6 @@ Function Test-PreMigration
 
     if ($totalThreadCount -gt 0)
     {
-        new-statusFile -logFolderPath $logFolderPath
-
         $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
     }
 
