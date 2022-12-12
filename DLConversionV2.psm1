@@ -2352,7 +2352,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "Members"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of the distribution list is not found in Office 365."
                         errorMessageDetail = ""
@@ -2409,7 +2409,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
                         errorMessageDetail = ""
@@ -2466,7 +2466,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
                         errorMessageDetail = ""
@@ -2523,7 +2523,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "ManagedBy"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of owners was not found in Office 365."
                         errorMessageDetail = ""
@@ -2580,7 +2580,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "ModeratedBy"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of moderatedBy was not found in Office 365."
                         errorMessageDetail = ""
@@ -2637,7 +2637,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "BypassModerationFromSendersorMembers"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
                         errorMessageDetail = ""
@@ -2692,7 +2692,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "GrantSendOnBehalfTo"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
                         errorMessageDetail = ""
@@ -2749,7 +2749,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "SendAs"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "A member with SendAs permissions was not found in Office 365."
                         errorMessageDetail = ""
@@ -2806,7 +2806,7 @@ Function Start-DistributionListMigration
                         Alias = $member.Alias
                         Name = $member.name
                         AttributeCommonName = "SendAs"
-                        ADAttributeName = $member.activeDirectoryAttribute
+                        ADAttributeName = $member.onPremADAttribute
                         DN = $member.DN
                         ErrorMessage = "The group to be migrated has send as rights on an on premises object.  The object is not present in Office 365."
                         errorMessageDetail = ""
