@@ -532,7 +532,7 @@ Function Start-DistributionListMigration
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
 
     $onPremADAttributes = @{
-        onPremAcceptMessagesFromDLMembers = @{"Value" = "dlMemSubmitPerms" ; "Description" = "LDAP Attribute for Accept Messages from DL Members" }
+        onPremAcceptMessagesFromDLMembers = @{"Value" = "dlMemSubmitPerms" ; "Description" = "LDAP Attribute for Accept Messages from DL Members"}
         onPremRejectMessagesFromDLMembers = @{"Value" = "dlMemRejectPerms" ; "Description" = "LDAP Attribute for Reject Messages from DL Members"}
         onPremBypassModerationFromDL = @{"Value" = "msExchBypassModerationFromDLMembersLink" ; "Description" = "LDAP Attribute for Bypass Moderation from DL Members"}
         onPremForwardingAddress = @{"Value" = "altRecipient" ; "Description" = "LDAP Attribute for ForwardingAddress"}
@@ -628,6 +628,7 @@ Function Start-DistributionListMigration
         retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
+        testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
 
     #Define the property sets that will be cleared on the on premises object.
@@ -709,6 +710,7 @@ Function Start-DistributionListMigration
     #Define new arrays to check for errors instead of failing.
 
     [array]$global:preCreateErrors=@()
+    [array]$global:testOffice365Errors=@()
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
     [array]$office365ReplaceErrors=@()
@@ -1498,21 +1500,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "Members"
-                        ADattribute = $onPremADAttributes.onPremMembers.value
-                        errorMessage = $normalizedTest.isErrorMessage
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -1561,22 +1553,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "RejectMessagesFrom"
-                        ADAttributeName = $onPremADAttributes.onPremRejectMessagesFromSenders.value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -1611,22 +1592,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "RejectMessagesFromDLMembers" 
-                        ADattributeName = $onPremADAttributes.onPremRejectMessagesFromDLMembers.value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else {
                     $exchangeRejectMessagesSMTP+=$normalizedTest
@@ -1672,22 +1642,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "AcceptMessagesOnlyFrom"
-                        ADAttributeName = $onPremADAttributes.onPremAcceptMessagesFromSenders.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else {
                     $exchangeAcceptMessagesSMTP+=$normalizedTest
@@ -1721,22 +1680,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "AcceptMessagesOnlyFromDLMembers"
-                        ADAttributeName = $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -1784,22 +1732,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "ManagedBy"
-                        ADAttributeName = $onPremADAttributes.onPremManagedBy.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -1834,22 +1771,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "ManagedBy"
-                        ADAttributeName = $onPremADAttributes.onPremCoManagedBy.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -1876,20 +1802,12 @@ Function Start-DistributionListMigration
 
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
-                $isErrorObject = new-Object psObject -property @{
-                    primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
-                    externalDirectoryObjectID = $object.externalDirectoryObjectID
-                    alias=$normalizedTest.alias
-                    name=$normalizedTest.name
-                    attributeCommonName = "ManagedBy"
-                    ADAttributeName = $onPremADAttributes.onPremGroupType.value
-                    errorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
-                    errorMessageDetail = ""
-                }
+                $object.isError=$TRUE
+                $object.isErrorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                
+                out-logfile -string object
 
-                out-logfile -string $isErrorObject
-
-                $global:preCreateErrors+=$isErrorObject
+                $global:preCreateErrors+=$object
 
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
                 out-logfile -string "The group must be converted to security or removed from managed by."
@@ -1908,20 +1826,12 @@ Function Start-DistributionListMigration
 
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $object.primarySMTPAddressOrUPN
-                        externalDirectoryObjectID = $object.externalDirectoryObjectID
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "ManagedBy"
-                        ADAttributeName = ($onPremADAttributes.onPremCoManagedBy.Value+ " or " + $onPremADAttributes.onPremManagedBy.Value )
-                        errorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
-                        errorMessageDetail = ""
-                    }
+                    $object.isError=$TRUE
+                    $object.isErrorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $object
     
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$object
         
                     out-logfile -string "A security group has managed by rights on the distribution list."
                     out-logfile -string "The administrator has specified to override the group type."
@@ -1963,22 +1873,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommondName = "ModeratedBy"
-                        ADattributeName = $onPremADAttributes.onPremModeratedBy.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -2026,22 +1925,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommondName = "BypassModerationFromSendersOrMembers"
-                        ADAttributeName = $onPremADAttributes.onPremBypassModerationFromSenders.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -2078,22 +1966,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "BypassModerationFromSendersOrMembers"
-                        ADAttributeName = $onPremADAttributes.onPremBypassModerationFromDL.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -2137,22 +2014,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -errorAction STOP -cn "None"
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "GrantSendOnBehalfTo"
-                        ADAttributeName = $onPremADAttributes.onPremGrantSendOnBehalfTo.Value
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else 
                 {
@@ -2201,22 +2067,11 @@ Function Start-DistributionListMigration
             {
                 $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -errorAction STOP -CN:$permission.Identity
 
+                out-logfile -string $normalizedTest
+
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        primarySMTPAddressOrUPN = $normalizedTest.name
-                        externalDirectoryObjectID = $NULL
-                        alias=$normalizedTest.alias
-                        name=$normalizedTest.name
-                        attributeCommonName = "Group to be migrated has send as permissions on another on premises group"
-                        ADAttrbiteName = "SendAsDependency"
-                        errorMessage = $normalizedTest.isErrorMessage
-                        errorMessageDetail = ""
-                    }
-
-                    out-logfile -string $isErrorObject
-
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:preCreateErrors+=$normalizedTest
                 }
                 else {
                     $allObjectsSendAsAccessNormalized+=$normalizedTest

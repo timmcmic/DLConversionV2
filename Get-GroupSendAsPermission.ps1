@@ -280,22 +280,11 @@
 
                     $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn -activeDirectoryAttribute "SendAs" -errorAction STOP -cn "None"
 
+                    out-logfile -string $normalizedTest
+
                     if ($normalizedTest.isError -eq $TRUE)
                     {
-                        $isErrorObject = new-Object psObject -property @{
-                            primarySMTPAddressOrUPN = $normalizedTest.name
-                            externalDirectoryObjectID = $NULL
-                            alias=$normalizedTest.alias
-                            name=$normalizedTest.name
-                            attributeCommanName = "SendAs"
-                            ADAttributeName = "SendAsOnGroupToBeMigrated"
-                            errorMessage = $normalizedTest.isErrorMessage
-                            errorMessageDetail = ""
-                        }
-
-                        out-logfile -string $isErrorObject
-
-                        $global:preCreateErrors+=$isErrorObject
+                        $global:preCreateErrors+=$normalizedTest
                     }
                     else 
                     {
