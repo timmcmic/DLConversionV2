@@ -2628,6 +2628,17 @@ Function Start-DistributionListMigration
 
     if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
     {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testoffice365errorsxml.valu
+        }
         out-logfile -string "+++++"
         out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
@@ -2635,8 +2646,6 @@ Function Start-DistributionListMigration
 
         if ($global:preCreateErrors.count -gt 0)
         {
-            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-
             foreach ($preReq in $global:preCreateErrors)
             {
                 write-errorEntry -errorEntry $preReq
@@ -2645,15 +2654,13 @@ Function Start-DistributionListMigration
 
         if ($global:testOffice365Errors.count -gt 0)
         {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testoffice365errorsxml.value
-
             foreach ($preReq in $global:testOffice365Errors)
             {
                 write-errorEntry -errorEntry $prereq
             }
         }
 
-        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        #out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
     }
 
     #Exit #Debug Exit
