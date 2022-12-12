@@ -205,7 +205,7 @@ Function Test-PreMigration
     $host.ui.RawUI.WindowTitle = $windowTitle
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration-PreMigration\"
+    [string]$global:staticFolderName="\PreReqCheck\"
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
 
