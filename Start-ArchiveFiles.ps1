@@ -38,7 +38,16 @@
 
         out-logFile -string "Archiving files associated with run."
 
-        $functionDate = Get-Date -Format FileDateTime
+        if ($isHealthCheck -eq $TRUE)
+        {
+            $functionDate = Get-Date -Format FileDateTime
+            $functionDate = "PreReqTest-"+$functionDate
+        }
+        else 
+        {
+            $functionDate = Get-Date -Format FileDateTime
+        }
+        
         $functionNameSplit = $global:logFile.split("\")
 
         out-logfile -string "Split string for group name."
@@ -56,17 +65,8 @@
             out-logfile -string "Success - renaming directory."
 
             $functionFolderName = $functionNameSplit[0]+"-Success"
-
-            if ($isHealthCheck -eq $TRUE)
-            {
-                $functionFolderName = "PreReqCheck-"+$functionDate+"-"+$functionFolderName
-                $functionOriginalPath= $logFolderPath+$global:staticFolderName
-            }
-            else 
-            {
-                $functionFolderName = $functionDate+"-"+$functionFolderName
-                $functionOriginalPath= $logFolderPath+$global:staticFolderName
-            }
+            $functionFolderName = $functionDate+"-"+$functionFolderName
+            $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
             out-logfile -string $functionFolderName
             out-logfile -string $functionOriginalPath
