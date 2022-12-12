@@ -412,7 +412,9 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$isHealthCheck=$FALSE
     )
 
     #Initialize telemetry collection.
@@ -461,10 +463,14 @@ Function Start-DistributionListMigration
     #Define global variables.
 
     $global:threadNumber=$threadNumberAssigned
-    $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration\"
-    [string]$global:staticAuditFolderName="\AuditData\"
-    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
+
+    if ($isHealthTest -eq $FALSE)
+    {
+        $global:logFile=$NULL #This is the global variable for the calculated log file name
+        [string]$global:staticFolderName="\DLMigration\"
+        [string]$global:staticAuditFolderName="\AuditData\"
+        [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
+    }
 
     #Define variables for import data - used for importing data into pre-collect.
 
@@ -752,7 +758,10 @@ Function Start-DistributionListMigration
 
     #Log start of DL migration to the log file.
 
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+    if ($isHealthTest -eq $FALSE)
+    {
+        new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+    }
 
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOCTICE"
