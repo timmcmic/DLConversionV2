@@ -148,7 +148,7 @@ Function Start-MultipleTestPreMigrations
     Param
     (
         [Parameter(Mandatory = $true)]
-        [string]$groupSMTPAddress,
+        [array]$groupSMTPAddresses,
         #Local Active Director Domain Controller Parameters
         [Parameter(Mandatory = $true)]
         [string]$globalCatalogServer,
