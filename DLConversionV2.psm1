@@ -2646,9 +2646,9 @@ Function Start-DistributionListMigration
 
         if ($global:testOffice365Errors.Count -gt 0)
         {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testoffice365errorsxml.valu
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
         }
-        
+
         out-logfile -string "+++++"
         out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
