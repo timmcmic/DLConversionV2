@@ -752,11 +752,14 @@ Function Start-DistributionListMigration
 
     #Ensure that no status files exist at the start of the run.
 
-    if ($totalThreadCount -gt 0)
+    if ($isHealthCheck -eq $FALSE)
     {
-        if ($global:threadNumber -eq 1)
+        if ($totalThreadCount -gt 0)
         {
-            remove-statusFiles -fullCleanup:$TRUE
+            if ($global:threadNumber -eq 1)
+            {
+                remove-statusFiles -fullCleanup:$TRUE
+            }
         }
     }
 
