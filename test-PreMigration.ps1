@@ -257,5 +257,12 @@ Function Test-PreMigration
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
-    Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    {
+        Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
+    }
+    else 
+    {
+        Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+    }
 }
