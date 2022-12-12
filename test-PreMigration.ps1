@@ -177,7 +177,7 @@ Function Test-PreMigration
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0,
+        [int]$totalThreadCount=0
     )
 
     #Initialize telemetry collection.
