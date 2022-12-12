@@ -27,7 +27,9 @@
             [Parameter(Mandatory = $true)]
             [boolean]$isSuccess=$FALSE,
             [Parameter(Mandatory = $true)]
-            [string]$logFolderPath=$NULL
+            [string]$logFolderPath=$NULL,
+            [Parameter(Mandatory = $true)]
+            [boolean]$isHealthCheck=$FALSE   
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -36,7 +38,16 @@
 
         out-logFile -string "Archiving files associated with run."
 
-        $functionDate = Get-Date -Format FileDateTime
+        if ($isHealthCheck -eq $TRUE)
+        {
+            $functionDate = Get-Date -Format FileDateTime
+            $functionDate = "PreReqTest-"+$functionDate
+        }
+        else 
+        {
+            $functionDate = Get-Date -Format FileDateTime
+        }
+        
         $functionNameSplit = $global:logFile.split("\")
 
         out-logfile -string "Split string for group name."
