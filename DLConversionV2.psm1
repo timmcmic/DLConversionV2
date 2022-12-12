@@ -464,7 +464,7 @@ Function Start-DistributionListMigration
 
     $global:threadNumber=$threadNumberAssigned
 
-    if ($isHealthTest -eq $FALSE)
+    if ($isHealthCheck -eq $FALSE)
     {
         $global:logFile=$NULL #This is the global variable for the calculated log file name
         [string]$global:staticFolderName="\DLMigration\"
@@ -758,7 +758,7 @@ Function Start-DistributionListMigration
 
     #Log start of DL migration to the log file.
 
-    if ($isHealthTest -eq $FALSE)
+    if ($isHealthCheck -eq $FALSE)
     {
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     }
@@ -2670,7 +2670,7 @@ Function Start-DistributionListMigration
             }
         }
 
-        if ($isHealthTest -eq $FALSE)
+        if ($isHealthCheck -eq $FALSE)
         {
             out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
@@ -2680,11 +2680,11 @@ Function Start-DistributionListMigration
         }  
     }
 
-    if ($isHealthTest -eq $TRUE)
+    if ($isHealthCheck -eq $TRUE)
     {
         return
     }
-    
+
     #Exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
