@@ -240,10 +240,6 @@ Function Test-PreMigration
         $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
     }
 
-    write-host $logFolderPath
-    Write-Host $logFolderPath
-    exit
-
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
     #Output all parameters bound or unbound and their associated values.
