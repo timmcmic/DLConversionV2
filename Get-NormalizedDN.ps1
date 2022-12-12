@@ -59,7 +59,9 @@
             [Parameter(Mandatory = $false)]
             [boolean]$isMember=$FALSE,
             [Parameter(Mandatory = $true)]
-            [string]$activeDirectoryAttribute
+            [string]$activeDirectoryAttribute,
+            [Parameter(Mandatory = $true)]
+            [string]$activeDirectoryAttributeCommon
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -201,6 +203,7 @@
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
                     OnPremADAttribute = $activeDirectoryAttribute
+                    OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                     DN = $DN
                     isAlreadyMigrated = $false
                     isError=$false
@@ -228,6 +231,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $true
                         isError=$false
@@ -251,6 +255,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
@@ -292,6 +297,7 @@
                         RecipientOrUser = "User"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $FALSE
                         isError=$false
@@ -318,6 +324,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
@@ -342,6 +349,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $true
                         isError=$false
@@ -374,6 +382,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
@@ -394,6 +403,7 @@
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $null
                         OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$true
@@ -415,6 +425,7 @@
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
                     OnPremADAttribute = $activeDirectoryAttribute
+                    OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                     DN = $DN
                     isAlreadyMigrated = $false
                     isError=$true
