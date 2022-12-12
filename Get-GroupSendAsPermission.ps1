@@ -278,7 +278,7 @@
                 {
                     #$functionSendAsTest+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
 
-                    $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
+                    $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn -activeDirectoryAttribute "SendAs" -errorAction STOP -cn "None"
 
                     if ($normalizedTest.isError -eq $TRUE)
                     {

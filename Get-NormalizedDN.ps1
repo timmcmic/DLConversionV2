@@ -57,8 +57,9 @@
             [Parameter(Mandatory = $TRUE)]
             [string]$originalGroupDN,
             [Parameter(Mandatory = $false)]
-            [boolean]$isMember=$FALSE
-
+            [boolean]$isMember=$FALSE,
+            [Parameter(Mandatory = $true)]
+            [boolean]$activeDirectoryAttribute
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -199,6 +200,8 @@
                     GroupType = $NULL
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
+                    OnPremADAttribute = $activeDirectoryAttribute
+                    DN = $DN
                     isAlreadyMigrated = $false
                     isError=$false
                     isErrorMessage=""
@@ -224,6 +227,8 @@
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
@@ -245,6 +250,8 @@
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -264,6 +271,8 @@
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -282,6 +291,8 @@
                         GroupType = $NULL
                         RecipientOrUser = "User"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $FALSE
                         isError=$false
                         isErrorMessage=""
@@ -306,6 +317,8 @@
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -328,6 +341,8 @@
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
@@ -358,6 +373,8 @@
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -376,6 +393,8 @@
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $null
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        DN = $DN
                         isAlreadyMigrated = $false
                         isError=$true
                         isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
@@ -395,6 +414,8 @@
                     GroupType = $functionTest.GroupType
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
+                    OnPremADAttribute = $activeDirectoryAttribute
+                    DN = $DN
                     isAlreadyMigrated = $false
                     isError=$true
                     isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
