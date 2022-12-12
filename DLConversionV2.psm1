@@ -2637,7 +2637,7 @@ Function Start-DistributionListMigration
         {
             out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
 
-            foreach ($preReq in $global:preCrateErrors)
+            foreach ($preReq in $global:preCreateErrors)
             {
                 write-errorEntry -errorEntry $preReq
             }
