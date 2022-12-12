@@ -59,7 +59,7 @@
 
             if ($isHealthCheck -eq $TRUE)
             {
-                $functionFolderName = "PreReqCheck"+$functionDate+"-"+$functionFolderName
+                $functionFolderName = "PreReqCheck-"+$functionDate+"-"+$functionFolderName
                 $functionOriginalPath= $logFolderPath+$global:staticFolderName
             }
             else 
