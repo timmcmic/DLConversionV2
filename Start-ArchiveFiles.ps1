@@ -27,7 +27,9 @@
             [Parameter(Mandatory = $true)]
             [boolean]$isSuccess=$FALSE,
             [Parameter(Mandatory = $true)]
-            [string]$logFolderPath=$NULL
+            [string]$logFolderPath=$NULL,
+            [Parameter(Mandatory = $true)]
+            [boolean]$isHealthCheck=$FALSE   
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -54,8 +56,17 @@
             out-logfile -string "Success - renaming directory."
 
             $functionFolderName = $functionNameSplit[0]+"-Success"
-            $functionFolderName = $functionDate+"-"+$functionFolderName
-            $functionOriginalPath= $logFolderPath+$global:staticFolderName
+
+            if ($isHealthCheck -eq $TRUE)
+            {
+                $functionFolderName = "PreReqCheck"+$functionDate+"-"+$functionFolderName
+                $functionOriginalPath= $logFolderPath+$global:staticFolderName
+            }
+            else 
+            {
+                $functionFolderName = $functionDate+"-"+$functionFolderName
+                $functionOriginalPath= $logFolderPath+$global:staticFolderName
+            }
 
             out-logfile -string $functionFolderName
             out-logfile -string $functionOriginalPath

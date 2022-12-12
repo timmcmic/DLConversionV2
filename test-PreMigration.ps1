@@ -259,10 +259,10 @@ Function Test-PreMigration
 
     if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
     {
-        Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
+        Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath -isHealthCheck:$TRUE
     }
     else 
     {
-        Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+        Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath -isHealthCheck:$TRUE
     }
 }
