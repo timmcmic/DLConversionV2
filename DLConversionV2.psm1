@@ -2669,7 +2669,15 @@ Function Start-DistributionListMigration
             }
         }
 
-        out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        if ($isHealthTest -eq $FALSE)
+        {
+            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+            return
+        }  
     }
 
     #Exit #Debug Exit
