@@ -173,7 +173,11 @@ Function Test-PreMigration
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory = $false)]
+        [int]$global:threadNumber=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0
     )
 
     #Initialize telemetry collection.
@@ -221,6 +225,20 @@ Function Test-PreMigration
     }
 
     #Log start of DL migration to the log file.
+
+    #Define the sub folders for multi-threading.
+
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
+    {
+        new-statusFile -logFolderPath $logFolderPath
+
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+    }
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
