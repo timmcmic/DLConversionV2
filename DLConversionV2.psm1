@@ -2213,21 +2213,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "Members"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of the distribution list is not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2270,21 +2261,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "RejectMessagesFromSendersorMembers / RejectMessagesFrom / RejectMessagesFromDLMembers"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of RejectMessagesFromSendersOrMembers was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2327,21 +2309,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "AcceptMessagesOnlyFromSendersorMembers / AcceptMessagesOnlyFrom / AcceptMessagesOnlyFromDLMembers"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of AcceptMessagesOnlyFromSendersorMembers was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2384,21 +2357,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "ManagedBy"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of owners was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2441,21 +2405,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "ModeratedBy"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of moderatedBy was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2498,21 +2453,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "BypassModerationFromSendersorMembers"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of BypassModerationFromSendersorMembers was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2553,21 +2499,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "GrantSendOnBehalfTo"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member of GrantSendOnBehalfTo was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2610,21 +2547,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "SendAs"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "A member with SendAs permissions was not found in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2667,21 +2595,12 @@ Function Start-DistributionListMigration
 
                 if ($isTestError -eq "Yes")
                 {
-                    $isErrorObject = new-Object psObject -property @{
-                        PrimarySMTPAddressorUPN = $member.PrimarySMTPAddressorUPN
-                        ExternalDirectoryObjectID = $member.ExternalDirectoryObjectID
-                        Alias = $member.Alias
-                        Name = $member.name
-                        AttributeCommonName = "SendAs"
-                        ADAttributeName = $member.onPremADAttribute
-                        DN = $member.DN
-                        ErrorMessage = "The group to be migrated has send as rights on an on premises object.  The object is not present in Office 365."
-                        errorMessageDetail = ""
-                    }
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $isErrorObject
+                    out-logfile -string $member
 
-                    $global:preCreateErrors+=$isErrorObject
+                    $global:testOffice365Errors += $member
                 }
             }
             catch{
@@ -2707,27 +2626,31 @@ Function Start-DistributionListMigration
     #At this time we have validated the on premises pre-requisits for group migration.
     #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
 
-    if ($global:preCreateErrors.count -gt 0)
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
     {
-        out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-                
         out-logfile -string "+++++"
         out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
         out-logfile -string ""
 
-        foreach ($preReq in $global:preCreateErrors)
+        if ($global:preCreateErrors.count -gt 0)
         {
-            out-logfile -string "====="
-            out-logfile -string ("Primary Email Address or UPN: " +$preReq.primarySMTPAddressOrUPN)
-            out-logfile -string ("External Directory Object ID: " +$preReq.externalDirectoryObjectID)
-            out-logfile -string ("Name: "+$preReq.name)
-            out-logfile -string ("Alias: "+$preReq.Alias)
-            out-logfile -string ("Attribute Common Name in Error: "+$preReq.attributeCommonName)
-            out-logfile -string ("Attribute AD Name in Error: "+$preReq.ADAttributeName)
-            out-logfile -string ("Error Message: "+$preReq.errorMessage)
-            out-logfile -string ("Error Message Detail: "+$preReq.errorMessageDetail)
-            out-logfile -string "====="
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+
+            foreach ($preReq in $global:preCrateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testoffice365errorsxml.value
+
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
         }
 
         out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
