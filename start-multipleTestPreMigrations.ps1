@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Start-MultipleTestPreMigrations
+Function start-MultipleTestPreMigrations
 {
     <#
     .SYNOPSIS
@@ -154,9 +154,6 @@ Function Start-MultipleTestPreMigrations
         [string]$globalCatalogServer,
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
@@ -184,10 +181,8 @@ Function Start-MultipleTestPreMigrations
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        #Defining optional parameters for retention and upgrade
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowDetailedTelemetryCollection=$TRUE
@@ -203,13 +198,13 @@ Function Start-MultipleTestPreMigrations
     [double]$telemetryElapsedSeconds = 0
     $telemetryEventName = "Start-MultipleTestPreMigrations"
     [double]$telemetryGroupCount = 0
-    
+
     if ($allowTelemetryCollection -eq $TRUE)
     {
         start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
     }
 
-    $windowTitle = "Start-MultipleTestPreMigrations Controller"
+    $windowTitle = "Start-MultipleDistributionListMigration Controller"
     $host.ui.RawUI.WindowTitle = $windowTitle
 
     #Define global variables.
@@ -218,14 +213,13 @@ Function Start-MultipleTestPreMigrations
     [string]$global:staticFolderName="\Master\"
     [string]$masterFileName="Master"
 
-
     [array]$jobOutput=@()
 
     [int]$totalAddressCount = $groupSMTPAddresses.Count
     $telemetryGroupCount = $totalAddressCount   
     [int]$maxThreadCount = 5
 
-    [string]$jobName="MultipleMigration"
+    [string]$jobName="MultiplePreMigration"
 
     [string]$originalLogFolderPath=$logFolderPath #Store the original in case the calculated is a network drive.
 
@@ -244,7 +238,7 @@ Function Start-MultipleTestPreMigrations
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN start-MultipleTestPreMigrations"
+    Out-LogFile -string "BEGIN START-MULTIPLEDISTRIBUTIONLISTMIGRATION"
     Out-LogFile -string "================================================================================"
 
     #Call garbage collection at the beginning to help with array management.
@@ -265,26 +259,14 @@ Function Start-MultipleTestPreMigrations
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
-
-    if ($exchangeOnlineCredential -ne $null)
-    {
-        Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
-    }
-
-    if ($exchangeOnlineCertificateThumbPrint -ne "")
-    {
-        Out-LogFile -string ("ExchangeOnlineCertificateThumbprint = "+$exchangeOnlineCertificateThumbPrint)
-    }
-
-    Out-LogFile -string ("ExchangeAuthenticationMethod = "+$exchangeAuthenticationMethod)
     out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
     Out-LogFile -string "********************************************************************************"
 
-    #Perform paramter validation manually.
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "ENTERING PARAMTER VALIDATION"
     Out-LogFile -string "********************************************************************************"
+
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
@@ -372,7 +354,7 @@ Function Start-MultipleTestPreMigrations
 
                 $forThread = $forCounter+1
 
-                Start-Job -Name $jobName -InitializationScript {import-module c:\repository\DLConversionV2\DLConversionV2.psd1 -Force} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -azureADCredential $args[10] -azureEnvironmentName $args[11] -azureTenantID $args[12] -azureApplicationID $args[13] -azureCertificateThumbprint $args[14] -allowTelemetryCollection $args[15] -allowDetailedTelemetryCollection $args[16] -threadNumberAssigned $args[17] -totalThreadCount $args[18]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection,$forThread,$loopThreadCount
+                Start-Job -Name $jobName -InitializationScript {import-module c:\repository\dlconversionv2\dlconversionv2.psd1 -force} -ScriptBlock { Start-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -azureADCredential $args[12] -azureEnvironmentName $args[13] -azureTenantID $args[14] -azureApplicationID $args[15] -azureCertificateThumbprint $args[16] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection
 
                 if ($forCounter -eq 0)
                 {
@@ -437,7 +419,7 @@ Function Start-MultipleTestPreMigrations
 
                 $forThread=$forCounter+1
 
-                Start-Job -name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34] -overrideCentralizedMailTransportEnabled $args[35] -azureADCredential $args[36] -azureEnvironmentName $args[37] -azureTenantID $args[38] -azureApplicationID $args[39] -azureCertificateThumbprint $args[40] -allowTelemetryCollection $args[41] -allowDetailedTelemetryCollection $args[42]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter,$overrideCentralizedMailTransportEnabled,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+                Start-Job -Name $jobName -InitializationScript {import-module c:\repository\dlconversionv2\dlconversionv2.psd1 -force} -ScriptBlock { Start-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -azureADCredential $args[12] -azureEnvironmentName $args[13] -azureTenantID $args[14] -azureApplicationID $args[15] -azureCertificateThumbprint $args[16] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection
 
                 if ($forCounter -eq 0)
                 {
@@ -511,6 +493,6 @@ Function Start-MultipleTestPreMigrations
     }
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "END START-MULTIPLETESTPREMIGRATIONS"
     Out-LogFile -string "================================================================================"
 }
