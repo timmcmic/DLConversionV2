@@ -368,6 +368,7 @@ Function Start-MultipleDistributionListMigration
     [array]$nestedRetryGroups=@()
     [array]$groupsToRetry=@()
     [boolean]$nestingError = $false
+    [array]$crossGroupDependencyFound = @()
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
@@ -774,17 +775,29 @@ Function Start-MultipleDistributionListMigration
 
         foreach ($group in $nestedRetryGroups)
         {
-            out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
+            out-logfile -string "Searching array for any cross group dependencies - these cannot be retried."
 
-            if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
+            $crossGroupCheck = $nestedRetryGroups | where {($_.primarySMTPAddressOrUPN -eq $group.parentSMTPAddress) -and ($_.parentSMTPAddress -eq $group.primarySMTPAddressOrUPN)} }
+
+            if ($crossGroupCheck -gt 0)
             {
-                out-logfile -string ("Nested DL parent eligable for retry: "+$group.ParentGroupSMTPAddress)
-                $groupsToRetry+=$group.ParentGroupSMTPAddress
+                out-logfile -string "Cross group dependencies found - adding to error array."
+                $crossGroupDependencyFound = $crossGroupCheck
             }
             else 
             {
-                out-logfile -string "Parent group not eligable for retry - child not included in migration set."
-            }
+                out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
+
+                if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
+                {
+                    out-logfile -string ("Nested DL parent eligable for retry: "+$group.ParentGroupSMTPAddress)
+                    $groupsToRetry+=$group.ParentGroupSMTPAddress
+                }
+                else 
+                {
+                    out-logfile -string "Parent group not eligable for retry - child not included in migration set."
+                }
+            } 
         }
 
         out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
