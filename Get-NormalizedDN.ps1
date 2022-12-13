@@ -420,7 +420,7 @@
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                        isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."
                     }
                 }
             }
@@ -442,7 +442,7 @@
                     DN = $DN
                     isAlreadyMigrated = $false
                     isError=$true
-                    isErrorMessage="The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."
                 }
             }    
         }
