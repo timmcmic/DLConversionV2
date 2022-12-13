@@ -360,6 +360,15 @@ Function Start-MultipleDistributionListMigration
         }
     }
 
+    #Define the nested groups csv.
+
+    [string]$nestedGroupCSV = "nestedGroups.csv"
+    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
+    [array]$nestedRetryGroups=@()
+    [array]$groupsToRetry=@()
+    [boolean]$nestingError = $false
+
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
@@ -729,7 +738,65 @@ Function Start-MultipleDistributionListMigration
 
     out-logfile -string "Starting multi-migration function."
     startMultiMigration
-    
+
+    #Now the we've made the first pass - we can work through any of the nested group exceptions.
+
+    do
+    {
+        #Resetting groups to retry.
+
+        $groupsToRetry = @()
+
+        #Begin by importing the CSV file containing the nested objects.
+
+        try{
+            out-logfile -string "Importing the CSV objects for nested group retries."
+
+            $nestedRetryGroups = import-csv -path $nestedCSVPath -errorAction Stop
+        }
+        catch {
+            out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried"
+            $nestingError = $true
+        }
+
+        #Remove the CSV file that was processed.  This file will be recreated if possible.
+
+        try {
+            out-logfile -string "Removing the CSV file previously imported.  Will be recreated by migration threads if nesting found."
+
+            Remove-Item -Path $nestedCSVPath -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to remove the CSV file for nesting.  The file will continue to be appended and groups ignored."
+        }
+
+        #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
+
+        foreach ($group in $nestedRetryGroups)
+        {
+            out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
+
+            if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
+            {
+                out-logfile -string ("Nested DL parent eligable for retry: "+$group.ParentGroupSMTPAddress)
+                $groupsToRetry+=$group.ParentGroupSMTPAddress
+            }
+            else 
+            {
+                out-logfile -string "Parent group not eligable for retry - child not included in migration set."
+            }
+        }
+
+        out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
+
+        out-logfile -string "Resetting groupSMTPAddresses to the retry group set."
+
+        $groupSMTPAddresses = $groupsToRetry
+
+        out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
+    }
+    while(($nestingError -eq $FALSE) -or ($groupsToRetry.count -gt 0))
+
     get-migrationSummary -logFolderPath $logFolderPath
 
     #Call .net garbage collection due to bulk arrays.
