@@ -745,10 +745,26 @@ Function Start-MultipleDistributionListMigration
         do{
             #Import the groups that were identified as nested.
 
-            $nestedGroupsImport = import-csv $nestedCSVPath
+            try {
+                out-logfile -string "Immporting CSV file of nested groups to retry."
 
-            #Remote the nestedCSVfile.  It will be recreated if any of the threads identify a nested group.
-            #This will also trigger the do while to stop.
+                $nestedGroupsImport = import-csv $nestedCSVPath -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Error importing CSV file for nested groups.  Hard failure - nested groups may not rety."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try {
+                out-logfile -string "Removing the CSV file after import to terminate function."
+
+                Remove-Item $nestedCSVPath -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to remove the nested groups CSV - this is required for loop termination." 
+                out-logfile -string $_ -isError:$TRUE
+            }
+
 
             foreach ($group in $nestedGroupsImport)
             {
