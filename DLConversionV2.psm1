@@ -653,6 +653,12 @@ Function Start-DistributionListMigration
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
 
+    #Define the nested groups csv.
+
+    [string]$nestedGroupCSV = "nestedGroups.csv"
+    [string]$nestedGroupException = "NestedGroupException"
+    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
+
     #Define the property sets that will be cleared on the on premises object.
 
     [array]$dlPropertySet = '*' #Clear all properties of a given object
@@ -2666,6 +2672,13 @@ Function Start-DistributionListMigration
             foreach ($preReq in $global:preCreateErrors)
             {
                 write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -contains $nestedGroupException)
+                {
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
             }
         }
 
