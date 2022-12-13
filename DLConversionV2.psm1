@@ -2677,6 +2677,7 @@ Function Start-DistributionListMigration
 
                 if ($preReq.isErrorMessage -contains $nestedGroupException)
                 {
+                    out-logfile -string "Nested group exception written to CSV."
                     export-csv -Path $nestedCSVPath -inputObject $preReq -append
                 }
             }
