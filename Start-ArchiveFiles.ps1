@@ -28,7 +28,7 @@
             [boolean]$isSuccess=$FALSE,
             [Parameter(Mandatory = $true)]
             [string]$logFolderPath=$NULL,
-            [Parameter(Mandatory = $true)]
+            [Parameter(Mandatory = $false)]
             [boolean]$isHealthCheck=$FALSE   
         )
 
