@@ -287,8 +287,8 @@ Function Start-MultipleDistributionListMigration
 
     [array]$jobOutput=@()
 
-    [int]$totalAddressCount = $groupSMTPAddresses.Count
-    $telemetryGroupCount = $totalAddressCount   
+    [int]$totalAddressCount = 0
+    $telemetryGroupCount = $groupSMTPAddresses.count   
     [int]$maxThreadCount = 5
 
     [string]$jobName="MultipleMigration"
@@ -565,6 +565,8 @@ Function Start-MultipleDistributionListMigration
         {
             out-logfile -string $GroupSMTPAddress
         }
+
+        $totalAddressCount = $groupSMTPAddresses.Count
     }
 
     #Maximum thread count that can be supported at one time is 5 for now.
@@ -730,6 +732,7 @@ Function Start-MultipleDistributionListMigration
 
     #Execute function to perform multiple migrations.
 
+    makeUniqueSMTPAddresses
     performMultipleMigrations
 
     #At this time the first round of migrations has been completed.
@@ -749,9 +752,22 @@ Function Start-MultipleDistributionListMigration
             {
                 if ($groupSMTPAddresses -contains $group.primarySMTPAddressorUPN)
                 {
-                    out-logfile -string "Parent "
-                    $nestedGroupsRetry+=$group.primarySMTPAddressOfUPN
+                    Out-logfile -string "Child DL was requested for migration.  Add parent DL to retry list."
+
+                    $nestedGroupsRetry+=$group.parentGroupSMTPAddress
                 }
+                else 
+                {
+                    out-logfile -string "Child DL was not requested for migration.  Skipping retrying the parent DL to prevent loops."
+                }
+
+                out-logfile -string "Number of TOP DLs that require re-migration"
+                out-logfile -string $nestedGroupsRetry.Count.tostring()
+
+                $groupSMTPAddresses = $nestedGroupsRetry
+
+                #makeUniqueSMTPAddresses
+                #performMultipleMigrations
             }
         }
         while(test-path $nestedCSVPath)
