@@ -794,6 +794,10 @@ Function Start-MultipleDistributionListMigration
         $groupSMTPAddresses = $groupsToRetry
 
         out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
+
+        out-logfile -string "Restarting function to reprocess groups."
+
+        startMultiMigration
     }
     while(($nestingError -eq $FALSE) -or ($groupsToRetry.count -gt 0))
 
