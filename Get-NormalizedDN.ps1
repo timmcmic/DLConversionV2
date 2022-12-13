@@ -362,8 +362,23 @@
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
 
                     out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
-                    out-logfile -string $DN
-                    out-logFile -string ("A mail enabled group is a member of the group to be migrated or has permission on the group to be migrated.  This group must first be migrated - "+$DN) -isError:$TRUE
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $null
+                        Name = $dn
+                        PrimarySMTPAddressOrUPN = $null
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        GroupType = $functionTest.GroupType
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $null
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
+                        DN = $DN
+                        isAlreadyMigrated = $false
+                        isError=$true
+                        isErrorMessage="A mail enabled group is a member of the distribution list.  The child list must be migrated first or removed from membership."
+                    }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
                 {
