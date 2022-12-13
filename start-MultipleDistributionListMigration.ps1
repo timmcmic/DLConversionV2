@@ -795,7 +795,7 @@ Function Start-MultipleDistributionListMigration
 
         out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
 
-        if ($groupsSMTPAddresses.count -gt 0)
+        if ($groupSMTPAddresses.count -gt 0)
         {
             out-logfile -string "Restarting function to reprocess groups."
             startMultiMigration
