@@ -171,8 +171,6 @@
             }
         } until ($stopLoop -eq $TRUE)
         
-       
-
         try
         {
             #In this iteraction of the script were changing how we track recipients - since we're using adsi.
@@ -364,20 +362,20 @@
                     out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
                     
                     $functionObject = New-Object PSObject -Property @{
-                        Alias = $null
-                        Name = $dn
-                        PrimarySMTPAddressOrUPN = $null
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
-                        ExternalDirectoryObjectID = $null
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="A mail enabled group is a member of the distribution list.  The child list must be migrated first or removed from membership."
+                        isErrorMessage="NestedGroupException - A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
