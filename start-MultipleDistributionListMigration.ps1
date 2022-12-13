@@ -738,6 +738,10 @@ Function Start-MultipleDistributionListMigration
     {
         $totalAddressCount = makeUniqueSMTPAddresses
     }
+    else 
+    {
+        $totalAddressCount = 1
+    }
 
     performMultipleMigrations
 
@@ -792,6 +796,10 @@ Function Start-MultipleDistributionListMigration
             if ($groupSMTPAddresses.count -gt 1)
             {
                 $totalAddressCount = makeUniqueSMTPAddresses
+            }
+            else 
+            {
+                $totalAddressCount = 1
             }
 
             performMultipleMigrations
