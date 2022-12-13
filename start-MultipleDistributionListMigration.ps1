@@ -566,7 +566,7 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string $GroupSMTPAddress
         }
 
-        $totalAddressCount = $groupSMTPAddresses.Count
+        return $groupSMTPAddresses.Count
     }
 
     #Maximum thread count that can be supported at one time is 5 for now.
@@ -732,7 +732,7 @@ Function Start-MultipleDistributionListMigration
 
     #Execute function to perform multiple migrations.
 
-    makeUniqueSMTPAddresses
+    $totalAddressCount = makeUniqueSMTPAddresses
     performMultipleMigrations
 
     #At this time the first round of migrations has been completed.
