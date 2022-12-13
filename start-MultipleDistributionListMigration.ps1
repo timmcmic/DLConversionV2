@@ -768,7 +768,7 @@ Function Start-MultipleDistributionListMigration
 
             foreach ($group in $nestedGroupsImport)
             {
-                if ($groupSMTPAddresses -contains $group.primarySMTPAddressorUPN)
+                if ($groupSMTPAddresses -contains $group.PrimarySMTPAddressOrUPN)
                 {
                     Out-logfile -string "Child DL was requested for migration.  Add parent DL to retry list."
 
