@@ -782,7 +782,7 @@ Function Start-MultipleDistributionListMigration
             if ($crossGroupCheck -gt 0)
             {
                 out-logfile -string "Cross group dependencies found - adding to error array."
-                $crossGroupDependencyFound = $crossGroupCheck
+                $crossGroupDependencyFound += $crossGroupCheck
             }
             else 
             {
