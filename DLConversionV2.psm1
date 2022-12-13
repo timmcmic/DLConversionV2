@@ -656,7 +656,7 @@ Function Start-DistributionListMigration
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "NestedGroupException"
+    [string]$nestedGroupException = "*NestedGroupException*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
     #Define the property sets that will be cleared on the on premises object.
@@ -2675,7 +2675,7 @@ Function Start-DistributionListMigration
 
                 #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
 
-                if ($preReq.isErrorMessage.tostring() -like $nestedGroupException)
+                if ($preReq.isErrorMessage -like $nestedGroupException)
                 {
                     out-logfile -string "Nested group exception written to CSV."
                     export-csv -Path $nestedCSVPath -inputObject $preReq -append
