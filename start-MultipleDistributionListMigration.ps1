@@ -731,7 +731,13 @@ Function Start-MultipleDistributionListMigration
     #At this time the first round of migrations has been completed.
     #To support nested migrations
     
-    
+    if ($isMultiMachine -eq $FALSE)
+    {
+        do{
+            out-logfile "Found nested groups."
+        }
+        while(test-path $nestedCSVPath)
+    }
 
     get-migrationSummary -logFolderPath $logFolderPath
 
