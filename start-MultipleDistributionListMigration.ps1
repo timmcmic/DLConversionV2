@@ -723,6 +723,10 @@ Function Start-MultipleDistributionListMigration
         } until ($arrayLocation -eq $totalAddressCount)    
     }
 
+    #Execute the multi migration
+
+    out-logfile -string "Starting multi-migration function."
+    startMultiMigration
     
     get-migrationSummary -logFolderPath $logFolderPath
 
