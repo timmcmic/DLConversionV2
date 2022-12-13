@@ -778,15 +778,15 @@ Function Start-MultipleDistributionListMigration
                 {
                     out-logfile -string "Child DL was not requested for migration.  Skipping retrying the parent DL to prevent loops."
                 }
-
-                out-logfile -string "Number of TOP DLs that require re-migration"
-                out-logfile -string $nestedGroupsRetry.Count.tostring()
-
-                $groupSMTPAddresses = $nestedGroupsRetry
-
-                #makeUniqueSMTPAddresses
-                #performMultipleMigrations
             }
+
+            out-logfile -string "Number of TOP DLs that require re-migration"
+            out-logfile -string $nestedGroupsRetry.Count.tostring()
+
+            $groupSMTPAddresses = $nestedGroupsRetry
+
+            #makeUniqueSMTPAddresses
+            #performMultipleMigrations
         }
         while(test-path $nestedCSVPath)
     }
