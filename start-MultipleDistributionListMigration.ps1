@@ -238,6 +238,8 @@ Function Start-MultipleDistributionListMigration
         [string]$remoteDriveLetter=$NULL,
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
@@ -266,6 +268,13 @@ Function Start-MultipleDistributionListMigration
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\Master\"
     [string]$masterFileName="Master"
+
+    #Define the nested groups csv.
+
+    [string]$nestedGroupCSV = "nestedGroups.csv"
+    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
+    [array]$nestedGroupsImport = @()
 
     #Define parameters that are variables here (not available as parameters in this function.)
   
@@ -573,146 +582,158 @@ Function Start-MultipleDistributionListMigration
     #Begin processing batches of members in the SMTP array.
     #Current max jobs recommended 5 per batch.
 
-    do 
+    function performMultipleMigrations
     {
-        out-logfile -string $arrayLocation
-
-        #The remaining addrsses is the total addresses - the number of addresses alread processed by incrementing the array location.
-
-        $remainingAddresses = $totalAddressCount - $arrayLocation
-
-        out-logfile -string $remainingAddresses
-
-        #If the remaining number of addresses to process is greater than 5 - this means that we can do another bach of 5.
-        #The logic below processes groups in batches of 5.
-
-        if ($remainingAddresses -ge $maxThreadCount)
+        do 
         {
-            Out-logfile -string ("More than "+$maxThreadCount.ToString()+" groups to process.")
+            out-logfile -string $arrayLocation
 
-            #Set the max threads for the job to 5 so each job knows that 5 groups are being processed.
+            #The remaining addrsses is the total addresses - the number of addresses alread processed by incrementing the array location.
 
-            $loopThreadCount = $maxThreadCount
-            out-logfile -string ("The loop thread counter = "+$loopThreadCount)
+            $remainingAddresses = $totalAddressCount - $arrayLocation
 
-            #Iterate through each group with a for loop.
-            #The loop counter will be the thread number (IE if forCounter=0 then thread number is 1 for the job)
-            #The group to be processed is always where your at in the array + for counter.
-            #If this is the first job being procsesed - sleep for 5 before provisioning any more jobs (allows priority to thread 1 to do some pre-work before others kick in.)
+            out-logfile -string $remainingAddresses
 
-            for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
+            #If the remaining number of addresses to process is greater than 5 - this means that we can do another bach of 5.
+            #The logic below processes groups in batches of 5.
+
+            if ($remainingAddresses -ge $maxThreadCount)
             {
-                out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
+                Out-logfile -string ("More than "+$maxThreadCount.ToString()+" groups to process.")
 
-                $forThread = $forCounter+1
+                #Set the max threads for the job to 5 so each job knows that 5 groups are being processed.
 
-                Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34] -overrideCentralizedMailTransportEnabled $args[35] -azureADCredential $args[36] -azureEnvironmentName $args[37] -azureTenantID $args[38] -azureApplicationID $args[39] -azureCertificateThumbprint $args[40] -allowTelemetryCollection $args[41] -allowDetailedTelemetryCollection $args[42] -activeDirectoryAuthenticationMethod $args[43] -aadConnectAuthenticationMethod $args[44] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter,$overrideCentralizedMailTransportEnabled,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection,$activeDirectoryAuthenticationMethod,$aadConnectAuthenticationMethod
+                $loopThreadCount = $maxThreadCount
+                out-logfile -string ("The loop thread counter = "+$loopThreadCount)
 
-                if ($forCounter -eq 0)
+                #Iterate through each group with a for loop.
+                #The loop counter will be the thread number (IE if forCounter=0 then thread number is 1 for the job)
+                #The group to be processed is always where your at in the array + for counter.
+                #If this is the first job being procsesed - sleep for 5 before provisioning any more jobs (allows priority to thread 1 to do some pre-work before others kick in.)
+
+                for ($forCounter = 0 ; $forCounter -lt $maxThreadCount ; $forCounter ++)
                 {
-                    start-sleepProgress -sleepString "Sleeping after job provioning." -sleepSeconds 5
+                    out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
+
+                    $forThread = $forCounter+1
+
+                    Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34] -overrideCentralizedMailTransportEnabled $args[35] -azureADCredential $args[36] -azureEnvironmentName $args[37] -azureTenantID $args[38] -azureApplicationID $args[39] -azureCertificateThumbprint $args[40] -allowTelemetryCollection $args[41] -allowDetailedTelemetryCollection $args[42] -activeDirectoryAuthenticationMethod $args[43] -aadConnectAuthenticationMethod $args[44] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter,$overrideCentralizedMailTransportEnabled,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection,$activeDirectoryAuthenticationMethod,$aadConnectAuthenticationMethod
+
+                    if ($forCounter -eq 0)
+                    {
+                        start-sleepProgress -sleepString "Sleeping after job provioning." -sleepSeconds 5
+                    }
                 }
-            }
 
-            #We cannot allow the next batch to be processed - until the current batch has no running threads.
+                #We cannot allow the next batch to be processed - until the current batch has no running threads.
 
-            do 
-            {
-                out-logfile -string "Jobs are not yet completed in this batch."
+                do 
+                {
+                    out-logfile -string "Jobs are not yet completed in this batch."
 
-                $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
+                    $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
 
-                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
+                    out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
+
+                    foreach ($job in $loopJobs)
+                    {
+                        out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
+                    }
+
+                    start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
+
+
+                } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
+
+                #Increment the array location +5 since this loop processed 5 jobs.
+
+                $arrayLocation=$arrayLocation+$maxThreadCount
+
+                out-logfile -string ("The array location is = "+$arrayLocation)
+
+                #Remove all completed jobs at this time.
+
+                $loopJobs = get-job -name $jobName
 
                 foreach ($job in $loopJobs)
                 {
                     out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
-                }
-
-                start-sleepProgress -sleepString "Sleeping waiting on job completion." -sleepSeconds 30
-
-
-            } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
-
-            #Increment the array location +5 since this loop processed 5 jobs.
-
-            $arrayLocation=$arrayLocation+$maxThreadCount
-
-            out-logfile -string ("The array location is = "+$arrayLocation)
-
-            #Remove all completed jobs at this time.
-
-            $loopJobs = get-job -name $jobName
-
-            foreach ($job in $loopJobs)
-            {
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
-                remove-job -id $job.id
-            }  
-        }
-
-        #In this instance we have reached a batch of less than 5.
-        #That means when we call the job we need to specify the total thread count of remaining groups .
-        #In this case loop thread count would be the number of remaining groups.
-        #The loop creates the jobs based on the same logic - but this time only up to the number of remaining addresses.
-        #Iterate the array counter to the max number of locations when concluded.
-        #This should trigger the end of the DO UNTIL for batch processing.
-
-        else 
-        {
-            Out-logfile -string ("Less than "+$maxThreadCount.ToString()+" groups to process.")
-            $loopThreadCount = $remainingAddresses
-            out-logfile -string ("The loop thread counter = "+$loopThreadCount)
-
-            for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
-            {
-                out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
-
-                $forThread=$forCounter+1
-
-                Start-Job -name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34] -overrideCentralizedMailTransportEnabled $args[35] -azureADCredential $args[36] -azureEnvironmentName $args[37] -azureTenantID $args[38] -azureApplicationID $args[39] -azureCertificateThumbprint $args[40] -allowTelemetryCollection $args[41] -allowDetailedTelemetryCollection $args[42] -activeDirectoryAuthenticationMethod $args[43] -aadConnectAuthenticationMethod $args[44]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter,$overrideCentralizedMailTransportEnabled,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection,$activeDirectoryAuthenticationMethod,$aadConnectAuthenticationMethod
-
-                if ($forCounter -eq 0)
-                {
-                    start-sleepProgress -sleepString "Sleeping after job creation." -sleepSeconds 30
-                }
+                    remove-job -id $job.id
+                }  
             }
 
-            #We cannot allow the next batch to be processed - until the current batch has no running threads.
+            #In this instance we have reached a batch of less than 5.
+            #That means when we call the job we need to specify the total thread count of remaining groups .
+            #In this case loop thread count would be the number of remaining groups.
+            #The loop creates the jobs based on the same logic - but this time only up to the number of remaining addresses.
+            #Iterate the array counter to the max number of locations when concluded.
+            #This should trigger the end of the DO UNTIL for batch processing.
 
-            do 
+            else 
             {
-                out-logfile -string "Jobs are not yet completed in this batch."
+                Out-logfile -string ("Less than "+$maxThreadCount.ToString()+" groups to process.")
+                $loopThreadCount = $remainingAddresses
+                out-logfile -string ("The loop thread counter = "+$loopThreadCount)
 
-                $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
+                for ($forCounter = 0 ; $forCounter -lt $remainingAddresses ; $forCounter ++)
+                {
+                    out-logfile -string $groupSMTPAddresses[$ArrayLocation+$forCounter]
 
-                out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
+                    $forThread=$forCounter+1
+
+                    Start-Job -name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Start-DistributionListMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -aadConnectServer $args[4] -aadConnectCredential $args[5] -exchangeServer $args[6] -exchangeCredential $args[7] -exchangeOnlineCredential $args[8] -exchangeOnlineCertificateThumbPrint $args[9] -exchangeOnlineOrganizationName $args[10] -exchangeOnlineEnvironmentName $args[11] -exchangeOnlineAppID $args[12] -exchangeAuthenticationMethod $args[13] -dnNoSyncOU $args[15] -retainOriginalGroup $args[16] -enableHybridMailflow $args[17] -groupTypeOverride $args[18] -triggerUpgradeToOffice365Group $args[19] -useCollectedFullMailboxAccessOnPrem $args[26] -useCollectedFullMailboxAccessOffice365 $args[27] -useCollectedSendAsOnPrem $args[28] -useCollectedFolderPermissionsOnPrem $args[29] -useCollectedFolderPermissionsOffice365 $args[30] -threadNumberAssigned $args[31] -totalThreadCount $args[32] -isMultiMachine $args[33] -remoteDriveLetter $args[34] -overrideCentralizedMailTransportEnabled $args[35] -azureADCredential $args[36] -azureEnvironmentName $args[37] -azureTenantID $args[38] -azureApplicationID $args[39] -azureCertificateThumbprint $args[40] -allowTelemetryCollection $args[41] -allowDetailedTelemetryCollection $args[42] -activeDirectoryAuthenticationMethod $args[43] -aadConnectAuthenticationMethod $args[44]} -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$aadConnectServer,$aadConnectCredential,$exchangeServer,$exchangecredential,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$exchangeAuthenticationMethod,$retainOffice365Settings,$dnNoSyncOU,$retainOriginalGroup,$enableHybridMailflow,$groupTypeOverride,$triggerUpgradeToOffice365Group,$retainFullMailboxAccessOnPrem,$retainSendAsOnPrem,$retainMailboxFolderPermsOnPrem,$retainFullMailboxAccessOffice365,$retainSendAsOffice365,$retainMailboxFolderPermsOffice365,$useCollectedFolderPermissionsOnPrem,$useCollectedFullMailboxAccessOffice365,$useCollectedSendAsOnPrem,$useCollectedFolderPermissionsOnPrem,$useCollectedFolderPermissionsOffice365,$forThread,$loopThreadCount,$isMultiMachine,$remoteDriveLetter,$overrideCentralizedMailTransportEnabled,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection,$activeDirectoryAuthenticationMethod,$aadConnectAuthenticationMethod
+
+                    if ($forCounter -eq 0)
+                    {
+                        start-sleepProgress -sleepString "Sleeping after job creation." -sleepSeconds 30
+                    }
+                }
+
+                #We cannot allow the next batch to be processed - until the current batch has no running threads.
+
+                do 
+                {
+                    out-logfile -string "Jobs are not yet completed in this batch."
+
+                    $loopJobs = get-job -state Running | where {$_.name -eq $jobName}
+
+                    out-logfile -string ("Number of jobs that are running = "+$loopJobs.count.tostring())
+
+                    foreach ($job in $loopJobs)
+                    {
+                        out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
+                    }
+
+                    start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 30
+
+                } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
+
+                out-logfile -string ("The array location is = "+$arrayLocation)
+
+                #Remove all completed jobs at this time.
+
+                $loopJobs = get-job -name $jobName
 
                 foreach ($job in $loopJobs)
                 {
+                    $jobOutput+=(get-job -id $job.id).childjobs.output 
                     out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
-                }
+                    remove-job -id $job.id
+                }  
 
-                start-sleepProgress -sleepString "Sleeping pending job status." -sleepSeconds 30
+                $arrayLocation=$arrayLocation+$remainingAddresses
+            }
+        } until ($arrayLocation -eq $totalAddressCount)
+    }
 
-            } until ((get-job -State Running | where {$_.name -eq $jobName}).count -eq 0)
+    #Execute function to perform multiple migrations.
 
-            out-logfile -string ("The array location is = "+$arrayLocation)
-
-            #Remove all completed jobs at this time.
-
-            $loopJobs = get-job -name $jobName
-
-            foreach ($job in $loopJobs)
-            {
-                $jobOutput+=(get-job -id $job.id).childjobs.output 
-                out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
-                remove-job -id $job.id
-            }  
-
-            $arrayLocation=$arrayLocation+$remainingAddresses
-        }
-    } until ($arrayLocation -eq $totalAddressCount)
+    performMultipleMigrations
+    
+    #At this time the first round of migrations has been completed.
+    #To support nested migrations
+    
+    
 
     get-migrationSummary -logFolderPath $logFolderPath
 
