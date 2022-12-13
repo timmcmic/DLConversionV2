@@ -49,6 +49,8 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $true)]
             [string]$DN,
             [Parameter(Mandatory = $true)]
             [string]$CN,
@@ -203,6 +205,7 @@
                     OnPremADAttribute = $activeDirectoryAttribute
                     OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                     DN = $DN
+                    ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$false
                     isErrorMessage=""
@@ -231,6 +234,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
@@ -255,6 +259,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -276,6 +281,7 @@
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
                         OnPremADAttribute = $activeDirectoryAttribute
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -297,6 +303,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $FALSE
                         isError=$false
                         isErrorMessage=""
@@ -324,6 +331,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -349,6 +357,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
@@ -373,6 +382,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
                         isErrorMessage="NestedGroupException - A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
@@ -397,6 +407,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
@@ -418,6 +429,7 @@
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
                         isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."
@@ -440,6 +452,7 @@
                     OnPremADAttribute = $activeDirectoryAttribute
                     OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                     DN = $DN
+                    ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$true
                     isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."

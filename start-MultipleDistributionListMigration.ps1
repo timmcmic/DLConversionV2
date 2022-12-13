@@ -273,6 +273,7 @@ Function Start-MultipleDistributionListMigration
     [string]$nestedGroupException = "*NestedGroupException*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
     [array]$nestedGroupsImport = @()
+    [array]$nestedGroupsRetry = @()
 
     #Define parameters that are variables here (not available as parameters in this function.)
   
@@ -550,17 +551,20 @@ Function Start-MultipleDistributionListMigration
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "The following SMTP addresses have been requested for migration."
-
-    #Ensure that no addresses are specified more than once.
-
-    out-logfile -string "Unique list of SMTP addresses included in the array."
-
-    $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
-
-    foreach ($groupSMTPAddress in $groupSMTPAddresses)
+    function makeUniqueSMTPAddresses
     {
-        out-logfile -string $GroupSMTPAddress
+        Out-LogFile -string "The following SMTP addresses have been requested for migration."
+
+        #Ensure that no addresses are specified more than once.
+    
+        out-logfile -string "Unique list of SMTP addresses included in the array."
+    
+        $groupSMTPAddresses = $groupSMTPAddresses | Select-Object -Unique
+    
+        foreach ($groupSMTPAddress in $groupSMTPAddresses)
+        {
+            out-logfile -string $GroupSMTPAddress
+        }
     }
 
     #Maximum thread count that can be supported at one time is 5 for now.
@@ -570,18 +574,18 @@ Function Start-MultipleDistributionListMigration
     #The goal of this operation will be to batch moves in groups of 5 - and do another group after that.
 
     out-logfile -string ("The number of addresses to process is = "+$totalAddressCount)
-    
-    [boolean]$allDone=$FALSE
-    [int]$arrayLocation=0
-    [int]$maxArrayLocation = $totalAddressCount - 1
-    [int]$remainingAddresses = 0
-    [int]$loopThreadCount = 0
 
     #Begin processing batches of members in the SMTP array.
     #Current max jobs recommended 5 per batch.
 
     function performMultipleMigrations
     {
+        [boolean]$allDone=$FALSE
+        [int]$arrayLocation=0
+        [int]$maxArrayLocation = $totalAddressCount - 1
+        [int]$remainingAddresses = 0
+        [int]$loopThreadCount = 0
+
         do 
         {
             out-logfile -string $arrayLocation
@@ -733,10 +737,22 @@ Function Start-MultipleDistributionListMigration
     
     if ($isMultiMachine -eq $FALSE)
     {
-        out-logfile -string "Made it here"
         do{
-            out-logfile -string "Found nested groups."
-            exit
+            #Import the groups that were identified as nested.
+
+            $nestedGroupsImport = import-csv $nestedCSVPath
+
+            #Remote the nestedCSVfile.  It will be recreated if any of the threads identify a nested group.
+            #This will also trigger the do while to stop.
+
+            foreach ($group in $nestedGroupsImport)
+            {
+                if ($groupSMTPAddresses -contains $group.primarySMTPAddressorUPN)
+                {
+                    out-logfile -string "Parent "
+                    $nestedGroupsRetry+=$group.primarySMTPAddressOfUPN
+                }
+            }
         }
         while(test-path $nestedCSVPath)
     }
