@@ -28,6 +28,7 @@
         out-logfile -string ("ExternalDirectoryObjectID:" +$errorEntry.externalDirectoryObjectID)
         out-logfile -string ("OnPremADAttribute: "+$errorEntry.onPremADAttribute)
         out-logfile -string ("DN: "+$errorEntry.DN)
+        out-logfile -string ("ParentGroupSMTPAddress: "+$errorEntry.parentGroupSMTPAddress)
         out-logfile -string ("isAlreadyMigrated: "+$errorEntry.isAlreadyMigrated)
         out-logfile -string ("isError: "+$errorEntry.isError)
         out-logfile -string ("isErrorMessage: "+$errorEntry.isErrorMessage)
