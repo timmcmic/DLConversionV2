@@ -734,7 +734,8 @@ Function Start-MultipleDistributionListMigration
     if ($isMultiMachine -eq $FALSE)
     {
         do{
-            out-logfile "Found nested groups."
+            out-logfile -string "Found nested groups."
+            exit
         }
         while(test-path $nestedCSVPath)
     }
