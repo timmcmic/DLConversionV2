@@ -238,8 +238,6 @@ Function Start-MultipleDistributionListMigration
         [string]$remoteDriveLetter=$NULL,
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE,
-        [Parameter(Mandatory =$FALSE)]
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
@@ -729,7 +727,7 @@ Function Start-MultipleDistributionListMigration
     #Execute function to perform multiple migrations.
 
     performMultipleMigrations
-    
+
     #At this time the first round of migrations has been completed.
     #To support nested migrations
     
