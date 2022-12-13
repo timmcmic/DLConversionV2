@@ -734,7 +734,11 @@ Function Start-MultipleDistributionListMigration
 
     #Execute function to perform multiple migrations.
 
-    $totalAddressCount = makeUniqueSMTPAddresses
+    if ($groupSMTPAddresses.count -gt 1)
+    {
+        $totalAddressCount = makeUniqueSMTPAddresses
+    }
+
     performMultipleMigrations
 
     #At this time the first round of migrations has been completed.
@@ -785,7 +789,11 @@ Function Start-MultipleDistributionListMigration
 
             $groupSMTPAddresses = $nestedGroupsRetry
 
-            $groupsSMTPAddresses = makeUniqueSMTPAddresses
+            if ($groupSMTPAddresses.count -gt 1)
+            {
+                $totalAddressCount = makeUniqueSMTPAddresses
+            }
+
             performMultipleMigrations
         }
         while(test-path $nestedCSVPath)
