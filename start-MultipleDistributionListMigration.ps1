@@ -750,11 +750,7 @@ Function Start-MultipleDistributionListMigration
     
     if ($isMultiMachine -eq $FALSE)
     {
-        do{
-            #Reset the nested group array.
-
-            $nestedGroupRetry = @()
-            
+        do{            
             #Import the groups that were identified as nested.
 
             try {
@@ -795,7 +791,13 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string "Number of TOP DLs that require re-migration"
             out-logfile -string $nestedGroupsRetry.Count.tostring()
 
+            out-logfile -string "Setting group SMTP addresses to the nested retry array."
+
             $groupSMTPAddresses = $nestedGroupsRetry
+
+            out-logfile -string "Resetting the nested retry array to 0"
+            
+            $nestedGroupRetry = @()
 
             if ($groupSMTPAddresses.count -gt 1)
             {
