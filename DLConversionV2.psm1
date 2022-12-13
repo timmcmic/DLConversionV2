@@ -492,6 +492,12 @@ Function Start-DistributionListMigration
         }
     }
 
+    #Define the nested groups csv.
+
+    [string]$nestedGroupCSV = "nestedGroups.csv"
+    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
+
     if ($isHealthCheck -eq $FALSE)
     {
         #Define the sub folders for multi-threading.
@@ -652,12 +658,6 @@ Function Start-DistributionListMigration
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
-
-    #Define the nested groups csv.
-
-    [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "*NestedGroupException*"
-    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
     #Define the property sets that will be cleared on the on premises object.
 
