@@ -808,7 +808,7 @@ Function Start-MultipleDistributionListMigration
 
             performMultipleMigrations
         }
-        while(test-path $nestedCSVPath)
+        while($nestedGroupsRetry -gt 0)
     }
 
     exit
