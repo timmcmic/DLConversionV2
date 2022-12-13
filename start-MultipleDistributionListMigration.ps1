@@ -751,6 +751,10 @@ Function Start-MultipleDistributionListMigration
     if ($isMultiMachine -eq $FALSE)
     {
         do{
+            #Reset the nested group array.
+
+            $nestedGroupRetry = @()
+            
             #Import the groups that were identified as nested.
 
             try {
