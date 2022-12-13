@@ -492,7 +492,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($isHealtCheck -eq $FALSE)
+    if ($isHealthCheck -eq $FALSE)
     {
         #Define the sub folders for multi-threading.
 
