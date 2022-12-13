@@ -795,9 +795,16 @@ Function Start-MultipleDistributionListMigration
 
         out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
 
-        out-logfile -string "Restarting function to reprocess groups."
-
-        startMultiMigration
+        if ($groupsSMTPAddresses.count -gt 0)
+        {
+            out-logfile -string "Restarting function to reprocess groups."
+            startMultiMigration
+        }
+        else
+        {
+            out-logfile -string "No additional groups to process - not calling."
+        }
+        
     }
     while(($nestingError -eq $FALSE) -or ($groupsToRetry.count -gt 0))
 
