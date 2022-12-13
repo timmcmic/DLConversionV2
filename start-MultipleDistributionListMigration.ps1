@@ -785,8 +785,8 @@ Function Start-MultipleDistributionListMigration
 
             $groupSMTPAddresses = $nestedGroupsRetry
 
-            #makeUniqueSMTPAddresses
-            #performMultipleMigrations
+            $groupsSMTPAddresses = makeUniqueSMTPAddresses
+            performMultipleMigrations
         }
         while(test-path $nestedCSVPath)
     }
