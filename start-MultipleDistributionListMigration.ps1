@@ -777,7 +777,7 @@ Function Start-MultipleDistributionListMigration
         {
             out-logfile -string "Searching array for any cross group dependencies - these cannot be retried."
 
-            $crossGroupCheck = $nestedRetryGroups | where {($_.primarySMTPAddressOrUPN -eq $group.parentSMTPAddress) -and ($_.parentSMTPAddress -eq $group.primarySMTPAddressOrUPN)}
+            $crossGroupCheck = $nestedRetryGroups | where {($_.primarySMTPAddressOrUPN -eq $group.parentGroupSMTPAddress) -and ($_.parentGroupSMTPAddress -eq $group.primarySMTPAddressOrUPN)}
 
             if ($crossGroupCheck -gt 0)
             {
