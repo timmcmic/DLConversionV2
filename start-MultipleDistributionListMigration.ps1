@@ -760,137 +760,139 @@ Function Start-MultipleDistributionListMigration
 
     do
     {
-        #Resetting groups to retry.
-
-        $groupsToRetry = @()
-        $noCrossGroupDependencyFound = @()
-
-        #Begin by importing the CSV file containing the nested objects.
-
-        try{
-            out-logfile -string "Importing the CSV objects for nested group retries."
-
-            $nestedRetryGroups = import-csv -path $nestedCSVPath -errorAction Stop
-        }
-        catch {
-            out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried" -isError:$TRUE
-        }
-
-        #Remove the CSV file that was processed.  This file will be recreated if possible.
-
-        try {
-            out-logfile -string "Removing the CSV file previously imported.  Will be recreated by migration threads if nesting found."
-
-            Remove-Item -Path $nestedCSVPath -errorAction STOP
-        }
-        catch {
-            out-logfile -string "Unable to remove the CSV file for nesting.  The file will continue to be appended and groups ignored."
-        }
-
-        #At this time the error state for each group can be reset for further process.
-
-        out-logfile -string ("The number of groups to be retried for nesting: "+$nestedRetryGroups.count.tostring())
-
-        out-logfile -string "Resetting error state from the imported nested groups for further processing."
-
-        for ($i = 0 ; $i -lt $nestedRetryGroups.count ; $i++)
+        if (test-path $nestedCSVPath)
         {
-            out-logfile -string ("Clearing error state for: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
-            $nestedRetryGroups[$i].isError=$false
-            $nestedRetryGroups[$i].isErrorMessage=""
-        }
+            #Resetting groups to retry.
 
-        #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
+            $groupsToRetry = @()
+            $noCrossGroupDependencyFound = @()
 
-        out-logfile -string "Beginning object comparison to identity circular membership references."
-
-        for  ($j = 0 ; $j -lt $nestedRetryGroups.count ; $j++)
-        {
-            for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
-            {
-                #Compare the parent SMTP address to the SMTP address of the member found.
+            #Begin by importing the CSV file containing the nested objects.
+            
+            try{
+                out-logfile -string "Importing the CSV objects for nested group retries."
     
-                if (($nestedRetryGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedRetryGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
+                $nestedRetryGroups = import-csv -path $nestedCSVPath -errorAction Stop
+            }
+            catch {
+                out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried" -isError:$TRUE
+            }
+    
+            #Remove the CSV file that was processed.  This file will be recreated if possible.
+    
+            try {
+                out-logfile -string "Removing the CSV file previously imported.  Will be recreated by migration threads if nesting found."
+    
+                Remove-Item -Path $nestedCSVPath -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to remove the CSV file for nesting.  The file will continue to be appended and groups ignored."
+            }
+    
+            #At this time the error state for each group can be reset for further process.
+    
+            out-logfile -string ("The number of groups to be retried for nesting: "+$nestedRetryGroups.count.tostring())
+    
+            out-logfile -string "Resetting error state from the imported nested groups for further processing."
+    
+            for ($i = 0 ; $i -lt $nestedRetryGroups.count ; $i++)
+            {
+                out-logfile -string ("Clearing error state for: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
+                $nestedRetryGroups[$i].isError=$false
+                $nestedRetryGroups[$i].isErrorMessage=""
+            }
+    
+            #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
+    
+            out-logfile -string "Beginning object comparison to identity circular membership references."
+    
+            for  ($j = 0 ; $j -lt $nestedRetryGroups.count ; $j++)
+            {
+                for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
                 {
-                    out-logfile -string "Circular membership reference identified - setting error state."
-
-                    $nestedRetryGroups[$j].isError = $TRUE
-                    $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
-                }
-                else 
-                {
-                    out-logfile -string "No circular reference state detected."
+                    #Compare the parent SMTP address to the SMTP address of the member found.
+        
+                    if (($nestedRetryGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedRetryGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
+                    {
+                        out-logfile -string "Circular membership reference identified - setting error state."
+    
+                        $nestedRetryGroups[$j].isError = $TRUE
+                        $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                    }
+                    else 
+                    {
+                        out-logfile -string "No circular reference state detected."
+                    }
                 }
             }
-        }
-
-        foreach ($group in $nestedRetryGroups)
-        {
-            if ($group.isError -eq $TRUE)
+    
+            foreach ($group in $nestedRetryGroups)
             {
-                $crossGroupDependencyFound +=$group
+                if ($group.isError -eq $TRUE)
+                {
+                    $crossGroupDependencyFound +=$group
+                }
+                else
+                {
+                    $noCrossGroupDependencyFound+= $group
+                }
+            }
+    
+            if ($noCrossGroupDependencyFound.count -gt 0)
+            {
+                out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+                out-logfile -string "The following groups do not have a circular dependency and will be evaluated for automatic retry migration."
+                out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+    
+                foreach ($group in $noCrossGroupDependencyFound)
+                {
+                    #Using write error since I wrote a function to output errors but really it's just way to ensure consistent object loging.
+    
+                    write-ErrorEntry -errorEntry $group
+                }
+    
+                out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedXML.value
+            }
+    
+            if ($noCrossGroupDependencyFound.count -gt 0)
+            {
+                foreach ($group in $noCrossGroupDependencyFound)
+                {
+                    out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
+    
+                    if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
+                    {
+                        out-logfile -string ("Nested DL parent eligable for retry: "+$group.ParentGroupSMTPAddress)
+                        $groupsToRetry+=$group.ParentGroupSMTPAddress
+                    }
+                    else 
+                    {
+                        $group.isError = $TRUE
+                        $group.isErrorMessage = "ChildGroupMirationException:  The groupt to be migrated has a child group not included in the migration set."
+                        $crossGroupDependencyFound +=$group #Overloading this since it contains errors before and this is an error that I want outputted.
+                        out-logfile -string "Parent group not eligable for retry - child not included in migration set."
+                    }
+                } 
+            }
+    
+            out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
+    
+            out-logfile -string "Resetting groupSMTPAddresses to the retry group set."
+    
+            $groupSMTPAddresses = $groupsToRetry
+    
+            out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
+    
+            if ($groupSMTPAddresses.count -gt 0)
+            {
+                out-logfile -string "Restarting function to reprocess groups."
+                startMultiMigration
             }
             else
             {
-                $noCrossGroupDependencyFound+= $group
+                out-logfile -string "No additional groups to process - not calling."
             }
         }
-
-        if ($noCrossGroupDependencyFound.count -gt 0)
-        {
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-            out-logfile -string "The following groups do not have a circular dependency and will be evaluated for automatic retry migration."
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-
-            foreach ($group in $noCrossGroupDependencyFound)
-            {
-                #Using write error since I wrote a function to output errors but really it's just way to ensure consistent object loging.
-
-                write-ErrorEntry -errorEntry $group
-            }
-
-            out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedXML.value
-        }
-
-        if ($noCrossGroupDependencyFound.count -gt 0)
-        {
-            foreach ($group in $noCrossGroupDependencyFound)
-            {
-                out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
-
-                if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
-                {
-                    out-logfile -string ("Nested DL parent eligable for retry: "+$group.ParentGroupSMTPAddress)
-                    $groupsToRetry+=$group.ParentGroupSMTPAddress
-                }
-                else 
-                {
-                    $group.isError = $TRUE
-                    $group.isErrorMessage = "ChildGroupMirationException:  The groupt to be migrated has a child group not included in the migration set."
-                    $crossGroupDependencyFound +=$group #Overloading this since it contains errors before and this is an error that I want outputted.
-                    out-logfile -string "Parent group not eligable for retry - child not included in migration set."
-                }
-            } 
-        }
-
-        out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
-
-        out-logfile -string "Resetting groupSMTPAddresses to the retry group set."
-
-        $groupSMTPAddresses = $groupsToRetry
-
-        out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
-
-        if ($groupSMTPAddresses.count -gt 0)
-        {
-            out-logfile -string "Restarting function to reprocess groups."
-            startMultiMigration
-        }
-        else
-        {
-            out-logfile -string "No additional groups to process - not calling."
-        }
-        
     }
     while($groupsToRetry.count -gt 0)
 
