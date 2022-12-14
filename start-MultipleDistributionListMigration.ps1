@@ -360,6 +360,11 @@ Function Start-MultipleDistributionListMigration
         }
     }
 
+    $xmlFiles = @{
+        nestedXML = @{ "Value" =  "nestedGroupsRetried" ; "Description" = "XML file that exports the original DL configuration"}
+        errorXML = @{ "Value" =  "nestedGroupErrors" ; "Description" = "XML file that exports the updated DL configuration"}
+    }
+
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv" #Predetermined CSV file name.
@@ -820,18 +825,6 @@ Function Start-MultipleDistributionListMigration
             }
         }
 
-        if ($crossGroupDependencyFound.count -gt 0)
-        {
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-            out-logfile -string "ERROR:  The following groups have circular membership dependencies and cannot be automatically retried."
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-
-            foreach ($group in $crossGroupDependencyFound)
-            {
-                write-errorEntry -errorEntry $group
-            }
-        }
-
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
             out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
@@ -884,6 +877,25 @@ Function Start-MultipleDistributionListMigration
         
     }
     while($groupsToRetry.count -gt 0)
+
+    if ($crossGroupDependencyFound.count -gt 0)
+    {
+        out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+        out-logfile -string "ERROR:  The following nested groups have errors."
+        out-logfile -string "CircularReferenceException = A group to be migrated has a child group where the child group has the migrated group as a member."
+        out-logfile -string "Group -> GroupB || GroupB -> GroupA"
+        out-logfile -string "The dependencies must be removed and each group migrated.  Post mirgation the dependencies may be restored."
+        out-logfile -string "ChildGroupMigrationException = A group contains a child group not included in the migration set."
+        out-logfile -string "Automatic migration of nested groups cannot proceed.  Remove the child group or add the child group to the migration set."
+        out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
+        foreach ($group in $crossGroupDependencyFound)
+        {
+            write-errorEntry -errorEntry $group
+        }
+
+        out-xmlFile -itemToExport $crossGroupDependencyFound -itemNameToExport $xmlFiles.errorXML.value
+    }
 
     get-migrationSummary -logFolderPath $logFolderPath
 
