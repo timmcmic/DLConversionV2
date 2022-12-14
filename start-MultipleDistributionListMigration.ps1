@@ -893,6 +893,10 @@ Function Start-MultipleDistributionListMigration
                 out-logfile -string "No additional groups to process - not calling."
             }
         }
+        else
+        {
+            $groupsToRetry = 0 #Break out of the do while - there's nothing to do.
+        }
     }
     while($groupsToRetry.count -gt 0)
 
