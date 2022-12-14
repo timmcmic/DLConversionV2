@@ -773,6 +773,8 @@ Function Start-MultipleDistributionListMigration
 
         #At this time the error state for each group can be reset for further process.
 
+        out-logfile -string ("The number of groups to be retried for nesting: "+$nestedRetryGroups.count.tostring())
+
         out-logfile -string "Resetting error state from the imported nested groups for further processing."
 
         for ($i = 0 ; $i -lt $nestedRetryGroups.count ; $i++)
