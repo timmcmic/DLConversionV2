@@ -757,8 +757,7 @@ Function Start-MultipleDistributionListMigration
             $nestedRetryGroups = import-csv -path $nestedCSVPath -errorAction Stop
         }
         catch {
-            out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried"
-            $nestingError = $true
+            out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried" -isError:$TRUE
         }
 
         #Remove the CSV file that was processed.  This file will be recreated if possible.
@@ -847,8 +846,6 @@ Function Start-MultipleDistributionListMigration
             }
         }
 
-        return
-
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
             foreach ($group in $noCrossGroupDependencyFound)
@@ -886,7 +883,7 @@ Function Start-MultipleDistributionListMigration
         }
         
     }
-    while(($nestingError -eq $FALSE) -or ($groupsToRetry.count -gt 0))
+    while($groupsToRetry.count -gt 0)
 
     get-migrationSummary -logFolderPath $logFolderPath
 
