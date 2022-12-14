@@ -852,6 +852,9 @@ Function Start-MultipleDistributionListMigration
                 }
                 else 
                 {
+                    $group.isError = $TRUE
+                    $group.isErrorMessage = "ChildGroupMirationException:  The groupt to be migrated has a child group not included in the migration set."
+                    $crossGroupDependencyFound +=$group #Overloading this since it contains errors before and this is an error that I want outputted.
                     out-logfile -string "Parent group not eligable for retry - child not included in migration set."
                 }
             } 
