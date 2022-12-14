@@ -842,18 +842,11 @@ Function Start-MultipleDistributionListMigration
             }
         }
 
-        if ($crossGroupDependencyFound.count -gt 0)
+        foreach ($group in $nestedRetryGroups)
         {
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-            out-logfile -string "ERROR:  The following groups have cirular dependencies which cannot be retried through automation.  Manual intervention required."
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-
-            foreach ($group in $nestedRetryGroups)
-            {
-                write-ErrorEntry -errorEntry $group
-            }
+            write-ErrorEntry -errorEntry $group
         }
-
+        
         return
 
         if ($noCrossGroupDependencyFound.count -gt 0)
