@@ -786,6 +786,8 @@ Function Start-MultipleDistributionListMigration
             $nestedRetryGroups[$i].isErrorMessage=""
         }
 
+        return
+
         #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
 
         out-logfile -string "Beginning object comparison to identity circular membership references."
