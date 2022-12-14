@@ -779,12 +779,9 @@ Function Start-MultipleDistributionListMigration
         foreach ($group in $nestedRetryGroups)
         {
             out-logfile -string ("Resetting error state for: "+$group.primarySMTPAddressOrUPN)
-            out-logfile -string $group.isError
-            out-logfile -string $group.isErrorMessage
-            $group.isError = $FALSE
+            $group.isError = $NULL
             $group.isErrorMessage = ""
-            out-logfile -string $group.isError
-            out-logfile -string $group.isErrorMessage
+            $group.isError = $false
         }
 
         #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
