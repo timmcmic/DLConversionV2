@@ -798,7 +798,7 @@ Function Start-MultipleDistributionListMigration
                 {
                     out-logfile -string "Circular membership reference identified - setting error state."
 
-                    $nestedRetryGroups[$j].isError = $false
+                    $nestedRetryGroups[$j].isError = $true
                     $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                 }
                 else 
