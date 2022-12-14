@@ -793,6 +793,8 @@ Function Start-MultipleDistributionListMigration
             }
         }
 
+        return
+
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
             foreach ($group in $noCrossGroupDependencyFound)
