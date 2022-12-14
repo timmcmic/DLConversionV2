@@ -775,7 +775,7 @@ Function Start-MultipleDistributionListMigration
 
         foreach ($group in $nestedRetryGroups)
         {
-            for ($i = 0 ; $i -lt ($nestedRetryGroups -1 ) ; $i++)
+            for ($i = 0 ; $i -lt ($nestedRetryGroups.count-1 ) ; $i++)
             {
                 out-logfile -string ("Testing group: "+$group.primarySMTPAddressOrUPN+" Compared To: "+$nestedRetryGroups[$i].parentGroupSMTPAddress)
                 out-logfile -string ("Testing group: "+$group.parentGroupSMTPAddress+ "Compared To: "+$nestedGroups[$i].primarySMTPAddressorUPN)
