@@ -836,8 +836,8 @@ Function Start-MultipleDistributionListMigration
                 {
                     out-logfile -string "The SMTP address of the group matches the parent address of another group."
 
-                    $nestedGroup[$j].isError = $true
-                    $nestedGroup[$j].isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                    $nestedRetryGroups[$j].isError = $true
+                    $nestedRetryGroups[$j].isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                 }
             }
         }
@@ -848,7 +848,7 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string "ERROR:  The following groups have cirular dependencies which cannot be retried through automation.  Manual intervention required."
             out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
 
-            foreach ($group in $crossGroupDependencyFound)
+            foreach ($group in $nestedRetryGroups)
             {
                 write-ErrorEntry -errorEntry $group
             }
