@@ -780,8 +780,6 @@ Function Start-MultipleDistributionListMigration
         for ($i = 0 ; $i -lt $nestedRetryGroups.count ; $i++)
         {
             out-logfile -string ("Clearing error state for: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
-
-            out-logfile -string $nestedRetryGroups[$i].isError.getType()
             $nestedRetryGroups[$i].isError=$false
             $nestedRetryGroups[$i].isErrorMessage=""
         }
