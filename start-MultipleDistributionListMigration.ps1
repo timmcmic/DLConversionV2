@@ -772,59 +772,20 @@ Function Start-MultipleDistributionListMigration
             out-logfile -string "Unable to remove the CSV file for nesting.  The file will continue to be appended and groups ignored."
         }
 
-        #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
+        #At this time the error state for each group can be reset for further process.
 
-        <#
+        out-logfile -string "Resetting error state from the imported nested groups for further processing."
 
         foreach ($group in $nestedRetryGroups)
         {
-            for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
-            {
-                #Compare the parent SMTP address to the SMTP address of the member found.
-                
-                out-logfile -string ("Evaluating Group Parent Address: "+$group.parentGroupSMTPAddress)
-                out-logfile -string ("Evaluating retry group primary SMTP Address or UPN: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
-    
-                if ($group.parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN)
-                {
-                    #If they match check to see if the group primary SMTP address matches the parent SMTP address of the group.
+            out-logfile -string ("Resetting error state for: "+$group.primarySMTPAddressOrUPN)
+            $group.isError = $FALSE
+            $group.isErrorMessage = ""
+        }
 
-                    out-logfile -string "The SMTP address of the parent group matches the child address of another group."
+        #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
 
-                    out-logfile -string ("Evaluating group primary smtp address or upn: "+$group.primarySMTPAddressOrUPN)
-                    out-logfile -string ("Evaluating retry group parent group smtp address: "+$nestedRetryGroups[$i].parentGroupSMTPAddress)
-
-                    if ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress)
-                    {
-                        #A match exists - this indicates a circular dependency.
-
-                        out-logfile -string "The SMTP address of the group matches the parent address of another group."
-
-                        $group.isError = $true
-                        $group.isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
-                        $crossGroupDependencyFound += $group
-                    }
-                    else
-                    {
-                        #No match exists - this nested group may now be tested for further migration.
-    
-                        out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
-                        $group.isError = $false
-                        $group.isErrorMessage = ""
-                        $noCrossGroupDependencyFound +=$group
-                    }
-                }
-                else
-                {
-                    #No match exists - this nested group may now be tested for further migration.
-
-                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
-                    $group.isError = $false
-                    $group.isErrorMessage = ""
-                    $noCrossGroupDependencyFound +=$group
-                }
-            }
-        }#>
+        out-logfile -string "Beginning object comparison to identity circular membership references."
 
         for  ($j = 0 ; $j -lt $nestedRetryGroups.count ; $j++)
         {
@@ -834,20 +795,41 @@ Function Start-MultipleDistributionListMigration
     
                 if (($nestedRetryGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedRetryGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
                 {
-                    out-logfile -string "The SMTP address of the group matches the parent address of another group."
+                    out-logfile -string "Circular membership reference identified - setting error state."
 
                     $nestedRetryGroups[$j].isError = $true
-                    $nestedRetryGroups[$j].isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                    $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                }
+                else 
+                {
+                    out-logfile -string "No circular reference state detected."
                 }
             }
         }
 
         foreach ($group in $nestedRetryGroups)
         {
-            write-ErrorEntry -errorEntry $group
+            if ($group.isError = $TRUE)
+            {
+                $crossGroupDependencyFound +=$group
+            }
+            else
+            {
+                $noCrossGroupDepedencyFound += $group
+            }
         }
-        
-        return
+
+        if ($crossGroupDependencyFound.count -gt 0)
+        {
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+            out-logfile -string "ERROR:  The following groups have circular membership dependencies and cannot be automatically retried."
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
+            foreach ($group in $crossGroupDependencyFound)
+            {
+                write-errorEntry -errorEntry $group
+            }
+        }
 
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
