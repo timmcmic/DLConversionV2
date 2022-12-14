@@ -778,7 +778,7 @@ Function Start-MultipleDistributionListMigration
             for ($i = 0 ; $i -lt ($nestedRetryGroups.count-1 ) ; $i++)
             {
                 out-logfile -string ("Testing group: "+$group.primarySMTPAddressOrUPN+" Compared To: "+$nestedRetryGroups[$i].parentGroupSMTPAddress)
-                out-logfile -string ("Testing group: "+$group.parentGroupSMTPAddress+ "Compared To: "+$nestedGroups[$i].primarySMTPAddressorUPN)
+                out-logfile -string ("Testing group: "+$group.parentGroupSMTPAddress+ "Compared To: "+$nestedRetryGroups[$i].primarySMTPAddressorUPN)
 
                 if (($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress) -and ($group.parentGroupSMTPAddress -eq $nestedGroups[$i].primarySMTPAddressorUPN))
                 {
