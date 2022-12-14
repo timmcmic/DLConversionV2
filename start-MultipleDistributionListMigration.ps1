@@ -777,18 +777,18 @@ Function Start-MultipleDistributionListMigration
         {
             for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
             {
-                out-logfile -string ("Testing group: "+$group.primarySMTPAddressOrUPN+" Compared To: "+$nestedRetryGroups[$i].parentGroupSMTPAddress)
-                out-logfile -string ("Testing group: "+$group.parentGroupSMTPAddress+ "Compared To: "+$nestedRetryGroups[$i].primarySMTPAddressorUPN)
+                out-logfile -string ("Testing group: "+$group.primarySMTPAddressOrUPN)
+                {
+                    if ($group.parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN)
+                    {
+                        out-logfile -string "The SMTP address of the parent group matches the child address of another group."
 
-                if (($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress) -and ($group.parentGroupSMTPAddress -eq $nestedGroups[$i].primarySMTPAddressorUPN))
-                {
-                    out-logfile -string "Cross group dependencies found - adding to error array."
-                    $crossGroupDependencyFound += $group
-                }
-                else 
-                {
-                    out-logfile -string "Cross group dependency not found - adding to the array to process."
-                    $noCrossGroupDependencyFound += $group
+                        if ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress)
+                        {
+                            out-logfile -string "The SMTP address of the group matches the parent address of another group."
+                            $crossGroupDependencyFound += $group
+                        }
+                    }
                 }
             }
         }
