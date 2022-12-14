@@ -812,6 +812,15 @@ Function Start-MultipleDistributionListMigration
                         $noCrossGroupDependencyFound +=$group
                     }
                 }
+                else
+                {
+                    #No match exists - this nested group may now be tested for further migration.
+
+                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
+                    $group.isError = $false
+                    $group.isErrorMessage = ""
+                    $noCrossGroupDependencyFound +=$group
+                }
             }
         }
 
