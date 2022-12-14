@@ -856,11 +856,6 @@ Function Start-MultipleDistributionListMigration
 
         return
 
-        foreach ($group in $nestedRetryGroup)
-        {
-            if ($crossGroupDependencyFound -contains $)
-        }
-
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
             out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
