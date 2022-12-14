@@ -790,9 +790,20 @@ Function Start-MultipleDistributionListMigration
                     if ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress)
                     {
                         out-logfile -string "The SMTP address of the group matches the parent address of another group."
+
+                        $group.isError = $true
+                        $group.isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                         $crossGroupDependencyFound += $group
                     }
                 }
+            }
+        }
+
+        if ($crossGroupDependencyFound.count -gt 0)
+        {
+            foreach ($group in $crossGroupDependencyFound)
+            {
+                write-ErrorEntry -errorEntry $group
             }
         }
 
