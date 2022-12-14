@@ -837,6 +837,8 @@ Function Start-MultipleDistributionListMigration
 
                 write-ErrorEntry -errorEntry $group
             }
+
+            out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedXML.value
         }
 
         if ($noCrossGroupDependencyFound.count -gt 0)
