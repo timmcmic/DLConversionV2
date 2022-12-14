@@ -802,15 +802,15 @@ Function Start-MultipleDistributionListMigration
                         $group.isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                         $crossGroupDependencyFound += $group
                     }
-                }
-                else
-                {
-                    #No match exists - this nested group may now be tested for further migration.
-
-                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
-                    $group.isError = $false
-                    $group.isErrorMessage = ""
-                    $noCrossGroupDependencyFound +=$group
+                    else
+                    {
+                        #No match exists - this nested group may now be tested for further migration.
+    
+                        out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
+                        $group.isError = $false
+                        $group.isErrorMessage = ""
+                        $noCrossGroupDependencyFound +=$group
+                    }
                 }
             }
         }
