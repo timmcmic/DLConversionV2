@@ -278,6 +278,7 @@ Function Start-MultipleDistributionListMigration
     [boolean]$retainSendAsOffice365=$TRUE
 
     [array]$jobOutput=@()
+    [array]$smtpNoSpace=@()
 
     [int]$totalAddressCount = 0
     $telemetryGroupCount = 0
@@ -743,6 +744,16 @@ Function Start-MultipleDistributionListMigration
     #Execute the multi migration
 
     out-logfile -string "Starting multi-migration function."
+
+    #Ensure no spaces in SMTP addresses.
+
+    foreach ($group in $groupSMTPAddresses)
+    {
+        $smtpNoSpace+=remove-stringSpace -stringToFix $group
+    }
+
+    $groupSMTPAddresses = $smtpNoSpace
+
     startMultiMigration
 
     #Now the we've made the first pass - we can work through any of the nested group exceptions.
