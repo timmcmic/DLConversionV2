@@ -774,6 +774,8 @@ Function Start-MultipleDistributionListMigration
 
         #At this time process the groups in the nesting array.  If they match a child already migrated reproces the parent.
 
+        <#
+
         foreach ($group in $nestedRetryGroups)
         {
             for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
@@ -822,7 +824,37 @@ Function Start-MultipleDistributionListMigration
                     $noCrossGroupDependencyFound +=$group
                 }
             }
-        }
+        }#>
+
+        foreach ($group in $nestedRetryGroups)
+        {
+            for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
+            {
+                #Compare the parent SMTP address to the SMTP address of the member found.
+                
+                out-logfile -string ("Evaluating Group Parent Address: "+$group.parentGroupSMTPAddress)
+                out-logfile -string ("Evaluating retry group primary SMTP Address or UPN: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
+    
+                if (($group.parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
+                {
+                    out-logfile -string "The SMTP address of the group matches the parent address of another group."
+
+                    $group.isError = $true
+                    $group.isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                    $crossGroupDependencyFound += $group
+                }
+                else
+                {
+                    #No match exists - this nested group may now be tested for further migration.
+
+                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
+                    $group.isError = $false
+                    $group.isErrorMessage = ""
+                    $noCrossGroupDependencyFound +=$group
+                }
+            }
+        }#>
+
 
         if ($crossGroupDependencyFound.count -gt 0)
         {
