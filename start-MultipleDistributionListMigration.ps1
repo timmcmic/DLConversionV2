@@ -778,9 +778,9 @@ Function Start-MultipleDistributionListMigration
 
         for ($i = 0 ; $i -lt $nestedRetryGroups.count ; $i++)
         {
-            out-logfile -string "Clearing error state for: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN
+            out-logfile -string ("Clearing error state for: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
 
-            $nestedRetryGroups[$i].isError="false"
+            $nestedRetryGroups[$i].isError=$false
             $nestedRetryGroups[$i].isErrorMessage=""
         }
 
@@ -798,7 +798,7 @@ Function Start-MultipleDistributionListMigration
                 {
                     out-logfile -string "Circular membership reference identified - setting error state."
 
-                    $nestedRetryGroups[$j].isError = "True"
+                    $nestedRetryGroups[$j].isError = $false
                     $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                 }
                 else 
@@ -810,7 +810,7 @@ Function Start-MultipleDistributionListMigration
 
         foreach ($group in $nestedRetryGroups)
         {
-            if ($group.isError = "True")
+            if ($group.isError = $TRUE)
             {
                 $crossGroupDependencyFound +=$group
             }
