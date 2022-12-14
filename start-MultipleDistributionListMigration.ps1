@@ -362,13 +362,13 @@ Function Start-MultipleDistributionListMigration
 
     #Define the nested groups csv.
 
-    [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "*NestedGroupException*"
-    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
-    [array]$nestedRetryGroups=@()
-    [array]$groupsToRetry=@()
-    [boolean]$nestingError = $false
-    [array]$crossGroupDependencyFound = @()
+    [string]$nestedGroupCSV = "nestedGroups.csv" #Predetermined CSV file name.
+    [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV #Root log folder path with CSV file name.
+    [array]$nestedRetryGroups=@() #Import of the groups contained within the CSV file.
+    [array]$groupsToRetry=@() #Final list of groups determined that need to be retried.
+    [boolean]$nestingError = $false #True / flase determins if there was a nesting error with the object.
+    [array]$crossGroupDependencyFound = @() #List of groups that have a nesting dependency and cannot be retried.
+    [array]$noCrossGroupDependencyFound=@()
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
@@ -775,16 +775,27 @@ Function Start-MultipleDistributionListMigration
 
         foreach ($group in $nestedRetryGroups)
         {
-            out-logfile -string "Searching array for any cross group dependencies - these cannot be retried."
-
-            $crossGroupCheck = $nestedRetryGroups | where {($_.primarySMTPAddressOrUPN -eq $group.parentGroupSMTPAddress) -and ($_.parentGroupSMTPAddress -eq $group.primarySMTPAddressOrUPN)}
-
-            if ($crossGroupCheck -gt 0)
+            for ($i = 0 ; $i -lt ($nestedRetryGroups -1 ) ; $i++)
             {
-                out-logfile -string "Cross group dependencies found - adding to error array."
-                $crossGroupDependencyFound += $crossGroupCheck
+                out-logfile -string ("Testing group: "+$group.primarySMTPAddressOrUPN+" Compared To: "+$nestedRetryGroups[$i].parentGroupSMTPAddress)
+                out-logfile -string ("Testing group: "+$group.parentGroupSMTPAddress+ "Compared To: "+$nestedGroups[$i].primarySMTPAddressorUPN)
+
+                if (($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress) -and ($group.parentGroupSMTPAddress -eq $nestedGroups[$i].primarySMTPAddressorUPN))
+                {
+                    out-logfile -string "Cross group dependencies found - adding to error array."
+                    $crossGroupDependencyFound += $group
+                }
+                else 
+                {
+                    out-logfile -string "Cross group dependency not found - adding to the array to process."
+                    $noCrossGroupDependencyFound += $group
+                }
             }
-            else 
+        }
+
+        if ($noCrossGroupDependencyFound.count -gt 0)
+        {
+            foreach ($group in $noCrossGroupDependencyFound)
             {
                 out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
 
