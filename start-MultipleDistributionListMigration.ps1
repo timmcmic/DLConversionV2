@@ -747,6 +747,7 @@ Function Start-MultipleDistributionListMigration
         #Resetting groups to retry.
 
         $groupsToRetry = @()
+        $noCrossGroupDependencyFound = @()
 
         #Begin by importing the CSV file containing the nested objects.
 
@@ -777,11 +778,15 @@ Function Start-MultipleDistributionListMigration
         {
             for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
             {
+                #Compare the parent SMTP address to the SMTP address of the member found.
+                
                 out-logfile -string ("Evaluating Group Parent Address: "+$group.parentGroupSMTPAddress)
                 out-logfile -string ("Evaluating retry group primary SMTP Address or UPN: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
     
                 if ($group.parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN)
                 {
+                    #If they match check to see if the group primary SMTP address matches the parent SMTP address of the group.
+
                     out-logfile -string "The SMTP address of the parent group matches the child address of another group."
 
                     out-logfile -string ("Evaluating group primary smtp address or upn: "+$group.primarySMTPAddressOrUPN)
@@ -789,6 +794,8 @@ Function Start-MultipleDistributionListMigration
 
                     if ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress)
                     {
+                        #A match exists - this indicates a circular dependency.
+
                         out-logfile -string "The SMTP address of the group matches the parent address of another group."
 
                         $group.isError = $true
@@ -796,13 +803,40 @@ Function Start-MultipleDistributionListMigration
                         $crossGroupDependencyFound += $group
                     }
                 }
+                else
+                {
+                    #No match exists - this nested group may now be tested for further migration.
+
+                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
+                    $group.isError = $false
+                    $group.isErrorMessage = ""
+                    $noCrossGroupDependencyFound +=$group
+                }
             }
         }
 
         if ($crossGroupDependencyFound.count -gt 0)
         {
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+            out-logfile -string "ERROR:  The following groups have cirular dependencies which cannot be retried through automation.  Manual intervention required."
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
             foreach ($group in $crossGroupDependencyFound)
             {
+                write-ErrorEntry -errorEntry $group
+            }
+        }
+
+        if ($noCrossGroupDependencyFound.count -gt 0)
+        {
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+            out-logfile -string "The following groups do not have a circular dependency and will be evaluated for automatic retry migration."
+            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
+            foreach ($group in $noCrossGroupDependencyFound)
+            {
+                #Using write error since I wrote a function to output errors but really it's just way to ensure consistent object loging.
+
                 write-ErrorEntry -errorEntry $group
             }
         }
