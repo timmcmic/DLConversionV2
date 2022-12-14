@@ -768,7 +768,7 @@ Function Start-MultipleDistributionListMigration
             $noCrossGroupDependencyFound = @()
 
             #Begin by importing the CSV file containing the nested objects.
-            
+
             try{
                 out-logfile -string "Importing the CSV objects for nested group retries."
     
@@ -879,7 +879,7 @@ Function Start-MultipleDistributionListMigration
     
             out-logfile -string "Resetting groupSMTPAddresses to the retry group set."
     
-            $groupSMTPAddresses = $groupsToRetry
+            $groupSMTPAddresses = $groupsToRetry | Select-Object -Unique
     
             out-logfile -string ("New group SMTP address count: "+$groupSMTPAddresses.Count.tostring())
     
