@@ -826,35 +826,21 @@ Function Start-MultipleDistributionListMigration
             }
         }#>
 
-        foreach ($group in $nestedRetryGroups)
+        for  ($j = 0 ; $j -lt $nestedRetryGroups.count ; $j++)
         {
             for ($i = 0 ; $i -lt $nestedRetryGroups.Count ; $i++)
             {
                 #Compare the parent SMTP address to the SMTP address of the member found.
-                
-                out-logfile -string ("Evaluating Group Parent Address: "+$group.parentGroupSMTPAddress)
-                out-logfile -string ("Evaluating retry group primary SMTP Address or UPN: "+$nestedRetryGroups[$i].primarySMTPAddressOrUPN)
     
-                if (($group.parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($group.primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
+                if (($nestedGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
                 {
                     out-logfile -string "The SMTP address of the group matches the parent address of another group."
 
-                    $group.isError = $true
-                    $group.isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
-                    $crossGroupDependencyFound += $group
-                }
-                else
-                {
-                    #No match exists - this nested group may now be tested for further migration.
-
-                    out-logfile -string "The group does not have a cross group dependency.  Adding for automatic retry migration."
-                    $group.isError = $false
-                    $group.isErrorMessage = ""
-                    $noCrossGroupDependencyFound +=$group
+                    $nestedGroup[$j].isError = $true
+                    $nestedGroup[$j].isErrorMessage = "This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                 }
             }
-        }#>
-
+        }
 
         if ($crossGroupDependencyFound.count -gt 0)
         {
@@ -866,6 +852,13 @@ Function Start-MultipleDistributionListMigration
             {
                 write-ErrorEntry -errorEntry $group
             }
+        }
+
+        return
+
+        foreach ($group in $nestedRetryGroup)
+        {
+            if ($crossGroupDependencyFound -contains $)
         }
 
         if ($noCrossGroupDependencyFound.count -gt 0)
