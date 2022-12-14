@@ -832,7 +832,7 @@ Function Start-MultipleDistributionListMigration
             {
                 #Compare the parent SMTP address to the SMTP address of the member found.
     
-                if (($nestedGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
+                if (($nestedRetryGroups[$j].parentGroupSMTPAddress -eq $nestedRetryGroups[$i].primarySMTPAddressOrUPN) -and ($nestedRetryGroups[$j].primarySMTPAddressOrUPN -eq $nestedRetryGroups[$i].parentGroupSMTPAddress))
                 {
                     out-logfile -string "The SMTP address of the group matches the parent address of another group."
 
