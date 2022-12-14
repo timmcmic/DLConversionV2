@@ -360,6 +360,11 @@ Function Start-MultipleDistributionListMigration
         }
     }
 
+    $xmlFiles = @{
+        nestedGroupsRetried = @{ "Value" =  "nestedGroupsRetriedXML" ; "Description" = "XML file that represents all of the nested groups found."}
+        nestedGroupErrors = @{ "Value" =  "nestedGroupErrorsXML" ; "Description" = "XML file that represents all nested group errors that could not be migrated."}
+    }    
+
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv" #Predetermined CSV file name.
@@ -820,18 +825,6 @@ Function Start-MultipleDistributionListMigration
             }
         }
 
-        if ($crossGroupDependencyFound.count -gt 0)
-        {
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-            out-logfile -string "ERROR:  The following groups have circular membership dependencies and cannot be automatically retried."
-            out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
-
-            foreach ($group in $crossGroupDependencyFound)
-            {
-                write-errorEntry -errorEntry $group
-            }
-        }
-
         if ($noCrossGroupDependencyFound.count -gt 0)
         {
             out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
@@ -844,6 +837,8 @@ Function Start-MultipleDistributionListMigration
 
                 write-ErrorEntry -errorEntry $group
             }
+
+            out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedGroupsRetried.value
         }
 
         if ($noCrossGroupDependencyFound.count -gt 0)
@@ -859,6 +854,10 @@ Function Start-MultipleDistributionListMigration
                 }
                 else 
                 {
+                    $group.isError = $TRUE
+                    $group.isErrorMessage = "ParentNotEligableException: The parent group has a child group not included in the migration set.  Nested membership cannot be automatically migrated.  Remove child group or include child group in migration set."
+
+                    $crossGroupDependencyFound +=$group #Overloading this array so that errors can be output.
                     out-logfile -string "Parent group not eligable for retry - child not included in migration set."
                 }
             } 
@@ -884,6 +883,27 @@ Function Start-MultipleDistributionListMigration
         
     }
     while($groupsToRetry.count -gt 0)
+
+    if ($crossGroupDependencyFound.count -gt 0)
+    {
+        out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+        out-logfile -string "ERROR:"
+        out-logfile -string "The following groups are ineligable for nested group automatic migration."
+        out-logfile -string "ParentNotEligableException = The parent group contains a child group not included in the migration set.  Automatic nested group migration cannot be performed.  Remove the group or add the group to the migration set."
+        out-logfile -string "CircularReferenceException = Two groups have each other as members creating a nested dependency.  Remove the dependency and migrate the groups individaully.  Manually restore the dependency post migration."
+        out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
+        foreach ($group in $crossGroupDependencyFound)
+        {
+            write-errorEntry -errorEntry $group
+        }
+
+        out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"
+
+        out-xmlFile -itemToExport $crossGroupdependencyFound -itemNameTOExport $xmlFiles.nestedGroupErrors.value
+    }
+
+
 
     get-migrationSummary -logFolderPath $logFolderPath
 
