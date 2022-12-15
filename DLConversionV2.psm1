@@ -3659,7 +3659,7 @@ Function Start-DistributionListMigration
 
     $telemetryFunctionStartTime = get-universalDateTime
 
-    out-logfile -string "Monitoring Exchange Online for distribution list deletion."+
+    out-logfile -string "Monitoring Exchange Online for distribution list deletion."
 
     if ($totalThreadCount -gt 0)
     {
@@ -3678,7 +3678,7 @@ Function Start-DistributionListMigration
     {
         try {
             out-logfile -string "Invoking test-cloudDLPresent with no ADConnect information (single threaded)."
-            
+
             test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
         }
         catch {
