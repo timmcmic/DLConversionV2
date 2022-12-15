@@ -63,6 +63,7 @@
                 {
                     out-logfile -string "Time elapsed 5 minutes - proactively invoking AD Connect - assuming thread 1 failure in multi-migration."
                     invoke-adconnect -PowershellSessionName $aadConnectPowershellSessionName -isSingleAttempt $TRUE
+                    $waitTime = 0
                 }
                 else 
                 {
