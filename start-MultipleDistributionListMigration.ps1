@@ -277,6 +277,8 @@ Function Start-MultipleDistributionListMigration
     [boolean]$retainOffice365Settings=$true
     [boolean]$retainSendAsOffice365=$TRUE
 
+    [boolean]$noMoreGroupsToProcess=$FALSE
+
     [array]$jobOutput=@()
     [array]$smtpNoSpace=@()
 
@@ -758,10 +760,15 @@ Function Start-MultipleDistributionListMigration
 
     #Now the we've made the first pass - we can work through any of the nested group exceptions.
 
+    out-logfile -string "Entering do / until to start nested group processing."
+
     do
     {
+        out-logfile -string "Determining if nested groups CSV file exists."
+
         if (test-path $nestedCSVPath)
         {
+            out-logfile -string "Nested groups CSV file exists - proceeding with nested group processing."
             #Resetting groups to retry.
 
             $groupsToRetry = @()
@@ -775,7 +782,8 @@ Function Start-MultipleDistributionListMigration
                 $nestedRetryGroups = import-csv -path $nestedCSVPath -errorAction Stop
             }
             catch {
-                out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried" -isError:$TRUE
+                out-logfile -string "Unable to import the CSV file.  This is a soft error - existing the loop and nested groups will need to be manually retried"
+                $noMoreGroupsToProces=$TRUE #Set to true to exit loop.
             }
     
             #Remove the CSV file that was processed.  This file will be recreated if possible.
@@ -825,6 +833,8 @@ Function Start-MultipleDistributionListMigration
                     }
                 }
             }
+
+            out-logfile -string "Creating arrays for groups to reproces and groups in permenant failure."
     
             foreach ($group in $nestedRetryGroups)
             {
@@ -837,6 +847,8 @@ Function Start-MultipleDistributionListMigration
                     $noCrossGroupDependencyFound+= $group
                 }
             }
+
+            out-logfile -string "Writing out all groups that will be reprocessed."
     
             if ($noCrossGroupDependencyFound.count -gt 0)
             {
@@ -853,12 +865,15 @@ Function Start-MultipleDistributionListMigration
     
                 out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedXML.value
             }
+
+            out-logfile -string "Determining if groups are eligable for reprocessing..."
     
             if ($noCrossGroupDependencyFound.count -gt 0)
             {
                 foreach ($group in $noCrossGroupDependencyFound)
                 {
                     out-logfile -string ("Processing nested DL: "+$group.primarySMTPAddressOrUPN)
+                    out-logfile -string ("Processing nested parent DL:"+$group.parentGroupSMTPAddress)
     
                     if ($groupSMTPAddresses -contains $group.primarySMTPAddressOrUPN)
                     {
@@ -877,7 +892,7 @@ Function Start-MultipleDistributionListMigration
     
             out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
     
-            out-logfile -string "Resetting groupSMTPAddresses to the retry group set."
+            out-logfile -string "Resetting groupSMTPAddresses to the retry group set and seleting only unique values."
     
             $groupSMTPAddresses = $groupsToRetry | Select-Object -Unique
     
@@ -892,13 +907,15 @@ Function Start-MultipleDistributionListMigration
             {
                 out-logfile -string "No additional groups to process - not calling."
             }
+
+            $noMoreGroupsToProces = $FALSE
         }
         else
         {
-            $groupsToRetry = 0 #Break out of the do while - there's nothing to do.
+            $noMoreGroupsToProcess = $TRUE
         }
     }
-    while($groupsToRetry.count -gt 0)
+    until($noMoreGroupsToProcess=$TRUE)
 
     if ($crossGroupDependencyFound.count -gt 0)
     {
