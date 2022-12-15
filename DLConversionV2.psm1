@@ -3659,13 +3659,27 @@ Function Start-DistributionListMigration
 
     $telemetryFunctionStartTime = get-universalDateTime
 
-    out-logfile -string "Monitoring Exchange Online for distribution list deletion."
+    out-logfile -string "Monitoring Exchange Online for distribution list deletion."+
 
-    try {
-        test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
+    if ($totalThreadCount -gt 0)
+    {
+        out-logfile -string "Calling test-CloudDLPresent with AD Connect information."
+
+        try {
+            test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
+    else 
+    {
+        try {
+            test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     $telemetryFunctionEndTime = get-universalDateTime
