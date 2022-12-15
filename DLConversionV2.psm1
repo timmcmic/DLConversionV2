@@ -3666,6 +3666,8 @@ Function Start-DistributionListMigration
         out-logfile -string "Calling test-CloudDLPresent with AD Connect information."
 
         try {
+            out-logfile -string "Invoking test-cloudDLPresent using AD Connect information since multi-threaded."
+
             test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
         }
         catch {
@@ -3675,6 +3677,8 @@ Function Start-DistributionListMigration
     else 
     {
         try {
+            out-logfile -string "Invoking test-cloudDLPresent with no ADConnect information (single threaded)."
+            
             test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
         }
         catch {
