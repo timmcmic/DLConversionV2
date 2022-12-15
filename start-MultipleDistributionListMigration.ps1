@@ -908,14 +908,15 @@ Function Start-MultipleDistributionListMigration
                 out-logfile -string "No additional groups to process - not calling."
             }
 
-            $noMoreGroupsToProces = $FALSE
+            out-logfile -string "Setting noMoreGroupsToProcess = FALSE to have it loop through again."
+            $noMoreGroupsToProcess = $FALSE
         }
         else
         {
             $noMoreGroupsToProcess = $TRUE
         }
     }
-    until($noMoreGroupsToProcess=$TRUE)
+    until($noMoreGroupsToProcess -eq $TRUE)
 
     if ($crossGroupDependencyFound.count -gt 0)
     {
