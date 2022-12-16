@@ -5153,6 +5153,59 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "No cloud only groups had the migrated group as a member."
     }   
+
+    out-logfile -string "Processing Office 365 Managed By"
+
+    if ($allOffice365ForwardingAddress.count -gt 0)
+    {
+        foreach ($member in $allOffice365ForwardingAddress)
+        {
+            $isTestError="No" #Reset error tracking.
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds...." -sleepSeconds 5
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try{
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ForwardingAddress.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            }
+            catch{
+                out-logfile -string $_
+                $isTestErrorDetail = $_
+                $isTestError="Yes"
+            }
+
+            if ($isTestError -eq "Yes")
+            {
+                out-logfile -string "Error adding forwarding address to a mailbox."
+
+                $isErrorObject = new-Object psObject -property @{
+                    distinguishedName = $member.distinguishedName
+                    primarySMTPAddress = $member.primarySMTPAddress
+                    alias = $member.Alias
+                    displayName = $member.displayName
+                    attribute = "Distribution List Forwarding Address"
+                    errorMessage = "Unable to add the distribution list as a forwarding address to a mailbox recipient."
+                    erroMessageDetail = $isTestErrorDetail
+                }
+
+                out-logfile -string $isErrorObject
+
+                $office365ReplaceErrors+=$isErrorObject
+            }
+        }
+    }
+    else 
+    {
+        out-LogFile -string "There were no mailboxes in Office 365 with the distribution list as forwarding address."    
+    }
+
     
     if ($allowNonSyncedGroup -eq $FALSE)
     {
