@@ -3876,6 +3876,8 @@ Function Start-DistributionListMigration
     
     #EXIT #Debug Exit.
 
+    start-sleepProgress -sleepSeconds 30 -sleepString "Holding post DL creation for 30 seconds to allow buffer for cache purge before resetting attributes that may collid with the origianl group."
+
     $telemetryFunctionStartTime = get-universalDateTime
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
