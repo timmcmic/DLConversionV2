@@ -94,6 +94,19 @@
         Out-LogFile -string "BEGIN SET-Office365DLMV"
         Out-LogFile -string "********************************************************************************"
 
+        if ($office365DLConfigurationPostMigration.externalDirectoryObjectID -eq "")
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.GUID
+        }
+        else
+        {
+            $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
+        }
+
+        out-logfile -string "External directory object ID utilized for set commands:"
+        out-logfile -string $functionExternalDirectoryObjectID
+
+
         out-logfile -string "Determine if this is a first pass operation."
 
         if ($isFirstPass -eq $FALSE)
@@ -131,18 +144,6 @@
             $functionEmailAddresses = $functionEmailAddresses | select-object -unique
 
             out-logfile -string $functionEmailAddresses
-
-            if ($office365DLConfigurationPostMigration.externalDirectoryObjectID -eq "")
-            {
-                $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.GUID
-            }
-            else
-            {
-                $functionExternalDirectoryObjectID = $office365DLConfigurationPostMigration.externalDirectoryObjectID
-            }
-
-            out-logfile -string "External directory object ID utilized for set commands:"
-            out-logfile -string $functionExternalDirectoryObjectID
 
             $functionEmailAddressToRemove = $office365DLConfigurationPostMigration.primarySMTPAddress
 
