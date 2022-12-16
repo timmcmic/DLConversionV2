@@ -446,6 +446,7 @@ Function Start-DistributionListMigration
     [double]$telemetryCollectOffice365Dependency=0
     [double]$telemetryTimeToRemoveDL=0
     [double]$telemetryCreateOffice365DL=0
+    [double]$telemetryCreateOffice365DLFirstPass=0
     [double]$telemetryReplaceOnPremDependency=0
     [double]$telemetryReplaceOffice365Dependency=0
     [boolean]$telemetryError=$FALSE
@@ -3437,11 +3438,222 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    #EXIT #Debug Exit
-
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
+
+    #EXIT #Debug Exit
+
+    #We can begin the process of recreating the distribution group in Exchange Online.
+    #This will make a first pass at creating a stub distribution list and perfomring long running transations like updating membership.
+    #By creating the DL first and updating these items - the original DL remains fully available until the new DL is populated and ready to turn over.
+
+    out-logfile -string "Create the new distribution list in Office 365.  This list uses the tempoary name for creation."
+
+    $telemetryFunctionStartTime = get-universalDateTime
+
+    out-logfile "Attempting to create the DL in Office 365."
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            $office365DLConfigurationPostMigration=new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+
+            #If we made it this far then the group was created.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logFile -string $_ -isError:$TRUE 
+            }
+            else 
+            {
+                out-logfile -string "Unable to create the distribution list on attempt.  Retry"
+
+                if ($loopCounter -gt 0)
+                {
+                    start-sleepProgress -sleepSeconds ($loopCounter * 5) -sleepstring "Invoke sleep - error creating distribution group."
+                }
+                $loopCounter=$loopCounter+1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
+    #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do 
+    {
+        try {
+                        
+            #If we hit here we did not get a terminating error.  Write the configuration.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-NewO365DL")
+            
+            #If we made it this far we can end the loop - we were succssful.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                $loopCounter = $loopCounter+1 
+            }
+        }   
+    } while ($stopLoop -eq $false)
+
+    #Now it is time to set the multi valued attributes on the DL in Office 365.
+    #Setting these first must occur since moderators have to be established before moderation can be enabled.
+
+    out-logFile -string "Setting the multivalued attributes of the migrated group for the first pass."
+
+    out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
+
+    [int]$loopCounter=0
+    [boolean]$stopLoop = $FALSE
+    
+    do {
+        try {
+            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE
+
+            $stopLoop = $TRUE
+        }
+        catch {
+            if ($loopCounter -gt 4)
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+            else {
+                start-sleepProgress -sleepString "Uanble to set Office 365 DL Multi Value attributes - try again." -sleepSeconds 5
+
+                $loopCounter = $loopCounter +1
+            } 
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    out-logfile -string ("The number of post create errors is: "+$global:postCreateErrors.count)
+
+    #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
+    #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+
+            #If we made it this far we were successful - output the information to XML.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-SetMVAttsFirstAttempt")
+
+            #Now that we are this far - we can exit the loop.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                $loopCounter = $loopCounter+1 
+            }
+        }
+        
+    } while ($stopLoop -eq $FALSE)
+
+    #The distribution list has now been created.  There are single value attributes that we're now ready to update.
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 4)
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Transient error updating distribution group - retrying." -sleepSeconds 5
+
+                $loopCounter=$loopCounter+1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    out-logfile -string ("The number of post create errors is: "+$global:postCreateErrors.count)
+
+    out-logFile -string ("Capture the DL status post migration.")
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+
+            #If we made it this far we successfully got the DL.  Write it.
+
+            out-LogFile -string "Write new DL configuration to XML."
+
+            out-Logfile -string $office365DLConfigurationPostMigration
+            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-SetSingleValAttsFirstAttempt")
+
+            #Now that we wrote it - stop the loop.
+
+            $stopLoop=$TRUE
+        }
+        catch {
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                $loopCounter = $loopCounter+1 
+            }
+        }   
+    } while ($stopLoop -eq $false)
+
+    $telemetryFunctionEndTime = get-universalDateTime
+
+    $telemetryCreateOffice365DLFirstPass = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("The time it took to create the Office 365 distribution group and run first pass attributes: "+$telemetryCreateOffice365DLFirstPass.toString())
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "START Remove on premises distribution group from office 365.."
@@ -3661,83 +3873,15 @@ Function Start-DistributionListMigration
     out-logfile -string ("Elapsed time to remove the Office 365 Distribution List: "+$telemetryTimeToRemoveDL.tostring())
 
     #At this point we have validated that the group is gone from office 365.
-    #We can begin the process of recreating the distribution group in Exchange Online.
+    
+    #EXIT #Debug Exit.
 
     $telemetryFunctionStartTime = get-universalDateTime
-
-    out-logfile "Attempting to create the DL in Office 365."
-
-    $stopLoop = $FALSE
-    [int]$loopCounter = 0
-
-    do {
-        try {
-            $office365DLConfigurationPostMigration=new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
-
-            #If we made it this far then the group was created.
-
-            $stopLoop=$TRUE
-        }
-        catch {
-            if ($loopCounter -gt 10)
-            {
-                out-logFile -string $_ -isError:$TRUE 
-            }
-            else 
-            {
-                out-logfile -string "Unable to create the distribution list on attempt.  Retry"
-
-                if ($loopCounter -gt 0)
-                {
-                    start-sleepProgress -sleepSeconds ($loopCounter * 5) -sleepstring "Invoke sleep - error creating distribution group."
-                }
-                $loopCounter=$loopCounter+1
-            }
-        }
-    } while ($stopLoop -eq $FALSE)
-
-    #Sometimes the configuration is not immediately available due to ad sync time in Office 365.
-    #Implement a loop that protects us here - trying 10 times and sleeping the bare minimum in between to eliminate longer static sleeps.
-
-    $stopLoop = $FALSE
-    [int]$loopCounter = 0
-
-    do 
-    {
-        try {
-                        
-            #If we hit here we did not get a terminating error.  Write the configuration.
-
-            out-LogFile -string "Write new DL configuration to XML."
-
-            out-Logfile -string $office365DLConfigurationPostMigration
-            out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport (($xmlFiles.office365DLConfigurationPostMigrationXML.value)+"-NewO365DL")
-            
-            #If we made it this far we can end the loop - we were succssful.
-
-            $stopLoop=$TRUE
-        }
-        catch {
-            if ($loopCounter -gt 10)
-            {
-                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
-                $stopLoop = $TRUE
-            }
-            else 
-            {
-                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
-
-                $loopCounter = $loopCounter+1 
-            }
-        }   
-    } while ($stopLoop -eq $false)
-
-    #EXIT #Debug Exit.
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
     #Setting these first must occur since moderators have to be established before moderation can be enabled.
 
-    out-logFile -string "Setting the multivalued attributes of the migrated group."
+    out-logFile -string "Setting the multivalued attributes of the migrated group for the first pass."
 
     out-logfile -string $office365DLConfigurationPostMigration.primarySMTPAddress
 
@@ -5107,6 +5251,19 @@ Function Start-DistributionListMigration
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
 
+        out-logfile -string "Re-importing the powershell session for Exchange as this may have timed out due to long running operations."
+
+        try 
+        {
+            Out-LogFile -string "Calling import-PowerShellSession"
+
+            import-powershellsession -powershellsession $sessionToImport
+        }
+        catch 
+        {
+            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+        }
+
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
         try{
@@ -5527,6 +5684,7 @@ Function Start-DistributionListMigration
             TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
             TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
             TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+            TimeToCreateOffice365DLFirstPass = $telemetryCreateOffice365DLFirstPass
             TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
             TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
         }
