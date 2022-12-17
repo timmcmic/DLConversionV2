@@ -87,7 +87,7 @@
 
         out-logfile -string "Determining if this is the first pass on attribute setting."
 
-        if ($isFirstPass -eq $FALSE)
+        if ($isFirstAttempt -eq $FALSE)
         {
             out-logfile -string "This is not the first pass - set attribute that may collid with the original group."
 

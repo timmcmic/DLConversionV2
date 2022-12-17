@@ -109,7 +109,7 @@
 
         out-logfile -string "Determine if this is a first pass operation."
 
-        if ($isFirstPass -eq $FALSE)
+        if ($isFirstAttempt -eq $FALSE)
         {
             out-logfile -string "This is not the first pass - update items that would conflict with existing group."
 
