@@ -82,6 +82,7 @@ function start-collectOnPremFullMailboxAccess
     $auditMailboxes=$NULL
     [array]$auditFullMailboxAccess=@()
     [int]$forCounter=0
+    [int]$powershellCounter = 0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
 
@@ -162,6 +163,7 @@ function start-collectOnPremFullMailboxAccess
         out-logFile -string "Unable to import powershell session."
         out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
     }
+
     try 
     {
         out-logFile -string "Attempting to set view entire forest to TRUE."
@@ -286,10 +288,46 @@ function start-collectOnPremFullMailboxAccess
 
         $mailbox = $auditMailboxes[$mailboxCounter]
 
-        if ($forCounter -gt 500)
+        if (($forCounter -gt 500) -and ($powerShellCounter -lt 5))
         {
             start-sleepProgress -sleepstring "Powershell pause at 500 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
+            $powershellCounter++
+        }
+        elseif ($forCounter -gt 500) 
+        {
+            start-sleepProgress -sleepstring "Powershell pause at 500 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            $forCounter=0
+            $powershellCounter = 0
+
+            if ($exchangeAuthenticationMethod -eq "Kerberos")
+            {
+                disable-allPowerShellSessions
+                
+                try 
+                {
+                    Out-LogFile -string "Calling New-PowerShellSession"
+
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    out-logfile -string $_
+                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                }
+
+                try 
+                {
+                    out-logFile -string "Attempting to import powershell session."
+
+                    import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
+                }
+                catch 
+                {
+                    out-logFile -string "Unable to import powershell session."
+                    out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+                }
+            }
         }
         else 
         {
