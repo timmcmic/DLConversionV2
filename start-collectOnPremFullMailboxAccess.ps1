@@ -86,6 +86,9 @@ function start-collectOnPremFullMailboxAccess
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
 
+    $commandStartTime = get-date
+    $commandEndTime = $NULL
+
     $xmlFiles = @{
         onPremRecipientFullMailboxAccess= @{"Value" = "onPremRecipientFullMailboxAccess.xml" ; "Desscription" = "XML file of discovered permissions"}
         onPremMailboxList= @{"Value" = "onPremMailboxListFullMailboxAccess.xml" ; "Description" = "XML file of all mailboxes to be processed"}
@@ -287,23 +290,24 @@ function start-collectOnPremFullMailboxAccess
         #Drop the mailbox into a working variable.
 
         $mailbox = $auditMailboxes[$mailboxCounter]
+        $commandEndTime = get-Date
 
-        if (($forCounter -gt 500) -and ($powerShellCounter -lt 5))
+        if (($forCounter -gt 500) -and (($commandEndTime - $commandStartTime).totalHours -lt 9))
         {
-            start-sleepProgress -sleepstring "Powershell pause at 500 operations - increment powershell session counter." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            start-sleepProgress -sleepstring "Powershell pause at 500 operations - total operation time less than ." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
-            $powershellCounter++
+            out-logfile -string "(($commandEndTime - $commandStartTime).totalhours).tostring()"
         }
         elseif ($forCounter -gt 500) 
         {
             start-sleepProgress -sleepstring "Powershell pause at 500 operations - evaluate powershell session reset." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
-            $powershellCounter = 0
+            $commandStartTime = get-Date
 
             if ($exchangeAuthenticationMethod -eq "Kerberos")
             {
                 out-logfile -string "Kerberos authentication utilized - reset powershell session."
-                
+
                 disable-allPowerShellSessions
                 
                 try 
