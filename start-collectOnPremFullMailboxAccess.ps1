@@ -296,7 +296,7 @@ function start-collectOnPremFullMailboxAccess
         {
             start-sleepProgress -sleepstring "Powershell pause at 500 operations - total operation time less than ." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
-            out-logfile -string "(($commandEndTime - $commandStartTime).totalhours).tostring()"
+            out-logfile -string (($commandEndTime - $commandStartTime).totalhours).tostring()
         }
         elseif ($forCounter -gt 500) 
         {
