@@ -290,18 +290,20 @@ function start-collectOnPremFullMailboxAccess
 
         if (($forCounter -gt 500) -and ($powerShellCounter -lt 5))
         {
-            start-sleepProgress -sleepstring "Powershell pause at 500 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            start-sleepProgress -sleepstring "Powershell pause at 500 operations - increment powershell session counter." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
             $powershellCounter++
         }
         elseif ($forCounter -gt 500) 
         {
-            start-sleepProgress -sleepstring "Powershell pause at 500 operations." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            start-sleepProgress -sleepstring "Powershell pause at 500 operations - evaluate powershell session reset." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0
             $powershellCounter = 0
 
             if ($exchangeAuthenticationMethod -eq "Kerberos")
             {
+                out-logfile -string "Kerberos authentication utilized - reset powershell session."
+                
                 disable-allPowerShellSessions
                 
                 try 
