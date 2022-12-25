@@ -88,6 +88,7 @@ function start-collectOnPremFullMailboxAccess
 
     $commandStartTime = get-date
     $commandEndTime = $NULL
+    [int]$kerberosRunTime = 4
 
     $xmlFiles = @{
         onPremRecipientFullMailboxAccess= @{"Value" = "onPremRecipientFullMailboxAccess.xml" ; "Desscription" = "XML file of discovered permissions"}
@@ -300,7 +301,7 @@ function start-collectOnPremFullMailboxAccess
         $mailbox = $auditMailboxes[$mailboxCounter]
         $commandEndTime = get-Date
 
-        if (($forCounter -gt 500) -and (($commandEndTime - $commandStartTime).totalHours -lt 9))
+        if (($forCounter -gt 500) -and (($commandEndTime - $commandStartTime).totalHours -lt $kerberosRunTime))
         {
             start-sleepProgress -sleepstring "Powershell pause at 500 operations - total operation time less than ." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
             $forCounter=0

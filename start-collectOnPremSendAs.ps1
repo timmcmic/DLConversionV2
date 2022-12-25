@@ -83,6 +83,10 @@ function start-collectOnPremSendAs
     [int]$recipientCounter=0
     [int]$totalRecipients=0
 
+    $commandStartTime = get-date
+    $commandEndTime = $NULL
+    [int]$kerberosRunTime = 4
+
     $xmlFiles = @{
         onPremRecipientSendAs= @{"Value" = "onPremRecipientSendAs.xml" ; "Description" = "XML file that holds send as permissions from on premises"}
         onPremRecipientList= @{"Value" = "onPremRecipientListSendAs.xml" ; "Description" = "XML file that holds recipients to process for send as rights"}
@@ -97,73 +101,79 @@ function start-collectOnPremSendAs
         exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangePowershell" ; "Description" = "Exchange On-Premises powershell session name."}
     }
 
+    new-LogFile -groupSMTPAddress OnPremSendAsPermissions -logFolderPath $logFolderPath
+
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    new-LogFile -groupSMTPAddress OnPremSendAsPermissions -logFolderPath $logFolderPath
-
     #Output all parameters bound or unbound and their associated values.
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    if ($exchangeAuthenticationMethod -eq "Basic")
+    function session-toImport
     {
+        if ($exchangeAuthenticationMethod -eq "Basic")
+        {
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logfile -string $_
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
+        }
+        elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+        {
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logfile -string $_
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
+        }
+        else 
+        {
+            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+        }
+        
         try 
         {
-            Out-LogFile -string "Calling New-PowerShellSession"
+            out-logFile -string "Attempting to import powershell session."
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
         }
         catch 
         {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            out-logFile -string "Unable to import powershell session."
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
-    }
-    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
-    {
+
         try 
         {
-            Out-LogFile -string "Calling New-PowerShellSession"
+            out-logFile -string "Attempting to set view entire forest to TRUE."
 
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            enable-ExchangeOnPremEntireForest -isAudit:$TRUE
         }
         catch 
         {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            out-logFile -string "Unable to set view entire forest to TRUE."
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
     }
-    else 
-    {
-        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-    }
 
-    try 
-    {
-        out-logFile -string "Attempting to import powershell session."
-
-        import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
-    }
-    catch 
-    {
-        out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
-    }
-    try 
-    {
-        out-logFile -string "Attempting to set view entire forest to TRUE."
-
-        enable-ExchangeOnPremEntireForest -isAudit:$TRUE
-    }
-    catch 
-    {
-        out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
-    }
+    session-toImport
 
     #Define the log file path one time.
 
@@ -270,11 +280,30 @@ function start-collectOnPremSendAs
 
         $recipient = $auditRecipients[$recipientCounter]
 
-        if ($forCounter -gt 500)
+        $commandEndTime = get-Date
+
+        if (($forCounter -gt 500) -and (($commandEndTime - $commandStartTime).totalHours -lt $kerberosRunTime))
+        {
+            start-sleepProgress -sleepstring "Powershell pause at 500 operations - total operation time less than ." -sleepSeconds 5 -sleepParentID 1 -sleepID 2
+            $forCounter=0
+            out-logfile -string (($commandEndTime - $commandStartTime).totalhours).tostring()
+        }
+        elseif ($forCounter -gt 500)
         {
             start-sleepProgress -sleepString "Throttling for 5 seconds at 500 operations." -sleepSeconds 5
 
             $forCounter=0
+
+            $commandStartTime = get-Date
+
+            if ($exchangeAuthenticationMethod -eq "Kerberos")
+            {
+                out-logfile -string "Kerberos authentication utilized - reset powershell session."
+
+                disable-allPowerShellSessions
+                
+                session-toImport
+            }
         }
         else 
         {
