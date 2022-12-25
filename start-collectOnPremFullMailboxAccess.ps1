@@ -116,68 +116,76 @@ function start-collectOnPremFullMailboxAccess
    write-hashTable -hashTable $onPremExchangePowershell
    write-hashTable -hashTable $xmlFiles
 
+   function session-toImport
+   {
+        if ($exchangeAuthenticationMethod -eq "Basic")
+        {
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logfile -string $_
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
+        }
+        elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+        {
+            try 
+            {
+                Out-LogFile -string "Calling New-PowerShellSession"
+
+                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+            }
+            catch 
+            {
+                out-logfile -string $_
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
+        }
+        else 
+        {
+            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+        }
+        
+        try 
+        {
+            out-logFile -string "Attempting to import powershell session."
+
+            import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
+        }
+        catch 
+        {
+            out-logFile -string "Unable to import powershell session."
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+        }
+
+        try 
+        {
+            out-logFile -string "Attempting to set view entire forest to TRUE."
+
+            enable-ExchangeOnPremEntireForest -isAudit:$TRUE
+        }
+        catch 
+        {
+            out-logFile -string "Unable to set view entire forest to TRUE."
+            out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
+        }
+   }
+
     if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
     }
 
-    if ($exchangeAuthenticationMethod -eq "Basic")
-    {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
-
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-        }
-        catch 
-        {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
-    }
-    elseif ($exchangeAuthenticationMethod -eq "Kerberos")
-    {
-        try 
-        {
-            Out-LogFile -string "Calling New-PowerShellSession"
-
-            $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-        }
-        catch 
-        {
-            out-logfile -string $_
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
-    }
-    else 
-    {
-        out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-    }
     
-    try 
-    {
-        out-logFile -string "Attempting to import powershell session."
+    #Call powershell sesssion.
 
-        import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
-    }
-    catch 
-    {
-        out-logFile -string "Unable to import powershell session."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
-    }
-
-    try 
-    {
-        out-logFile -string "Attempting to set view entire forest to TRUE."
-
-        enable-ExchangeOnPremEntireForest -isAudit:$TRUE
-    }
-    catch 
-    {
-        out-logFile -string "Unable to set view entire forest to TRUE."
-        out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
-    }
+    session-toImport
 
     #Define the log file path one time.
 
@@ -310,29 +318,7 @@ function start-collectOnPremFullMailboxAccess
 
                 disable-allPowerShellSessions
                 
-                try 
-                {
-                    Out-LogFile -string "Calling New-PowerShellSession"
-
-                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $onPremExchangePowershell.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-                }
-                catch 
-                {
-                    out-logfile -string $_
-                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-                }
-
-                try 
-                {
-                    out-logFile -string "Attempting to import powershell session."
-
-                    import-powershellsession -powershellsession $sessionToImport -isAudit:$TRUE
-                }
-                catch 
-                {
-                    out-logFile -string "Unable to import powershell session."
-                    out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
-                }
+                session-toImport
             }
         }
         else 
