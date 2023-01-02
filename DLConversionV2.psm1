@@ -751,6 +751,12 @@ Function Start-DistributionListMigration
 
     [string]$mailOnMicrosoftComDomain = ""
 
+    #Define variables for kerberos enablement.
+
+    $commandStartTime = get-date
+    $commandEndTime = $NULL
+    [int]$kerberosRunTime = 4
+
     #Ensure that no status files exist at the start of the run.
 
     if ($isHealthCheck -eq $FALSE)
@@ -769,6 +775,72 @@ Function Start-DistributionListMigration
     if ($isHealthCheck -eq $FALSE)
     {
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+    }
+
+    function session-toImport
+    {
+        #Now we can determine if exchange on premises is utilized and if so establish the connection.
+   
+        Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
+
+        if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
+        {
+            if ($exchangeAuthenticationMethod -eq "Basic")
+            {
+                try 
+                {
+                    Out-LogFile -string "Calling New-PowerShellSession"
+
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                }
+            }
+            elseif ($exchangeAuthenticationMethod -eq "Kerberos")
+            {
+                try 
+                {
+                    Out-LogFile -string "Calling New-PowerShellSession"
+
+                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
+                }
+                catch 
+                {
+                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+                }
+            }
+            else 
+            {
+                out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+            }
+            
+            try 
+            {
+                Out-LogFile -string "Calling import-PowerShellSession"
+
+                import-powershellsession -powershellsession $sessionToImport
+            }
+            catch 
+            {
+                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
+            }
+            try 
+            {
+                out-logfile -string "Calling set entire forest."
+
+                enable-ExchangeOnPremEntireForest
+            }
+            catch 
+            {
+                Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
+            }
+        }
+        else
+        {
+            Out-LogFile -string "No on premises Exchange specified - skipping setup of powershell session."
+        }
     }
 
     out-logfile -string "********************************************************************************"
@@ -1133,68 +1205,7 @@ Function Start-DistributionListMigration
 
    #exit #debug exit
 
-   #Now we can determine if exchange on premises is utilized and if so establish the connection.
-   
-   Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
-
-    if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
-    {
-        if ($exchangeAuthenticationMethod -eq "Basic")
-        {
-            try 
-            {
-                Out-LogFile -string "Calling New-PowerShellSession"
-
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-            }
-            catch 
-            {
-                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-            }
-        }
-        elseif ($exchangeAuthenticationMethod -eq "Kerberos")
-        {
-            try 
-            {
-                Out-LogFile -string "Calling New-PowerShellSession"
-
-                $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-            }
-            catch 
-            {
-                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-            }
-        }
-        else 
-        {
-            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-        }
-        
-        try 
-        {
-            Out-LogFile -string "Calling import-PowerShellSession"
-
-            import-powershellsession -powershellsession $sessionToImport
-        }
-        catch 
-        {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
-        try 
-        {
-            out-logfile -string "Calling set entire forest."
-
-            enable-ExchangeOnPremEntireForest
-        }
-        catch 
-        {
-            Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
-        }
-    }
-    else
-    {
-        Out-LogFile -string "No on premises Exchange specified - skipping setup of powershell session."
-    }
+   session-toImport
 
     #If the administrator has specified aad connect information - establish the powershell session.
 
@@ -5244,6 +5255,15 @@ Function Start-DistributionListMigration
 
     if ($enableHybridMailflow -eq $TRUE)
     {
+        $commandEndTime = get-date
+
+        if (($commandEndTime - $commandStartTime).totalHours -gt $kerberosRunTime)
+        {
+            out-logfile -string "Re-importing the exchange on premises powershell session due to kerberos timeout."
+
+            session-toImport
+        }
+
         #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
 
         $isTestError="No"
