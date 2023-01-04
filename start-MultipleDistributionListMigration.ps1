@@ -906,6 +906,8 @@ Function Start-MultipleDistributionListMigration
             else
             {
                 out-logfile -string "No additional groups to process - not calling."
+                out-logfile -string "Setting no more groups to process to TRUE."
+                $noMoreGroupsToProcess = $TRUE
             }
 
             out-logfile -string "Setting noMoreGroupsToProcess = FALSE to have it loop through again."
