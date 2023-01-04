@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $FALSE)]
+            $aadConnectPowershellSessionName=$NULL
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -37,6 +39,8 @@
         #Declare function variables.
 
         [boolean]$firstLoopProcessing=$TRUE
+        [int]$waitTime=0
+        [int]$maxWaitTIme = 11
 
         #Start function processing.
 
@@ -53,6 +57,20 @@
             }
             else 
             {
+                out-logfile -string "Determine if AD Connect should be proactivly triggered (suspect thread 1 failure)."
+
+                if (($waitTime -eq $maxWaitTime) -and ($aadConnectPowershellSessionName -ne $NULL))
+                {
+                    out-logfile -string "Time elapsed 5 minutes - proactively invoking AD Connect - assuming thread 1 failure in multi-migration."
+                    invoke-adconnect -PowershellSessionName $aadConnectPowershellSessionName -isSingleAttempt $TRUE
+                    $waitTime = 0
+                }
+                else 
+                {
+                    out-logfile -string "No need to invoke ADConnect at this time."
+                    $waitTime++
+                }
+
                 start-sleepProgress -sleepString "Group found in Office 365 - sleep for 30 seconds - try again." -sleepSeconds 30
             }
 
