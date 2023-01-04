@@ -112,6 +112,11 @@
 
             $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
 
+            if ($invokeTest.result -ne "Success")
+            {
+                out-logFile -string "An error has occured - this is not necessarily uncommon."
+                out-logFile -string $invokeTest.exception.toString()
+            }
         }
 
         if ($doCounter -eq 10)
