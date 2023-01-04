@@ -48,7 +48,7 @@
         {
             Out-LogFile -string "Importing powershell session."
 
-            Import-PSSession -Session $PowershellSession -ErrorAction Stop
+            Import-PSSession -Session $PowershellSession -allowClobber -ErrorAction Stop
         }
         catch 
         {
