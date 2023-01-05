@@ -103,6 +103,11 @@
                     out-logFile -string "An error has occured - this is not necessarily uncommon."
                     out-logFile -string $invokeTest.exception.toString()
                 }
+                else 
+                {
+                    out-logfile -string "The results of the AD Sync."
+                    out-logfile -string $invokeTest.result
+                }
 
                 $doCounter=$doCounter+1
 
@@ -119,10 +124,14 @@
             out-logfile -string $invokeTest
 
             if ($invokeTest.result -ne "Success")
-                {
-                    out-logFile -string "An error has occured - this is not necessarily uncommon."
-                    out-logFile -string $invokeTest.exception.toString()
-                }
+            {
+                out-logFile -string "An error has occured - this is not necessarily uncommon."
+                out-logFile -string $invokeTest.exception.toString()
+            }
+            else {
+                out-logfile -string "The results of the AD Sync."
+                out-logfile -string $invokeTest.result
+            }
         }
 
         if ($doCounter -eq 10)
@@ -131,10 +140,7 @@
             out-logfile -string "Consider reviewing the AD Connect server for any potential issues."
         }
 
-        out-logfile -string "The results of the AD Sync."
-        out-logfile -string $invokeTest.result
-
-        Out-LogFile -string "ADConnect was successfully triggered."
+        Out-LogFile -string "Function to trigger AD Connect."
 
         Out-LogFile -string "END INVOKE-ADCONNECT"
         Out-LogFile -string "********************************************************************************"
