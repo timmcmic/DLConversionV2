@@ -5358,19 +5358,6 @@ Function Start-DistributionListMigration
         #The routing contact configuration has been updated and retained.
         #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
 
-        out-logfile -string "Re-importing the powershell session for Exchange as this may have timed out due to long running operations."
-
-        try 
-        {
-            Out-LogFile -string "Calling import-PowerShellSession"
-
-            import-powershellsession -powershellsession $sessionToImport
-        }
-        catch 
-        {
-            Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-        }
-
         out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
 
         try{
@@ -5415,7 +5402,7 @@ Function Start-DistributionListMigration
 
         do {
             try{
-                $routingDynamicGroupConfig = $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+                $routingDynamicGroupConfig = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
 
                 $stopLoop = $TRUE
             }
