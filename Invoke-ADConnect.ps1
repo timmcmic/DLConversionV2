@@ -75,40 +75,20 @@
         #The script will try to trigger ad connect 10 times - if not successful move on.
         #Eventually AD conn\ect will run on it's own or potentially there is an issue with the remote powershell session <or> the server itself.
 
-        if ($isSingleAttempt -eq $FALSE)
-        {
-            $doCounter=0
+        $doCounter=0
 
-            do 
+        do 
+        {
+            if ($invokeSleep -eq $TRUE)
             {
-                if ($invokeSleep -eq $TRUE)
-                {
-                    start-sleepProgress -sleepString "Retrying after waiting 30 seconds." -sleepSeconds 30
-                }
-                else 
-                {
-                    out-logfile -string "This is first attempt - skipping sleep."
+                start-sleepProgress -sleepString "Retrying after waiting 30 seconds." -sleepSeconds 30
+            }
+            else 
+            {
+                out-logfile -string "This is first attempt - skipping sleep."
 
-                    $invokeSleep = $true
-                }
-
-                $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
-
-                if ($invokeTest.result -ne "Success")
-                {
-                    out-logFile -string "An error has occured - this is not necessarily uncommon."
-                    out-logFile -string $invokeTest.exception.toString()
-                }
-
-                $doCounter=$doCounter+1
-
-                out-logfile ("Retry counter incremented:  "+$doCounter.tostring())
-                
-            } until (($invokeTest.result -eq "Success") -or ($doCounter -eq 10))
-        }
-        else 
-        {
-            out-logfile -string "Attempting one time invocation of AD Connnect for multi-threaded retry."
+                $invokeSleep = $true
+            }
 
             $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
 
@@ -117,9 +97,21 @@
                 out-logFile -string "An error has occured - this is not necessarily uncommon."
                 out-logFile -string $invokeTest.exception.toString()
             }
-        }
 
-        if ($doCounter -eq 10)
+            if ($isSingleAttempt -eq $TRUE)
+            {
+                $doCounter = 10
+            }
+            else 
+            {
+                $doCounter=$doCounter+1
+            }
+
+            out-logfile ("Retry counter incremented:  "+$doCounter.tostring())
+            
+        } until (($invokeTest.result -eq "Success") -or ($doCounter -eq 10))
+        
+        if (($doCounter -eq 10) -and ($isSingleAttempt -eq $FALSE))
         {
             out-logfile -string "AD Connect was not triggered due to retry limit reached."
             out-logfile -string "Consider reviewing the AD Connect server for any potential issues."
