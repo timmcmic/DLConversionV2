@@ -66,8 +66,8 @@
 
                     start-sleepProgress -sleepSeconds (get-random -Minimum 5 -Maximum 60) -sleepString "Sleeping before invoking AD connect suspected thread 1 failure."
 
-                    invoke-adconnect -PowershellSessionName $aadConnectPowershellSessionName -isSingleAttempt $TRUE
-                    
+                    invoke-adconnect -PowershellSessionName $aadConnectPowershellSessionName -isSingleAttempt $TRUE -erorAction STOP
+
                     $waitTime = 0
                 }
                 else 
