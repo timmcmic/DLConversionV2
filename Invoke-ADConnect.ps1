@@ -65,6 +65,7 @@
     
         try 
         {
+            out-logfile -string "Importing ADSync module..."
             invoke-command -session $workingPowershellSession -ScriptBlock {Import-Module -Name 'AdSync'} *>&1
         }
         catch 
@@ -94,6 +95,7 @@
                 }
 
                 $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
+                out-logfile -string $invokeTest
 
                 if ($invokeTest.result -ne "Success")
                 {
