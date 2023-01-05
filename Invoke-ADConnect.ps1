@@ -53,6 +53,7 @@
         try 
         {
             $workingPowershellSession = Get-PSSession -Name $PowershellSessionName
+            out-logfile -string $workingPowershellSession
         }
         catch 
         {
