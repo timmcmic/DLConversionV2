@@ -95,6 +95,7 @@
                 }
 
                 $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
+
                 out-logfile -string $invokeTest
 
                 if ($invokeTest.result -ne "Success")
@@ -113,7 +114,9 @@
         {
             out-logfile -string "Attempting one time invocation of AD Connnect for multi-threaded retry."
 
-            $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta'} *>&1
+            $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction Continue} *>&1
+
+            out-logfile -string $invokeTest
 
             if ($invokeTest.result -ne "Success")
                 {
