@@ -115,6 +115,32 @@
 
                 $functionErrors+=$isErrorObject
             }
+
+            try 
+            {
+                out-logfile -string "Setting distribution windows email address."
+                
+                Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -WindowsEmailAddress $originalDLConfiguration.mail -errorAction STOP -BypassSecurityGroupManagerCheck
+            }
+            catch 
+            {
+                out-logfile "Error encountered setting core single valued attributes."
+
+                out-logfile -string $_
+
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                    Alias = $functionMailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Cloud distribution list:  WindowsEmailAddress"
+                    ErrorMessage = "Error setting windows email address on the migrated distribution group.  Administrator action required."
+                    ErrorMessageDetail = $_
+                }
+
+                $functionErrors+=$isErrorObject
+            }
+
         }
         else 
         {
@@ -488,31 +514,6 @@
                     Name = $originalDLConfiguration.name
                     Attribute = "Cloud distribution list:  SimpleDisplayName"
                     ErrorMessage = "Error setting simple display name on the migrated distribution group.  Administrator action required."
-                    ErrorMessageDetail = $_
-                }
-
-                $functionErrors+=$isErrorObject
-            }
-
-            try 
-            {
-                out-logfile -string "Setting distribution windows email address."
-                
-                Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -WindowsEmailAddress $originalDLConfiguration.mail -errorAction STOP -BypassSecurityGroupManagerCheck
-            }
-            catch 
-            {
-                out-logfile "Error encountered setting core single valued attributes."
-
-                out-logfile -string $_
-
-                $isErrorObject = new-Object psObject -property @{
-                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-                    Alias = $functionMailNickName
-                    Name = $originalDLConfiguration.name
-                    Attribute = "Cloud distribution list:  WindowsEmailAddress"
-                    ErrorMessage = "Error setting windows email address on the migrated distribution group.  Administrator action required."
                     ErrorMessageDetail = $_
                 }
 
