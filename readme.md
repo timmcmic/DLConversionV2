@@ -2,4 +2,4 @@ Information regarding the use, features, and code changes of the DLConversionV2 
 
 https://timmcmic.wordpress.com
 
-Refer to the first blog post that is a table of contents.
+Refer to the pinned blog post that is a table of contents.
