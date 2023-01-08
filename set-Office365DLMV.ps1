@@ -207,7 +207,7 @@
                     
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                        ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                        ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
@@ -234,7 +234,7 @@
 
                         $isErrorObject = new-Object psObject -property @{
                             PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                             Alias = $functionMailNickName
                             Name = $originalDLConfiguration.name
                             Attribute = "Cloud Proxy Addresses"
@@ -272,7 +272,7 @@
 
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                        ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                        ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
@@ -304,7 +304,7 @@
 
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                        ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                        ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
@@ -355,7 +355,7 @@
 
                     $isErrorObject = new-Object psObject -property @{
                         PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                        ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                        ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
@@ -383,7 +383,7 @@
 
                 $isErrorObject = new-Object psObject -property @{
                     PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                    ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                    ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove temporary SMTP address of group."
@@ -464,7 +464,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $originalDLConfiguration.mailNickName
                                 Name = $functionMailNickName
                                 Attribute = "Cloud Distribution Group Member"
@@ -553,7 +553,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group RejectMessagesFromSendersOrMembers"
@@ -644,7 +644,7 @@
     
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group AcceptMessagesOnlyFromSendersOrMembers"
@@ -732,7 +732,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group ManagedBy"
@@ -821,7 +821,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group ModeratedBy"
@@ -910,7 +910,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group BypassModerationFromSendersOrMembers"
@@ -999,7 +999,7 @@
 
                             $isErrorObject = new-Object psObject -property @{
                                 PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group GrantSendOnBehalfTo"
