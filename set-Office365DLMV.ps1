@@ -453,28 +453,39 @@
                     {
                         out-logfile -string ("Attempting to add recipient: "+$recipient)
 
-
                         try {
                             add-O365DistributionGroupMember -identity $functionExternalDirectoryObjectID -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string "Error on individual recipient add."
+                            out-logfile -string "It is possible that the operation times out or server returns busy - sleep 15 and retry"
 
-                            out-logfile -string $_
+                            start-sleepProgress -sleepSeconds 15 -sleepString "Sleeping due to error on individual add to retry."
 
-                            $isErrorObject = new-Object psObject -property @{
-                                PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
-                                Alias = $originalDLConfiguration.mailNickName
-                                Name = $functionMailNickName
-                                Attribute = "Cloud Distribution Group Member"
-                                ErrorMessage = ("Member "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
-                                ErrorMessageDetail = $_
+                            try 
+                            {
+                                add-O365DistributionGroupMember -identity $functionExternalDirectoryObjectID -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
                             }
+                            catch 
+                            {
+                                out-logfile -string ("Error procesing recipient: "+$recipient)
 
-                            out-logfile -string $isErrorObject
+                                out-logfile -string $_
 
-                            $functionErrors+=$isErrorObject
+                                $isErrorObject = new-Object psObject -property @{
+                                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                                    ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                                    Alias = $originalDLConfiguration.mailNickName
+                                    Name = $functionMailNickName
+                                    Attribute = "Cloud Distribution Group Member"
+                                    ErrorMessage = ("Member "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                                    ErrorMessageDetail = $_
+                                }
+
+                                out-logfile -string $isErrorObject
+
+                                $functionErrors+=$isErrorObject
+                            }
                         }
                     }
                 }
