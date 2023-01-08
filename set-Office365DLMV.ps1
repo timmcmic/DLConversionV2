@@ -106,6 +106,18 @@
         out-logfile -string "External directory object ID utilized for set commands:"
         out-logfile -string $functionExternalDirectoryObjectID
 
+        if ($originalDLConfiguration.mailNickName -ne $NULL)
+        {
+            out-logfile -string "Mail nickname present on premsies -> using this value."
+            $functionMailNickName = $originalDLConfiguration.mailNickName
+            out-logfile -string $functionMailNickName
+        }
+        else 
+        {
+            out-logfile -string "Mail nickname not present on premises -> using Office 365 value."
+            $functionMailNickName = $office365DLConfiguration.alias
+            out-logfile -string $functionMailNickName
+        }
 
         out-logfile -string "Determine if this is a first pass operation."
 
@@ -149,19 +161,6 @@
 
             out-logfile -string "Email address to remove after resetting attributes."
             out-logfile -string $functionEmailAddressToRemove
-
-            if ($originalDLConfiguration.mailNickName -ne $NULL)
-            {
-                out-logfile -string "Mail nickname present on premsies -> using this value."
-                $functionMailNickName = $originalDLConfiguration.mailNickName
-                out-logfile -string $functionMailNickName
-            }
-            else 
-            {
-                out-logfile -string "Mail nickname not present on premises -> using Office 365 value."
-                $functionMailNickName = $office365DLConfiguration.alias
-                out-logfile -string $functionMailNickName
-            }
 
             #With the new temp DL logic - the fast deletion and then immediately moving into set operations sometimes caused cache collisions.
             #This caused the following bulk logic to fail - then the individual set logics would also fail.
