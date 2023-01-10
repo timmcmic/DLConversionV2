@@ -676,6 +676,10 @@ Function Start-Office365GroupMigration
     [int]$forLoopTrigger=1000
     [int]$createMailContactDelay=5
 
+    [string]$functionObjectClassContact = "Contact"
+    [string]$functionObjectClassGroup = "Group"
+    [string]$functionObjectClassDynamic = "msExchDynamicDistributionList"
+
     #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
     #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
 
@@ -2115,8 +2119,6 @@ Function Start-Office365GroupMigration
 
     start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized
 
-    exit
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
@@ -2174,7 +2176,7 @@ Function Start-Office365GroupMigration
                 $forLoopCounter++    
             }
 
-            if (($member.recipientType -ne "Contact") -and ($member.recipientType -ne "Group") -and ($member.recipientType -ne "msExchDynamicDistributionList"))
+            if (($member.recipientType -ne $functionObjectClassContact) -and ($member.recipientType -ne $functionObjectClassGroup) -and ($member.recipientType -ne $functionObjectClassDynamic))
             {
                 out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
@@ -3279,6 +3281,8 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     start-testo365UnifiedGroupDependency -allOffice365ManagedBy $allOffice365ManagedBy -allOffice365SendAsAccess $allOffice365SendAsAccess -allOffice365FullMailboxAccess $allOffice365FullMailboxAccess -allOffice365MailboxFolderPermissions $allOffice365MailboxFolderPermissions
+
+    exit
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
