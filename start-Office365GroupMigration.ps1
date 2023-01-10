@@ -389,13 +389,11 @@ Function Start-Office365GroupMigration
 
     $global:threadNumber=$threadNumberAssigned
 
-    if ($isHealthCheck -eq $FALSE)
-    {
-        $global:logFile=$NULL #This is the global variable for the calculated log file name
-        [string]$global:staticFolderName="\DLMigration\"
-        [string]$global:staticAuditFolderName="\AuditData\"
-        [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
-    }
+
+    $global:logFile=$NULL #This is the global variable for the calculated log file name
+    [string]$global:staticFolderName="\DLMigration\"
+    [string]$global:staticAuditFolderName="\AuditData\"
+    [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
 
     #Define variables for import data - used for importing data into pre-collect.
 
@@ -423,23 +421,19 @@ Function Start-Office365GroupMigration
     [string]$nestedGroupException = "*NestedGroupException*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
-    if ($isHealthCheck -eq $FALSE)
+    #Define the sub folders for multi-threading.
+
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
     {
-        #Define the sub folders for multi-threading.
+        new-statusFile -logFolderPath $logFolderPath
 
-        [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
-
-        #If multi threaded - the log directory needs to be created for each thread.
-        #Create the log folder path for status before changing the log folder path.
-
-        if ($totalThreadCount -gt 0)
-        {
-            new-statusFile -logFolderPath $logFolderPath
-
-            $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
-        }
-    }
-    
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+    }    
 
     #For mailbox folder permissions set these to false.
     #Supported methods for gathering folder permissions require use of the pre-collection.
@@ -693,14 +687,11 @@ Function Start-Office365GroupMigration
 
     #Ensure that no status files exist at the start of the run.
 
-    if ($isHealthCheck -eq $FALSE)
+    if ($totalThreadCount -gt 0)
     {
-        if ($totalThreadCount -gt 0)
+        if ($global:threadNumber -eq 1)
         {
-            if ($global:threadNumber -eq 1)
-            {
-                remove-statusFiles -fullCleanup:$TRUE
-            }
+            remove-statusFiles -fullCleanup:$TRUE
         }
     }
 
