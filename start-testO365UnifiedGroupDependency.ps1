@@ -136,6 +136,150 @@
             out-logfile -string "No on premsies send as rights provided in this function call."
         }
 
+        if ($allOffice365ManagedBy -ne $NULL)
+        {
+            out-logfile -string "Evaluating all Office 365 Managed By entries..."
+
+            foreach ($member in $allOffice365ManagedBy)
+            {
+                out-logfile -string ("Testing member: "+$member.name)
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $member.alias
+                    Name = $member.name
+                    PrimarySMTPAddressOrUPN = $member.primarySMTPAddress
+                    GUID = $member.GUID
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $member.legacyExchangeDN
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="Office 365 Unified Groups are not security enabled.  They may not have managed by rights on other groups.  Remove the managed by right on this object in Office 365 to proceed with converstion to an Office 365 Unified Group."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+        }
+        else 
+        {
+            out-logfile -string "No Office 365 Managed By objects were submitted for evaluation this function call."
+        }
+
+        if ($allOffice365SendAsAccess -ne $NULL)
+        {
+            out-logfile -string "Evaluating all Office 365 send as acesss"
+
+            foreach ($member in $allOffice365SendAsAccess)
+            {
+                out-logfile -string ("Testing member: "+$member.Identity)
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $NULL
+                    Name = $member.Identity
+                    PrimarySMTPAddressOrUPN = $NULL
+                    GUID = $NULL
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $NULL
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $NULL
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="An Office 365 Unified Group is not a security principal and may not have send as rights on other objects.  Remove the send as rights from these objects to proceed with Office 365 Unified Group conversion."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+        }
+        else
+        {
+            out-logfile -string "No Office 365 Send As permissions were submitted in this function call for evaluation."
+        }
+
+        if ($allOffice365FullMailboxAccess -ne $NULL)
+        {
+            out-logfile -string "Evaluating all Office 365 full mailbox access."
+
+            foreach ($member in $allOffice365FullMailboxAccess)
+            {
+                out-logfile -string ("Testing member: "+$member.Identity)
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $NULL
+                    Name = $member.Identity
+                    PrimarySMTPAddressOrUPN = $NULL
+                    GUID = $NULL
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $NULL
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $NULL
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="An Office 365 group is not a security principal.  Either remove the full mailbox access rights assigned to the group on this object or do not inclue useCollectedOffice365FullMailboxAccess."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+        }
+
+        if ($allOffice365MailboxFolderPermissions -ne $NULL)
+        {
+            out-logfile -string "Evaluating all Office 365 send as acesss"
+
+            foreach ($member in $allOffice365MailboxFolderPermissions)
+            {
+                out-logfile -string ("Testing member: "+$member.Identity)
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $member.FolderName
+                    Name = $member.Identity
+                    PrimarySMTPAddressOrUPN = $NULL
+                    GUID = $NULL
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $NULL
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $NULL
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="An Office 365 Unified Group is not a security principal.  Remove the folder permissions assigned to the group or do not use the useCollectedOffice365MailboxFolders switch."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+        }
+        else 
+        {
+            out-logfile -string "No Office 365 mailbox folder permissions were submitted for evaluation this function call."
+        }
+
         Out-LogFile -string "END start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
     }

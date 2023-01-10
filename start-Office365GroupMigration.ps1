@@ -2116,6 +2116,10 @@ Function Start-Office365GroupMigration
     start-testo365UnifiedGroupDependency -exchangeDLMembership $exchangeDLMembership -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -allObjectsSendAsNormalized $allObjectsSendAsNormalized
 
     Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
@@ -2168,23 +2172,30 @@ Function Start-Office365GroupMigration
                 $forLoopCounter++    
             }
 
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+            if (($member.recipientType -ne "Contact") -and ($member.recipientType -ne "Group"))
+            {
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
-            try{
-                $isTestError=test-O365Recipient -member $member
+                try{
+                    $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $member
+                        out-logfile -string $member
 
-                    $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
                 }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else
+            {
+                out-logfile -string "Member is a group or contact and is not eligable for testing for Office 365 Unified Group migrations - skipping."
             }
         }
     }
@@ -2389,44 +2400,7 @@ Function Start-Office365GroupMigration
 
     if ($exchangeBypassModerationSMTP.count -gt 0)
     {
-        out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeBypassModerationSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+        out-logfile -string "Office 365 Unified Groups do not accept bypass moderation from senders or members.  Skipping testing."
     }
     else 
     {
@@ -2531,44 +2505,7 @@ Function Start-Office365GroupMigration
 
     if ($allObjectsSendAsAccessNormalized.count -gt 0)
     {
-        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
-
-        foreach ($member in $allObjectsSendAsAccessNormalized)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+        out-logfile -string "Office 365 Unified Groups are not security enabled and may not have send as rights on other objects - skipping testing."
     }
     else 
     {
@@ -3333,6 +3270,16 @@ Function Start-Office365GroupMigration
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    start-testo365UnifiedGroupDependency -allOffice365ManagedBy $allOffice365ManagedBy -allOffice365SendAsAccess $allOffice365SendAsAccess -allOffice365FullMailboxAccess $allOffice365FullMailboxAccess -allOffice365MialboxFolderPermissions $allOffice365MailboxFolderPermissions
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
     #At this time we have validated the on premises pre-requisits for group migration.
