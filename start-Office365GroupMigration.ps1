@@ -3293,8 +3293,6 @@ Function Start-Office365GroupMigration
 
     start-testo365UnifiedGroupDependency -allOffice365ManagedBy $allOffice365ManagedBy -allOffice365SendAsAccess $allOffice365SendAsAccess -allOffice365FullMailboxAccess $allOffice365FullMailboxAccess -allOffice365MailboxFolderPermissions $allOffice365MailboxFolderPermissions
 
-    exit
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
