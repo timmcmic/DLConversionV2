@@ -706,10 +706,7 @@ Function Start-Office365GroupMigration
 
     #Log start of DL migration to the log file.
 
-    if ($isHealthCheck -eq $FALSE)
-    {
-        new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-    }
+    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
     function session-toImport
     {
