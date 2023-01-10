@@ -66,6 +66,21 @@
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
 
+        if ($addManagersAsMembers -eq $TRUE)
+        {
+            out-logfile -string "Administrator has choosen to add managers as members."
+
+            $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP + $exchangeManagedBySMTP
+
+            out-logfile -string "Updated Exchange DL Membership with combined ManagedBy"
+            out-logfile -string $exchangeDLMembershipSMTP
+        }
+        else 
+        {
+            for
+        }
+
+
         if ($exchangeDLMembershipSMTP -ne $NULL)
         {
             out-logfile -string "Evaluating Exchange DL Membership"
