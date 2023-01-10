@@ -53,8 +53,6 @@
             [AllowEmptyCollection()]
             [array]$exchangeSendAsSMTP=$NULL,
             [Parameter(Mandatory=$true)]
-            [string]$groupTypeOverride,
-            [Parameter(Mandatory=$true)]
             $office365DLConfigurationPostMigration,
             [Parameter(Mandatory=$TRUE)]
             $mailOnMicrosoftComDomain,
