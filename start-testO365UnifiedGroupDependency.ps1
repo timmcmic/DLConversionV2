@@ -70,7 +70,7 @@
             {
                 out-logfile -string ("Testing member: "+$member.name)
 
-                if (($member.recipientType -eq $functionObjectClassContact) -and ($member.isAlreadyMigrated -eq $TRUE)
+                if (($member.recipientType -eq $functionObjectClassContact) -and ($member.isAlreadyMigrated -eq $TRUE))
                 {
                     out-logfile -string "Member is a contact associated with a previously migrated group - record as error."
 
