@@ -62,7 +62,12 @@
         {
             out-logfile -string "Creating the distribution group in Office 365."
 
-            $functionDL = new-o365UnifiedGroup -displayname $functionName -errorAction STOP 
+            $previousErrorAction = $ErrorActionPreference
+            $ErrorActionPreference = 'Stop'
+
+            $functionDL = new-o365UnifiedGroup -displayname $functionName
+
+            $ErrorActionPreference = $previousErrorAction 
     
             out-logfile -string $functionDL
         }
