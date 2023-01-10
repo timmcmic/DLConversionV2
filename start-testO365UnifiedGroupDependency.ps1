@@ -94,6 +94,36 @@
             }
         }
 
+        if ($exchangeBypassModerationSMTP -ne $NULL)
+        {
+            out-logfile -string "Evaluating bypass moderation from senders or members of the on premises group."
+
+            foreach ($member in $exchangeBypassModerationSMTP)
+            {
+                out-logfile -string ("Testing member: "+$member.name)
+
+                $member.isError = $TRUE
+                $member.isErrorMessage = "Office 365 Unified Groups do not have BypassModerationFromSendersOrMembers.  To migrate to an Office 365 Unified Group the bypass moderation from senders or members must be cleared."
+
+                $global:preCreateErrors+=$member
+            }
+        }
+
+        if ($allObjectSendAsNormalized -ne $NULL)
+        {
+            out-logfile -string "Evaluating all send as rights discovered on recipient objects on premises.."
+
+            foreach ($member in $allObjectSendAsNormalized)
+            {
+                out-logfile -string ("Testing member: "+$member.name)
+
+                $member.isError = $TRUE
+                $member.isErrorMessage = "In order to retain or mirror send as permissiosn the group must be a security group.  Office 365 Unified Groups are not securtiy groups.  Remove all send as rights for this group on premises to continue converation to an Office 365 Group."
+
+                $global:preCreateErrors+=$member
+            }
+        }
+
         Out-LogFile -string "END start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
     }
