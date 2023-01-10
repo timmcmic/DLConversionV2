@@ -115,6 +115,7 @@
             foreach ($member in $exchangeBypassModerationSMTP)
             {
                 out-logfile -string ("Testing member: "+$member.name)
+                out-logfile -string ("Bypass moderation error - invalid attribute.")
 
                 $member.isError = $TRUE
                 $member.isErrorMessage = "Office 365 Unified Groups do not have BypassModerationFromSendersOrMembers.  To migrate to an Office 365 Unified Group the bypass moderation from senders or members must be cleared."
@@ -134,6 +135,7 @@
             foreach ($member in $allObjectsSendAsAccessNormalized)
             {
                 out-logfile -string ("Testing member: "+$member.name)
+                out-logfile -string ("Send as error - invalid permission.")
 
                 $member.isError = $TRUE
                 $member.isErrorMessage = "In order to retain or mirror send as permissiosn the group must be a security group.  Office 365 Unified Groups are not securtiy groups.  Remove all send as rights for this group on premises to continue converation to an Office 365 Group."
@@ -153,6 +155,7 @@
             foreach ($member in $allOffice365ManagedBy)
             {
                 out-logfile -string ("Testing member: "+$member.name)
+                out-logfile -string "ManagedBy error - invalid permission"
 
                 $functionObject = New-Object PSObject -Property @{
                     Alias = $member.alias
@@ -190,6 +193,7 @@
             foreach ($member in $allOffice365SendAsAccess)
             {
                 out-logfile -string ("Testing member: "+$member.Identity)
+                out-logfile -string "Send as error - invalid."
 
                 $functionObject = New-Object PSObject -Property @{
                     Alias = $NULL
@@ -227,6 +231,7 @@
             foreach ($member in $allOffice365FullMailboxAccess)
             {
                 out-logfile -string ("Testing member: "+$member.Identity)
+                out-logfile -string "Full Mailbox Access Permission Error - invalid permission."
 
                 $functionObject = New-Object PSObject -Property @{
                     Alias = $NULL
@@ -260,6 +265,7 @@
             foreach ($member in $allOffice365MailboxFolderPermissions)
             {
                 out-logfile -string ("Testing member: "+$member.Identity)
+                out-logfile -string "Mailbox Folder Permission Error - invalid permission."
 
                 $functionObject = New-Object PSObject -Property @{
                     Alias = $member.FolderName
