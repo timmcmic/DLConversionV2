@@ -2068,7 +2068,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
-    start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized
+    start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManasgersAsMembers
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"

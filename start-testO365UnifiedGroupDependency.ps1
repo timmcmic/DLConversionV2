@@ -39,6 +39,8 @@
             [Parameter(Mandatory = $false)]
             $exchangeBypassModerationSMTP=$NULL,
             [Parameter(Mandatory = $false)]
+            $exchangeManagedBySMTP=$NULL,
+            [Parameter(Mandatory = $false)]
             $allObjectsSendAsAccessNormalized=$NULL,
             [Parameter(Mandatory = $false)]
             $allOffice365ManagedBy=$NULL,
