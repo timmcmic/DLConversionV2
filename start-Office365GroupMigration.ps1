@@ -2199,7 +2199,18 @@ Function Start-Office365GroupMigration
             }
             else
             {
-                out-logfile -string "Member is a group or contact and is not eligable for testing for Office 365 Unified Group migrations - skipping."
+                if ($member.recipientType -ne $functionObjectClassContact) 
+                {
+                    out-logfile -string "Member is a contact and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
+                elseif ($member.recipientType -ne $functionObjectClassGroup)
+                {
+                    out-logfile -string "Member is a group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
+                elseif ($member.recipientType -ne $functionObjectClassDynamic)
+                {
+                    out-logfile -string "Member is a dynamic group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
             }
         }
     }
