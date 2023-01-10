@@ -66,7 +66,7 @@
         {
             out-logfile -string "Evaluating Exchange DL Membership"
 
-            foreach ($member in $exchangeDLMembership)
+            foreach ($member in $exchangeDLMembershipSMTP)
             {
                 out-logfile -string ("Testing member: "+$member.name)
 
