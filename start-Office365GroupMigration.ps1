@@ -3435,6 +3435,8 @@ Function Start-Office365GroupMigration
         }   
     } while ($stopLoop -eq $false)
 
+    exit
+
     #Now it is time to set the multi valued attributes on the DL in Office 365.
     #Setting these first must occur since moderators have to be established before moderation can be enabled.
 
