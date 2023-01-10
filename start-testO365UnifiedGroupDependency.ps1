@@ -93,6 +93,10 @@
                 }
             }
         }
+        else 
+        {
+            out-logfile -string "No distribution group members were provided on this function call."
+        }
 
         if ($exchangeBypassModerationSMTP -ne $NULL)
         {
@@ -108,6 +112,10 @@
                 $global:preCreateErrors+=$member
             }
         }
+        else
+        {
+            out-logfile -string "No bypass moderation from senders or members supplied in this function call."
+        }
 
         if ($allObjectSendAsNormalized -ne $NULL)
         {
@@ -122,6 +130,10 @@
 
                 $global:preCreateErrors+=$member
             }
+        }
+        else
+        {
+            out-logfile -string "No on premsies send as rights provided in this function call."
         }
 
         Out-LogFile -string "END start-testO365UnifiedGroupDependency"
