@@ -851,8 +851,6 @@ Function Start-Office365GroupMigration
     
     $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
     
-    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
-    
     if ($azureTenantID -ne $NULL)
     {
         $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
