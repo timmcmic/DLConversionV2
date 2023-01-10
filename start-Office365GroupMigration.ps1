@@ -1762,55 +1762,6 @@ Function Start-Office365GroupMigration
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        #First scan is to ensure that any of the groups listed on the managed by objects are still security.
-        #It is possible someone added it to managed by and changed the group type after.
-
-        foreach ($object in $exchangeManagedBySMTP)
-        {
-            #If the objec thas a non-null group type (is a group) and the value of the group type matches none of the secuity group types.
-            #The object is a distribution list - no good.
-
-            if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
-            {
-                $object.isError=$TRUE
-                $object.isErrorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
-                
-                out-logfile -string object
-
-                $global:preCreateErrors+=$object
-
-                out-logfile -string "A distribution list (not security enabled) was found on managed by."
-                out-logfile -string "The group must be converted to security or removed from managed by."
-                out-logfile -string $object.primarySMTPAddressOrUPN
-            }
-
-            #The group is not a distribution list.
-            #If the SMTP object of the managedBy object equals the original group - check to see if an override is found.
-            #If an override of distribution is found - this is not OK since security is required.
-
-            elseif (($object.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution")) 
-            {
-                out-logfile -string "Group type override detected - group has managed by permissions."
-
-                #Group type is not NULL / Group type is security value.
-
-                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
-
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-        
-                    out-logfile -string "A security group has managed by rights on the distribution list."
-                    out-logfile -string "The administrator has specified to override the group type."
-                    out-logfile -string "The group override must be removed or the object removed from managedBY."
-                    out-logfile -string $object.primarySMTPAddressOrUPN
-                }
-            }
-        }
-
         Out-LogFile -string "The following objects are members of the managedBY:"
         
         out-logfile -string $exchangeManagedBySMTP
@@ -3181,10 +3132,6 @@ Function Start-Office365GroupMigration
         {
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
-
-            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3205,10 +3152,6 @@ Function Start-Office365GroupMigration
         {
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3230,10 +3173,6 @@ Function Start-Office365GroupMigration
         {
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $xmlFiles.allOffice365FullMailboxAccessXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3244,10 +3183,6 @@ Function Start-Office365GroupMigration
         {
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $xmlFiles.allOffice365MailboxesFolderPermissionsXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
