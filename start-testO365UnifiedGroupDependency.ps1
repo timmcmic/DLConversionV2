@@ -35,7 +35,7 @@
         Param
         (
             [Parameter(Mandatory = $false)]
-            $exchangeDLMembership=$NULL,
+            $exchangeDLMembershipSMTP=$NULL,
             [Parameter(Mandatory = $false)]
             $exchangeBypassModerationSMTP=$NULL,
             [Parameter(Mandatory = $false)]
@@ -62,7 +62,7 @@
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
 
-        if ($exchangeDLMembership -ne $NULL)
+        if ($exchangeDLMembershipSMTP -ne $NULL)
         {
             out-logfile -string "Evaluating Exchange DL Membership"
 
