@@ -70,7 +70,16 @@
             {
                 out-logfile -string ("Testing member: "+$member.name)
 
-                if ($member.recipientType -eq $functionObjectClassContact)
+                if (($member.recipientType -eq $functionObjectClassContact) -and ($member.isAlreadyMigrated -eq $TRUE)
+                {
+                    out-logfile -string "Member is a contact associated with a previously migrated group - record as error."
+
+                    $member.isError = $true
+                    $member.isErrorMessage = "The contact found in this group is from a previously migrated group.  This would typically mean this was the parent group that had a child DL that was migrated.  Office 365 Groups do not support nested groups.  This contact will need to be removed for migration."  
+
+                    $global:preCreateErrors+=$member
+                }
+                elseif ($member.recipientType -eq $functionObjectClassContact)
                 {
                     out-logfile -string "Member is a contact - record as error."
 
