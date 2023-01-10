@@ -324,6 +324,8 @@ Function Start-Office365GroupMigration
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$addManasgersAsMembers = $false,
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
