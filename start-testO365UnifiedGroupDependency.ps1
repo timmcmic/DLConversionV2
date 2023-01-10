@@ -39,7 +39,7 @@
             [Parameter(Mandatory = $false)]
             $exchangeBypassModerationSMTP=$NULL,
             [Parameter(Mandatory = $false)]
-            $allObjectSendAsNormalized=$NULL,
+            $allObjectsSendAsAccessNormalized=$NULL,
             [Parameter(Mandatory = $false)]
             $allOffice365ManagedBy=$NULL,
             [Parameter(Mandatory = $false)]
@@ -127,11 +127,11 @@
             out-logfile -string "No bypass moderation from senders or members supplied in this function call."
         }
 
-        if ($allObjectSendAsNormalized -ne $NULL)
+        if ($allObjectsSendAsAccessNormalized -ne $NULL)
         {
             out-logfile -string "Evaluating all send as rights discovered on recipient objects on premises.."
 
-            foreach ($member in $allObjectSendAsNormalized)
+            foreach ($member in $allObjectsSendAsAccessNormalized)
             {
                 out-logfile -string ("Testing member: "+$member.name)
 
