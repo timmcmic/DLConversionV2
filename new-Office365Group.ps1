@@ -51,7 +51,7 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN New-Office365DL"
+        Out-LogFile -string "BEGIN New-Office365Group"
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string ("Random DL name: "+$functionName)
@@ -71,7 +71,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        Out-LogFile -string "END New-Office365DL"
+        Out-LogFile -string "END New-Office365Group"
         Out-LogFile -string "********************************************************************************"
 
         return $functionDL
