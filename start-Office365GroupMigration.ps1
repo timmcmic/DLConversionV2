@@ -3472,6 +3472,8 @@ Function Start-Office365GroupMigration
     $stopLoop = $FALSE
     [int]$loopCounter = 0
 
+    exit
+
     do {
         try {
             $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
