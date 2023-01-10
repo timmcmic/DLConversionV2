@@ -534,7 +534,7 @@
                 out-logfile -string $functionRecipients
 
                 try {
-                    set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
+                    set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Error bulk updating RejectMessagesFromSendersOrMembers"
