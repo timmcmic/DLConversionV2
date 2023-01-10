@@ -2110,6 +2110,12 @@ Function Start-Office365GroupMigration
     $telemetryFunctionStartTime = get-universalDateTime
 
     Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    start-testo365UnifiedGroupDependency -exchangeDLMembership $exchangeDLMembership -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -allObjectsSendAsNormalized $allObjectsSendAsNormalized
+
+    Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 

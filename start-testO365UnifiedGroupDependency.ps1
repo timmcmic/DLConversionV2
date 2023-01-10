@@ -52,11 +52,47 @@
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
+        $functionObjectClassContact = "Contact"
+        $functionObjectClassGroup = "Group"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
+
+        if ($exchangeDLMembership -ne $NULL)
+        {
+            out-logfile -string "Evaluating Exchange DL Membership"
+
+            foreach ($member in $exchangeDLMembership)
+            {
+                out-logfile -string ("Testing member: "+$member.name)
+
+                if ($member.recipientType -eq $functionObjectClassContact)
+                {
+                    out-logfile -string "Member is a contact - record as error."
+
+                    $member.isError = $true
+                    $member.isErrorMessage = "Contacts may not be included in an Office 365 Unified Group.  Remove the contact in order to migrate to an Office 365 Unified Group."  
+
+                    $global:preCreateErrors+=$member
+                }
+                elseif ($member.recipientType -eq $functionObjectClassGroup)
+                {
+                    out-logfile -string "Member is a group - record as error."
+
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+
+                    $global:preCreateErrors+=$member
+                }
+                else 
+                {
+                    out-logfile -string "Member is neither a group nor contact - allow the migrate to proceed."
+                }
+            }
+        }
 
         Out-LogFile -string "END start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
