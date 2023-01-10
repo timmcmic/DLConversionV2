@@ -2174,7 +2174,7 @@ Function Start-Office365GroupMigration
                 $forLoopCounter++    
             }
 
-            if (($member.recipientType -ne "Contact") -and ($member.recipientType -ne "Group"))
+            if (($member.recipientType -ne "Contact") -and ($member.recipientType -ne "Group") -and ($member.recipientType -ne "msExchDynamicDistributionList"))
             {
                 out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
