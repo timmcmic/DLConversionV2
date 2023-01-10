@@ -3375,7 +3375,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration=new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
 
             #If we made it this far then the group was created.
 
