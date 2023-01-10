@@ -54,6 +54,7 @@
 
         $functionObjectClassContact = "Contact"
         $functionObjectClassGroup = "Group"
+        $functionObjectClassDynamic = "msExchDynamicDistributionList"
 
         #Start function processing.
 
@@ -84,6 +85,15 @@
 
                     $member.isError = $TRUE
                     $member.isErrorMessage = "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+
+                    $global:preCreateErrors+=$member
+                }
+                elseif ($member.recipientType -eq $functionObjectClassDynamic)
+                {
+                    out-logfile -string "Member is a dynamic group group - record as error."
+
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "Dyanmic Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
 
                     $global:preCreateErrors+=$member
                 }
