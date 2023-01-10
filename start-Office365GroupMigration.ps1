@@ -2115,6 +2115,8 @@ Function Start-Office365GroupMigration
 
     start-testo365UnifiedGroupDependency -exchangeDLMembership $exchangeDLMembership -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -allObjectsSendAsNormalized $allObjectsSendAsNormalized
 
+    exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
