@@ -66,16 +66,7 @@
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
 
-        if ($addManagersAsMembers -eq $TRUE)
-        {
-            out-logfile -string "Administrator has choosen to add managers as members."
-
-            $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP + $exchangeManagedBySMTP
-
-            out-logfile -string "Updated Exchange DL Membership with combined ManagedBy"
-            out-logfile -string $exchangeDLMembershipSMTP
-        }
-        else 
+        if ($exchangeManagedBySMTP -ne $NULL)
         {
             out-logfile -string "Ensure that each manager is a member prior to proceeding."
 
@@ -93,8 +84,14 @@
 
                     $member.isError = $TRUE
                     $member.isErrorMessage = "Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+
+                    $global:preCreateErrors+=$member
                 }
             }
+        }
+        else 
+        {
+            out-logfile -string "No On Premises Managed By objects were submitted for evaluation this function call."
         }
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
