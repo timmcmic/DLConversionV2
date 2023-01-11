@@ -233,15 +233,15 @@ Function Start-Office365GroupMigration
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE -useCollectedOnPremMailboxFolderPermissions:$TRUE -useCollectedOffice365MailboxFolderPermissions:$TRUE -useCollectedOnPremSendAs:$TRUE -useCollectedOnPremFullMailboxAccess:$TRUE -useCollectedOffice365FullMailboxAccess:$TRUE
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE -useCollectedOnPremMailboxFolderPermissions:$TRUE -useCollectedOffice365MailboxFolderPermissions:$TRUE -useCollectedOnPremSendAs:$TRUE -useCollectedOnPremFullMailboxAccess:$TRUE -useCollectedOffice365FullMailboxAccess:$TRUE
 
     #>
 
@@ -363,7 +363,7 @@ Function Start-Office365GroupMigration
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
-    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryEventName = "Start-Office365GroupMigration"
     $telemetryFunctionStartTime=$NULL
     $telemetryFunctionEndTime=$NULL
     [double]$telemetryNormalizeDN=0
@@ -378,7 +378,7 @@ Function Start-Office365GroupMigration
     [boolean]$telemetryError=$FALSE
 
 
-    $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
+    $windowTitle = ("Start-Office365GroupMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
      #Define the status directory.
@@ -800,7 +800,7 @@ Function Start-Office365GroupMigration
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "BEGIN Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
     out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
@@ -5569,7 +5569,7 @@ Function Start-Office365GroupMigration
     disable-allPowerShellSessions
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "END Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
     if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
