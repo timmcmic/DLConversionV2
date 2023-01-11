@@ -69,7 +69,7 @@
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
 
-        if ($$.ParameterSetName -eq $functionFirstPassParameterSetName)
+        if ($PSCmdlet.ParameterSetName -eq $functionFirstPassParameterSetName)
         {
             out-logfile -string "Test managers for count > 1 which is required for migration."
 
