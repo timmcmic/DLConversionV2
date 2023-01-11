@@ -325,7 +325,7 @@ Function Start-Office365GroupMigration
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
-        [boolean]$addManasgersAsMembers = $false,
+        [boolean]$addManagersAsMembers = $false,
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
@@ -1447,61 +1447,6 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
-        {
-            #Resetting error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeDLMembershipSMTP+=$normalizedTest
-                }
-                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeDLMembershipSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the group:"
-        
-        out-logfile -string $exchangeDLMembershipSMTP
-    }
-    else 
-    {
-        out-logFile -string "The distribution group has no members."    
-    }
-
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
 
     Out-LogFile -string "REJECT USERS"
@@ -2028,6 +1973,72 @@ Function Start-Office365GroupMigration
         out-logfile -string $exchangeSendAsSMTP
     }
 
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
+        {
+            #Resetting error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeDLMembershipSMTP+=$normalizedTest
+                }
+                
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($addManagersAsMemebers -eq $TRUE)
+    {
+        out-logfile -string "Migration includes managers as members."
+
+        $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
+    }
+    else 
+    {
+        out-logfile -string "Migration does not automatically include managers as members."
+    }
+
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the group:"
+        
+        out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else 
+    {
+        out-logFile -string "The distribution group has no members."    
+    }
+
     #exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
@@ -2068,7 +2079,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
-    start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManasgersAsMembers
+    start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
