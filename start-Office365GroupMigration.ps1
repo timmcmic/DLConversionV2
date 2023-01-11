@@ -2079,7 +2079,14 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
-    start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers
+    try {
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to test for Office 365 Unified group dependencies."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
@@ -3237,8 +3244,14 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
-    start-testo365UnifiedGroupDependency -allOffice365ManagedBy $allOffice365ManagedBy -allOffice365SendAsAccess $allOffice365SendAsAccess -allOffice365FullMailboxAccess $allOffice365FullMailboxAccess -allOffice365MailboxFolderPermissions $allOffice365MailboxFolderPermissions
-
+    try {
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to test for Office 365 Unified group dependencies."
+        out-logfile -string $_ -isError:$TRUE
+    }
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
