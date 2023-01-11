@@ -2021,17 +2021,6 @@ Function Start-Office365GroupMigration
         }
     }
 
-    if ($addManagersAsMembers -eq $TRUE)
-    {
-        out-logfile -string "Migration includes managers as members."
-
-        $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
-    }
-    else 
-    {
-        out-logfile -string "Migration does not automatically include managers as members."
-    }
-
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
         Out-LogFile -string "The following objects are members of the group:"
@@ -2084,13 +2073,12 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
         out-logfile -string $_ -isError:$TRUE
     }
-
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"

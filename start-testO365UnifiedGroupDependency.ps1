@@ -34,22 +34,24 @@
 
         Param
         (
-            [Parameter(Mandatory = $false)]
-            $exchangeDLMembershipSMTP=$NULL,
-            [Parameter(Mandatory = $false)]
-            $exchangeBypassModerationSMTP=$NULL,
-            [Parameter(Mandatory = $false)]
-            $exchangeManagedBySMTP=$NULL,
-            [Parameter(Mandatory = $false)]
-            $allObjectsSendAsAccessNormalized=$NULL,
-            [Parameter(Mandatory = $false)]
-            $allOffice365ManagedBy=$NULL,
-            [Parameter(Mandatory = $false)]
-            $allOffice365SendAsAccess=$NULL,
-            [Parameter(Mandatory = $false)]
-            $allOffice365FullMailboxAccess=$NULL,
-            [Parameter(Mandatory = $false)]
-            $allOffice365MailboxFolderPermissions=$NULL
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            $exchangeDLMembershipSMTP,
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            $exchangeBypassModerationSMTP,
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            $exchangeManagedBySMTP,
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            $allObjectsSendAsAccessNormalized,
+            [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            $allOffice365ManagedBy,
+            [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            $allOffice365SendAsAccess,
+            [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            $allOffice365FullMailboxAccess,
+            [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            $allOffice365MailboxFolderPermissions,
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [boolean]$addManagersAsMembers
         )
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -58,7 +60,8 @@
         $functionObjectClassGroup = "Group"
         $functionObjectClassDynamic = "msExchDynamicDistributionList"
         $functionCoManagers = "msExchCoManagedByLink"
-        $functionManagers = 
+        $functionManagers = "managedBy"
+        $functionFirstPassParameterSetName = "FirstPass"
 
         #Start function processing.
 
@@ -66,32 +69,82 @@
         Out-LogFile -string "BEGIN start-testO365UnifiedGroupDependency"
         Out-LogFile -string "********************************************************************************"
 
-        if ($exchangeManagedBySMTP -ne $NULL)
+        if ($$.ParameterSetName -eq $functionFirstPassParameterSetName)
         {
-            out-logfile -string "Ensure that each manager is a member prior to proceeding."
+            out-logfile -string "Test managers for count > 1 which is required for migration."
 
-            foreach ($member in $exchangeManagedBySMTP)
+            if (($exchangeManagedBySMTP -eq $NULL) -or ($exchangeManagedBySMTP.count -eq 0))
             {
-                out-logfile -string ("Testing manager in members: "+$member.primarySMTPAddressOrUPN)
+                out-logfile -string "A manager attribute is required on premises.  Managers is the source of owners for Unified Group."
 
-                if ($exchangeDLMembershipSMTP.primarySMTPAddressOrUPN -contains $member.primarySMTPAddressOrUPN)
-                {
-                    out-logfile -string "The manager / owner is a member."
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $null
+                    Name = $null
+                    PrimarySMTPAddressOrUPN = $null
+                    GUID = $null
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $null
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $null
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
                 }
-                else 
-                {
-                    out-logfile -string "Manager is not a member of the DL - error."
 
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
-
-                    $global:preCreateErrors+=$member
-                }
+                $global:preCreateErrors+=$member
+            }
+            else 
+            {
+                out-logfile -string "There is at least one manager of the on premises group - proceed with further verification."
             }
         }
         else 
         {
-            out-logfile -string "No On Premises Managed By objects were submitted for evaluation this function call."
+            out-logfile -string "This is not the first pass function call - manager evaluation skipped."
+        }
+
+        if ($addManagersAsMembers -eq $FALSE)
+        {
+            if ($exchangeManagedBySMTP -ne $NULL)
+            {
+                out-logfile -string "Ensure that each manager is a member prior to proceeding."
+
+                foreach ($member in $exchangeManagedBySMTP)
+                {
+                    out-logfile -string ("Testing manager in members: "+$member.primarySMTPAddressOrUPN)
+
+                    if ($exchangeDLMembershipSMTP.primarySMTPAddressOrUPN -contains $member.primarySMTPAddressOrUPN)
+                    {
+                        out-logfile -string "The manager / owner is a member."
+                    }
+                    else 
+                    {
+                        out-logfile -string "Manager is not a member of the DL - error."
+
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+
+                        $global:preCreateErrors+=$member
+                    }
+                }
+            }
+            else 
+            {
+                out-logfile -string "No On Premises Managed By objects were submitted for evaluation this function call."
+            }
+        }
+        else
+        {
+            out-logfile -string "Adding managers to membership for evalution."
+
+            $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
         }
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
