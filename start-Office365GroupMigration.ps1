@@ -3315,9 +3315,9 @@ Function Start-Office365GroupMigration
 
     if ($addManagersAsMembers -eq $TRUE)
     {
-        out-logfile -string "Addint managers as members."
+        out-logfile -string "Adding managers as members."
 
-        $exchangeDLMembershipSMTP =+ $exchangeManagedBySMTP
+        $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
 
         out-logfile -string $exchangeDLMembershipSMTP
 
