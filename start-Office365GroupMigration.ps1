@@ -1402,11 +1402,14 @@ Function Start-Office365GroupMigration
         }
     }
 
-    out-logfile -string $azureADDLConfiguration
+    if ($azureAADLConfiguration -ne $NULL)
+    {
+        out-logfile -string $azureADDLConfiguration
 
-    out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+        out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
 
-    out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
+        out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
+    }
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
