@@ -3315,17 +3315,15 @@ Function Start-Office365GroupMigration
 
     if ($addManagersAsMembers -eq $TRUE)
     {
-        out-logfile -string "Adding managers as members."
+        out-logfile -string "Attempting to add managers to the members array if they are not already there."
 
         $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
 
         out-logfile -string $exchangeDLMembershipSMTP
 
-        out-logfile -string "Managers may also be members - ensure list is unique"
+        out-lofile -string "Ensuring that the membership array is unique as it may contain overlap with managers."
 
-        $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP.primarySMTPAddressOrUPN | select-object -unique
-
-        out-logfile -string $exchangeDLMembershipSMTP
+        $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | sort-object -unique -property PrimarySMTPAddressOrUPN
     }
     else
     {
