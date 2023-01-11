@@ -35,22 +35,31 @@
         Param
         (
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
             $exchangeDLMembershipSMTP,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
             $exchangeBypassModerationSMTP,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
             $exchangeManagedBySMTP,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
             $allObjectsSendAsAccessNormalized,
             [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            [AllowNull()]
             $allOffice365ManagedBy,
             [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            [AllowNull()]
             $allOffice365SendAsAccess,
             [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            [AllowNull()]
             $allOffice365FullMailboxAccess,
             [Parameter(Mandatory = $true , ParameterSetName = 'SecondPass')]
+            [AllowNull()]
             $allOffice365MailboxFolderPermissions,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
             [boolean]$addManagersAsMembers
         )
 
