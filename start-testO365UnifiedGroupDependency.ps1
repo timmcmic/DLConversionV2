@@ -77,9 +77,25 @@
         }
         else 
         {
-            for
-        }
+            out-logfile -string "Ensure that each manager is a member prior to proceeding."
 
+            foreach ($member in $exchangeManagedBySMTP)
+            {
+                out-logfile -string ("Testing manager in members: "+$member.primarySMTPAddressOrUPN)
+
+                if ($exchangeDLMembershipSMTP.primarySMTPAddressOrUPN -contains $member.primarySMTPAddressOrUPN)
+                {
+                    out-logfile -string "The manager / owner is a member."
+                }
+                else 
+                {
+                    out-logfile -string "Manager is not a member of the DL - error."
+
+                    $member.isError = $TRUE
+                    $member.isErrorMessage = "Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+                }
+            }
+        }
 
         if ($exchangeDLMembershipSMTP -ne $NULL)
         {
