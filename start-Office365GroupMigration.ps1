@@ -3942,12 +3942,15 @@ Function Start-Office365GroupMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
                 $stopLoop = $TRUE
             }
             else 
             {
                 start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
- 
+                
+                out-logfile -string $_
+
                 $loopCounter = $loopCounter+1 
             }
         }
@@ -3975,11 +3978,14 @@ Function Start-Office365GroupMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
                 $stopLoop = $TRUE
             }
             else 
             {
                 start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                out-logfile -string $_
  
                 $loopCounter = $loopCounter+1 
             }
@@ -4008,11 +4014,14 @@ Function Start-Office365GroupMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
                 $stopLoop = $TRUE
             }
             else 
             {
                 start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                out-logfile -string $_
  
                 $loopCounter = $loopCounter+1 
             }
