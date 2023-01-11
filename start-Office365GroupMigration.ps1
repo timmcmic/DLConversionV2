@@ -543,6 +543,8 @@ Function Start-Office365GroupMigration
         office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
         office365DLConfigurationPostMigrationXML = @{ "Value" =  "office365DLConfigurationPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
         office365DLMembershipPostMigrationXML = @{ "Value" =  "office365DLMembershipPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
+        office365DLOwnersPostMigrationXML = @{ "Value" =  "office365DLOwnersPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL owners post migration"}
+        office365DLSubscribersPostMigrationXML = @{ "Value" =  "office365DLSubscribersPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL owners post migration"}
         exchangeDLMembershipSMTPXML = @{ "Value" =  "exchangeDLMemberShipSMTPXML" ; "Description" = "XML file that holds the SMTP addresses of the on premises DL membership"}
         exchangeRejectMessagesSMTPXML = @{ "Value" =  "exchangeRejectMessagesSMTPXML" ; "Description" = "XML file that holds the Reject Messages From Senders or Members property of the on premises DL"}
         exchangeAcceptMessagesSMTPXML = @{ "Value" =  "exchangeAcceptMessagesSMTPXML" ; "Description" = "XML file that holds the Accept Messages from Senders or Members property of the on premises DL"}
@@ -644,6 +646,8 @@ Function Start-Office365GroupMigration
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
+    $office365DLOwnersPostMigration=$NULL #This holds the Office 365 DL owners information post migration.
+    $office365DLSubscribersPostMigration=$NULL #This holds the Office 365 DL subscribers information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
 
     #Declare some variables for string processing as items move around.
@@ -3471,7 +3475,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
+            set-Office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
             $stopLoop=$TRUE
         }
         catch {
@@ -3497,7 +3501,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
@@ -3786,7 +3790,7 @@ Function Start-Office365GroupMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup 
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup 
 
             $stopLoop = $TRUE
         }
@@ -3813,7 +3817,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
@@ -3849,7 +3853,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
+            set-Office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
             $stopLoop=$TRUE
         }
         catch {
@@ -3877,7 +3881,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
@@ -3912,14 +3916,80 @@ Function Start-Office365GroupMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedMembers $TRUE errorAction STOP
 
             #Membership obtained - export.
 
             out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string office365DLMembershipPostMigration
+            out-logfile -string $office365DLMembershipPostMigration
 
-            out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+            out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+
+            #Exports complete - stop loop
+
+            $stopLoop=$TRUE
+        }
+        catch{
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+ 
+                $loopCounter = $loopCounter+1 
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try{
+            $office365DLOwnersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedOwners $TRUE errorAction STOP
+
+            #Membership obtained - export.
+
+            out-logFile -string "Write the new DL membership to XML."
+            out-logfile -string $office365DLOwnersPostMigration
+
+            out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+
+            #Exports complete - stop loop
+
+            $stopLoop=$TRUE
+        }
+        catch{
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+ 
+                $loopCounter = $loopCounter+1 
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try{
+            $office365DLSubscribersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedSubscribers $TRUE errorAction STOP
+
+            #Membership obtained - export.
+
+            out-logFile -string "Write the new DL membership to XML."
+            out-logfile -string $office365DLSubscribersPostMigration
+
+            out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
 
             #Exports complete - stop loop
 

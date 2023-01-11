@@ -4066,9 +4066,9 @@ Function Start-DistributionListMigration
             #Membership obtained - export.
 
             out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string office365DLMembershipPostMigration
+            out-logfile -string $office365DLMembershipPostMigration
 
-            out-xmlFile -itemToExport office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+            out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
 
             #Exports complete - stop loop
 
