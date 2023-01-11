@@ -49,9 +49,7 @@
             [Parameter(Mandatory = $false)]
             $allOffice365FullMailboxAccess=$NULL,
             [Parameter(Mandatory = $false)]
-            $allOffice365MailboxFolderPermissions=$NULL,
-            [Parameter(Mandatory = $false)]
-            $addManagersAsMembers = $FALSE
+            $allOffice365MailboxFolderPermissions=$NULL
         )
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)

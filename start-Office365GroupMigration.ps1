@@ -2017,7 +2017,7 @@ Function Start-Office365GroupMigration
         }
     }
 
-    if ($addManagersAsMemebers -eq $TRUE)
+    if ($addManagersAsMembers -eq $TRUE)
     {
         out-logfile -string "Migration includes managers as members."
 
@@ -2080,7 +2080,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
@@ -3245,13 +3245,13 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
         out-logfile -string $_ -isError:$TRUE
     }
-    
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
