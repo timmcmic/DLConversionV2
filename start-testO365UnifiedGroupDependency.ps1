@@ -63,7 +63,7 @@
             [boolean]$addManagersAsMembers,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
             [AllowNull()]
-            [string]$recipientTypeDetails
+            $originalDLConfiguration
         )
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -86,7 +86,7 @@
         {
             out-logfile -string "Ensuring that the group is not a room distribution list."
 
-            if ($recipientTypeDetails -eq $functionRoomRecipientTypeDetails)
+            if ($originalDLConfiguration.msExchRecipientTypeDetails -eq $functionRoomRecipientTypeDetails)
             {
                 out-logfile -string "Generate error - room distribution list found."
 
