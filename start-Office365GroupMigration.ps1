@@ -3321,9 +3321,11 @@ Function Start-Office365GroupMigration
 
         out-logfile -string $exchangeDLMembershipSMTP
 
-        out-lofile -string "Ensuring that the membership array is unique as it may contain overlap with managers."
+        out-logfile -string "Ensuring that the membership array is unique as it may contain overlap with managers."
 
         $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | sort-object -unique -property PrimarySMTPAddressOrUPN
+
+        out-logfile -string $exchangeDLMembershipSMTP
     }
     else
     {
