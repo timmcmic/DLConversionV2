@@ -57,6 +57,8 @@
         $functionObjectClassContact = "Contact"
         $functionObjectClassGroup = "Group"
         $functionObjectClassDynamic = "msExchDynamicDistributionList"
+        $functionCoManagers = "msExchCoManagedByLink"
+        $functionManagers = 
 
         #Start function processing.
 
@@ -102,30 +104,66 @@
 
                 if (($member.recipientType -eq $functionObjectClassContact) -and ($member.isAlreadyMigrated -eq $TRUE))
                 {
-                    out-logfile -string "Member is a contact associated with a previously migrated group - record as error."
+                    if (($member.OnPremADAttribute -eq $functionCoManagers) -or ($member.OnPremADAttribute -eq $functionManagers))
+                    {
+                        out-logfile -string "Member is a contact associated with a previously migrated group and is a group manager added to membership - record as error."
 
-                    $member.isError = $true
-                    $member.isErrorMessage = "The contact found in this group is from a previously migrated group.  This would typically mean this was the parent group that had a child DL that was migrated.  Office 365 Groups do not support nested groups.  This contact will need to be removed for migration."  
+                        $member.isError = $true
+                        $member.isErrorMessage = "The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
 
-                    $global:preCreateErrors+=$member
+                        $global:preCreateErrors+=$member
+                    }
+                    else 
+                    {
+                        out-logfile -string "Member is a contact associated with a previously migrated group - record as error."
+
+                        $member.isError = $true
+                        $member.isErrorMessage = "The contact found in this group is from a previously migrated group.  This would typically mean this was the parent group that had a child DL that was migrated.  Office 365 Groups do not support nested groups.  This contact will need to be removed for migration."  
+
+                        $global:preCreateErrors+=$member
+                    }
                 }
                 elseif ($member.recipientType -eq $functionObjectClassContact)
                 {
-                    out-logfile -string "Member is a contact - record as error."
+                    if (($member.OnPremADAttribute -eq $functionCoManagers) -or ($member.OnPremADAttribute -eq $functionManagers))
+                    {
+                        out-logfile -string "Member is a contact added to members with -addManagersAsMembers - record as error"
 
-                    $member.isError = $true
-                    $member.isErrorMessage = "Contacts may not be included in an Office 365 Unified Group.  Remove the contact in order to migrate to an Office 365 Unified Group."  
+                        $member.isError = $true
+                        $member.isErrorMessage = "The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
 
-                    $global:preCreateErrors+=$member
+                        $global:preCreateErrors+=$member
+                    }
+                    else
+                    {
+                        out-logfile -string "Member is a contact - record as error."
+
+                        $member.isError = $true
+                        $member.isErrorMessage = "Contacts may not be included in an Office 365 Unified Group.  Remove the contact in order to migrate to an Office 365 Unified Group."  
+
+                        $global:preCreateErrors+=$member
+                    }
                 }
                 elseif ($member.recipientType -eq $functionObjectClassGroup)
                 {
-                    out-logfile -string "Member is a group - record as error."
+                    if (($member.OnPremADAttribute -eq $functionCoManagers) -or ($member.OnPremADAttribute -eq $functionManagers))
+                    {
+                        out-logfile -string "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group.  Group was added as a member by -addManagersAsMembers."
 
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+                        $member.isError = $true
+                        $member.isErrorMessage = "Groups may not be members of Office 365 Unified Groups.  This group was added as a member becuase it is a manager and the migration used -addManagersAsMembers.  Remove the group from managers."  
 
-                    $global:preCreateErrors+=$member
+                        $global:preCreateErrors+=$member
+                    }
+                    else 
+                    {
+                        out-logfile -string "Member is a group - record as error."
+
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+
+                        $global:preCreateErrors+=$member
+                    }
                 }
                 elseif ($member.recipientType -eq $functionObjectClassDynamic)
                 {
