@@ -2776,6 +2776,10 @@ Function Start-Office365GroupMigration
 
         out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $xmlFiles.allGroupsSendAsNormalizedXML.value
     }
+    else 
+    {
+        $allObjectsSendAsAccessNormalized=@()
+    }
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
     {
