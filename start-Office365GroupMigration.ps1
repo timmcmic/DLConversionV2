@@ -3211,6 +3211,17 @@ Function Start-Office365GroupMigration
     else 
     {
         out-logfile -string "Administrator opted out of recording Office 365 dependencies."
+        $allOffice365MailboxFolderPermissions=@() 
+        $allOffice365FullMailboxAccess=@()  
+        $allOffice365SendAsAccessOnGroup=@()
+        $allOffice365SendAsAccess=@()  
+        $allOffice365ForwardingAddress=@() 
+        $allOffice365ManagedBy=@() 
+        $allOffice365GrantSendOnBehalfTo=@()  
+        $allOffice365BypassModeration=@()
+        $allOffice365Reject=@() 
+        $allOffice365Accept=@()  
+        $allOffice365MemberOf=@()
     }
 
     $telemetryFunctionEndTime = get-universalDateTime
