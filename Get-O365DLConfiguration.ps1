@@ -95,7 +95,7 @@
 
             try
             {
-                $functionDLConfiguration = get-unifiedGroup -identity $groupSMTPAddress -includeAllProperties -errorAction STOP
+                $functionDLConfiguration = get-o365UnifiedGroup -identity $groupSMTPAddress -includeAllProperties -errorAction STOP
             }
             catch
             {
@@ -104,7 +104,6 @@
         }
         
         
-
         Out-LogFile -string "END GET-O365DLCONFIGURATION"
         Out-LogFile -string "********************************************************************************"
         
