@@ -3925,7 +3925,7 @@ Function Start-Office365GroupMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedMembers $TRUE errorAction STOP
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedMembers $TRUE -errorAction STOP
 
             #Membership obtained - export.
 
@@ -3961,7 +3961,7 @@ Function Start-Office365GroupMigration
 
     do {
         try{
-            $office365DLOwnersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedOwners $TRUE errorAction STOP
+            $office365DLOwnersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedOwners $TRUE -errorAction STOP
 
             #Membership obtained - export.
 
@@ -3997,7 +3997,7 @@ Function Start-Office365GroupMigration
 
     do {
         try{
-            $office365DLSubscribersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedSubscribers $TRUE errorAction STOP
+            $office365DLSubscribersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedSubscribers $TRUE -errorAction STOP
 
             #Membership obtained - export.
 
