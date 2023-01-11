@@ -98,7 +98,7 @@
                     isErrorMessage="No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
                 }
 
-                $global:preCreateErrors+=$member
+                $global:preCreateErrors+=$functionObject
             }
             else 
             {
