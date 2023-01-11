@@ -3320,6 +3320,10 @@ Function Start-Office365GroupMigration
         $exchangeDLMembershipSMTP =+ $exchangeManagedBySMTP
 
         out-logfile -string $exchangeDLMembershipSMTP
+
+        out-logfile -string "Managers may also be members - ensure list is unique"
+
+        $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | select-object -unique
     }
     else
     {
