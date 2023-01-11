@@ -60,7 +60,10 @@
             $allOffice365MailboxFolderPermissions,
             [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
             [AllowNull()]
-            [boolean]$addManagersAsMembers
+            [boolean]$addManagersAsMembers,
+            [Parameter(Mandatory = $true , ParameterSetName = 'FirstPass')]
+            [AllowNull()]
+            [string]$recipientTypeDetails
         )
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -71,6 +74,7 @@
         $functionCoManagers = "msExchCoManagedByLink"
         $functionManagers = "managedBy"
         $functionFirstPassParameterSetName = "FirstPass"
+        $functionRoomRecipientTypeDetails = "268435456"
 
         #Start function processing.
 
@@ -80,6 +84,41 @@
 
         if ($PSCmdlet.ParameterSetName -eq $functionFirstPassParameterSetName)
         {
+            out-logfile -string "Ensuring that the group is not a room distribution list."
+
+            if ($recipientTypeDetails -eq $functionRoomRecipientTypeDetails)
+            {
+                out-logfile -string "Generate error - room distribution list found."
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $null
+                    Name = $null
+                    PrimarySMTPAddressOrUPN = $null
+                    GUID = $null
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $null
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = $null
+                    DN = $null
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="The distribution list requested for migration to an Office 365 Unified Group is a room distribution list.  Room distribution lists cannot be converted to Office 365 Unified Groups."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+            else
+            {
+                out-logfile -string "Distribution list to be migrated is not a room distribution group."
+            }
+
+
             out-logfile -string "Test managers for count > 1 which is required for migration."
 
             if (($exchangeManagedBySMTP -eq $NULL) -or ($exchangeManagedBySMTP.count -eq 0))
