@@ -4016,6 +4016,8 @@ Function Start-Office365GroupMigration
 
     out-logfile -string ("Time elapsed to fully create Office 365 DL: "+$telemetryCreateOffice365DL.toString())
 
+    exit
+
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
     #The group as this point sits in the non-sync OU.  This was to service the deletion.
