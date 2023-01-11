@@ -29,7 +29,9 @@
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress,
             [Parameter(Mandatory = $false)]
-            [string]$groupTypeOverride=""
+            [string]$groupTypeOverride="",
+            [Parameter(Mandatory = $false)]
+            [boolean]$isUnifiedGroup=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -49,39 +51,59 @@
         Out-LogFile -string "********************************************************************************"
 
         #Get the recipient using the exchange online powershell session.
+
+        if ($isUnifiedGroup -eq $false)
+        {
+            out-logfile -string "Group is not unified use standard DL commands."
+
+            try 
+            {
+                if ($groupTypeOverride -eq "")
+                {
+                    Out-LogFile -string "Using Exchange Online to capture the distribution group."
+
+                    $functionDLConfiguration=get-O365DistributionGroup -identity $groupSMTPAddress -errorAction STOP
+                
+                    Out-LogFile -string "Original DL configuration found and recorded."
+                }
+                elseif ($groupTypeOverride -eq "Security")
+                {
+                    Out-logfile -string "Using Exchange Online to capture distribution group with filter security"
+
+                    $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailSecurity -errorAction STOP
+
+                    out-logfile -string "Original DL configuration found and recorded by filter security."
+                }
+                elseif ($groupTypeOverride -eq "Distribution")
+                {
+                    out-logfile -string "Using Exchange Online to capture distribution group with filter distribution."
+
+                    $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailDistribution
+
+                    out-logfile -string "Original DL configuration found and recorded by filter distribution."
+                }
+                
+            }
+            catch 
+            {
+                Out-LogFile -string $_ -isError:$TRUE
+            }
+        }
+        else
+        {
+            out-logfile -string "Group is unified use unified group commands."
+
+            try
+            {
+                $functionDLConfiguration = get-unifiedGroup -identity $groupSMTPAddress -includeAllProperties -errorAction STOP
+            }
+            catch
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
         
-        try 
-        {
-            if ($groupTypeOverride -eq "")
-            {
-                Out-LogFile -string "Using Exchange Online to capture the distribution group."
-
-                $functionDLConfiguration=get-O365DistributionGroup -identity $groupSMTPAddress -errorAction STOP
-            
-                Out-LogFile -string "Original DL configuration found and recorded."
-            }
-            elseif ($groupTypeOverride -eq "Security")
-            {
-                Out-logfile -string "Using Exchange Online to capture distribution group with filter security"
-
-                $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailSecurity -errorAction STOP
-
-                out-logfile -string "Original DL configuration found and recorded by filter security."
-            }
-            elseif ($groupTypeOverride -eq "Distribution")
-            {
-                out-logfile -string "Using Exchange Online to capture distribution group with filter distribution."
-
-                $functionDLConfiguration=get-o365DistributionGroup -identity $groupSMTPAddress -RecipientTypeDetails $functionMailDistribution
-
-                out-logfile -string "Original DL configuration found and recorded by filter distribution."
-            }
-            
-        }
-        catch 
-        {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
+        
 
         Out-LogFile -string "END GET-O365DLCONFIGURATION"
         Out-LogFile -string "********************************************************************************"

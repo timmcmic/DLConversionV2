@@ -3312,6 +3312,8 @@ Function Start-Office365GroupMigration
         }  
     }
 
+    #If we're only doing health checking return to the health checking function.
+
     if ($isHealthCheck -eq $TRUE)
     {
         return
@@ -3431,11 +3433,9 @@ Function Start-Office365GroupMigration
     $stopLoop = $FALSE
     [int]$loopCounter = 0
 
-    exit
-
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup:$TRUE -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
