@@ -3311,6 +3311,21 @@ Function Start-Office365GroupMigration
         return
     }
 
+    out-logfile "All Unified Group pre-reqs passed - determine if managers are added to owners."
+
+    if ($addManagersAsMembers -eq $TRUE)
+    {
+        out-logfile -string "Addint managers as members."
+
+        $exchangeDLMembershipSMTP =+ $exchangeManagedBySMTP
+
+        out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else
+    {
+        out-logfile -string "Managers not automatically added as members."
+    }
+
     #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
