@@ -61,8 +61,7 @@
             [Parameter(Mandatory=$TRUE)]
             $allOffice365SendAsAccessOnGroup=$NULL,
             [Parameter(Mandatory=$FALSE)]
-            [boolean]$isFirstAttempt=$false
-            $allOffice365SendAsAccessOnGroup=$NULL,
+            [boolean]$isFirstAttempt=$false,
             [Parameter(Mandatory=$true)]
             [psCredential]$exchangeOnlineCredential
         )
