@@ -62,6 +62,9 @@
             $allOffice365SendAsAccessOnGroup=$NULL,
             [Parameter(Mandatory=$FALSE)]
             [boolean]$isFirstAttempt=$false
+            $allOffice365SendAsAccessOnGroup=$NULL,
+            [Parameter(Mandatory=$true)]
+            [psCredential]$exchangeOnlineCredential
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -386,6 +389,32 @@
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove temporary SMTP address of group."
                     ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
+                    ErrorMessageDetail = $_
+                }
+
+                out-logfile -string $isErrorObject
+
+                $functionErrors+=$isErrorObject
+            }
+
+            try
+            {
+                out-logfile -string "Remove the migration user from owners which is added by default."
+                
+                remove-o365UnifiedGroupLinks -identity $exchangeOnlineCredential.userName -linkType "Owner" -errorAction STOP
+            }
+            catch 
+            {
+                out-logfile -string "Unable to remove the migration user as an owner."
+                out-logfile -string $_
+
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                    Alias = $functionMailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Unable to remove the migration administrator as an owner of the group."
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manaual removal from owners required.")
                     ErrorMessageDetail = $_
                 }
 
