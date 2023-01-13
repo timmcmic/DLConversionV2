@@ -69,7 +69,7 @@
             }
             catch 
             {
-                Out-LogFile -string $_ -isError:$TRUE
+                Out-LogFile -string $_ 
             }
         }
         else 
@@ -88,7 +88,7 @@
                 }
                 catch 
                 {
-                    Out-LogFile -string $_ -isError:$TRUE
+                    Out-LogFile -string $_ 
                 }
             }
             else
@@ -108,7 +108,7 @@
                 }
                 catch 
                 {
-                    Out-LogFile -string $_ -isError:$TRUE
+                    Out-LogFile -string $_ 
                 }
             }
             else
@@ -128,7 +128,7 @@
                 }
                 catch 
                 {
-                    Out-LogFile -string $_ -isError:$TRUE
+                    Out-LogFile -string $_ 
                 }
             }
             else
