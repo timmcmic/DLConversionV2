@@ -400,7 +400,7 @@
             {
                 out-logfile -string "Remove the migration user from owners which is added by default."
                 
-                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Owner" -links $exchangeOnlineCredential.userName -errorAction STOP
+                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Owner" -links $exchangeOnlineCredential.userName -confirm:$FALSE -errorAction STOP
             }
             catch 
             {
