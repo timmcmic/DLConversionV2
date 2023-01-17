@@ -536,6 +536,8 @@ Function Convert-Office365DLtoUnifiedGroup
     [int]$forLoopTrigger=1000
     [int]$createMailContactDelay=5
 
+    [boolean]$allowNonSyncedGroup = $FALSE
+
     #Ensure that no status files exist at the start of the run.
 
     if ($isHealthCheck -eq $FALSE)
@@ -1105,29 +1107,9 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
 
-    exit #Tim
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
-
-    out-logfile -string "Begin accepted domain validation."
-
-    try {
-        test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
-    }
-    catch {
-        out-logfile $_
-        out-logfile -string "Unable to capture accepted domains for validation." -isError:$TRUE
-    }
-
-    try {
-        test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
-    }
 
     try {
         $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
@@ -1135,380 +1117,6 @@ Function Convert-Office365DLtoUnifiedGroup
     catch {
         out-logfile -string $_
         out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
-    }
-
-    out-logfile -string "Being validating all distribution list members."
-    
-    if ($exchangeDLMembershipSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeDLMembershipSMTP)
-        {
-            #Reset the failure.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            if (($member.recipientType -ne $functionObjectClassContact) -and ($member.recipientType -ne $functionObjectClassGroup) -and ($member.recipientType -ne $functionObjectClassDynamic))
-            {
-                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-                try{
-                    $isTestError=test-O365Recipient -member $member
-
-                    if ($isTestError -eq "Yes")
-                    {
-                        $member.isError = $TRUE
-                        $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                        out-logfile -string $member
-
-                        $global:testOffice365Errors += $member
-                    }
-                }
-                catch{
-                    out-logfile -string $_ -isError:$TRUE
-                }
-            }
-            else
-            {
-                if ($member.recipientType -ne $functionObjectClassContact) 
-                {
-                    out-logfile -string "Member is a contact and is not eligable for testing for Office 365 Unified Group migrations - skipping"
-                }
-                elseif ($member.recipientType -ne $functionObjectClassGroup)
-                {
-                    out-logfile -string "Member is a group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
-                }
-                elseif ($member.recipientType -ne $functionObjectClassDynamic)
-                {
-                    out-logfile -string "Member is a dynamic group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
-                }
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no DL members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all members with reject rights."
-
-    if ($exchangeRejectMessagesSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL reject messages is in Office 365."
-
-        foreach ($member in $exchangeRejectMessagesSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no reject members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all members with accept rights."
-
-    if ($exchangeAcceptMessagesSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeAcceptMessagesSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-            
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no accept members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all managed by members."
-
-    if ($exchangeManagedBySMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeManagedBySMTP)
-        {
-            #Reset Error Variable.
-
-            $isTestError="No"
-            
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no managed by members to evaluate."    
-    }
-
-    out-logfile -string "Being evaluating all moderated by members."
-
-    if ($exchangeModeratedBySMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeModeratedBySMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no moderated by members to evaluate."    
-    }
-
-    out-logfile -string "Being evaluating all bypass moderation members."
-
-    if ($exchangeBypassModerationSMTP.count -gt 0)
-    {
-        out-logfile -string "Office 365 Unified Groups do not accept bypass moderation from senders or members.  Skipping testing."
-    }
-    else 
-    {
-        out-logfile -string "There were no bypass moderation members to evaluate."    
-    }
-
-    out-logfile -string "Begin evaluation of all grant send on behalf to members."
-
-    if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
-        {
-            $isTestError = "No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no grant send on behalf to members to evaluate."    
-    }
-
-    out-logfile -string "Begin evaluation all members with send as rights."
-
-    if ($exchangeSendAsSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL send as is in Office 365."
-
-        foreach ($member in $exchangeSendAsSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no members with send as rights."    
-    }
-
-    out-logfile -string "Begin evaluation of groups on premises that the group to be migrated has send as rights on."
-
-    if ($allObjectsSendAsAccessNormalized.count -gt 0)
-    {
-        out-logfile -string "Office 365 Unified Groups are not security enabled and may not have send as rights on other objects - skipping testing."
-    }
-    else 
-    {
-        out-logfile -string "There were no members with send as rights."    
     }
 
     Out-LogFile -string "********************************************************************************"
@@ -1529,279 +1137,19 @@ Function Convert-Office365DLtoUnifiedGroup
 
     $telemetryFunctionStartTime = get-universalDateTime
 
-    out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
-
-    #Start with groups this DL is a member of remaining on premises.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value))
-        {
-            try 
-            {
-                $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsMemberOf -ne $NULL)
-    {
-        out-logFile -string "The group to be migrated is a member of the following groups."
-        out-logfile -string $allGroupsMemberOf
-    }
-    else 
-    {
-        out-logfile -string "The group is not a member of any other groups on premises."
-    }
-
-    #Handle all recipients that have forwarding to this group based on forwarding address.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value))
-        {
-            try 
-            {
-                $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allUsersForwardingAddress -ne $NULL)
-    {
-        out-logFile -string "The group has forwarding address set on the following users.."
-        out-logfile -string $allUsersForwardingAddress
-    }
-    else 
-    {
-        out-logfile -string "The group does not have forwarding set on any other users."
-    }
-
-    #Handle all groups this object has reject permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value))
-        {
-            try 
-            {
-                $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsReject -ne $NULL)
-    {
-        out-logFile -string "The group has reject permissions on the following groups:"
-        out-logfile -string $allGroupsReject
-    }
-    else 
-    {
-        out-logfile -string "The group does not have any reject permissions on other groups."
-    }
-
-    #Handle all groups this object has accept permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value))
-        {
-            try 
-            {
-                $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsAccept -ne $NULL)
-    {
-        out-logFile -string "The group has accept messages from on the following groups:"
-        out-logfile -string $allGroupsAccept
-    }
-    else 
-    {
-        out-logfile -string "The group does not have accept permissions on any groups."
-    }
-
-    if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling ge canonical name."
-
-        foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
-        {
-            try 
-            {
-                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-
-            }
-            catch {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "The group is not a co manager on any other groups."    
-    }
-
-    if ($allGroupsCoManagedByBL -ne $NULL)
-    {
-        out-logFile -string "The group is a co-manager on the following objects:"
-        out-logfile -string $allGroupsCoManagedByBL
-    }
-    else 
-    {
-        out-logfile -string "The group is not a co manager on any other objects."
-    }
-
-    #Handle all groups this object has bypass moderation permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value))
-        {
-            try 
-            {
-                $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsBypassModeration -ne $NULL)
-    {
-        out-logFile -string "This group has bypass moderation on the following groups:"
-        out-logfile -string $allGroupsBypassModeration
-    }
-    else 
-    {
-        out-logfile -string "This group does not have any bypass moderation on any groups."
-    }
-
-    #Handle all groups this object has accept permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value))
-        {
-            try 
-            {
-                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
-    {
-        out-logFile -string "This group has grant send on behalf to to the following groups:"
-        out-logfile -string $allGroupsGrantSendOnBehalfTo
-    }
-    else 
-    {
-        out-logfile -string "The group does ont have any send on behalf of rights to other groups."
-    }
-
-    #Handle all groups this object has manager permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
-        {
-            try 
-            {
-                $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($allGroupsManagedBy -ne $NULL)
-    {
-        out-logFile -string "This group has managedBY rights on the following groups."
-        out-logfile -string $allGroupsManagedBy
-    }
-    else 
-    {
-        out-logfile -string "The group is not a manager on any other groups."
-    }
-
     $telemetryFunctionEndTime = get-universalDateTime
 
     $telemetryDependencyOnPrem = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
 
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-    out-logfile -string ("Summary of dependencies found:")
-    out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
-    out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
-    out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
-    out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
-    out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
-    out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
-    out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
-    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-
-
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "Recording all gathered information to XML to preserve original values."
-
-    if ($allObjectsSendAsAccessNormalized.count -ne 0)
-    {
-        out-logfile -string $allObjectsSendAsAccessNormalized
-
-        out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $xmlFiles.allGroupsSendAsNormalizedXML.value
-    }
-    else 
-    {
-        $allObjectsSendAsAccessNormalized=@()
-    }
     
-    if ($exchangeDLMembershipSMTP -ne $NULL)
+    if ($exchangeDLMembershipSMTP.count -gt 0)
     {
         Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $xmlFiles.exchangeDLMembershipSMTPXML.value
     }
@@ -1810,7 +1158,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeDLMembershipSMTP=@()
     }
 
-    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    if ($exchangeRejectMessagesSMTP.count -gt 0)
     {
         out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $xmlFiles.exchangeRejectMessagesSMTPXML.value
     }
@@ -1819,7 +1167,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeRejectMessagesSMTP=@()
     }
 
-    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP.count -gt 0)
     {
         out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $xmlFiles.exchangeAcceptMessagesSMTPXML.value
     }
@@ -1828,7 +1176,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeAcceptMessagesSMTP=@()
     }
 
-    if ($exchangeManagedBySMTP -ne $NULL)
+    if ($exchangeManagedBySMTP.count -gt 0)
     {
         out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $xmlFiles.exchangeManagedBySMTPXML.value
     }
@@ -1837,7 +1185,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeManagedBySMTP=@()
     }
 
-    if ($exchangeModeratedBySMTP -ne $NULL)
+    if ($exchangeModeratedBySMTP.count -gt 0)
     {
         out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $xmlFiles.exchangeModeratedBySMTPXML.value
     }
@@ -1846,7 +1194,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeModeratedBySMTP=@()
     }
 
-    if ($exchangeBypassModerationSMTP -ne $NULL)
+    if ($exchangeBypassModerationSMTP.count -gt 0)
     {
         out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $xmlFiles.exchangeBypassModerationSMTPXML.value
     }
@@ -1855,7 +1203,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeBypassModerationSMTP=@()
     }
 
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
     {
         out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $xmlFiles.exchangeGrantSendOnBehalfToSMTPXML.value
     }
@@ -1864,85 +1212,13 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeGrantSendOnBehalfToSMTP=@()
     }
 
-    if ($exchangeSendAsSMTP -ne $NULL)
+    if ($exchangeSendAsSMTP.count -gt 0)
     {
         out-xmlfile -itemToExport $exchangeSendAsSMTP -itemNameToExport $xmlFiles.exchangeSendAsSMTPXML.value
     }
     else 
     {
         $exchangeSendAsSMTP=@()
-    }
-
-    if ($allGroupsMemberOf -ne $NULL)
-    {
-        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $xmlFiles.allGroupsMemberOfXML.value
-    }
-    else 
-    {
-        $allGroupsMemberOf=@()
-    }
-    
-    if ($allGroupsReject -ne $NULL)
-    {
-        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $xmlFiles.allGroupsRejectXML.value
-    }
-    else 
-    {
-        $allGroupsReject=@()
-    }
-    
-    if ($allGroupsAccept -ne $NULL)
-    {
-        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $xmlFiles.allGroupsAcceptXML.value
-    }
-    else 
-    {
-        $allGroupsAccept=@()
-    }
-
-    if ($allGroupsCoManagedByBL -ne $NULL)
-    {
-        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $xmlFiles.allGroupsCoManagedByXML.value
-    }
-    else 
-    {
-        $allGroupsCoManagedByBL=@()    
-    }
-
-    if ($allGroupsBypassModeration -ne $NULL)
-    {
-        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $xmlFiles.allGroupsBypassModerationXML.value
-    }
-    else 
-    {
-        $allGroupsBypassModeration=@()
-    }
-
-    if ($allUsersForwardingAddress -ne $NULL)
-    {
-        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $xmlFiles.allUsersForwardingAddressXML.value
-    }
-    else 
-    {
-        $allUsersForwardingAddress=@()
-    }
-
-    if ($allGroupsManagedBy -ne $NULL)
-    {
-        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $xmlFiles.allGroupsManagedByXML.value
-    }
-    else 
-    {
-        $allGroupsManagedBy=@()
-    }
-
-    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
-    {
-        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $xmlFiles.allGroupsGrantSendOnBehalfToXML.value
-    }
-    else 
-    {
-        $allGroupsGrantSendOnBehalfTo =@()
     }
 
     #EXIT #Debug Exit
@@ -2030,22 +1306,11 @@ Function Convert-Office365DLtoUnifiedGroup
 
         if ($retainSendAsOffice365 -eq $TRUE)
         {
-            out-logfile -string "Retain Office 365 send as set to try - invoke only if group is type security on premsies."
-
-            if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
-            {
-                out-logfile -string "Group is type security on premises - therefore it may have send as rights."
-
-                try{
-                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
-                }
-                catch{
-                    out-logfile -string $_ -isError:$TRUE
-                }
+            try{
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
             }
-            else 
-            {
-                out-logfile -string "Group is not security on premsies therefore has no send as rights in Office 365."
+            catch{
+                out-logfile -string $_ -isError:$TRUE
             }
         }
 
@@ -2370,7 +1635,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Managers not automatically added as members."
     }
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit Tim
 
     #We can begin the process of recreating the distribution group in Exchange Online.
     #This will make a first pass at creating a stub distribution list and perfomring long running transations like updating membership.
