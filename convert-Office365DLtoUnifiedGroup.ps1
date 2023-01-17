@@ -887,7 +887,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "REJECT USERS"
 
     try {
-        $exchangeRejectMessagesSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.RejectMessagesFromSendersOrMembers -errorAction STOP
+        $exchangeRejectMessagesSMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.RejectMessagesFromSendersOrMembers -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -909,7 +909,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "ACCEPT USERS"
 
     try {
-        $exchangeAcceptMessagesSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.AcceptMessagesOnlyFromSendersOrMembers -errorAction STOP
+        $exchangeAcceptMessagesSMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.AcceptMessagesOnlyFromSendersOrMembers -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -932,7 +932,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "Process MANAGEDBY"
 
     try {
-        $exchangeManagedBySMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ManagedBy -errorAction STOP
+        $exchangeManagedBySMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ManagedBy -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -955,7 +955,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "Process MODERATEDBY"
 
     try {
-        $exchangeModeratedBySMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ModeratedBy -errorAction STOP
+        $exchangeModeratedBySMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ModeratedBy -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -978,7 +978,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "Process BYPASS USERS"
 
     try {
-        $exchangeBypassModerationSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.BypassModerationFromSendersOrMembers -errorAction STOP
+        $exchangeBypassModerationSMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.BypassModerationFromSendersOrMembers -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -999,7 +999,7 @@ Function Convert-Office365DLtoUnifiedGroup
     out-logfile -string "Invoke get-normalizedO365 to normalize grant send on behalf to."
 
     try {
-        $exchangeGrantSendOnBehalfToSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.GrantSendOnBehalfTo -errorAction STOP
+        $exchangeGrantSendOnBehalfToSMTP = @(get-normalizedO365 -attributeToNormalize $office365DLConfiguration.GrantSendOnBehalfTo -errorAction STOP)
     }
     catch {
         out-logfile -string $_
@@ -1043,7 +1043,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     catch {
         out-logfile -string $_
-        out-logfile -string "Unable to normalize Office 365 GrantSendOnBehalfTo." -isError:$TRUE
+        out-logfile -string "Unable to normalize Office 365 Members." -isError:$TRUE
     }
 
     if ($exchangeDLMembershipSMTP.Count -gt 0)
