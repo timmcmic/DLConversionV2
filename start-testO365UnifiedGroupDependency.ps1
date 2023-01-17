@@ -138,12 +138,39 @@
                     RecipientOrUser = $null
                     ExternalDirectoryObjectID = $null
                     OnPremADAttribute = $null
-                    OnPremADAttributeCommonName = $null
+                    OnPremADAttributeCommonName = "ManagedBy / msExchCoManagedBy"
                     DN = $null
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
                     isErrorMessage="No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
+                }
+
+                $global:preCreateErrors+=$functionObject
+            }
+            elseif (($exchangeManagedBySMTP -eq $NULL) -or ($exchangeManagedBySMTP.count -gt 100)) 
+            {
+                out-logfile -string "Manager count is greater than 100 - this migration may not proceed."
+
+                $functionObject = New-Object PSObject -Property @{
+                    Alias = $null
+                    Name = $null
+                    PrimarySMTPAddressOrUPN = $null
+                    GUID = $null
+                    RecipientType = $null
+                    ExchangeRecipientTypeDetails = $null
+                    ExchangeRecipientDisplayType = $null
+                    ExchangeRemoteRecipientType = $null
+                    GroupType = $NULL
+                    RecipientOrUser = $null
+                    ExternalDirectoryObjectID = $null
+                    OnPremADAttribute = $null
+                    OnPremADAttributeCommonName = "managedBy / msExchCoManagedBy"
+                    DN = $null
+                    ParentGroupSMTPAddress = $null
+                    isAlreadyMigrated = $null
+                    isError=$True
+                    isErrorMessage="The managedBy count is greater than 100.  An Office 365 Unified Group may not have more than 100 managers."
                 }
 
                 $global:preCreateErrors+=$functionObject
