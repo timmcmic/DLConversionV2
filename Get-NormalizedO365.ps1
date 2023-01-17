@@ -95,7 +95,7 @@
                         $functionRecipient = get-o365user -identity $member -errorAction STOP
 
                         $functionObject = New-Object PSObject -Property @{
-                            PrimarySMTPAddressOrUPN = $functionRecipient.userPrincipalName
+                            PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
                             ExternalDirectoryObjectID = ("Value_"+$functionRecipient.externalDirectoryObjectID)
                             isError=$NULL
                             isErrorMessage=$null
