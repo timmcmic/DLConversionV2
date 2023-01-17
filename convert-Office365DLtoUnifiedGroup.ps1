@@ -1041,15 +1041,22 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Unable to obtain the Office 365 DL membership." -isError:$TRUE
     }
 
-    out-logfile -string "Normalize the membership now."
+    if ($office365DLMembership.count -gt 0)
+    {
+        try {
+            $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to normalize Office 365 Members." -isError:$TRUE
+        }
+    }
+    else 
+    {
+        $exchangeDLMembershipSMTP = @()
+    }
 
-    try {
-        $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
-    }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "Unable to normalize Office 365 Members." -isError:$TRUE
-    }
+    out-logfile -string "Normalize the membership now."
 
     if ($exchangeDLMembershipSMTP.Count -gt 0)
     {
