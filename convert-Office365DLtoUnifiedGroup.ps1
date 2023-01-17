@@ -1039,7 +1039,7 @@ Function Convert-Office365DLtoUnifiedGroup
     out-logfile -string "Normalize the membership now."
 
     try {
-        $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
+        $exchangeDLMembershipSMTP = @(get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP)
     }
     catch {
         out-logfile -string $_
