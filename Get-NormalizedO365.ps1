@@ -91,7 +91,7 @@
 
                         out-logfile -string "Testing object for user type."
 
-                        $functionRecipient = get-user -identity $member -errorAction STOP
+                        $functionRecipient = get-user -identity $member.externalDirectoryObjectID -errorAction STOP
 
                         $functionObject = New-Object PSObject -Property @{
                             PrimarySMTPAddressOrUPN = $functionRecipient.userPrincipalName
