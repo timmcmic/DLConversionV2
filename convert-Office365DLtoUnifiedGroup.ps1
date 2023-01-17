@@ -1045,7 +1045,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Unable to normalize Office 365 GrantSendOnBehalfTo." -isError:$TRUE
     }
 
-    if ($exchangeDLMembershipSMTP -gt 0)
+    if ($exchangeDLMembershipSMTP.Count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the group:"
         
