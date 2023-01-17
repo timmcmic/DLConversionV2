@@ -78,7 +78,34 @@
             {
                 out-logfile -string ("Testing member: "+$member)
 
-                $functionRecipient = get-o365Recipient -identity $member
+                try {
+                    out-logfile -string "Testing for recipient type."
+
+                    $functionRecipient = get-o365Recipient -identity $member -errorAction STOP
+                }
+                catch {
+
+                    out-logfile -string "Testing for recipient type failed."
+
+                    try {
+
+                        out-logfile -string "Testing object for user type."
+
+                        $functionRecipient = get-user -identity $member -errorAction STOP
+
+                        $functionObject = New-Object PSObject -Property @{
+                            PrimarySMTPAddressOrUPN = $functionRecipient.userPrincipalName
+                            ExternalDirectoryObjectID = ("Value_"+$functionRecipient.externalDirectoryObjectID)
+                            isError=$NULL
+                            isErrorMessage=$null
+
+                        }
+                    }
+                    catch {
+                        out-logfile -string $member
+                        out-logfile -string "A user or recipient in the group cannot be located." -isError:$TRUE
+                    }
+                }
 
                 $functionObject = New-Object PSObject -Property @{
                     PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
