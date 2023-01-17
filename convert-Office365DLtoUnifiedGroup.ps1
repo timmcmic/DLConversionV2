@@ -2036,10 +2036,18 @@ Function Convert-Office365DLtoUnifiedGroup
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLMembershipPostMigration
+            if ($office365DlMembershipPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLMembershipPostMigration
+    
+                out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No members to export."
+            }
 
-            out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+           
 
             #Exports complete - stop loop
 
@@ -2072,10 +2080,16 @@ Function Convert-Office365DLtoUnifiedGroup
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLOwnersPostMigration
+            if ($office365DLOwnersPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLOwnersPostMigration
 
-            out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+                out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No owners to export."
+            }
 
             #Exports complete - stop loop
 
@@ -2108,11 +2122,17 @@ Function Convert-Office365DLtoUnifiedGroup
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLSubscribersPostMigration
+            if ($office365DlSubscribersPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLSubscribersPostMigration
 
-            out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
-
+                out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No subscribers to export."
+            }
+            
             #Exports complete - stop loop
 
             $stopLoop=$TRUE
