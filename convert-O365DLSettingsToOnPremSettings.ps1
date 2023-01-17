@@ -1,9 +1,12 @@
 function convert-O365DLSettingsToOnPremSettings
 {
-    [Parameter(Mandatory = $true)]
-    $office365DLConfiguration
-
-    $functionObject = $null
+    [CmdletBinding()]
+    
+    param (
+        [Parameter(Mandatory = $true)]
+        $office365DLConfiguration
+    )
+  
     
     #Output all parameters bound or unbound and their associated values.
 
@@ -13,39 +16,39 @@ function convert-O365DLSettingsToOnPremSettings
     Out-LogFile -string "BEGIN convert-O365DLSettingsToOnPremSettings"
     Out-LogFile -string "********************************************************************************"
 
-    [boolean]$msExchEnableModeration=$office365DLConfiguration.ModerationEnabled
-    [boolean]$msExchHideFromAddressLists=$office365DLConfiguration.HiddenFromAddressListsEnabled
-    [boolean]$msExchRequireAuthToSendTo=$office365DLConfiguration.RequireSenderAuthenticationEnabled
-    [string]$mailNickName=$office365DLConfiguration.Alias
-    [string]$displayName=$office365DLConfiguration.DisplayName
-    [string]$msExchSenderHintTranslations=$office365DLConfiguration.MailTipTranslations
-    [string]$extensionAttribute1=$office365DLConfiguration.CustomAttribute1
-    [string]$extensionAttribute10=$office365DLConfiguration.CustomAttribute10
-    [string]$extensionAttribute11=$office365DLConfiguration.CustomAttribute11
-    [string]$extensionAttribute12=$office365DLConfiguration.CustomAttribute12
-    [string]$extensionAttribute13=$office365DLConfiguration.CustomAttribute13
-    [string]$extensionAttribute14=$office365DLConfiguration.CustomAttribute14
-    [string]$extensionAttribute15=$office365DLConfiguration.CustomAttribute15
-    [string]$extensionAttribute2=$office365DLConfiguration.CustomAttribute2
-    [string]$extensionAttribute3=$office365DLConfiguration.CustomAttribute3
-    [string]$extensionAttribute4=$office365DLConfiguration.CustomAttribute4
-    [string]$extensionAttribute5=$office365DLConfiguration.CustomAttribute5
-    [string]$extensionAttribute6=$office365DLConfiguration.CustomAttribute6
-    [string]$extensionAttribute7=$office365DLConfiguration.CustomAttribute7
-    [string]$extensionAttribute8=$office365DLConfiguration.CustomAttribute8
-    [string]$extensionAttribute9=$office365DLConfiguration.CustomAttribute9
-    [string]$msExchExtensionCustomAttribute1=$office365DLConfiguration.ExtensionCustomAttribute1
-    [string]$msExchExtensionCustomAttribute2=$office365DLConfiguration.ExtensionCustomAttribute2
-    [string]$msExchExtensionCustomAttribute3=$office365DLConfiguration.ExtensionCustomAttribute3
-    [string]$msExchExtensionCustomAttribute4=$office365DLConfiguration.ExtensionCustomAttribute4
-    [string]$msExchExtensionCustomAttribute5=$office365DLConfiguration.ExtensionCustomAttribute5
-    [array]$proxyAddresses=$office365DLConfiguration.emailAddresses
-    [string]$mail=$office365DlConfiguration.windowsEmailAddress
-    [string]$legacyExchangeDN=$office365DLConfiguration.legacyExchangeDN
-
     $functionObject = New-Object PSObject -Property @{
-        
+        msExchEnableModeration=$office365DConfiguration.ModerationEnabled
+        msExchHideFromAddressLists=$office365DConfiguration.HiddenFromAddressListsEnabled
+        msExchRequireAuthToSendTo=$office365DConfiguration.RequireSenderAuthenticationEnabled
+        mailNickName=$office365DConfiguration.Alias
+        displayName=$office365DConfiguration.DisplayName
+        msExchSenderHintTranslations=$office365DConfiguration.MailTipTranslations
+        extensionAttribute1=$office365DConfiguration.CustomAttribute1
+        extensionAttribute10=$office365DConfiguration.CustomAttribute10
+        extensionAttribute11=$office365DConfiguration.CustomAttribute11
+        extensionAttribute12=$office365DConfiguration.CustomAttribute12
+        extensionAttribute13=$office365DConfiguration.CustomAttribute13
+        extensionAttribute14=$office365DConfiguration.CustomAttribute14
+        extensionAttribute15=$office365DConfiguration.CustomAttribute15
+        extensionAttribute2=$office365DConfiguration.CustomAttribute2
+        extensionAttribute3=$office365DConfiguration.CustomAttribute3
+        extensionAttribute4=$office365DConfiguration.CustomAttribute4
+        extensionAttribute5=$office365DConfiguration.CustomAttribute5
+        extensionAttribute6=$office365DConfiguration.CustomAttribute6
+        extensionAttribute7=$office365DConfiguration.CustomAttribute7
+        extensionAttribute8=$office365DConfiguration.CustomAttribute8
+        extensionAttribute9=$office365DConfiguration.CustomAttribute9
+        msExchExtensionCustomAttribute1=$office365DConfiguration.ExtensionCustomAttribute1
+        msExchExtensionCustomAttribute2=$office365DConfiguration.ExtensionCustomAttribute2
+        msExchExtensionCustomAttribute3=$office365DConfiguration.ExtensionCustomAttribute3
+        msExchExtensionCustomAttribute4=$office365DConfiguration.ExtensionCustomAttribute4
+        msExchExtensionCustomAttribute5=$office365DConfiguration.ExtensionCustomAttribute5
+        proxyAddresses=$office365DConfiguration.EmailAddresses
+        mail=$office365DConfiguration.WindowsEmailAddress
+        legacyExchangeDN=$office365DConfiguration.LegacyExchangeDN
     }
+
+    out-logfile -string $functionObject
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END convert-O365DLSettingsToOnPremSettings"
