@@ -83,6 +83,8 @@
                 $functionObject = New-Object PSObject -Property @{
                     PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
                     ExternalDirectoryObjectID = $functionRecipient.externalDirectoryObjectID
+                    isError=$NULL
+                    isErrorMessage=$null
                 }
 
                 out-logfile -string $functionObject
