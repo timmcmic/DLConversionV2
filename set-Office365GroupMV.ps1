@@ -421,6 +421,32 @@
 
                 $functionErrors+=$isErrorObject
             }
+
+            try
+            {
+                out-logfile -string "Remove the migration user from members which is added by default."
+                
+                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Member" -links $exchangeOnlineCredential.userName -confirm:$FALSE -errorAction STOP
+            }
+            catch 
+            {
+                out-logfile -string "Unable to remove the migration user as an member."
+                out-logfile -string $_
+
+                $isErrorObject = new-Object psObject -property @{
+                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                    ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                    Alias = $functionMailNickName
+                    Name = $originalDLConfiguration.name
+                    Attribute = "Unable to remove the migration administrator as an member of the group."
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manaual removal from members required.")
+                    ErrorMessageDetail = $_
+                }
+
+                out-logfile -string $isErrorObject
+
+                $functionErrors+=$isErrorObject
+            }
         }
         else 
         {
