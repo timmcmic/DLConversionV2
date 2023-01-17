@@ -1643,7 +1643,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Managers not automatically added as members."
     }
 
-    EXIT #Debug Exit Tim
+    #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
     #This will make a first pass at creating a stub distribution list and perfomring long running transations like updating membership.
