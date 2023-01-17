@@ -1306,12 +1306,21 @@ Function Convert-Office365DLtoUnifiedGroup
 
         if ($retainSendAsOffice365 -eq $TRUE)
         {
-            try{
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
+            if ($office365DLConfiguration.groupType -eq "MailUniversalSecurityGroup")
+            {
+                out-logfile -string "Group is a security group - attempt to locate send as permissions."
+
+                try{
+                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
+        }
+        else 
+        {
+            out-logfile -string "Group is not a security group - do not search permissions."
         }
 
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has send as rights on = "+$allOffice365SendAsAccess.count)
