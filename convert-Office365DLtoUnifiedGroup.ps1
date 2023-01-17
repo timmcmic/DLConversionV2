@@ -447,68 +447,21 @@ Function Convert-Office365DLtoUnifiedGroup
     #Supported methods for gathering folder permissions require use of the pre-collection.
     #Precolletion automatically sets these to true.  These were origianlly added to support doing it at runtime - but its too slow.
     
-    [boolean]$retainMailboxFolderPermsOnPrem=$FALSE
     [boolean]$retainMailboxFolderPermsOffice365=$FALSE
     [boolean]$retainOffice365Settings=$true
-    [boolean]$retainFullMailboxAccessOnPrem=$FALSE
-    [boolean]$retainSendAsOnPrem=$FALSE
     [boolean]$retainFullMailboxAccessOffice365=$FALSE
     [boolean]$retainSendAsOffice365=$TRUE
 
     #Define variables utilized in the core function that are not defined by parameters.
 
     $coreVariables = @{ 
-        useOnPremisesExchange = @{ "Value" = $FALSE ; "Description" = "Boolean determines if Exchange on premises should be utilized" }
-        useAADConnect = @{ "Value" = $FALSE ; "Description" = "Boolean determines if an AADConnect isntance will be utilzied" }
-        exchangeOnPremisesPowershellSessionName = @{ "Value" = "ExchangeOnPremises" ; "Description" = "Static exchange on premises powershell session name" }
-        aadConnectPowershellSessionName = @{ "Value" = "AADConnect" ; "Description" = "Static AADConnect powershell session name" }
-        ADGlobalCatalogPowershellSessionName = @{ "Value" = "ADGlobalCatalog" ; "Description" = "Static AD Domain controller powershell session name" }
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
-        activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
         azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
-        globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
-        globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
     }
 
     #The variables below are utilized to define working parameter sets.
     #Some variables are assigned to single values - since these will be utilized with functions that query or set information.
-
-    $onPremADAttributes = @{
-        onPremAcceptMessagesFromDLMembers = @{"Value" = "dlMemSubmitPerms" ; "Description" = "LDAP Attribute for Accept Messages from DL Members"}
-        onPremAcceptMessagesFromDLMembersCommon = @{"Value" = "AcceptMessagesFromMembers" ; "Description" = "LDAP Attribute for Accept Messages from DL Members"}
-        onPremRejectMessagesFromDLMembers = @{"Value" = "dlMemRejectPerms" ; "Description" = "LDAP Attribute for Reject Messages from DL Members"}
-        onPremRejectMessagesFromDLMembersCommon = @{"Value" = "RejectMessagesFromMembers" ; "Description" = "LDAP Attribute for Reject Messages from DL Members"}
-        onPremBypassModerationFromDL = @{"Value" = "msExchBypassModerationFromDLMembersLink" ; "Description" = "LDAP Attribute for Bypass Moderation from DL Members"}
-        onPremBypassModerationFromDLCommon = @{"Value" = "BypassModerationFromSendersOrMembers" ; "Description" = "LDAP Attribute for Bypass Moderation from DL Members"}
-        onPremForwardingAddress = @{"Value" = "altRecipient" ; "Description" = "LDAP Attribute for ForwardingAddress"}
-        onPremForwardingAddressCommon = @{"Value" = "ForwardingAddress" ; "Description" = "LDAP Attribute for ForwardingAddress"}
-        onPremGrantSendOnBehalfTo = @{"Value" = "publicDelegates" ; "Description" = "LDAP Attribute for Grant Send on Behalf To"}
-        onPremGrantSendOnBehalfToCommon = @{"Value" = "GrantSendOnBehalfTo" ; "Description" = "LDAP Attribute for Grant Send on Behalf To"}
-        onPremRejectMessagesFromSenders = @{"Value" = "unauthorig" ; "Description" = "LDAP Attribute for Reject Messages from Sender"}
-        onPremRejectMessagesFromSendersCommon = @{"Value" = "RejectMessagesFromSenders" ; "Description" = "LDAP Attribute for Reject Messages from Sender"}
-        onPremAcceptMessagesFromSenders = @{"Value" = "authOrig" ; "Description" = "LDAp Attribute for Accept Messages From Sender"} 
-        onPremAcceptMessagesFromSendersCommon = @{"Value" = "AcceptMessagesFromSenders" ; "Description" = "LDAp Attribute for Accept Messages From Sender"} 
-        onPremManagedBy = @{"Value" = "managedBy" ; "Description" = "LDAP Attribute for Managed By"}
-        onPremManagedByCommon = @{"Value" = "ManagedBy" ; "Description" = "LDAP Attribute for Managed By"}
-        onPremCoManagedBy = @{"Value" = "msExchCoManagedByLink" ; "Description" = "LDAP Attributes for Co Managers (Muiltivalued ManagedBy)"}
-        onPremCoManagedByCommon = @{"Value" = "ManagedBy" ; "Description" = "LDAP Attributes for Co Managers (Muiltivalued ManagedBy)"}
-        onPremModeratedBy = @{"Value" = "msExchModeratedByLink" ; "Description" = "LDAP Attrbitute for Moderated By"}
-        onPremModeratedByCommon = @{"Value" = "ModeratedBy" ; "Description" = "LDAP Attrbitute for Moderated By"}
-        onPremBypassModerationFromSenders = @{"Value" = "msExchBypassModerationLink" ; "Description" = "LDAP Attribute for Bypass Moderation from Senders"}
-        onPremBypassModerationFromSendersCommon = @{"Value" = "BypassModerationFromSendersorMembers" ; "Description" = "LDAP Attribute for Bypass Moderation from Senders"}
-        onPremMembers = @{"Value" = "member" ; "Description" = "LDAP Attribute for Distribution Group Members" }
-        onPremMembersCommon = @{"Value" = "Member" ; "Description" = "LDAP Attribute for Distribution Group Members" }
-        onPremForwardingAddressBL = @{"Value" = "altRecipientBL" ; "Description" = "LDAP Backlink Attribute for Forwarding Address"}
-        onPremRejectMessagesFromDLMembersBL = @{"Value" = "dlMemRejectPermsBL" ; "Description" = "LDAP Backlink Attribute for Reject Messages from DL Members"}
-        onPremAcceptMessagesFromDLMembersBL = @{"Value" = "dlMemSubmitPermsBL" ; "Description" = "LDAP Backlink Attribute for Accept Messages from DL Members"}
-        onPremManagedObjects = @{"Value" = "managedObjects" ; "Description" = "LDAP Backlink Attribute for Managed By"}
-        onPremMemberOf = @{"Value" = "memberOf" ; "Description" = "LDAP Backlink Attribute for Members"}
-        onPremBypassModerationFromDLMembersBL = @{"Value" = "msExchBypassModerationFromDLMembersBL" ; "Description" = "LDAP Backlink Attribute for Bypass Moderation from DL Members"}
-        onPremCoManagedByBL = @{"Value" = "msExchCoManagedObjectsBL" ; "Description" = "LDAP Backlink Attribute for Co Managers (Multivalued ManagedBY)"}
-        onPremGrantSendOnBehalfToBL = @{"Value" = "publicDelegatesBL" ; "Description" = "LDAP Backlink Attribute for Grant Send On Behalf To"}
-        onPremGroupType = @{"Value" = "groupType" ; "Description" = "Value representing universal / global / local / security / distribution"}
-    }
 
     #Define the Office 365 attributes that will be used for filters.
 
@@ -524,15 +477,6 @@ Function Convert-Office365DLtoUnifiedGroup
         office365BypassModerationusers = @{ "Value" = "BypassModerationFromSendersOrMembers" ; "Description" = "All Office 365 objects that have bypass moderation for the migrated group"}
         office365UnifiedAccept = @{ "Value" = "AcceptMessagesOnlyFromSendersOrMembers" ; "Description" = "All Office 365 Unified Groups that the migrated group has accept messages from senders or members rights assigned"}
         office365UnifiedReject = @{ "Value" = "RejectMessagesFromSendersOrMembers" ; "Description" = "All Office 365 Unified Groups that the migrated group has reject messages from senders or members rights assigned"}
-    }
-
-    #Static variables utilized for the Exchange On-Premsies Powershell.
-
-    $onPremExchangePowershell = @{
-        exchangeServerConfiguration = @{"Value" = "Microsoft.Exchange" ; "Description" = "Defines the Exchange Remote Powershell configuration"} 
-        exchangeServerAllowRedirection = @{"Value" = $TRUE ; "Description" = "Defines the Exchange Remote Powershell redirection preference"} 
-        exchangeServerURI = @{"Value" = "https://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
-        exchangeServerURIKerberos = @{"Value" = "http://"+$exchangeServer+"/powershell" ; "Description" = "Defines the Exchange Remote Powershell connection URL"} 
     }
 
     #Define XML files to contain backups.
@@ -553,17 +497,6 @@ Function Convert-Office365DLtoUnifiedGroup
         exchangeBypassModerationSMTPXML = @{ "Value" =  "exchangeBypassModerationSMTPXML" ; "Description" = "XML file that holds the Bypass Moderation From Senders or Members property of the on premises DL"}
         exchangeGrantSendOnBehalfToSMTPXML = @{ "Value" =  "exchangeGrantSendOnBehalfToXML" ; "Description" = "XML file that holds the Grant Send On Behalf To property of the on premises DL"}
         exchangeSendAsSMTPXML = @{ "Value" =  "exchangeSendASSMTPXML" ; "Description" = "XML file that holds the Send As rights of the on premises DL"}
-        allGroupsMemberOfXML = @{ "Value" =  "allGroupsMemberOfXML" ; "Description" = "XML file that holds all of on premises groups the migrated group is a member of"}
-        allGroupsRejectXML = @{ "Value" =  "allGroupsRejectXML" ; "Description" = "XML file that holds all of the on premises groups the migrated group has reject rights assigned"}
-        allGroupsAcceptXML = @{ "Value" =  "allGroupsAcceptXML" ; "Description" = "XML file that holds all of the on premises groups the migrated group has accept rights assigned"}
-        allGroupsBypassModerationXML = @{ "Value" =  "allGroupsBypassModerationXML" ; "Description" = "XML file that holds all of the on premises groups that the migrated group has bypass moderation rights assigned"}
-        allUsersForwardingAddressXML = @{ "Value" =  "allUsersForwardingAddressXML" ; "Description" = "XML file that holds all recipients the migrated group hsa forwarding address set on"}
-        allGroupsGrantSendOnBehalfToXML = @{ "Value" =  "allGroupsGrantSendOnBehalfToXML" ; "Description" = "XML file that holds all of the on premises objects that the migrated group hsa grant send on behalf to on"}
-        allGroupsManagedByXML = @{ "Value" =  "allGroupsManagedByXML" ; "Description" = "XML file that holds all of the on premises objects the migrated group has managed by rights assigned"}
-        allGroupsSendAsXML = @{ "Value" =  "allGroupSendAsXML" ; "Description" = "XML file that holds all of the on premises objects that have the migrated group with send as rights assigned"}
-        allGroupsSendAsNormalizedXML= @{ "Value" = "allGroupsSendAsNormalizedXML" ; "Description" = "XML file that holds all normalized send as right"}
-        allGroupsFullMailboxAccessXML = @{ "Value" =  "allGroupsFullMailboxAccessXML" ; "Description" = "XML file that holds all full mailbox access rights assigned to the migrated group"}
-        allMailboxesFolderPermissionsXML = @{ "Value" =  "allMailboxesFolderPermissionsXML" ; "Description" = "XML file that holds all mailbox folder permissions assigned to the migrated group"}
         allOffice365MemberOfXML= @{ "Value" = "allOffice365MemberOfXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group as a member"}
         allOffice365AcceptXML= @{ "Value" = "allOffice365AcceptXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned accept messages from senders or members rights"}
         allOffice365RejectXML= @{ "Value" = "allOffice365RejectXML" ; "Description" = "XML file that holds All cloud only groups that have the migrated group assigned reject messages from senders or members rights"}
@@ -575,33 +508,17 @@ Function Convert-Office365DLtoUnifiedGroup
         allOffice365FullMailboxAccessXML = @{ "Value" =  "allOffice365FullMailboxAccessXML" ; "Description" = "XML file that holds all cloud only objects where full mailbox access is assigned to the migrated group"}
         allOffice365MailboxesFolderPermissionsXML = @{ "Value" =  'allOffice365MailboxesFolderPermissionsXML' ; "Description" = "XML file that holds all cloud only recipients where a mailbox folder permission is assigned to the migrated group"}
         allOffice365SendAsAccessOnGroupXML = @{ "Value" =  'allOffice365SendAsAccessOnGroupXML' ; "Description" = "XML file that holds all cloud only send as rights assigned to the migrated group"}
-        routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
-        routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
-        allGroupsCoManagedByXML= @{ "Value" = "allGroupsCoManagedByXML" ; "Description" = "XML file holds all on premises objects that the migrated group has managed by rights assigned"}
         retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
         retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions.xml" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
-        retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
-        retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
-        retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
 
-    #Define the property sets that will be cleared on the on premises object.
-
-    [array]$dlPropertySet = '*' #Clear all properties of a given object
-    [array]$dlPropertySetToClear = #Holds the final array of attributes to be cleared.
-    [array]$dlPropertiesToClearModern='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2016 or newer schema.
-    [array]$dlPropertiesToClearLegacy='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2013 or older schema
-
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
     $originalAzureADConfiguration=$NULL #This holds the azure ad DL configuration
-    $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
-    $routingContactConfig=$NULL #Holds the mail routing contact configuration.
-    $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
@@ -610,21 +527,8 @@ Function Convert-Office365DLtoUnifiedGroup
     [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
     [array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
     [array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
+    [array]$exchangeDLSubscribersSMTP=@() #Array of objects that are subscribers to the DL.
 
-    #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
-
-    [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
-    [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
-    [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
-    [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
-    [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
-    [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
-    [array]$allGroupsManagedBy=$NULL #All dependencies on premises that have managed by rights
-    [array]$allObjectsFullMailboxAccess=$NULL #All dependencies on premises that have full mailbox access rights
-    [array]$allObjectSendAsAccess=$NULL #All dependencies on premises that have the migrated group with send as rights.
-    [array]$allObjectsSendAsAccessNormalized=@() #All dependencies send as rights normalized
-    [array]$allMailboxesFolderPermissions=@() #All dependencies on premises with mailbox folder permissions defined
-    [array]$allGroupsCoManagedByBL=$NULL #All groups on premises where the migrated group is a manager
 
     #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
 
@@ -645,26 +549,14 @@ Function Convert-Office365DLtoUnifiedGroup
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
+    $office365DLMembership = $NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $office365DLOwnersPostMigration=$NULL #This holds the Office 365 DL owners information post migration.
     $office365DLSubscribersPostMigration=$NULL #This holds the Office 365 DL subscribers information post migration
-    $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
-
-    #Declare some variables for string processing as items move around.
-
-    [string]$tempOU=$NULL
-    [array]$tempNameArrayArray=@()
-    [string]$tempName=$NULL
-    [string]$tempDN=$NULL
 
     #For loop counter.
 
     [int]$forLoopCounter=0
-
-    #Exchange Schema Version
-
-    [int]$exchangeRangeUpper=$NULL
-    [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
 
     #Define new arrays to check for errors instead of failing.
 
@@ -681,21 +573,6 @@ Function Convert-Office365DLtoUnifiedGroup
 
     [int]$forLoopTrigger=1000
     [int]$createMailContactDelay=5
-
-    [string]$functionObjectClassContact = "Contact"
-    [string]$functionObjectClassGroup = "Group"
-    [string]$functionObjectClassDynamic = "msExchDynamicDistributionList"
-
-    #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
-    #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
-
-    [string]$mailOnMicrosoftComDomain = ""
-
-    #Define variables for kerberos enablement.
-
-    $commandStartTime = get-date
-    $commandEndTime = $NULL
-    [int]$kerberosRunTime = 4
 
     #Ensure that no status files exist at the start of the run.
 
@@ -715,72 +592,6 @@ Function Convert-Office365DLtoUnifiedGroup
     if ($isHealthCheck -eq $FALSE)
     {
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-    }
-
-    function session-toImport
-    {
-        #Now we can determine if exchange on premises is utilized and if so establish the connection.
-   
-        Out-LogFile -string "Determine if Exchange On Premises specified and create session if necessary."
-
-        if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
-        {
-            if ($exchangeAuthenticationMethod -eq "Basic")
-            {
-                try 
-                {
-                    Out-LogFile -string "Calling New-PowerShellSession"
-
-                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURI.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-                }
-                catch 
-                {
-                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-                }
-            }
-            elseif ($exchangeAuthenticationMethod -eq "Kerberos")
-            {
-                try 
-                {
-                    Out-LogFile -string "Calling New-PowerShellSession"
-
-                    $sessiontoImport=new-PowershellSession -credentials $exchangecredential -powershellSessionName $corevariables.exchangeOnPremisesPowershellSessionName.value -connectionURI $onPremExchangePowershell.exchangeServerURIKerberos.value -authenticationType $exchangeAuthenticationMethod -configurationName $onPremExchangePowershell.exchangeServerConfiguration.value -allowredirection $onPremExchangePowershell.exchangeServerAllowRedirection.value -requiresImport:$TRUE
-                }
-                catch 
-                {
-                    Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-                }
-            }
-            else 
-            {
-                out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
-            }
-            
-            try 
-            {
-                Out-LogFile -string "Calling import-PowerShellSession"
-
-                import-powershellsession -powershellsession $sessionToImport
-            }
-            catch 
-            {
-                Out-LogFile -string "ERROR:  Unable to create powershell session." -isError:$TRUE
-            }
-            try 
-            {
-                out-logfile -string "Calling set entire forest."
-
-                enable-ExchangeOnPremEntireForest
-            }
-            catch 
-            {
-                Out-LogFile -string "ERROR:  Unable to view entire forest." -isError:$TRUE
-            }
-        }
-        else
-        {
-            Out-LogFile -string "No on premises Exchange specified - skipping setup of powershell session."
-        }
     }
 
     out-logfile -string "********************************************************************************"
@@ -823,18 +634,7 @@ Function Convert-Office365DLtoUnifiedGroup
     #Perform cleanup of any strings so that no spaces existin trailing or leading.
 
     $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
-    $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
     $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
-
-    if ($aadConnectServer -ne $NULL)
-    {
-        $aadConnectServer = remove-stringSpace -stringToFix $aadConnectServer
-    }
-
-    if ($exchangeServer -ne $NULL)
-    {
-        $exchangeServer=remove-stringSpace -stringToFix $exchangeServer
-    }
     
     if ($exchangeOnlineCertificateThumbPrint -ne "")
     {
@@ -852,10 +652,6 @@ Function Convert-Office365DLtoUnifiedGroup
     {
         $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
     }
-
-    $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
-    
-    $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
     
     if ($azureTenantID -ne $NULL)
     {
@@ -877,16 +673,6 @@ Function Convert-Office365DLtoUnifiedGroup
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
-    if ($aadConnectCredential -ne $null)
-    {
-        Out-LogFile -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())
-    }
-
-    if ($exchangecredential -ne $null)
-    {
-        Out-LogFile -string ("ExchangeUserName = "+$exchangeCredential.UserName.toString())
-    }
-
     if ($exchangeOnlineCredential -ne $null)
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
@@ -903,25 +689,6 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string " RECORD VARIABLES"
     Out-LogFile -string "********************************************************************************"
 
-    foreach ($dlProperty in $dlPropertySet)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared legacy = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearLegacy)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
-    Out-LogFile -string ("DL property set to be cleared modern = ")
-
-    foreach ($dlProperty in $dlPropertiesToClearModern)
-    {
-        Out-LogFile -string $dlProperty
-    }
-
     out-logfile -string ("Predefined thread folders = ")
 
     foreach ($property in $threadFolder)
@@ -929,16 +696,12 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string $property
     }
 
-    out-logfile -string ("Exchange legacy schema version: "+$exchangeLegacySchemaVersion)
-
     out-logfile -string ("Global import file: "+$global:importFile)
     out-logfile -string ("Global staticFolderName: "+$global:staticFolderName)
     out-logfile -string ("Global threadNumber: "+$global:threadNumber)
 
     write-hashTable -hashTable $xmlFiles
-    write-hashTable -hashTable $onPremExchangePowershell
     write-hashTable -hashTable $office365Attributes
-    write-hashTable -hashTable $onPremADAttributes
     write-hashTable -hashTable $coreVariables
     
     Out-LogFile -string "********************************************************************************"
@@ -948,18 +711,6 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "ENTERING PARAMTER VALIDATION"
     Out-LogFile -string "********************************************************************************"
-
-    #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
-
-    Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
-
-    $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
-
-    #Validate that both the exchange credential and exchange server are presented together.
-
-    Out-LogFile -string "Validating that both ExchangeServer and ExchangeCredential are specified."
-
-    $coreVariables.useOnPremisesExchange.value = start-parameterValidation -exchangeServer $exchangeServer -exchangeCredential $exchangeCredential
 
     #Validate that only one method of engaging exchange online was specified.
 
@@ -987,36 +738,13 @@ Function Convert-Office365DLtoUnifiedGroup
 
     #exit #Debug exit.
 
-    #Validate that an OU was specified <if> retain group is not set to true.
-
-    Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
-
-    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
-
-    out-logfile -string "Testing for enable hybrid mail flow enablement."
-
-    start-parametervalidation -useOnPremisesExchange $coreVariables.useOnPremisesExchange.value -enableHybridMailFlow $enableHybridMailFlow
-
-    if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
-    {
-        $retainFullMailboxAccessOnPrem=$TRUE
-    }
+    #Evaluate if administrators have selected to retain Office 365 permissions from files.
 
     if ($useCollectedFullMailboxAccessOffice365 -eq $TRUE)
     {
         $retainFullMailboxAccessOffice365=$TRUE
     }
 
-    if ($useCollectedSendAsOnPrem -eq $TRUE)
-    {
-        $retainSendAsOnPrem=$TRUE
-    }
-
-    if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
-    {
-        $retainMailboxFolderPermsOnPrem=$TRUE
-    }
-    
     if ($useCollectedFolderPermissionsOffice365 -eq $TRUE)
     {
         $retainMailboxFolderPermsOffice365=$TRUE
@@ -1024,35 +752,6 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
-
-    Out-Logfile -string "Determine Exchange Schema Version"
-
-    try{
-        $exchangeRangeUpper = get-ExchangeSchemaVersion -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
-        out-logfile -string ("The range upper for Exchange Schema is: "+ $exchangeRangeUpper)
-    }
-    catch{
-        out-logfile -string "Error occured obtaining the Exchange Schema Version."
-        out-logfile -string $_ -isError:$TRUE
-    }
-    
-    if ($exchangeRangeUpper -ge $exchangeLegacySchemaVersion)
-    {
-        out-logfile -string "Modern exchange version detected - using modern parameters"
-        $dlPropertySetToClear=$dlPropertiesToClearModern
-    }
-    else 
-    {
-        out-logfile -string "Legacy exchange versions detected - using legacy parameters"
-        $dlPropertySetToClear = $dlPropertiesToClearLegacy   
-    }
-
-    Out-LogFile -string ("DL property set to be cleared after schema evaluation = ")
-
-    foreach ($dlProperty in $dlPropertySetToClear)
-    {
-        Out-LogFile -string $dlProperty
-    }
 
     # EXIT #Debug Exit
 
@@ -1068,10 +767,6 @@ Function Convert-Office365DLtoUnifiedGroup
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
    $telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
-
-   Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
-
-   $telemetryActiveDirectoryVersion = Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
 
    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
@@ -1141,43 +836,7 @@ Function Convert-Office365DLtoUnifiedGroup
         }
    }
 
-   #exit #debug exit
-
-   session-toImport
-
-    #If the administrator has specified aad connect information - establish the powershell session.
-
-    Out-LogFile -string "Determine if AAD Connect information specified and establish session if necessary."
-
-    if ($coreVariables.useAADConnect.value -eq $TRUE)
-    {
-        try 
-        {
-            out-logfile -string "Creating powershell session to the AD Connect server."
-
-            New-PowershellSession -Server $aadConnectServer -Credentials $aadConnectCredential -PowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -authenticationType $aadConnectAuthenticationMethod
-        }
-        catch 
-        {
-            out-logfile -string "Unable to create remote powershell session to the AD Connect server."
-            out-logfile -string $_ -isError:$TRUE
-        }
-    }
-
-    #Establish powershell session to the global catalog server.
-
-    try 
-    {
-        Out-LogFile -string "Establish powershell session to the global catalog server specified."
-
-        new-powershellsession -server $globalCatalogServer -credentials $activeDirectoryCredential -powershellsessionname $coreVariables.ADGlobalCatalogPowershellSessionName.value -authenticationType $activeDirectoryAuthenticationMethod
-    }
-    catch 
-    {
-        out-logfile -string "Unable to create remote powershell session to the AD Global Catalog server."
-        out-logfile -string $_ -isError:$TRUE
-    }
-    
+   #exit #debug exit    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
@@ -1187,219 +846,33 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "BEGIN GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
-
-    Out-LogFile -string "Getting the original DL Configuration"
-
-    try
-    {
-        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
-    }
-    catch
-    {
-        out-logfile -string $_ -isError:$TRUE
-    }
-    
-    Out-LogFile -string "Log original DL configuration."
-    out-logFile -string $originalDLConfiguration
-
-    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
-
-    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
-
-    Out-LogFile -string "Determine if administrator desires to audit send as."
-
-    if ($retainSendAsOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to audit on premsies send as."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedSendAsOnPrem -eq $TRUE)
-        {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
-
-            
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
-
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try {
-                $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premises."
-                out-logfile -string $_ -isError:$TRUE
-            }  
-        }
-        else 
-        {
-            try {
-                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premsies."
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises send as."
-    }
-
-    #Record what was returned.
-
-    if ($allObjectSendAsAccess.count -ne 0)
-    {
-        out-logfile -string $allObjectSendAsAccess
-
-        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $xmlFiles.allGroupsSendAsXML.value
-    }
-
-    Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
-
-    if ($retainFullMailboxAccessOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
-        {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
-
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientFullMailboxAccessXML.value
-
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration -collectedData $importData
-        }
-        else 
-        {
-            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
-        }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises full mailbox access."
-    }
-
-    #Record what was returned.
-
-    if ($allObjectsFullMailboxAccess.count -ne 0)
-    {
-        out-logfile -string $allObjectsFullMailboxAccess
-
-        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $xmlFiles.allGroupsFullMailboxAccessXML.value
-    }
-
-    out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
-
-    if ($retainMailboxFolderPermsOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to retain mailbox folder permissions.."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
-        {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
-
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremMailboxFolderPermissionsXML.value
-
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try {
-                $allMailboxesFolderPermissions = get-onPremFolderPermissions -originalDLConfiguration $originalDLConfiguration -collectedData $importData
-            }
-            catch {
-                out-logfile -string "Unable to process on prem folder permissions."
-                out-logfile -string $_ -isError:$TRUE
-            }  
-        }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises send as."
-    }
-
-    #Record what was returned.
-
-    if ($allMailboxesFolderPermissions.count -ne 0)
-    {
-        out-logfile -string $allMailboxesFolderPermissions
-
-        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $xmlFiles.allMailboxesFolderPermissionsXML.value
-    }
-
-    #If there are any sendAs or mailbox access permissiosn for the group.
-    #The group should be retained for saftey and only manually deleted if the administrator understands ramiifactions.
-    #In testing disabling the group will allow the permissions to continue functioning - deleting the group would loose it.
-    #Overrideing the administrators decision to delete the group.
-
-    if (($allObjectSendAsAccess -ne 0) -or ($allObjectsFullMailboxAccess -ne 0) -or ($allMailboxesFolderPermissions -ne 0))
-    {
-        out-logfile -string "Overriding any administrator action to delete the group as dependencies exist."
-        $retainOriginalGroup = $TRUE
-    }
-    else 
-    {
-        out-logfile -string "Audit shows no dependencies for sendAs or full mailbox access - keeping administrator settings on group retention."    
-    }
-
     #exit #Debug Exit
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
-    if ($allowNonSyncedGroup -eq $FALSE)
+    try 
     {
-        try 
-        {
-            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
-        }
-        catch 
-        {
-            out-logFile -string $_ -isError:$TRUE
-        }
+        $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
     }
-    else 
+    catch 
     {
-        $office365DLConfiguration="DistributionListIsNonSynced"
+        out-logFile -string $_ -isError:$TRUE
     }
-        
+            
     Out-LogFile -string $office365DLConfiguration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
-    out-logfile -string "Capture the original Azure AD distribution list informaiton"
+    out-logfile -string "Capture the original Azure AD distribution list information"
 
-    if ($allowNonSyncedGroup -eq $FALSE)
-    {
-        try{
-            $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
-        }
-        catch{
-            out-logfile -string $_
-            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
-        }
+    try{
+        $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
+    }
+    catch{
+        out-logfile -string $_
+        out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
     }
 
     if ($azureAADLConfiguration -ne $NULL)
@@ -1411,38 +884,29 @@ Function Convert-Office365DLtoUnifiedGroup
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
 
+    out-logfile -string "Convert Office 365 DL configuration to orignal DL configuration for function reuse."
+
+    try
+    {
+        $originalDLConfiguration = convert-O365DLSettingsToOnPremSettings -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+    }
+    catch
+    {
+        out-lofile -string "Unable to convert the cloud DL settings to on premises settings for code reuse."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    Out-LogFile -string "Log original DL configuration."
+    out-logFile -string $originalDLConfiguration
+
+    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration coverted from Office 365 values."
+
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    if ($allowNonSyncedGroup -eq $FALSE)
-    {
-        Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
-
-        try 
-        {
-            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
-        }
-        catch 
-        {
-            out-logFile -string $_ -isError:$TRUE
-        }
-    }
-    else 
-    {
-        out-logfile -string "The administrator is attempting to migrate a non-synced group.  Office 365 check skipped."
-        
-        try 
-        {
-            test-nonSyncDL -originalDLConfiguration $originalDLConfiguration -errorAction STOP    
-        }
-        catch 
-        {
-            out-logfile -string $_ -isError:$TRUE   
-        }
-    }
-
-    
     #At this time we have the DL configuration on both sides and have checked to ensure it is dir synced.
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
 
@@ -1454,86 +918,19 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-NormalizedO365 to normalize the reject members."
 
     Out-LogFile -string "REJECT USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeRejectMessagesSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.RejectMessagesFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 reject messages from senders or members." -isError:$TRUE
     }
 
-    Out-LogFile -string "REJECT GROUPS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    if ($exchangeRejectMessagesSMTP.count -gt 0)
     {
         out-logfile -string "The group has reject messages members."
         Out-logFile -string $exchangeRejectMessagesSMTP
@@ -1543,86 +940,19 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile "The group to be migrated has no reject messages from members."    
     }
     
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-Normalizedo365 to normalize the accept members."
 
     Out-LogFile -string "ACCEPT USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeAcceptMessagesSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.AcceptMessagesOnlyFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 accept messages from senders or members." -isError:$TRUE
     }
 
-    Out-LogFile -string "ACCEPT GROUPS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    if ($exchangeAcceptMessagesSMTP.count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the accept messages from senders:"
         
@@ -1633,88 +963,19 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logFile -string "This group has no accept message from restrictions."    
     }
     
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members."
 
     Out-LogFile -string "Process MANAGEDBY"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeManagedBySMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeManagedBySMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ManagedBy -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 managedBy." -isError:$TRUE
     }
 
-    Out-LogFile -string "Process CoMANAGERS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeManagedBySMTP+=$normalizedTest
-                }
-                
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeManagedBySMTP -ne $NULL)
+    if ($exchangeManagedBySMTP.count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the managedBY:"
         
@@ -1725,48 +986,19 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "The group has no managers."    
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members."
 
     Out-LogFile -string "Process MODERATEDBY"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeModeratedBySMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeModeratedBySMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ModeratedBy -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 ModeratedBy." -isError:$TRUE
     }
 
-    if ($exchangeModeratedBySMTP -ne $NULL)
+    if ($exchangeModeratedBySMTP -gt 0)
     {
         Out-LogFile -string "The following objects are members of the moderatedBY:"
         
@@ -1777,89 +1009,19 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile "The group has no moderators."    
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation users members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-NormalizedO365 to normalize the bypass moderation users members."
 
     Out-LogFile -string "Process BYPASS USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeBypassModerationSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.BypassModerationFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 BypassModerationFromSendersOrMembers." -isError:$TRUE
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation groups members DN to Office 365 identifier."
-
-    Out-LogFile -string "Process BYPASS GROUPS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeBypassModerationSMTP -ne $NULL)
+    if ($exchangeBypassModerationSMTP -gt 0)
     {
         Out-LogFile -string "The following objects are members of the bypass moderation:"
         
@@ -1870,45 +1032,17 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile "The group has no bypass moderation."    
     }
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value)-ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+    out-logfile -string "Invoke get-normalizedO365 to normalize grant send on behalf to."
 
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
-                }
-                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+    try {
+        $exchangeGrantSendOnBehalfToSMTP = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.GrantSendOnBehalfTo -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 GrantSendOnBehalfTo." -isError:$TRUE
     }
 
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    if ($exchangeGrantSendOnBehalfToSMTP -gt 0)
     {
         Out-LogFile -string "The following objects are members of the grant send on behalf to:"
         
@@ -1919,112 +1053,37 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile "The group has no grant send on behalf to."    
     }
 
-    Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
+    #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
 
-    Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
+    out-logfile -string "Obtaining send as permissions - setting to empty as not relevant for this code."
 
-    if ($allObjectSendAsAccess -ne $NULL)
-    {
-        foreach ($permission in $allObjectSendAsAccess)
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+    $exchangeSendAsSMTP=@()
 
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members."
 
-            try 
-            {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
+    try {
+        out-logfile -string "Obtianing the original Office 365 Group membership."
 
-                out-logfile -string $normalizedTest
+        $office365DLMembership = get-o365DlMembership -groupSMTPAddres $groupSMTPAddress -errorAction STOP
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $allObjectsSendAsAccessNormalized+=$normalizedTest
-                }
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
+        out-logfile -string $office365DLMembership
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to obtain the Office 365 DL membership." -isError:$TRUE
     }
 
-   #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
+    out-logfile -string "Normalize the membership now."
 
-    out-logfile -string "Obtaining send as permissions."
-
-    try 
-    {
-        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $corevariables.globalCatalogWithPort.value -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -groupSMTPAddress $groupSMTPAddress
+    try {
+        $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
     }
-    catch 
-    {
-        out-logfile -string "Unable to normalize the send as DNs."
-        out-logfile -string $_ -isError:$TRUE
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to normalize Office 365 GrantSendOnBehalfTo." -isError:$TRUE
     }
 
-    if ($exchangeSendAsSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects have send as rights on the DL."
-        
-        out-logfile -string $exchangeSendAsSMTP
-    }
-
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
-        {
-            #Resetting error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeDLMembershipSMTP+=$normalizedTest
-                }
-                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeDLMembershipSMTP -ne $NULL)
+    if ($exchangeDLMembershipSMTP -gt 0)
     {
         Out-LogFile -string "The following objects are members of the group:"
         
@@ -2057,9 +1116,6 @@ Function Convert-Office365DLtoUnifiedGroup
     out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
-    out-logfile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
-    out-logfile -string ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count)
-    out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     #Exit #Debug Exit.
@@ -2076,7 +1132,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized @() -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
@@ -2086,6 +1142,8 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
     Out-LogFile -string "********************************************************************************"
+
+    exit #Tim
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
