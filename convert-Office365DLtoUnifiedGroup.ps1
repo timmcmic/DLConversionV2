@@ -849,6 +849,8 @@ Function Convert-Office365DLtoUnifiedGroup
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
 
+    Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
+
     out-logfile -string "Convert Office 365 DL configuration to orignal DL configuration for function reuse."
 
     try
