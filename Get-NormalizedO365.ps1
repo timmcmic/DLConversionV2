@@ -100,6 +100,10 @@
                             isError=$NULL
                             isErrorMessage=$null
                         }
+
+                        out-logfile -string $functionRecipient
+
+                        $functionReturnArray += $functionRecipient
                     }
                     catch {
                         out-logfile -string $_
