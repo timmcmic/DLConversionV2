@@ -95,6 +95,7 @@
         else 
         {
             out-logfile -string "No values to normalize were provided."
+            $functionReturnArray = @()
         }
 
         Out-LogFile -string "END GET-NormalizedO365"
