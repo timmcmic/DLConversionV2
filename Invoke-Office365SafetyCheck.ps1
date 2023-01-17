@@ -121,6 +121,10 @@
         {
             out-logfile -string "The email address specified does not belong to a mail universal distribution group or mail universal security group." -isError:$TRUE
         }
+        else
+        {
+            out-logfile -string "The recipient in Office 365 is a valid type proceed with migration or conversion."
+        }
         
         Out-LogFile -string "END INVOKE-OFFICE365SAFETYCHECK"
         Out-LogFile -string "********************************************************************************"
