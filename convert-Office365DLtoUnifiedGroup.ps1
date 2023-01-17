@@ -505,7 +505,7 @@ Function Convert-Office365DLtoUnifiedGroup
     [array]$allOffice365SendAsAccess=$NULL #All cloud only groups the migrated group has send as access on.
     [array]$allOffice365SendAsAccessOnGroup = $NULL #All send as permissions set on the on premises group that are set in the cloud.
     [array]$allOffice365MailboxFolderPermissions=$NULL #All cloud only groups the migrated group has mailbox folder permissions on.
-    [array]$allOnPremSendAs=@() #This array will be empty.  Reused code requires it be present / set with no values.
+    [array]$allObjectsSendAsAccessNormalized=@() #This array will be empty.  Reused code requires it be present / set with no values.
     
     #Cloud variables for the distribution list to be migrated.
 
