@@ -906,6 +906,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        $exchangeRejectMessagesSMTP = @()
         out-logfile "The group to be migrated has no reject messages from members."    
     }
     
@@ -929,6 +930,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else
     {
+        $exchangeAcceptMessagesSMTP = @()
         out-logFile -string "This group has no accept message from restrictions."    
     }
     
@@ -952,6 +954,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        $exchangeManagedBySMTP =@()
         out-logfile -string "The group has no managers."    
     }
 
@@ -967,7 +970,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Unable to normalize Office 365 ModeratedBy." -isError:$TRUE
     }
 
-    if ($exchangeModeratedBySMTP -gt 0)
+    if ($exchangeModeratedBySMTP.Count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the moderatedBY:"
         
@@ -975,6 +978,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        $exchangeModeratedBySMTP = @()
         out-logfile "The group has no moderators."    
     }
 
@@ -990,7 +994,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Unable to normalize Office 365 BypassModerationFromSendersOrMembers." -isError:$TRUE
     }
 
-    if ($exchangeBypassModerationSMTP -gt 0)
+    if ($exchangeBypassModerationSMTP.Count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the bypass moderation:"
         
@@ -998,6 +1002,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        $exchangeBypassModerationSMTP = @()
         out-logfile "The group has no bypass moderation."    
     }
 
@@ -1011,7 +1016,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string "Unable to normalize Office 365 GrantSendOnBehalfTo." -isError:$TRUE
     }
 
-    if ($exchangeGrantSendOnBehalfToSMTP -gt 0)
+    if ($exchangeGrantSendOnBehalfToSMTP.Count -gt 0)
     {
         Out-LogFile -string "The following objects are members of the grant send on behalf to:"
         
@@ -1019,6 +1024,7 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        $exchangeGrantSendOnBehalfToSMTP = @()
         out-logfile "The group has no grant send on behalf to."    
     }
 
