@@ -2,6 +2,8 @@ function convert-O365DLSettingsToOnPremSettings
 {
     [Parameter(Mandatory = $true)]
     $office365DLConfiguration
+
+    $functionObject = $null
     
     #Output all parameters bound or unbound and their associated values.
 
