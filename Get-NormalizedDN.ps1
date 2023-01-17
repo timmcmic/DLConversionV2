@@ -199,6 +199,9 @@
                     PrimarySMTPAddressOrUPN = $functionTest.mail
                     GUID = $NULL
                     RecipientType = $functionTest.objectClass
+                    ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                    ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                    ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                     GroupType = $NULL
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null
@@ -228,6 +231,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.extensionAttribute2
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -253,6 +259,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -276,6 +285,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $NULL
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -297,6 +309,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.userPrincipalName
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $NULL
                         RecipientOrUser = "User"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -325,6 +340,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -351,6 +369,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.extensionAttribute2
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -376,6 +397,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -401,6 +425,9 @@
                         PrimarySMTPAddressOrUPN = $functionTest.mail
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
@@ -423,6 +450,9 @@
                         PrimarySMTPAddressOrUPN = $null
                         GUID = $NULL
                         RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
                         ExternalDirectoryObjectID = $null
@@ -446,6 +476,9 @@
                     PrimarySMTPAddressOrUPN = $null
                     GUID = $NULL
                     RecipientType = $functionTest.objectClass
+                    ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                    ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                    ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                     GroupType = $functionTest.GroupType
                     RecipientOrUser = "Recipient"
                     ExternalDirectoryObjectID = $null

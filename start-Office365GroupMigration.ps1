@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Start-DistributionListMigration 
+Function Start-Office365GroupMigration
 {
     <#
     .SYNOPSIS
@@ -161,18 +161,6 @@ Function Start-DistributionListMigration
     This option enables mail flow objects in the on-premises Active Directory post migration.
     This supports relay scenarios through the onpremises Exchange organization.
 
-    .PARAMETER GROUPTYPEOVERRIDE
-
-    *OPTIONAL*
-    This allows the administrator to override the group creation type in Office 365.
-    For example, an on premises security group may be migrated to Office 365 as a distribution only list.
-    If any security dependencies are discovered during the migration this option is always overridden to preserve security and the settings.
-
-    .PARAMETER TRIGGERUPGRADETOOFFICE365GROUP
-
-    *OPTIONAL*
-    This settings triggers the migrated group to be upgraded to the modern Office 365 Group / Universal Group experience.
-
     .PARAMETER OVERRIDECENTRALIZEDMAILTRANSPORTENABLED
 
     *OPTIONAL*
@@ -241,78 +229,19 @@ Function Start-DistributionListMigration
 
     The following blog posts maintain documentation regarding this module.
 
-    Introduction to the Distribution List Migration Module version 2.0
-    https://timmcmic.wordpress.com/2021/04/25/4116/
-
-    Preparing to use the distribution list migration v2 module.
-    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-2/
-
-    Using the distribution list migration module v2 for simple migrations
-    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-3-2/
-
-    Retaining the original distribution group post migration…
-    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-4/
-
-    Gathering advanced dependencies for a group to be migrated…
-    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-5/
-
-    How does the module track distribution lists that have been migrated?
-    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-6/
-
-    Enabling hybrid mail flow for migrated distribution lists.
-    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-7/
-
-    https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration-version-2-0-part-8/
-
-    Introduction to batch migrations.
-    https://timmcmic.wordpress.com/2021/09/02/office-365-distribution-list-migrations-version-2-0-part-9/
-
-    https://timmcmic.wordpress.com/2021/09/27/office-365-distribution-list-migration-version-2-0-part-10/
-
-    Improvements in Error Handling in version 2.4.8.x
-    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-11/
-
-    Announcing multiple migration machine support.
-    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-12/
-
-    Enabling support for partially mail enabled distribution groups.
-    https://timmcmic.wordpress.com/2022/03/07/office-365-distribution-list-migration-version-2-0-part-13/
-
-    Enabling hybrid mail flow post group migration.
-    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-14/
-
-    Enabling migration support for non-synchronized groups.
-    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-15/
-
-    Mail flow issues with centralized mail transport enabled and migrated distribution groups.
-    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-16/
-
-    I need assistance with the migration module, have a suggestion, or want to request a feature?
-    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-17/
-
-    New handling of recipient restrictions assigned to the migrated distribution group.
-    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-18/
-
-    New handling of distribution group creation during migration to eliminate ambiguous references.
-    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-19/
-
-    Adding a new method of verifying the distribution list is directory synchronized.
-    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/
-
-    Preparing for the deprecation and disablement of Basic Authentication.
-    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-21/
+    https://timmcmic.wordpress.com/2023/01/08/office-365-distribution-list-migration-version-2-0/
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE
 
     .EXAMPLE
 
-    Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE -useCollectedOnPremMailboxFolderPermissions:$TRUE -useCollectedOffice365MailboxFolderPermissions:$TRUE -useCollectedOnPremSendAs:$TRUE -useCollectedOnPremFullMailboxAccess:$TRUE -useCollectedOffice365FullMailboxAccess:$TRUE
+    Start-Office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred -enableHybridMailFlow:$TRUE -triggerUpgradeToOffice365Group:$TRUE -useCollectedOnPremMailboxFolderPermissions:$TRUE -useCollectedOffice365MailboxFolderPermissions:$TRUE -useCollectedOnPremSendAs:$TRUE -useCollectedOnPremFullMailboxAccess:$TRUE -useCollectedOffice365FullMailboxAccess:$TRUE
 
     #>
 
@@ -380,11 +309,6 @@ Function Start-DistributionListMigration
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Security","Distribution","None")]
-        [string]$groupTypeOverride="None",
-        [Parameter(Mandatory = $false)]
-        [boolean]$triggerUpgradeToOffice365Group=$FALSE,
         [Parameter(Mandatory=$false)]
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
@@ -400,6 +324,8 @@ Function Start-DistributionListMigration
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$addManagersAsMembers = $false,
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
@@ -437,7 +363,7 @@ Function Start-DistributionListMigration
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
-    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryEventName = "Start-Office365GroupMigration"
     $telemetryFunctionStartTime=$NULL
     $telemetryFunctionEndTime=$NULL
     [double]$telemetryNormalizeDN=0
@@ -452,7 +378,7 @@ Function Start-DistributionListMigration
     [boolean]$telemetryError=$FALSE
 
 
-    $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
+    $windowTitle = ("Start-Office365GroupMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
      #Define the status directory.
@@ -617,6 +543,8 @@ Function Start-DistributionListMigration
         office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
         office365DLConfigurationPostMigrationXML = @{ "Value" =  "office365DLConfigurationPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
         office365DLMembershipPostMigrationXML = @{ "Value" =  "office365DLMembershipPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
+        office365DLOwnersPostMigrationXML = @{ "Value" =  "office365DLOwnersPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL owners post migration"}
+        office365DLSubscribersPostMigrationXML = @{ "Value" =  "office365DLSubscribersPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL owners post migration"}
         exchangeDLMembershipSMTPXML = @{ "Value" =  "exchangeDLMemberShipSMTPXML" ; "Description" = "XML file that holds the SMTP addresses of the on premises DL membership"}
         exchangeRejectMessagesSMTPXML = @{ "Value" =  "exchangeRejectMessagesSMTPXML" ; "Description" = "XML file that holds the Reject Messages From Senders or Members property of the on premises DL"}
         exchangeAcceptMessagesSMTPXML = @{ "Value" =  "exchangeAcceptMessagesSMTPXML" ; "Description" = "XML file that holds the Accept Messages from Senders or Members property of the on premises DL"}
@@ -718,6 +646,8 @@ Function Start-DistributionListMigration
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
+    $office365DLOwnersPostMigration=$NULL #This holds the Office 365 DL owners information post migration.
+    $office365DLSubscribersPostMigration=$NULL #This holds the Office 365 DL subscribers information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
 
     #Declare some variables for string processing as items move around.
@@ -751,6 +681,10 @@ Function Start-DistributionListMigration
 
     [int]$forLoopTrigger=1000
     [int]$createMailContactDelay=5
+
+    [string]$functionObjectClassContact = "Contact"
+    [string]$functionObjectClassGroup = "Group"
+    [string]$functionObjectClassDynamic = "msExchDynamicDistributionList"
 
     #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
     #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
@@ -866,7 +800,7 @@ Function Start-DistributionListMigration
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "BEGIN Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
     out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
@@ -923,8 +857,6 @@ Function Start-DistributionListMigration
     
     $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
     
-    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
-    
     if ($azureTenantID -ne $NULL)
     {
         $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
@@ -960,7 +892,7 @@ Function Start-DistributionListMigration
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
-    if ($azureADCreential -ne $NULL)
+    if ($azureADCredential -ne $NULL)
     {
         out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
@@ -1450,9 +1382,7 @@ Function Start-DistributionListMigration
     {
         $office365DLConfiguration="DistributionListIsNonSynced"
     }
-
-    
-    
+        
     Out-LogFile -string $office365DLConfiguration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
@@ -1472,7 +1402,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($azureADDLConfiguration -ne $NULL)
+    if ($azureAADLConfiguration -ne $NULL)
     {
         out-logfile -string $azureADDLConfiguration
 
@@ -1523,61 +1453,6 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
-
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
-        {
-            #Resetting error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeDLMembershipSMTP+=$normalizedTest
-                }
-                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeDLMembershipSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the group:"
-        
-        out-logfile -string $exchangeDLMembershipSMTP
-    }
-    else 
-    {
-        out-logFile -string "The distribution group has no members."    
-    }
 
     Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
 
@@ -1841,55 +1716,6 @@ Function Start-DistributionListMigration
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        #First scan is to ensure that any of the groups listed on the managed by objects are still security.
-        #It is possible someone added it to managed by and changed the group type after.
-
-        foreach ($object in $exchangeManagedBySMTP)
-        {
-            #If the objec thas a non-null group type (is a group) and the value of the group type matches none of the secuity group types.
-            #The object is a distribution list - no good.
-
-            if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
-            {
-                $object.isError=$TRUE
-                $object.isErrorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
-                
-                out-logfile -string object
-
-                $global:preCreateErrors+=$object
-
-                out-logfile -string "A distribution list (not security enabled) was found on managed by."
-                out-logfile -string "The group must be converted to security or removed from managed by."
-                out-logfile -string $object.primarySMTPAddressOrUPN
-            }
-
-            #The group is not a distribution list.
-            #If the SMTP object of the managedBy object equals the original group - check to see if an override is found.
-            #If an override of distribution is found - this is not OK since security is required.
-
-            elseif (($object.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution")) 
-            {
-                out-logfile -string "Group type override detected - group has managed by permissions."
-
-                #Group type is not NULL / Group type is security value.
-
-                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
-
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-        
-                    out-logfile -string "A security group has managed by rights on the distribution list."
-                    out-logfile -string "The administrator has specified to override the group type."
-                    out-logfile -string "The group override must be removed or the object removed from managedBY."
-                    out-logfile -string $object.primarySMTPAddressOrUPN
-                }
-            }
-        }
-
         Out-LogFile -string "The following objects are members of the managedBY:"
         
         out-logfile -string $exchangeManagedBySMTP
@@ -2154,6 +1980,61 @@ Function Start-DistributionListMigration
         out-logfile -string $exchangeSendAsSMTP
     }
 
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
+        {
+            #Resetting error variable.
+
+            $isTestError="No"
+
+            if ($forLoopCounter -eq $forLoopTrigger)
+            {
+                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                $forLoopCounter = 0
+            }
+            else 
+            {
+                $forLoopCounter++    
+            }
+
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeDLMembershipSMTP+=$normalizedTest
+                }
+                
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the group:"
+        
+        out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else 
+    {
+        out-logFile -string "The distribution group has no members."    
+    }
+
     #exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
@@ -2189,6 +2070,22 @@ Function Start-DistributionListMigration
     $forLoopCounter=0 #Resetting counter at next set of queries.
 
     $telemetryFunctionStartTime = get-universalDateTime
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    try {
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to test for Office 365 Unified group dependencies."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -2243,23 +2140,41 @@ Function Start-DistributionListMigration
                 $forLoopCounter++    
             }
 
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+            if (($member.recipientType -ne $functionObjectClassContact) -and ($member.recipientType -ne $functionObjectClassGroup) -and ($member.recipientType -ne $functionObjectClassDynamic))
+            {
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
-            try{
-                $isTestError=test-O365Recipient -member $member
+                try{
+                    $isTestError=test-O365Recipient -member $member
 
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
-                    out-logfile -string $member
+                        out-logfile -string $member
 
-                    $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
                 }
             }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
+            else
+            {
+                if ($member.recipientType -ne $functionObjectClassContact) 
+                {
+                    out-logfile -string "Member is a contact and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
+                elseif ($member.recipientType -ne $functionObjectClassGroup)
+                {
+                    out-logfile -string "Member is a group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
+                elseif ($member.recipientType -ne $functionObjectClassDynamic)
+                {
+                    out-logfile -string "Member is a dynamic group and is not eligable for testing for Office 365 Unified Group migrations - skipping"
+                }
             }
         }
     }
@@ -2464,44 +2379,7 @@ Function Start-DistributionListMigration
 
     if ($exchangeBypassModerationSMTP.count -gt 0)
     {
-        out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeBypassModerationSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+        out-logfile -string "Office 365 Unified Groups do not accept bypass moderation from senders or members.  Skipping testing."
     }
     else 
     {
@@ -2606,44 +2484,7 @@ Function Start-DistributionListMigration
 
     if ($allObjectsSendAsAccessNormalized.count -gt 0)
     {
-        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
-
-        foreach ($member in $allObjectsSendAsAccessNormalized)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
+        out-logfile -string "Office 365 Unified Groups are not security enabled and may not have send as rights on other objects - skipping testing."
     }
     else 
     {
@@ -2659,67 +2500,6 @@ Function Start-DistributionListMigration
     $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
-
-    #At this time we have validated the on premises pre-requisits for group migration.
-    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
-
-    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
-    {
-        #Write the XML files first so that the error table is complete without separation.
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-        }
-
-        if ($global:testOffice365Errors.Count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
-        }
-
-        out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
-        out-logfile -string "+++++"
-        out-logfile -string ""
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            foreach ($preReq in $global:preCreateErrors)
-            {
-                write-errorEntry -errorEntry $preReq
-
-                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
-
-                if ($preReq.isErrorMessage -like $nestedGroupException)
-                {
-                    out-logfile -string "Nested group exception written to CSV."
-                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
-                }
-            }
-        }
-
-        if ($global:testOffice365Errors.count -gt 0)
-        {
-            foreach ($preReq in $global:testOffice365Errors)
-            {
-                write-errorEntry -errorEntry $prereq
-            }
-        }
-
-        if ($isHealthCheck -eq $FALSE)
-        {
-            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
-        }
-        else
-        {
-            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
-        }  
-    }
-
-    if ($isHealthCheck -eq $TRUE)
-    {
-        return
-    }
 
     #Exit #Debug Exit
 
@@ -2995,6 +2775,10 @@ Function Start-DistributionListMigration
         out-logfile -string $allObjectsSendAsAccessNormalized
 
         out-xmlFile -itemToExport $allObjectsSendAsAccessNormalized -itemNameToExport $xmlFiles.allGroupsSendAsNormalizedXML.value
+    }
+    else 
+    {
+        $allObjectsSendAsAccessNormalized=@()
     }
     
     if ($exchangeDLMembershipSMTP -ne $NULL)
@@ -3367,10 +3151,6 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
-
-            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3391,10 +3171,6 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3416,10 +3192,6 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $xmlFiles.allOffice365FullMailboxAccessXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3430,10 +3202,6 @@ Function Start-DistributionListMigration
         {
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $xmlFiles.allOffice365MailboxesFolderPermissionsXML.value
-
-            out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
-
-            $groupTypeOverride="Security"
         }
         else 
         {
@@ -3442,7 +3210,6 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "Administrator opted out of recording Office 365 dependencies."
         out-logfile -string "Administrator opted out of recording Office 365 dependencies."
         $allOffice365MailboxFolderPermissions=@() 
         $allOffice365FullMailboxAccess=@()  
@@ -3483,6 +3250,106 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    try {
+        start-testo365UnifiedGroupDependency -allOffice365ManagedBy $allOffice365ManagedBy -allOffice365SendAsAccess $allOffice365SendAsAccess -allOffice365FullMailboxAccess $allOffice365FullMailboxAccess -allOffice365MailboxFolderPermissions $allOffice365MailboxFolderPermissions -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to test for Office 365 Unified group dependencies."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE UNIFIED GROUP PRE-REQS"
+    Out-LogFile -string "********************************************************************************"
+
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors.Count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
+        }
+
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:preCreateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -like $nestedGroupException)
+                {
+                    out-logfile -string "Nested group exception written to CSV."
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
+        }
+
+        if ($isHealthCheck -eq $FALSE)
+        {
+            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+        }  
+    }
+
+    #If we're only doing health checking return to the health checking function.
+
+    if ($isHealthCheck -eq $TRUE)
+    {
+        return
+    }
+
+    out-logfile "All Unified Group pre-reqs passed - determine if managers are added to owners."
+
+    if ($addManagersAsMembers -eq $TRUE)
+    {
+        out-logfile -string "Attempting to add managers to the members array if they are not already there."
+
+        $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
+
+        out-logfile -string $exchangeDLMembershipSMTP
+
+        out-logfile -string "Ensuring that the membership array is unique as it may contain overlap with managers."
+
+        $exchangeDLMembershipSMTP = $exchangeDLMembershipSMTP | sort-object -unique -property PrimarySMTPAddressOrUPN
+
+        out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else
+    {
+        out-logfile -string "Managers not automatically added as members."
+    }
+
     #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
@@ -3500,7 +3367,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration=new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
+            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
 
             #If we made it this far then the group was created.
 
@@ -3572,7 +3439,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
 
             $stopLoop = $TRUE
         }
@@ -3599,7 +3466,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup:$TRUE -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
@@ -3635,7 +3502,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
+            set-Office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
             $stopLoop=$TRUE
         }
         catch {
@@ -3661,7 +3528,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
@@ -3950,7 +3817,7 @@ Function Start-DistributionListMigration
     
     do {
         try {
-            set-Office365DLMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -errorAction STOP -groupTypeOverride $groupTypeOverride -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup 
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
 
             $stopLoop = $TRUE
         }
@@ -3977,7 +3844,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we were successful - output the information to XML.
 
@@ -4013,7 +3880,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
+            set-Office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
             $stopLoop=$TRUE
         }
         catch {
@@ -4041,7 +3908,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+            $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -isUnifiedGroup $TRUE -errorAction STOP
 
             #If we made it this far we successfully got the DL.  Write it.
 
@@ -4076,7 +3943,7 @@ Function Start-DistributionListMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP
+            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedMembers $TRUE -errorAction STOP
 
             #Membership obtained - export.
 
@@ -4093,11 +3960,86 @@ Function Start-DistributionListMigration
             if ($loopCounter -gt 10)
             {
                 out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
                 $stopLoop = $TRUE
             }
             else 
             {
                 start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+                
+                out-logfile -string $_
+
+                $loopCounter = $loopCounter+1 
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try{
+            $office365DLOwnersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedOwners $TRUE -errorAction STOP
+
+            #Membership obtained - export.
+
+            out-logFile -string "Write the new DL membership to XML."
+            out-logfile -string $office365DLOwnersPostMigration
+
+            out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+
+            #Exports complete - stop loop
+
+            $stopLoop=$TRUE
+        }
+        catch{
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                out-logfile -string $_
+ 
+                $loopCounter = $loopCounter+1 
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try{
+            $office365DLSubscribersPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -isUnifiedGroup $TRUE -getUnifiedSubscribers $TRUE -errorAction STOP
+
+            #Membership obtained - export.
+
+            out-logFile -string "Write the new DL membership to XML."
+            out-logfile -string $office365DLSubscribersPostMigration
+
+            out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
+
+            #Exports complete - stop loop
+
+            $stopLoop=$TRUE
+        }
+        catch{
+            if ($loopCounter -gt 10)
+            {
+                out-logfile -string "Unable to get Office 365 distribution list configuration after 10 tries."
+                out-logfile -string $_
+                $stopLoop = $TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to capture the Office 365 DL configuration.  Sleeping 15 seconds." -sleepSeconds 15
+
+                out-logfile -string $_
  
                 $loopCounter = $loopCounter+1 
             }
@@ -5645,7 +5587,7 @@ Function Start-DistributionListMigration
     disable-allPowerShellSessions
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "END START-DISTRIBUTIONLISTMIGRATION"
+    Out-LogFile -string "END Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
     if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))

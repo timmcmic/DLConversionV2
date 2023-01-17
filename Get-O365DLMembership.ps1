@@ -27,7 +27,15 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress
+            [string]$groupSMTPAddress,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isUnifiedGroup=$false,
+            [Parameter(Mandatory = $false)]
+            [boolean]$getUnifiedMembers=$false,
+            [Parameter(Mandatory = $false)]
+            [boolean]$getUnifiedOwners=$false,
+            [Parameter(Mandatory = $false)]
+            [boolean]$getUnifiedSubscribers=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -37,6 +45,9 @@
         #Declare function variables.
 
         $functionDLMembership=$NULL #Holds the return information for the group query.
+        $functionMembersLinkType = "Members"
+        $functionOwnersLinkType = "Owners"
+        $functionSubscribersLinkType = "Subscribers"
 
         #Start function processing.
 
@@ -45,20 +56,60 @@
         Out-LogFile -string "********************************************************************************"
 
         #Get the recipient using the exchange online powershell session.
-        
-        try 
+
+        if ($isUnifiedGroup -eq $FALSE)
         {
+
             Out-LogFile -string "Using Exchange Online to obtain the group membership."
 
-            $functionDLMembership=get-O365DistributionGroupMember -identity $groupSMTPAddress -errorAction STOP
+            $functionDLMembership=get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP
             
             Out-LogFile -string "Distribution group membership recorded."
         }
-        catch 
+        else 
         {
-            Out-LogFile -string $_ -isError:$TRUE
-        }
+            out-logfile -string "Using Exchange Online to obtain unified group member properties."
 
+            if ($getUnifiedMembers -eq $TRUE)
+            {
+                Out-LogFile -string "Using Exchange Online to obtain the unified group membership membership."
+
+                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionMembersLinkType -resultsize unlimited -errorAction STOP
+                
+                Out-LogFile -string "Distribution group membership recorded."
+            }
+            else
+            {
+                out-logfile -string "Call is not for unified group members."
+            }
+
+            if ($getUnifiedOwners -eq $TRUE)
+            {
+                Out-LogFile -string "Using Exchange Online to obtain the unified group owners membership."
+
+                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionOwnersLinkType -resultsize unlimited -errorAction STOP
+                
+                Out-LogFile -string "Distribution group owners recorded."
+            }
+            else
+            {
+                out-logfile -string "Call is not for unified group owners."
+            }
+
+            if ($getUnifiedSubscribers -eq $TRUE)
+            {
+                Out-LogFile -string "Using Exchange Online to obtain the unified group subscribers membership."
+
+                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionSubscribersLinkType -resultsize unlimited -errorAction STOP
+                
+                Out-LogFile -string "Distribution group subscribers recorded."
+            }
+            else
+            {
+                out-logfile -string "Call is not for unified group subscribers."
+            }
+        }
+        
         Out-LogFile -string "END GET-O365DLMEMBERSHIP"
         Out-LogFile -string "********************************************************************************"
         

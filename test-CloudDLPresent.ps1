@@ -70,6 +70,10 @@
 
                     $waitTime = 0
                 }
+                elseif ($aadConnectPowershellSessionName -eq $NULL)
+                {
+                    out-logfile -string "Not a mutlithreaded migration - no proactive AD Connect calls."
+                }
                 else 
                 {
                     out-logfile -string "No need to invoke ADConnect at this time."
