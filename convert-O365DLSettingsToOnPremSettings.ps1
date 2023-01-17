@@ -43,34 +43,6 @@ function convert-O365DLSettingsToOnPremSettings
 
     $functionObject = New-Object PSObject -Property @{
         msExchEnableModeration=$msExchEnableModeration
-        msExchHideFromAddressLists=$msExchHideFromAddressLists
-        msExchRequireAuthToSendTo=$msExchRequireAuthToSendTo
-        mailNickName=$mailNickName
-        displayName=$displayName
-        msExchSenderHintTranslations=$msExchSenderHintTranslations
-        extensionAttribute1=$extensionAttribute1
-        extensionAttribute10=$extensionAttribute10
-        extensionAttribute11=$extensionAttribute11
-        extensionAttribute12=$extensionAttribute12
-        extensionAttribute13=$extensionAttribute13
-        extensionAttribute14=$extensionAttribute14
-        extensionAttribute15=$extensionAttribute15
-        extensionAttribute2=$extensionAttribute2
-        extensionAttribute3=$extensionAttribute3
-        extensionAttribute4=$extensionAttribute4
-        extensionAttribute5=$extensionAttribute5
-        extensionAttribute6=$extensionAttribute6
-        extensionAttribute7=$extensionAttribute7
-        extensionAttribute8=$extensionAttribute8
-        extensionAttribute9=$extensionAttribute9
-        msExchExtensionCustomAttribute1=$msExchExtensionCustomAttribute1
-        msExchExtensionCustomAttribute2=$msExchExtensionCustomAttribute2
-        msExchExtensionCustomAttribute3=$msExchExtensionCustomAttribute3
-        msExchExtensionCustomAttribute4=$msExchExtensionCustomAttribute4
-        msExchExtensionCustomAttribute5=$msExchExtensionCustomAttribute5
-        proxyAddresses=$proxyAddresses
-        mail=$mail
-        legacyExchangeDN=$legacyExchangeDN
     }
 
     out-logfile -string $functionObject
