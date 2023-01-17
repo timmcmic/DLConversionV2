@@ -70,8 +70,6 @@
 
         out-logfile -string "Determine if attribute has values to convert."
 
-        <#
-
         if ($attributeToNormalize.count -gt 0)
         {
             out-logfile -string "Attribute to convert has values."
@@ -122,52 +120,6 @@
             }
         }
         else 
-        {
-            out-logfile -string "No values to normalize were provided."
-            $functionReturnArray = @()
-        }
-
-        #>
-
-        if ($attributeToNormalize.count -gt 0)
-        {
-            out-logfile -string "Attribute has objects that require normalization."
-
-            foreach ($member in $attributeToNormalize)
-            {
-                out-logfile -string ("Testing member: "+$member)
-                
-                if ($member.recipientType -ne "User")
-                {
-                    out-logfile -string "Object is recipient record Exchange values."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        PrimarySMTPAddressOrUPN = $member.primarySMTPAddress
-                        ExternalDirectoryObjectID = ("Value_"+$member.externalDirectoryObjectID)
-                        isError=$NULL
-                        isErrorMessage=$null
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Object is a user - pull appropriate user values."
-
-                    $functionRecipient = get-o365User -identity $member.externalDirectoryObjectID
-
-                    $functionObject = New-Object PSObject -Property @{
-                        PrimarySMTPAddressOrUPN = $functionRecipient.userPrincipalName
-                        ExternalDirectoryObjectID = ("Value_"+$member.externalDirectoryObjectID)
-                        isError=$NULL
-                        isErrorMessage=$null
-                    }
-                }
-                
-                out-logfile -string $functionObject
-
-                $functionReturnArray += $functionObject
-            }
-        }
-        else
         {
             out-logfile -string "No values to normalize were provided."
             $functionReturnArray = @()
