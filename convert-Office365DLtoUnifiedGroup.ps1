@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Start-Office365GroupMigration
+Function Convert-Office365DLtoUnifiedGroup
 {
     <#
     .SYNOPSIS
