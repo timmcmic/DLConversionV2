@@ -251,30 +251,6 @@ Function Convert-Office365DLtoUnifiedGroup
     (
         [Parameter(Mandatory = $true)]
         [string]$groupSMTPAddress,
-        #Local Active Director Domain Controller Parameters
-        [Parameter(Mandatory = $true)]
-        [string]$globalCatalogServer,
-        [Parameter(Mandatory = $true)]
-        [pscredential]$activeDirectoryCredential,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
-        #Azure Active Directory Connect Parameters
-        [Parameter(Mandatory = $false)]
-        [string]$aadConnectServer=$NULL,
-        [Parameter(Mandatory = $false)]
-        [pscredential]$aadConnectCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $aadConnectAuthenticationMethod="Kerberos",
-        #Exchange On-Premises Parameters
-        [Parameter(Mandatory = $false)]
-        [string]$exchangeServer=$NULL,
-        [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        [string]$exchangeAuthenticationMethod="Basic",
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
@@ -303,23 +279,9 @@ Function Convert-Office365DLtoUnifiedGroup
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         #Defining optional parameters for retention and upgrade
-        [Parameter(Mandatory = $false)]
-        [string]$dnNoSyncOU = "NotSet",
-        [Parameter(Mandatory = $false)]
-        [boolean]$retainOriginalGroup = $TRUE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$enableHybridMailflow = $FALSE,
-        [Parameter(Mandatory=$false)]
-        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
-        [Parameter(Mandatory=$false)]
-        [boolean]$allowNonSyncedGroup=$FALSE,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedSendAsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
