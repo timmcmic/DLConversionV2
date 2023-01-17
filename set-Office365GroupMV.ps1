@@ -477,7 +477,7 @@
 
                 #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
 
-                $functionRecipients = $functionRecipients | select-object -Unique
+                $functionRecipients = @($functionRecipients | select-object -Unique)
 
                 out-logfile -string "Updating membership with unique values."
                 out-logfile -string $functionRecipients
