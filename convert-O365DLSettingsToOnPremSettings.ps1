@@ -44,11 +44,8 @@ function convert-O365DLSettingsToOnPremSettings
     [string]$legacyExchangeDN=$office365DLConfiguration.legacyExchangeDN
 
     $functionObject = New-Object PSObject -Property @{
-        msExchEnableModeration=$msExchEnableModeration
+        
     }
-
-    out-logfile -string $functionObject
-    out-logfile -string $functionObject.msExchEnableModeration
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END convert-O365DLSettingsToOnPremSettings"
