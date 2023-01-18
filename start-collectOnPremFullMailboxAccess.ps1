@@ -221,6 +221,7 @@ function start-collectOnPremFullMailboxAccess
             {
                 foreach ($mailbox in $bringMyOwnMailboxes)
                 {
+                    out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
                         $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
