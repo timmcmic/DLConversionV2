@@ -63,7 +63,6 @@
 
             $functionDLMembership=get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP
             
-            out-logfile -string $functionDLMembership
             Out-LogFile -string "Distribution group membership recorded."
         }
         else 
