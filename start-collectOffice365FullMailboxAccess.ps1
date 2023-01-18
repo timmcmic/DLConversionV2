@@ -168,7 +168,7 @@ function start-collectOffice365FullMailboxAccess
     {
         if ($retryCollection -eq $FALSE)
         {
-            if ($bringMyOwnMailboxes -eq $NULL)
+            if ($bringMyOwnMailboxes.count -eq 0)
             {
                 out-logFile -string "Obtaining all Office 365 mailboxes."
 
