@@ -1042,7 +1042,6 @@ Function Convert-Office365DLtoUnifiedGroup
         $office365DLMembership = @(get-o365DlMembership -groupSMTPAddres $groupSMTPAddress -errorAction STOP)
 
         out-logfile -string $office365DLMembership
-        out-logfile -string $office365DLMembership.count.tostring()
     }
     catch {
         out-logfile -string $_
