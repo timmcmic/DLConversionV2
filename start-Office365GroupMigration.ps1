@@ -1220,6 +1220,7 @@ Function Start-Office365GroupMigration
 
             
             $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
+            out-logfile -string $importFilePath
 
             try {
                 $importData = import-CLIXML -path $importFilePath
