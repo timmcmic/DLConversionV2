@@ -159,6 +159,8 @@ Function test-preO365GroupConversion
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
+        [Parameter(Mandatory = $false)]
+        [boolean]$addManagersAsMembers = $false,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
