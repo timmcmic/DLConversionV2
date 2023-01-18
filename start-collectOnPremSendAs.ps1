@@ -212,8 +212,6 @@ function start-collectOnPremSendAs
                     out-logfile -string $_
                     out-logfile -string "Unable to find a recipient specified in bring your own mailboxes." -isError:$TRUE
                 }
-
-                $auditRecipients = $bringMyOwnRecipients
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
