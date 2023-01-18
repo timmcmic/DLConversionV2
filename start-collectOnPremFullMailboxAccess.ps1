@@ -79,7 +79,7 @@ function start-collectOnPremFullMailboxAccess
 
     #Declare function variables.
 
-    $auditMailboxes=$NULL
+    $auditMailboxes=@()
     [array]$auditFullMailboxAccess=@()
     [int]$forCounter=0
     [int]$powershellCounter = 0
