@@ -1042,6 +1042,7 @@ Function Convert-Office365DLtoUnifiedGroup
         $office365DLMembership = get-o365DlMembership -groupSMTPAddres $groupSMTPAddress -errorAction STOP
 
         out-logfile -string $office365DLMembership
+        out-logfile -string $office365DLMembership.count.tostring()
     }
     catch {
         out-logfile -string $_
@@ -1050,6 +1051,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     if ($office365DLMembership.count -gt 0)
     {
+        out-logfile -string "Office 365 DL has membership - begin normalizing..."
         try {
             $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
         }
@@ -1060,8 +1062,11 @@ Function Convert-Office365DLtoUnifiedGroup
     }
     else 
     {
+        out-logfile -string "No office 365 DL members to normalize."
         $exchangeDLMembershipSMTP = @()
     }
+
+    exit
 
     out-logfile -string "Normalize the membership now."
 
