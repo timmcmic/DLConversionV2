@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Test-PreMigrationO365Group 
+Function test-preO365GroupConversion 
 {
     <#
     .SYNOPSIS
@@ -132,14 +132,6 @@ Function Test-PreMigrationO365Group
     (
         [Parameter(Mandatory = $true)]
         [string]$groupSMTPAddress,
-        #Local Active Director Domain Controller Parameters
-        [Parameter(Mandatory = $true)]
-        [string]$globalCatalogServer,
-        [Parameter(Mandatory = $true)]
-        [pscredential]$activeDirectoryCredential,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
@@ -168,28 +160,14 @@ Function Test-PreMigrationO365Group
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         #Defining optional parameters for retention and upgrade
-        [Parameter(Mandatory = $false)]
-        [string]$dnNoSyncOU = "NotSet",
-        #Definte parameters for pre-collected permissions
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
-        #Define parameters for multi-threaded operations
-        [Parameter(Mandatory = $false)]
-        [int]$threadNumberAssigned=0,
-        [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0,
-        [Parameter(Mandatory = $FALSE)]
-        [boolean]$isMultiMachine=$FALSE,
-        [Parameter(Mandatory = $FALSE)]
-        [string]$remoteDriveLetter=$NULL,
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory = $false)]
+        [int]$threadNumberAssigned=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0
     )
 
     #Initialize telemetry collection.
@@ -262,7 +240,7 @@ Function Test-PreMigrationO365Group
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    start-office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedSendAsOnPrem $useCollectedSendAsOnPrem -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365
+    convert-Office365DLtoUnifiedGroup -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigrationO365Group"
