@@ -43,6 +43,7 @@
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
         $functionMailSecurity="MailUniversalSecurityGroup"
         $functionMailDistribution="MailUniversalDistributionGroup"
+        $functionGroupType = "GroupMailbox"
 
         #Start function processing.
 
@@ -52,7 +53,9 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        if ($isUnifiedGroup -eq $false)
+        $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
+
+        if (($isUnifiedGroup -eq $false) -or ($functionRecipient.recipientTypeDetails -ne $functionGroupType))
         {
             out-logfile -string "Group is not unified use standard DL commands."
 
