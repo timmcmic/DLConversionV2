@@ -167,9 +167,6 @@ Function Test-PreMigrationO365Group
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        #Defining optional parameters for retention and upgrade
-        [Parameter(Mandatory = $false)]
-        [string]$dnNoSyncOU = "NotSet",
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
@@ -196,6 +193,8 @@ Function Test-PreMigrationO365Group
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversion"
+
+    [string]$dnNoSyncOU = "NotSet"
 
     if ($allowTelemetryCollection -eq $TRUE)
     {
