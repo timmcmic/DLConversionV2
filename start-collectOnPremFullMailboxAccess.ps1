@@ -225,6 +225,7 @@ function start-collectOnPremFullMailboxAccess
                         $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                     catch {
+                        out-logfile -string $_
                         out-logfile -string "Unable to locate a specified mailbox in bring your own mailboxes." -isError:$TRUE
                     }
                 }
