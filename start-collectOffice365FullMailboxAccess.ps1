@@ -188,9 +188,10 @@ function start-collectOffice365FullMailboxAccess
             else 
             {
                 out-logfile -string "Brinf your own mailboxes was specified - evaluating only mailboxes specified."
-                
+
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
+                    out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                     $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                 }
