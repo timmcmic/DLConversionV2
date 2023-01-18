@@ -1063,8 +1063,6 @@ Function Convert-Office365DLtoUnifiedGroup
         $exchangeDLMembershipSMTP = @()
     }
 
-    exit
-
     out-logfile -string "Normalize the membership now."
 
     if ($exchangeDLMembershipSMTP.Count -gt 0)
