@@ -156,7 +156,7 @@
         {
             out-logfile -string "Operation is retried - use Office 365 value."
 
-            if ($office365DLConfiguration.recipientDisplayType -ne "GroupMailbox")
+            if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
             {
                 out-logfile -string "Office 365 group is normal - use windows email address."
 
