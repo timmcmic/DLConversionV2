@@ -84,7 +84,7 @@ function start-collectOnPremMailboxFolders
 
     #Declare function variables.
 
-    $auditMailboxes=$NULL
+    $auditMailboxes=@()
     $auditFolders=$NULL
     [array]$auditFolderNames=@()
     [array]$auditFolderPermissions=@()
@@ -215,7 +215,16 @@ function start-collectOnPremMailboxFolders
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditMailboxes = $bringMyOwnMailboxes
+                foreach ($mailbox in $bringMyOwnMailboxes)
+                {
+                    try {
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                    }
+                    catch {
+                        out-logfile -string $_
+                        out-logfile -string "Unable to locate a mailbox specified in bring your own mailboxes."
+                    }
+                }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
