@@ -155,7 +155,19 @@
         else 
         {
             out-logfile -string "Operation is retried - use Office 365 value."
-            [array]$functionProxyAddressArray=$originalDLConfiguration.windowsEmailAddress.split("@")
+
+            if ($office365DLConfiguration.recipientDisplayType -ne "GroupMailbox")
+            {
+                out-logfile -string "Office 365 group is normal - use windows email address."
+
+                [array]$functionProxyAddressArray=$office365DLConfiguration.windowsEmailAddress.split("@")
+            }
+            else
+            {
+                out-logfile -string "Office 365 group is unified - use primary SMTP address."
+
+                [array]$functionProxyAddressArray=$office365DLConfiguration.primarySMTPAddress.split("@")
+            }
         }
         
         foreach ($member in $functionProxyAddressArray)
