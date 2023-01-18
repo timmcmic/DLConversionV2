@@ -1229,6 +1229,9 @@ Function Start-Office365GroupMigration
                 out-logfile -string $_ -isError:$TRUE
             }
 
+            out-logfile =string $importData
+            exit
+
             try {
                 $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
             }
