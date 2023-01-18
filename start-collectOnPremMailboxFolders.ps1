@@ -217,12 +217,13 @@ function start-collectOnPremMailboxFolders
 
                 foreach ($mailbox in $bringMyOwnMailboxes)
                 {
+                    out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
                         $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                     catch {
                         out-logfile -string $_
-                        out-logfile -string "Unable to locate a mailbox specified in bring your own mailboxes."
+                        out-logfile -string "Unable to locate a mailbox specified in bring your own mailboxes." -isError:$TRUE
                     }
                 }
 
