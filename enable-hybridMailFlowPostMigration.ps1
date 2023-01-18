@@ -469,7 +469,7 @@
         {
             out-logfile -string "Unified group - use primary SMTP address."
 
-            $tempMailArray = $office365DLConfiguration.primaryemailaddress.split("@")
+            $tempMailArray = $office365DLConfiguration.primarysmtpaddress.split("@")
         }
 
         foreach ($member in $tempMailArray)
