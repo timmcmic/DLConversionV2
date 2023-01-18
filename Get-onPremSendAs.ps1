@@ -83,7 +83,6 @@
                         
                         start-sleepProgress -sleepString "Throttling for 5 seconds at 1000 operations." -sleepSeconds 5
 
-
                         $functionCounter=0
                     }
                     else 

@@ -200,18 +200,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Using recipients provided by function caller.."
 
-                try
-                {
-                    foreach ($mailbox in $bringMyOwnRecipients)
-                    {
-                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
-                    }
-                }
-                catch 
-                {
-                    out-logfile -string $_
-                    out-logfile -string "Unable to find a recipient specified in bring your own mailboxes." -isError:$TRUE
-                }
+                $auditRecipients = $bringYourOwnRecipients
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
