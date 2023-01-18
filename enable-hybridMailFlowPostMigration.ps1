@@ -459,7 +459,18 @@
 
         #At this time test to ensure the routing contact is present.
 
-        $tempMailArray = $office365DLConfiguration.windowsEmailAddress.split("@")
+        if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
+        {
+            out-logfile -string "Standard DL - use windows email address."
+
+            $tempMailArray = $office365DLConfiguration.windowsEmailAddress.split("@")
+        }
+        else
+        {
+            out-logfile -string "Unified group - use primary SMTP address."
+
+            $tempMailArray = $office365DLConfiguration.primaryemailaddress.split("@")
+        }
 
         foreach ($member in $tempMailArray)
         {
