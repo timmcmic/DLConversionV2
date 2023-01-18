@@ -159,6 +159,11 @@ Function test-preO365GroupConversion
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
+        #Definte parameters for pre-collected permissions
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         #Defining optional parameters for retention and upgrade
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
@@ -169,16 +174,6 @@ Function test-preO365GroupConversion
         [Parameter(Mandatory = $false)]
         [int]$totalThreadCount=0
     )
-
-    #Initialize telemetry collection.
-
-    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
-    $traceModuleName = "DLConversion"
-
-    if ($allowTelemetryCollection -eq $TRUE)
-    {
-        start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
-    }
 
     #Initialize telemetry collection.
 
@@ -240,7 +235,7 @@ Function test-preO365GroupConversion
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    convert-Office365DLtoUnifiedGroup -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount
+    convert-Office365DLtoUnifiedGroup -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigrationO365Group"
