@@ -219,7 +219,16 @@ function start-collectOnPremFullMailboxAccess
             }
             else 
             {
-                $auditMailboxes = $bringMyOwnMailboxes
+                foreach ($mailbox in $bringMyOwnMailboxes)
+                {
+                    try {
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                    }
+                    catch {
+                        out-logfile -string "Unable to locate a specified mailbox in bring your own mailboxes." -isError:$TRUE
+                    }
+                }
+                
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
