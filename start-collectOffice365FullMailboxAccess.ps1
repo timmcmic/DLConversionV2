@@ -79,7 +79,7 @@ function start-collectOffice365FullMailboxAccess
         [Parameter(Mandatory = $false)]
         [boolean]$retryCollection=$FALSE,
         [Parameter(Mandatory = $false)]
-        $bringMyOwnMailboxes=$NULL
+        $bringMyOwnMailboxes=@()
     )
 
     $windowTitle = "Start-collectOffice365FullMailboxAccess"
