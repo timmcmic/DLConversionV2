@@ -200,7 +200,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Using recipients provided by function caller.."
 
-                $auditRecipients = $bringYourOwnRecipients
+                $auditRecipients = $bringMyOwnRecipients
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
