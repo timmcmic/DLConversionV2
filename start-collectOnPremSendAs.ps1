@@ -77,7 +77,7 @@ function start-collectOnPremSendAs
 
     #Declare function variables.
 
-    $auditRecipients=$NULL
+    $auditRecipients=@()
     [array]$auditSendAs=@()
     [int]$forCounter=0
     [int]$recipientCounter=0
@@ -199,6 +199,19 @@ function start-collectOnPremSendAs
             else 
             {
                 out-logFile -string "Using recipients provided by function caller.."
+
+                try
+                {
+                    foreach ($mailbox in $bringYourOwnMailboxes)
+                    {
+                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                    }
+                }
+                catch 
+                {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to find a recipient specified in bring your own mailboxes." -isError:$TRUE
+                }
 
                 $auditRecipients = $bringMyOwnRecipients
     
