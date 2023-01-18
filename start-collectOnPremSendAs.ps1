@@ -204,6 +204,7 @@ function start-collectOnPremSendAs
                 {
                     foreach ($mailbox in $bringMyOwnRecipients)
                     {
+                        out-logfile -string ("Testing recipient: "+$mailbox)
                         $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                 }
