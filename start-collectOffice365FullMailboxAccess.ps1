@@ -124,7 +124,7 @@ function start-collectOffice365FullMailboxAccess
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
+    if (($bringMyOwnMailboxes.count -gt 0 )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
