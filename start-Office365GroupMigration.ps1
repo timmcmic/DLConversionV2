@@ -1229,7 +1229,7 @@ Function Start-Office365GroupMigration
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            out-logfile =string $importData
+            out-logfile -string $importData
             exit
 
             try {
