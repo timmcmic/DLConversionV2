@@ -168,9 +168,12 @@ function start-collectOffice365FullMailboxAccess
     {
         if ($retryCollection -eq $FALSE)
         {
+            out-logfile -string "Mailboxes are not retried - evaluating all or bring your own."
+
             if ($bringMyOwnMailboxes.count -eq 0)
             {
                 out-logFile -string "Obtaining all Office 365 mailboxes."
+                out-logfile -string "Admin did not specify a mailbox subset."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
                 $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
@@ -184,6 +187,8 @@ function start-collectOffice365FullMailboxAccess
             }
             else 
             {
+                out-logfile -string "Brinf your own mailboxes was specified - evaluating only mailboxes specified."
+                
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
