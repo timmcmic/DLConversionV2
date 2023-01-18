@@ -1323,7 +1323,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
         if ($retainSendAsOffice365 -eq $TRUE)
         {
-            if ($office365DLConfiguration.groupType -eq "MailUniversalSecurityGroup")
+            if ($office365DLConfiguration.recipientType -eq "MailUniversalSecurityGroup")
             {
                 out-logfile -string "Group is a security group - attempt to locate send as permissions."
 
