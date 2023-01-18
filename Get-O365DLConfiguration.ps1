@@ -55,7 +55,7 @@
 
         $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
 
-        if (($isUnifiedGroup -eq $false) -or ($functionRecipient.recipientTypeDetails -ne $functionGroupType))
+        if (($isUnifiedGroup -eq $false) -and ($functionRecipient.recipientTypeDetails -ne $functionGroupType))
         {
             out-logfile -string "Group is not unified use standard DL commands."
 
