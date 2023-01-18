@@ -84,9 +84,21 @@
         }
         else 
         {
-            out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
-            [string]$functionCustomAttribute2=$office365DLConfiguration.WindowsEmailAddress
-            out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+            if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
+            {
+                out-logfile -string "Group is standard - use windows email address."
+                out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
+                [string]$functionCustomAttribute2=$office365DLConfiguration.WindowsEmailAddress
+                out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+            }
+            else
+            {
+                out-logfile -string "Group is universal use primary SMTP address."
+                out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
+                [string]$functionCustomAttribute2=$office365DLConfiguration.primarySMTPAddress
+                out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+            }
+
         }
 
         out-logfile -string "Evaluate OU location to utilize."
