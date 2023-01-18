@@ -202,7 +202,7 @@ function start-collectOnPremSendAs
 
                 try
                 {
-                    foreach ($mailbox in $bringYourOwnMailboxes)
+                    foreach ($mailbox in $bringMyOwnRecipients)
                     {
                         $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
