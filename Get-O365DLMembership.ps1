@@ -59,11 +59,11 @@
 
         if ($isUnifiedGroup -eq $FALSE)
         {
-
             Out-LogFile -string "Using Exchange Online to obtain the group membership."
 
             $functionDLMembership=get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP
             
+            out-logfile -string $functionDLMembership
             Out-LogFile -string "Distribution group membership recorded."
         }
         else 
