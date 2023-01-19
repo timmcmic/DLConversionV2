@@ -1,5 +1,35 @@
 function convert-O365DLSettingsToOnPremSettings
 {
+
+    <#
+    .SYNOPSIS
+
+    This function converts Office 365 Distribution List settings to on premises distribution list LDAP settings for code reuse.
+
+    .DESCRIPTION
+
+    Trigger function.
+
+    .PARAMETER OFFICE365DLCONFIGURATION
+
+    This is the configuration extracted from Office 365 for the group conversion.
+
+	.OUTPUTS
+
+    Returns DL attributes mapped to LDAP attributes.
+
+    .NOTES
+
+    The following blog posts maintain documentation regarding this module.
+
+    https://timmcmic.wordpress.com/2023/01/08/office-365-distribution-list-migration-version-2-0/
+
+    .EXAMPLE
+
+    convert-o365DLSettingsToOnPremisesSettings -office365DLConfiguration $office365DLConfiguration
+
+    #>
+
     [CmdletBinding()]
     
     param (

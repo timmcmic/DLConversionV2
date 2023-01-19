@@ -11,10 +11,6 @@
 
     No return.
 
-    .EXAMPLE
-
-    disable-allPowerShellSessions
-
     #>
     Function disable-allPowerShellSessions
      {

@@ -1,4 +1,6 @@
-<#
+    Function start-testO365UnifiedGroupDependency
+    {
+        <#
     .SYNOPSIS
 
     This function tests pre-requists for migrating directly to a Office 365 Unified Group.
@@ -19,6 +21,26 @@
 
     All objects with send as rights that cannot be mirrored in the service.
 
+    .PARAMETER allOffice365ManagedBy
+
+    All groups that have the list as a manager.
+
+    .PARAMETER allOffice365SendAsAccess
+
+    All groups in Office 365 that this group has send as rights on.
+
+    .PARAMETER allOffice365FullMailboxAccess
+
+    All objects in Office 365 the migrated group has full mailbox access on.
+
+    .PARAMETER allOffice365MailboxFolderPermissions
+
+    All objects in Office 365 the migrated group has mailbox folder permissions on.
+
+    .PARAMETER addManagersAsMembers
+
+    Specifies if managers will be added as members - since owners must be members of a unified group.
+
     .OUTPUTS
 
     None
@@ -28,8 +50,7 @@
     sstart-replaceOffice365 -office365Attribute Attribute -office365Member groupMember -groupSMTPAddress smtpAddess
 
     #>
-    Function start-testO365UnifiedGroupDependency
-    {
+    
         [cmdletbinding()]
 
         Param

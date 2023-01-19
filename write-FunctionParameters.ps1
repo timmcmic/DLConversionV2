@@ -1,11 +1,11 @@
 <#
     .SYNOPSIS
 
-    This function outputs all of the paramters from a function to the log file for review.
+    This function outputs all of the parameters from a function to the log file for review.
 
     .DESCRIPTION
 
-    This function outputs all of the paramters from a function to the log file for review.
+    This function outputs all of the parameters from a function to the log file for review.
 
     #>
     Function write-FunctionParameters

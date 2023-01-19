@@ -22,7 +22,7 @@ Function Start-Office365GroupMigration
     .SYNOPSIS
 
     This is the trigger function that begins the process of allowing an administrator to migrate a distribution list from
-    on premises to Office 365.
+    on premises to Office 365 with conversion to a Unified Group.
 
     .DESCRIPTION
 

@@ -7,6 +7,10 @@
 
     This function ensures that view entire forest is set to TRUE for exchange on premsies connections.
 
+    .PARAMETER isAudit
+
+    Specifies if the logging call is terminating / archive files.
+
     .OUTPUTS
 
     None

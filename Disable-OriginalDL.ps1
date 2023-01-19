@@ -19,9 +19,13 @@
 
     The global catalog server the operation should be performed on.
 
-    .PARAMETER UseExchange
+    .PARAMETER UseOnPremisesExchange
 
     If set to true disablement will occur using the exchange on premises powershell commands.
+
+    .PARAMETER adCredential
+
+    The active directory credential for AD operations.
 
     .OUTPUTS
 
