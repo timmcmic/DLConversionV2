@@ -128,6 +128,17 @@
                 $functionTargetAddress=$functionTargetAddress.toUpper()
             }
         }
+        
+        if (!$functionTargetAddress.contains("mail.onmicrosoft.com"))
+        {
+            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com"
+            out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
+            out-logfile -string "Error enabling hybrid mail flow." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string $functionTargetAddress
+        }
 
         out-logfile -string ("Function target address = "+$functionTargetAddress)
 
