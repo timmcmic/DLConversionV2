@@ -75,18 +75,32 @@
 
             if ($isRetry -eq $false)
             {
+                out-logfile -string "Operation is not retried creating dynamic distribution group."
+
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $originalDLConfiguration
 
-                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName 
+                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.mailNickName -primarySMTPAddress $originalDLConfiguration.mail -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
 
             }
             else 
             {
+                out-logfile -string "Operation is retried creating dynamic distribution group."
+
                 $tempOUSubstring = Get-OULocation -originalDLConfiguration $routingContactConfig
 
-                new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName
-            }
+                if ($originalDlConfiguration.RecipientTypeDetails -ne "GroupMailbox")
+                {
+                    out-logfile -string "Operation is retried using Office 365 values for normal DL."
 
+                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.windowsEmailAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
+                }
+                else
+                {
+                    out-logfile -string "Operation is retried using Office 365 values for universal group."
+
+                    new-dynamicDistributionGroup -name $originalDLConfiguration.name -alias $originalDLConfiguration.Alias -primarySMTPAddress $originalDLConfiguration.primarySMTPAddress -organizationalUnit $tempOUSubstring -domainController $globalCatalogServer -includedRecipients AllRecipients -conditionalCustomAttribute1 $routingContactConfig.extensionAttribute1 -conditionalCustomAttribute2 $routingContactConfig.extensionAttribute2 -displayName $originalDLConfiguration.DisplayName -errorAction STOP
+                }
+            }
         }
         catch{
             out-logfile -string $_
