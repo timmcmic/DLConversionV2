@@ -1403,7 +1403,7 @@ Function Start-DistributionListMigration
     {
         try 
         {
-            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
         }
         catch 
         {
