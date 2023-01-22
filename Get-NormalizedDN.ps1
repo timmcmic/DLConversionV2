@@ -409,7 +409,7 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="NestedGroupException - A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
+                        isErrorMessage="Nested_Group_Exception - A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 

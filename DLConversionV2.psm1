@@ -460,7 +460,7 @@ Function Start-DistributionListMigration
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedGroupException = "*Nested_Group_Exception*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
     if ($isHealthCheck -eq $FALSE)
