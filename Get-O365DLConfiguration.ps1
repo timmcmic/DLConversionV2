@@ -55,6 +55,21 @@
 
         $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
 
+        out-logfile -string $functionRecipient
+
+        if ($functionRecipient.RecipientTypeDetails -eq $functionGroupType)
+        {
+            out-logfile -string "Office 365 Recipient found is already an Office 365 Unified Group - exit." -isError:$TRUE
+        }
+        elseif (($functionRecipient.RecipientType -ne $functionMailSecurity) -and ($functionRecipient.RecipientType -ne $functionMailDistribution)) 
+        {
+            out-logfile -string "Office 365 Recipient found was not a mail univeral distribution or mail universal security group."
+        }
+        else 
+        {
+            out-logfile -string "Proceed with further group evaluation - group object located in Office 365."
+        }
+
         if (($isUnifiedGroup -eq $false) -and ($functionRecipient.recipientTypeDetails -ne $functionGroupType))
         {
             out-logfile -string "Group is not unified use standard DL commands."
