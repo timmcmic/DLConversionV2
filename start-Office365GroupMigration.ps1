@@ -2151,7 +2151,7 @@ Function Start-Office365GroupMigration
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                         out-logfile -string $member
 
@@ -2215,7 +2215,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2263,7 +2263,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2311,7 +2311,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2359,7 +2359,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2416,7 +2416,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2464,7 +2464,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 

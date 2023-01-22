@@ -1816,7 +1816,7 @@ Function Start-DistributionListMigration
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
                 $object.isError=$TRUE
-                $object.isErrorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                $object.isErrorMessage = "GROUP_NO_LONGER_SECURITY_EXCEPTION: A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
                 
                 out-logfile -string object
 
@@ -1840,7 +1840,7 @@ Function Start-DistributionListMigration
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                    $object.isErrorMessage = "GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
 
                     out-logfile -string $object
     
@@ -2215,7 +2215,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2263,7 +2263,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2311,7 +2311,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2359,7 +2359,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2407,7 +2407,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2455,7 +2455,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2501,7 +2501,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2549,7 +2549,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2597,7 +2597,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
