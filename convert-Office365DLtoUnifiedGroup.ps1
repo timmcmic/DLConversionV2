@@ -820,6 +820,21 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    out-logfile -string "Testing to ensure that group is not already an Office 365 Unified Group."
+
+    if ($office365DLConfiguration.RecipientTypeDetails -eq "GroupMailbox")
+    {
+        out-logfile -string "Office 365 object is already an Office 365 Unified Group." -isError:$TRUE
+    }
+    elseif (($office365DlConfiguration.RecipientType -ne "MailUniversalDistributionGroup") -and ($office365DLConfiguration.RecipientType -ne "MailUniversalSecurityGroup"))
+    {
+        out-logfile -string "Office 365 object is neither mail enabled security group or mail enabled distribution group." -isError:$TRUE
+    }
+    else
+    {
+        out-logfile -string "Office 365 object is a distribution group - continue."
+    }
+
     out-logfile -string "Capture the original Azure AD distribution list information"
 
     try{
