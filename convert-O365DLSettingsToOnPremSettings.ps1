@@ -37,6 +37,9 @@ function convert-O365DLSettingsToOnPremSettings
         $office365DLConfiguration
     )
   
+    $functionGroupType = $NULL
+    $functionCloudSecurity = "MailUniversalSecurityGroup"
+    $functionADSecurity = "-2147483640"
     
     #Output all parameters bound or unbound and their associated values.
 
@@ -45,6 +48,19 @@ function convert-O365DLSettingsToOnPremSettings
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN convert-O365DLSettingsToOnPremSettings"
     Out-LogFile -string "********************************************************************************"
+
+    if ($office365DLConfiguration.recipientType -eq $functionCloudSecurity)
+    {
+        out-logfile -string "Group is security type in Office 365 - setting active directory equivilient"
+
+        $functionGroupType = $functionADSecurity
+    }
+    else 
+    {
+        $functionGroupType = "0"
+    }
+
+    out-logfile -string ("The function group type: "+$functionGroupType)
 
     $functionObject = New-Object PSObject -Property @{
         msExchEnableModeration=$office365DConfiguration.ModerationEnabled
@@ -76,6 +92,7 @@ function convert-O365DLSettingsToOnPremSettings
         proxyAddresses=$office365DConfiguration.EmailAddresses
         mail=$office365DConfiguration.WindowsEmailAddress
         legacyExchangeDN=$office365DConfiguration.LegacyExchangeDN
+        groupType=$functionGroupType
     }
 
     out-logfile -string $functionObject
