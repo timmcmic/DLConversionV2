@@ -63,7 +63,7 @@
         }
         elseif (($functionRecipient.RecipientType -ne $functionMailSecurity) -and ($functionRecipient.RecipientType -ne $functionMailDistribution)) 
         {
-            out-logfile -string "Office 365 Recipient found was not a mail univeral distribution or mail universal security group."
+            out-logfile -string "Office 365 Recipient found was not a mail univeral distribution or mail universal security group - exit." -isError:$TRUE
         }
         else 
         {
