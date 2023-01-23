@@ -77,7 +77,7 @@ function start-collectOnPremSendAs
 
     #Declare function variables.
 
-    $auditRecipients=$NULL
+    $auditRecipients=@()
     [array]$auditSendAs=@()
     [int]$forCounter=0
     [int]$recipientCounter=0
@@ -200,8 +200,20 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Using recipients provided by function caller.."
 
-                $auditRecipients = $bringMyOwnRecipients
-    
+                foreach ($mailbox in $bringMyOwnRecipients)
+                {
+                    out-logfile -string ("Testing recipient: "+$mailbox)
+
+                    try{
+                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                    }
+                    catch {
+                        out-logfile -string $_
+                        out-logfile -string $mailbox
+                        out-logfile -string "The SMTP address specified is not a recipient - skipping."
+                    }
+                }
+                
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
                 $fileName = $xmlFiles.onPremRecipientList.value

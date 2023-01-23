@@ -482,7 +482,7 @@
 
             try 
             {
-                out-logfile -string "Setting extension attribute 1 of the group."
+                out-logfile -string "Setting extension attribute 15 of the group."
 
                 Set-O365UnifiedGroup -Identity $functionExternalDirectoryObjectID -CustomAttribute15 $originalDLConfiguration.extensionAttribute15   -errorAction STOP        
             }

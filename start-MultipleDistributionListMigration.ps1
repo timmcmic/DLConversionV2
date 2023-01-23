@@ -825,7 +825,7 @@ Function Start-MultipleDistributionListMigration
                         out-logfile -string "Circular membership reference identified - setting error state."
     
                         $nestedRetryGroups[$j].isError = $TRUE
-                        $nestedRetryGroups[$j].isErrorMessage = "CircularReferenceException: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
+                        $nestedRetryGroups[$j].isErrorMessage = "CIRCULAR_REFERENCE_EXCEPTION: This group has a child distribution list that also has this group as a member.  This creates a circular dependency which cannot be handeled automatically."
                     }
                     else 
                     {
@@ -883,7 +883,7 @@ Function Start-MultipleDistributionListMigration
                     else 
                     {
                         $group.isError = $TRUE
-                        $group.isErrorMessage = "ChildGroupMirationException:  The groupt to be migrated has a child group not included in the migration set."
+                        $group.isErrorMessage = "CHILD_GROUP_MIGRATION_EXCEPTION:  The groupt to be migrated has a child group not included in the migration set."
                         $crossGroupDependencyFound +=$group #Overloading this since it contains errors before and this is an error that I want outputted.
                         out-logfile -string "Parent group not eligable for retry - child not included in migration set."
                     }

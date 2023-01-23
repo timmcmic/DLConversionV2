@@ -191,6 +191,7 @@ function start-collectOffice365MailboxFolders
 
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
+                    out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
                     $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
                 }

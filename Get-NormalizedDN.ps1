@@ -409,7 +409,7 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="NestedGroupException - A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
+                        isErrorMessage="NESTED_GROUP_EXCEPTION: A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
@@ -462,7 +462,7 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                        isErrorMessage="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
                     }
                 }
             }
@@ -488,7 +488,7 @@
                     ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$true
-                    isErrorMessage="NotMailEnabledException - The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isErrorMessage="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
                 }
             }    
         }

@@ -1,21 +1,3 @@
-
-#############################################################################################
-# DISCLAIMER:																				#
-#																							#
-# THE SAMPLE SCRIPTS ARE NOT SUPPORTED UNDER ANY MICROSOFT STANDARD SUPPORT					#
-# PROGRAM OR SERVICE. THE SAMPLE SCRIPTS ARE PROVIDED AS IS WITHOUT WARRANTY				#
-# OF ANY KIND. MICROSOFT FURTHER DISCLAIMS ALL IMPLIED WARRANTIES INCLUDING, WITHOUT		#
-# LIMITATION, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR OF FITNESS FOR A PARTICULAR		#
-# PURPOSE. THE ENTIRE RISK ARISING OUT OF THE USE OR PERFORMANCE OF THE SAMPLE SCRIPTS		#
-# AND DOCUMENTATION REMAINS WITH YOU. IN NO EVENT SHALL MICROSOFT, ITS AUTHORS, OR			#
-# ANYONE ELSE INVOLVED IN THE CREATION, PRODUCTION, OR DELIVERY OF THE SCRIPTS BE LIABLE	#
-# FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS	#
-# PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS)	#
-# ARISING OUT OF THE USE OF OR INABILITY TO USE THE SAMPLE SCRIPTS OR DOCUMENTATION,		#
-# EVEN IF MICROSOFT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES						#
-#############################################################################################
-
-
 Function Test-PreMigrationO365Group 
 {
     <#
@@ -119,13 +101,8 @@ Function Test-PreMigrationO365Group
 
     .NOTES
 
-    
-    .EXAMPLE
-
-    test-PreMigration -groupSMTPAddress address -globalCatalogServer server -activeDirectoryCredential $cred -activeDirectoryAuthenticationMethod Kerberos -exchangeOnlineCredential $cred -azureADCredential $cred -logFolderPath c:\temp
-
     #>
-
+    
     [cmdletbinding()]
 
     Param
@@ -167,23 +144,36 @@ Function Test-PreMigrationO365Group
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        #Defining optional parameters for retention and upgrade
+        #Definte parameters for pre-collected permissions
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedSendAsOnPrem=$FALSE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowTelemetryCollection=$TRUE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$addManagersAsMembers = $false,
+        #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
         [Parameter(Mandatory = $false)]
-        [int]$totalThreadCount=0
+        [int]$totalThreadCount=0,
+        [Parameter(Mandatory = $FALSE)]
+        [boolean]$isMultiMachine=$FALSE,
+        [Parameter(Mandatory = $FALSE)]
+        [string]$remoteDriveLetter=$NULL,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversion"
+
+    [string]$dnNoSyncOU = "NotSet"
 
     if ($allowTelemetryCollection -eq $TRUE)
     {
@@ -250,7 +240,7 @@ Function Test-PreMigrationO365Group
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    start-office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount
+    start-office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedSendAsOnPrem $useCollectedSendAsOnPrem -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365 -addManagersAsMembers $addManagersAsMembers
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigrationO365Group"

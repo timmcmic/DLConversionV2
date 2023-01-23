@@ -1,4 +1,6 @@
-<#
+    Function start-testO365UnifiedGroupDependency
+    {
+        <#
     .SYNOPSIS
 
     This function tests pre-requists for migrating directly to a Office 365 Unified Group.
@@ -19,6 +21,26 @@
 
     All objects with send as rights that cannot be mirrored in the service.
 
+    .PARAMETER allOffice365ManagedBy
+
+    All groups that have the list as a manager.
+
+    .PARAMETER allOffice365SendAsAccess
+
+    All groups in Office 365 that this group has send as rights on.
+
+    .PARAMETER allOffice365FullMailboxAccess
+
+    All objects in Office 365 the migrated group has full mailbox access on.
+
+    .PARAMETER allOffice365MailboxFolderPermissions
+
+    All objects in Office 365 the migrated group has mailbox folder permissions on.
+
+    .PARAMETER addManagersAsMembers
+
+    Specifies if managers will be added as members - since owners must be members of a unified group.
+
     .OUTPUTS
 
     None
@@ -28,8 +50,7 @@
     sstart-replaceOffice365 -office365Attribute Attribute -office365Member groupMember -groupSMTPAddress smtpAddess
 
     #>
-    Function start-testO365UnifiedGroupDependency
-    {
+    
         [cmdletbinding()]
 
         Param
@@ -108,7 +129,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="The distribution list requested for migration to an Office 365 Unified Group is a room distribution list.  Room distribution lists cannot be converted to Office 365 Unified Groups."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_ROOMLIST_EXCEPTION:  The distribution list requested for migration to an Office 365 Unified Group is a room distribution list.  Room distribution lists cannot be converted to Office 365 Unified Groups."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -143,7 +164,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_NO_MANAGERS_EXCEPTION: No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -170,7 +191,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="The managedBy count is greater than 100.  An Office 365 Unified Group may not have more than 100 managers."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_TOO_MANY_MANAGERS_EXCEPTION: The managedBy count is greater than 100.  An Office 365 Unified Group may not have more than 100 managers."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -204,7 +225,7 @@
                         out-logfile -string "Manager is not a member of the DL - error."
 
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
 
                         $global:preCreateErrors+=$member
                     }
@@ -237,7 +258,7 @@
                         out-logfile -string "Member is a contact associated with a previously migrated group and is a group manager added to membership - record as error."
 
                         $member.isError = $true
-                        $member.isErrorMessage = "The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_MIGRATED_CONTACT_MANAGEDBY_EXCEPTION:  The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
 
                         $global:preCreateErrors+=$member
                     }
@@ -246,7 +267,7 @@
                         out-logfile -string "Member is a contact associated with a previously migrated group - record as error."
 
                         $member.isError = $true
-                        $member.isErrorMessage = "The contact found in this group is from a previously migrated group.  This would typically mean this was the parent group that had a child DL that was migrated.  Office 365 Groups do not support nested groups.  This contact will need to be removed for migration."  
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_MIGRATED_CONTACT_MEMBERSHIP_EXCEPTION: The contact found in this group is from a previously migrated group.  This would typically mean this was the parent group that had a child DL that was migrated.  Office 365 Groups do not support nested groups.  This contact will need to be removed for migration."  
 
                         $global:preCreateErrors+=$member
                     }
@@ -258,7 +279,7 @@
                         out-logfile -string "Member is a contact added to members with -addManagersAsMembers - record as error"
 
                         $member.isError = $true
-                        $member.isErrorMessage = "The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_CONTACT_MANAGEDBY_EXCEPTION: The contact found is a manager of the group added to members by -addManagersAsMembers.  The contact must be removed from managers."  
 
                         $global:preCreateErrors+=$member
                     }
@@ -267,7 +288,7 @@
                         out-logfile -string "Member is a contact - record as error."
 
                         $member.isError = $true
-                        $member.isErrorMessage = "Contacts may not be included in an Office 365 Unified Group.  Remove the contact in order to migrate to an Office 365 Unified Group."  
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_CONTACT_MEMBERSHIP_EXCEPTION Contacts may not be included in an Office 365 Unified Group.  Remove the contact in order to migrate to an Office 365 Unified Group."  
 
                         $global:preCreateErrors+=$member
                     }
@@ -279,7 +300,7 @@
                         out-logfile -string "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group.  Group was added as a member by -addManagersAsMembers."
 
                         $member.isError = $true
-                        $member.isErrorMessage = "Groups may not be members of Office 365 Unified Groups.  This group was added as a member becuase it is a manager and the migration used -addManagersAsMembers.  Remove the group from managers."  
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_GROUP_MANAGEDBY_EXCEPTION: Groups may not be members of Office 365 Unified Groups.  This group was added as a member becuase it is a manager and the migration used -addManagersAsMembers.  Remove the group from managers."  
 
                         $global:preCreateErrors+=$member
                     }
@@ -288,7 +309,7 @@
                         out-logfile -string "Member is a group - record as error."
 
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_GROUP_MEMBERSHIP_EXCEPTION: Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
 
                         $global:preCreateErrors+=$member
                     }
@@ -298,7 +319,7 @@
                     out-logfile -string "Member is a dynamic group group - record as error."
 
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "Dyanmic Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
+                    $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_DYNAMIC_MEMBERSHIP_EXCEPTION: Dyanmic Groups may not be included in an Office 365 Unified Group.  Remove the group in order to migrate to an Office 365 Unified Group"
 
                     $global:preCreateErrors+=$member
                 }
@@ -323,7 +344,7 @@
                 out-logfile -string ("Bypass moderation error - invalid attribute.")
 
                 $member.isError = $TRUE
-                $member.isErrorMessage = "Office 365 Unified Groups do not have BypassModerationFromSendersOrMembers.  To migrate to an Office 365 Unified Group the bypass moderation from senders or members must be cleared."
+                $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_BYPASS_MODERATION_FROM_SENDERS_OR_MEMBERS_EXCEPTION: Office 365 Unified Groups do not have BypassModerationFromSendersOrMembers.  To migrate to an Office 365 Unified Group the bypass moderation from senders or members must be cleared."
 
                 $global:preCreateErrors+=$member
             }
@@ -343,7 +364,7 @@
                 out-logfile -string ("Send as error - invalid permission.")
 
                 $member.isError = $TRUE
-                $member.isErrorMessage = "In order to retain or mirror send as permissiosn the group must be a security group.  Office 365 Unified Groups are not securtiy groups.  Remove all send as rights for this group on premises to continue converation to an Office 365 Group."
+                $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_SENDAS_FOUND_EXCEPTION: In order to retain or mirror send as permissiosn the group must be a security group.  Office 365 Unified Groups are not securtiy groups.  Remove all send as rights for this group on premises to continue converation to an Office 365 Group."
 
                 $global:preCreateErrors+=$member
             }
@@ -380,7 +401,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="Office 365 Unified Groups are not security enabled.  They may not have managed by rights on other groups.  Remove the managed by right on this object in Office 365 to proceed with converstion to an Office 365 Unified Group."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_MANAGEDBY_ON_OTHER_OBJECTS_EXCEPTION: Office 365 Unified Groups are not security enabled.  They may not have managed by rights on other groups.  Remove the managed by right on this object in Office 365 to proceed with converstion to an Office 365 Unified Group."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -418,7 +439,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="An Office 365 Unified Group is not a security principal and may not have send as rights on other objects.  Remove the send as rights from these objects to proceed with Office 365 Unified Group conversion."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_SENDAS_FOUND_EXCEPTION:  An Office 365 Unified Group is not a security principal and may not have send as rights on other objects.  Remove the send as rights from these objects to proceed with Office 365 Unified Group conversion."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -456,7 +477,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="An Office 365 group is not a security principal.  Either remove the full mailbox access rights assigned to the group on this object or do not inclue useCollectedOffice365FullMailboxAccess."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_FULL_MAILOBOX_ACCESS_EXCEPTION: An Office 365 group is not a security principal.  Either remove the full mailbox access rights assigned to the group on this object or do not inclue useCollectedOffice365FullMailboxAccess."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -490,7 +511,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="An Office 365 Unified Group is not a security principal.  Remove the folder permissions assigned to the group or do not use the useCollectedOffice365MailboxFolders switch."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_MAILBOX_FOLDER_PERMISSION_EXCEPTION:  An Office 365 Unified Group is not a security principal.  Remove the folder permissions assigned to the group or do not use the useCollectedOffice365MailboxFolders switch."
                 }
 
                 $global:preCreateErrors+=$functionObject

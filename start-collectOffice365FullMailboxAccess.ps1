@@ -79,7 +79,7 @@ function start-collectOffice365FullMailboxAccess
         [Parameter(Mandatory = $false)]
         [boolean]$retryCollection=$FALSE,
         [Parameter(Mandatory = $false)]
-        $bringMyOwnMailboxes=$NULL
+        $bringMyOwnMailboxes=@()
     )
 
     $windowTitle = "Start-collectOffice365FullMailboxAccess"
@@ -124,7 +124,7 @@ function start-collectOffice365FullMailboxAccess
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    if (($bringMyOwnMailboxes -ne $NULL )-and ($retryCollection -eq $TRUE))
+    if (($bringMyOwnMailboxes.count -gt 0 )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
@@ -168,9 +168,12 @@ function start-collectOffice365FullMailboxAccess
     {
         if ($retryCollection -eq $FALSE)
         {
-            if ($bringMyOwnMailboxes -eq $NULL)
+            out-logfile -string "Mailboxes are not retried - evaluating all or bring your own."
+
+            if ($bringMyOwnMailboxes.count -eq 0)
             {
                 out-logFile -string "Obtaining all Office 365 mailboxes."
+                out-logfile -string "Admin did not specify a mailbox subset."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
                 $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
@@ -184,10 +187,13 @@ function start-collectOffice365FullMailboxAccess
             }
             else 
             {
+                out-logfile -string "Brinf your own mailboxes was specified - evaluating only mailboxes specified."
+
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
+                    out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
-                    $auditMailboxes += get-o365ailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                 }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 

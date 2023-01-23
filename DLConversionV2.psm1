@@ -45,6 +45,10 @@ Function Start-DistributionListMigration
     Domain admin credentials are required if the group does not have resorces outside of the domain where the group resides.
     Enterprise admin credentials are required if the group has resources across multiple domains in the forest.
 
+    .PARAMETER ACTIVEDIRECTORYAUTHENTICATIONMETHOD
+
+    Allows the administrator to specify kerberos or basic authentication for connections to Active Directory.
+
     .PARAMETER AADCONNECTSERVER
 
     *OPTIONAL*
@@ -58,6 +62,10 @@ Function Start-DistributionListMigration
     *MANDATORY with AADConnectServer specified*
     This parameter specifies the credentials used to connect to the AADConnect server.
     The account specified must be a member of the local administrators sync group of the AADConnect Server
+
+    .PARAMETER AADCONNECTAUTHENTICATIONMETHOD
+
+    Allows the administrator to specify kerberos or basic authentication for connections to the AADConnect server.
 
     .PARAMETER EXCHANGESERVER
 
@@ -171,12 +179,12 @@ Function Start-DistributionListMigration
     .PARAMETER TRIGGERUPGRADETOOFFICE365GROUP
 
     *OPTIONAL*
-    This settings triggers the migrated group to be upgraded to the modern Office 365 Group / Universal Group experience.
+    *Parameter retained for backwards compatibility but now disabled.*
 
     .PARAMETER OVERRIDECENTRALIZEDMAILTRANSPORTENABLED
 
     *OPTIONAL*
-    If centralied transport enabled is detected during migration this switch is required.
+    If centralized transport enabled is detected during migration this switch is required.
     This is an administrator acknowledgement that emails may flow externally in certain mail flow scenarios for migrated groups.
 
     .PARAMETER ALLOWNONSYNCEDGROUP
@@ -232,7 +240,19 @@ Function Start-DistributionListMigration
 
     *RESERVED*
 
-	.OUTPUTS
+    .PARAMETER ALLOWTELEMETRYCOLLECTION
+
+    Allows administrators to opt out of telemetry collection for DL migrations.  No identifiable information is collected in telemetry.
+
+    .PARAMETER ALLOWDETAILEDTELEMETRYCOLLECTIOn
+
+    Allows administrators to opt out of detailed telemetry collection.  Detailed telemetry collection includes information such as attribute member counts and time to process stages of the migration.
+
+    .PARAMETER ISHEALTHCHECK
+
+    Specifies if the function call is performing a distribution list health check.
+
+    .OUTPUTS
 
     Logs all activities and backs up all original data to the log folder directory.
     Moves the distribution group from on premieses source of authority to office 365 source of authority.
@@ -241,67 +261,11 @@ Function Start-DistributionListMigration
 
     The following blog posts maintain documentation regarding this module.
 
-    Introduction to the Distribution List Migration Module version 2.0
-    https://timmcmic.wordpress.com/2021/04/25/4116/
+    https://timmcmic.wordpress.com.  
 
-    Preparing to use the distribution list migration v2 module.
-    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-2/
+    Refer to the first pinned blog post that is the table of contents.
 
-    Using the distribution list migration module v2 for simple migrations
-    https://timmcmic.wordpress.com/2021/04/26/office-365-distribution-list-migrations-version-2-0-part-3-2/
-
-    Retaining the original distribution group post migration…
-    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-4/
-
-    Gathering advanced dependencies for a group to be migrated…
-    https://timmcmic.wordpress.com/2021/04/27/office-365-distribution-list-migrations-version-2-0-part-5/
-
-    How does the module track distribution lists that have been migrated?
-    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-6/
-
-    Enabling hybrid mail flow for migrated distribution lists.
-    https://timmcmic.wordpress.com/2021/04/28/office-365-distribution-list-migrations-version-2-0-part-7/
-
-    https://timmcmic.wordpress.com/2021/09/01/office-365-distribution-list-migration-version-2-0-part-8/
-
-    Introduction to batch migrations.
-    https://timmcmic.wordpress.com/2021/09/02/office-365-distribution-list-migrations-version-2-0-part-9/
-
-    https://timmcmic.wordpress.com/2021/09/27/office-365-distribution-list-migration-version-2-0-part-10/
-
-    Improvements in Error Handling in version 2.4.8.x
-    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-11/
-
-    Announcing multiple migration machine support.
-    https://timmcmic.wordpress.com/2021/10/19/office-365-distribution-list-migration-version-2-0-part-12/
-
-    Enabling support for partially mail enabled distribution groups.
-    https://timmcmic.wordpress.com/2022/03/07/office-365-distribution-list-migration-version-2-0-part-13/
-
-    Enabling hybrid mail flow post group migration.
-    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-14/
-
-    Enabling migration support for non-synchronized groups.
-    https://timmcmic.wordpress.com/2022/03/08/office-365-distribution-list-migration-version-2-0-part-15/
-
-    Mail flow issues with centralized mail transport enabled and migrated distribution groups.
-    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-16/
-
-    I need assistance with the migration module, have a suggestion, or want to request a feature?
-    https://timmcmic.wordpress.com/2022/03/13/office-365-distribution-list-migration-version-2-0-part-17/
-
-    New handling of recipient restrictions assigned to the migrated distribution group.
-    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-18/
-
-    New handling of distribution group creation during migration to eliminate ambiguous references.
-    https://timmcmic.wordpress.com/2022/03/27/office-365-distribution-list-migration-version-2-0-part-19/
-
-    Adding a new method of verifying the distribution list is directory synchronized.
-    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/
-
-    Preparing for the deprecation and disablement of Basic Authentication.
-    https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-21/
-
+    
     .EXAMPLE
 
     Start-DistributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer server.domain.com -activeDirectoryCredential $cred -logfolderpath c:\temp -dnNoSyncOU "OU" -exchangeOnlineCredential $cred -azureADCredential $cred
@@ -496,7 +460,7 @@ Function Start-DistributionListMigration
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedGroupException = "*Nested_Group_Exception*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
     if ($isHealthCheck -eq $FALSE)
@@ -1439,7 +1403,7 @@ Function Start-DistributionListMigration
     {
         try 
         {
-            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
         }
         catch 
         {
@@ -1852,7 +1816,7 @@ Function Start-DistributionListMigration
             if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
             {
                 $object.isError=$TRUE
-                $object.isErrorMessage = "A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                $object.isErrorMessage = "GROUP_NO_LONGER_SECURITY_EXCEPTION: A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
                 
                 out-logfile -string object
 
@@ -1876,7 +1840,7 @@ Function Start-DistributionListMigration
                 if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = "The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                    $object.isErrorMessage = "GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
 
                     out-logfile -string $object
     
@@ -2251,7 +2215,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2299,7 +2263,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2347,7 +2311,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2395,7 +2359,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2443,7 +2407,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2491,7 +2455,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2537,7 +2501,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2585,7 +2549,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2633,7 +2597,7 @@ Function Start-DistributionListMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -4076,7 +4040,7 @@ Function Start-DistributionListMigration
 
     do {
         try{
-            $office365DLMembershipPostMigration = get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP
+            $office365DLMembershipPostMigration = @(get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP)
 
             #Membership obtained - export.
 
@@ -5462,6 +5426,7 @@ Function Start-DistributionListMigration
 
     if ($triggerUpgradeToOffice365Group -eq $TRUE)
     {
+        <#
         out-logfile -string "Administrator has choosen to trigger modern group upgrade."
 
         try{
@@ -5473,6 +5438,12 @@ Function Start-DistributionListMigration
             out-logfile -string $_
             $isTestError="Yes"
         }
+        #>
+
+        $isTestError = "No"
+
+        Out-logfile -string "Trigger upgrade to Office 365 Group is no longer supported in this function call."
+        out-logfile -string "Use convert-Office365DLtoUnifiedGroup to convert this migrted DL to an Office 365 Group <or> start-Office365GroupMigration to migrate directly to an Office 365 Group."
     }
     else
     {

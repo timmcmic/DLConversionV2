@@ -31,7 +31,9 @@
             [Parameter(Mandatory = $false)]
             [string]$groupTypeOverride="",
             [Parameter(Mandatory = $false)]
-            [boolean]$isUnifiedGroup=$false
+            [boolean]$isUnifiedGroup=$false,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isFirstPass=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -43,6 +45,7 @@
         $functionDLConfiguration=$NULL #Holds the return information for the group query.
         $functionMailSecurity="MailUniversalSecurityGroup"
         $functionMailDistribution="MailUniversalDistributionGroup"
+        $functionGroupType = "GroupMailbox"
 
         #Start function processing.
 
@@ -52,7 +55,36 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        if ($isUnifiedGroup -eq $false)
+        $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
+
+        out-logfile -string $functionRecipient
+
+        out-logfile -string "Testing if this is the first pass for DL validation."
+
+        if ($isFirstPass -eq $TRUE)
+        {
+            out-logfile -string "This is the first pass."
+
+            if ($functionRecipient.RecipientTypeDetails -eq $functionGroupType)
+            {
+                out-logfile -string "Office 365 Recipient found is already an Office 365 Unified Group - exit." -isError:$TRUE
+            }
+            elseif (($functionRecipient.RecipientType -ne $functionMailSecurity) -and ($functionRecipient.RecipientType -ne $functionMailDistribution)) 
+            {
+                out-logfile -string "Office 365 Recipient found was not a mail univeral distribution or mail universal security group - exit." -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "Proceed with further group evaluation - group object located in Office 365."
+            }
+    
+        }
+        else 
+        {
+            out-logfile -string "This is not the first pass."
+        }
+
+        if (($isUnifiedGroup -eq $false) -and ($functionRecipient.recipientTypeDetails -ne $functionGroupType))
         {
             out-logfile -string "Group is not unified use standard DL commands."
 

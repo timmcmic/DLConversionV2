@@ -22,7 +22,7 @@ Function Start-Office365GroupMigration
     .SYNOPSIS
 
     This is the trigger function that begins the process of allowing an administrator to migrate a distribution list from
-    on premises to Office 365.
+    on premises to Office 365 with conversion to a Unified Group.
 
     .DESCRIPTION
 
@@ -326,6 +326,8 @@ Function Start-Office365GroupMigration
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$addManagersAsMembers = $false,
+        [Parameter(Mandatory = $false)]
+        [boolean]$overrideSecurityGroupCheck = $false,
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
@@ -422,7 +424,7 @@ Function Start-Office365GroupMigration
     #Define the nested groups csv.
 
     [string]$nestedGroupCSV = "nestedGroups.csv"
-    [string]$nestedGroupException = "*NestedGroupException*"
+    [string]$nestedGroupException = "*Nested_Group_Exception*"
     [string]$nestedCSVPath = $logFolderPath+"\"+$nestedGroupCSV
 
     if ($isHealthCheck -eq $FALSE)
@@ -1209,6 +1211,21 @@ Function Start-Office365GroupMigration
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
+    Out-logfile -string "Validating security group override."
+
+    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
+    {
+        out-logfile -string "Group type on premises is security."
+        out-logfile -string "The administrator must specify -overrideSecurityGroupCheck to allow the migration to proceed."
+        out-logfile -string "Office 365 Groups are not security principals.  It is possible that permissions may be lost in Office 365 as a result of deleting and recreating the group during migration."
+
+        out-logfile -string "UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "Group is not security on premises therefore the administrator does not need to override and acknowledge potentially lost permissions."
+    }
+
     if ($retainSendAsOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies send as."
@@ -1220,6 +1237,7 @@ Function Start-Office365GroupMigration
 
             
             $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
+            out-logfile -string $importFilePath
 
             try {
                 $importData = import-CLIXML -path $importFilePath
@@ -1371,7 +1389,7 @@ Function Start-Office365GroupMigration
     {
         try 
         {
-            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
         }
         catch 
         {
@@ -2150,7 +2168,7 @@ Function Start-Office365GroupMigration
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                         out-logfile -string $member
 
@@ -2214,7 +2232,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2262,7 +2280,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2310,7 +2328,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2358,7 +2376,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2415,7 +2433,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -2463,7 +2481,7 @@ Function Start-Office365GroupMigration
                 if ($isTestError -eq "Yes")
                 {
                     $member.isError = $TRUE
-                    $member.isErrorMessage = "A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
 
                     out-logfile -string $member
 
@@ -3947,10 +3965,18 @@ Function Start-Office365GroupMigration
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLMembershipPostMigration
+            if ($office365DlMembershipPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLMembershipPostMigration
+    
+                out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No members to export."
+            }
 
-            out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+           
 
             #Exports complete - stop loop
 
@@ -3983,10 +4009,16 @@ Function Start-Office365GroupMigration
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLOwnersPostMigration
+            if ($office365DLOwnersPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLOwnersPostMigration
 
-            out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+                out-xmlFile -itemToExport $office365DLOwnersPostMigration -itemNametoExport $xmlFiles.office365DLOwnersPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No owners to export."
+            }
 
             #Exports complete - stop loop
 
@@ -4019,11 +4051,17 @@ Function Start-Office365GroupMigration
 
             #Membership obtained - export.
 
-            out-logFile -string "Write the new DL membership to XML."
-            out-logfile -string $office365DLSubscribersPostMigration
+            if ($office365DlSubscribersPostMigration.count -gt 0)
+            {
+                out-logFile -string "Write the new DL membership to XML."
+                out-logfile -string $office365DLSubscribersPostMigration
 
-            out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
-
+                out-xmlFile -itemToExport $office365DLSubscribersPostMigration -itemNametoExport $xmlFiles.office365DLSubscribersPostMigrationXML.value
+            }
+            else {
+                out-logfile -string "No subscribers to export."
+            }
+            
             #Exports complete - stop loop
 
             $stopLoop=$TRUE
