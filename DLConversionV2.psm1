@@ -1451,7 +1451,7 @@ Function Start-DistributionListMigration
     if ($allowNonSyncedGroup -eq $FALSE)
     {
         try {
-            $azureADDLMembership = get-AzureADMembership -objectID $azureADDLConfiguration.objectID -errorAction STOP
+            $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
