@@ -49,7 +49,7 @@
         out-logfile -string "Attempting to obtain the Azure AD Group membersip."
 
         try {
-            $functionDLMembership = get-azureADGroupMember -objectID $groupobjectID -all -errorAction STOP
+            $functionDLMembership = get-azureADGroupMember -objectID $groupobjectID -all:$TRUE -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain the azure group membership."
