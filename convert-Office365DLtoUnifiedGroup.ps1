@@ -463,6 +463,7 @@ Function Convert-Office365DLtoUnifiedGroup
         retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
         retainMailboxFolderPermsOffice365XML= @{ "Value" = "office365MailboxFolderPermissions.xml" ; "Description" = "Import XML file for pre-gathered mailbox folder permissions in Office 365"}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
@@ -501,6 +502,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $azureADDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembership = @()
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
@@ -838,6 +840,27 @@ Function Convert-Office365DLtoUnifiedGroup
 
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
+
+    out-logfile -string "Recording Azure AD DL membership."
+
+    if ($allowNonSyncedGroup -eq $FALSE)
+    {
+        try {
+            $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to obtain Azure AD DL Membership."
+            out-logfile -string $_
+        }
+    }
+
+    if ($azureADDLMembership -ne $NULL)
+    {
+        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.value
+    }
+
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -isCloudOnly $TRUE -errorAction STOP
 
