@@ -365,11 +365,6 @@ Function get-DLHealthReport
     [double]$telemetryValidateCloudRecipients=0
     [double]$telemetryDependencyOnPrem=0
     [double]$telemetryCollectOffice365Dependency=0
-    [double]$telemetryTimeToRemoveDL=0
-    [double]$telemetryCreateOffice365DL=0
-    [double]$telemetryCreateOffice365DLFirstPass=0
-    [double]$telemetryReplaceOnPremDependency=0
-    [double]$telemetryReplaceOffice365Dependency=0
     [boolean]$telemetryError=$FALSE
 
 
@@ -523,20 +518,9 @@ Function get-DLHealthReport
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
 
-    #Define the property sets that will be cleared on the on premises object.
-
-    [array]$dlPropertySet = '*' #Clear all properties of a given object
-    [array]$dlPropertySetToClear = #Holds the final array of attributes to be cleared.
-    [array]$dlPropertiesToClearModern='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2016 or newer schema.
-    [array]$dlPropertiesToClearLegacy='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2013 or older schema
-
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
-    $originalAzureADConfiguration=$NULL #This holds the azure ad DL configuration
-    $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
-    $routingContactConfig=$NULL #Holds the mail routing contact configuration.
-    $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
@@ -580,9 +564,6 @@ Function get-DLHealthReport
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
-    $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
-    $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
-    $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
 
     #Declare some variables for string processing as items move around.
 
@@ -604,12 +585,6 @@ Function get-DLHealthReport
 
     [array]$global:preCreateErrors=@()
     [array]$global:testOffice365Errors=@()
-    [array]$global:postCreateErrors=@()
-    [array]$onPremReplaceErrors=@()
-    [array]$office365ReplaceErrors=@()
-    [array]$global:office365ReplacePermissionsErrors=@()
-    [array]$global:onPremReplacePermissionsErrors=@()
-    [array]$generalErrors=@()
     [string]$isTestError="No"
 
 
