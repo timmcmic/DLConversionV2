@@ -2,11 +2,11 @@ function compare-recipientArrays
 {
     param(
         [Parameter(Mandatory = $false)]
-        $onPremData=$NULL,
+        [System.Collections.ArrayList]$onPremData=$NULL,
         [Parameter(Mandatory = $false)]
-        $azureData=$NULL,
+        [System.Collections.ArrayList]$azureData=$NULL,
         [Parameter(Mandatory = $false)]
-        $office365Data=$NULL
+        [System.Collections.ArrayList]$office365Data=$NULL
     )
 
     [array]$functionReturnArray = @()
