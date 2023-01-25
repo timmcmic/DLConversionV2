@@ -524,6 +524,9 @@ Function get-DLHealthReport
         office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
+
+    [array]$dlPropertySet = '*' #Clear all properties of a given object
+
     #On premises variables for the distribution list to be migrated.
 
     $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
