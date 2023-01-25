@@ -516,6 +516,12 @@ Function get-DLHealthReport
         azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
+        office365AcceptMessagesFromSendersOrMembersXML= @{"value" = "office365AcceptMessagesFromSendersOrMembers" ; "Description" = "Export XML of all Office 365 accept messages from senders or member normalized."}
+        office365RejectMessagesFromSendersOrMembersXML= @{"value" = "office365RejectMessagesFromSendersOrMembers" ; "Description" = "Export XML of all Office 365 reject messages from senders or member normalized."}
+        office365ModeratedByXML= @{"value" = "office365ModeratedByXML" ; "Description" = "Export XML of all Office 365 moderatedBy normalized."}
+        office365BypassModerationFromSendersOrMembersXML= @{"value" = "office365BypassModerationFromSendersOrMembers" ; "Description" = "Export XML of all Office 365 bypass moderatios from senders or member normalized."}
+        office365ManagedByXML= @{"value" = "office365ManagedBy" ; "Description" = "Export XML of all Office 365 managedby normalized."}
+        office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
     #On premises variables for the distribution list to be migrated.
@@ -558,6 +564,15 @@ Function get-DLHealthReport
     [array]$allOffice365SendAsAccess=$NULL #All cloud only groups the migrated group has send as access on.
     [array]$allOffice365SendAsAccessOnGroup = $NULL #All send as permissions set on the on premises group that are set in the cloud.
     [array]$allOffice365MailboxFolderPermissions=$NULL #All cloud only groups the migrated group has mailbox folder permissions on.
+
+    #Define normlaized variables for the Office 365 group.
+
+    [array]$office365AcceptMessagesFromSendersOrMembers=$NULL
+    [array]$office365RejectMessagesFromSendersOrMembers=$NULL
+    [array]$office365ModeratedBy=$NULL
+    [array]$office365BypassModerationFromSendersOrMembers=$NULL
+    [array]$office365ManagedBy = $NULL
+    [array]$office365GrantSendOnBehalfTo = $NULL
     
     #Cloud variables for the distribution list to be migrated.
 
@@ -565,36 +580,11 @@ Function get-DLHealthReport
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
 
-    #Declare some variables for string processing as items move around.
-
-    [string]$tempOU=$NULL
-    [array]$tempNameArrayArray=@()
-    [string]$tempName=$NULL
-    [string]$tempDN=$NULL
-
     #For loop counter.
 
     [int]$forLoopCounter=0
 
-    #Exchange Schema Version
-
-    [int]$exchangeRangeUpper=$NULL
-    [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
-
-    #Define new arrays to check for errors instead of failing.
-
-    [array]$global:preCreateErrors=@()
-    [array]$global:testOffice365Errors=@()
-    [string]$isTestError="No"
-
-
     [int]$forLoopTrigger=1000
-    [int]$createMailContactDelay=5
-
-    #To support the new feature for multiple onmicrosoft.com domains -> use this variable to hold the cross premsies routing domain.
-    #This value can no longer be calculated off the address@domain.onmicrosoft.com value.
-
-    [string]$mailOnMicrosoftComDomain = ""
 
     #Define variables for kerberos enablement.
 
@@ -605,8 +595,6 @@ Function get-DLHealthReport
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
-
-   
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOCTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
@@ -1138,15 +1126,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeDLMembershipSMTP+=$normalizedTest
-                }
-                
+                $exchangeDLMembershipSMTP+=$normalizedTest                
             }
             catch 
             {
@@ -1191,14 +1171,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
-                }
+                $exchangeRejectMessagesSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1230,13 +1203,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
-                }
+                $exchangeRejectMessagesSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1280,13 +1247,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
-                }
+                $exchangeAcceptMessagesSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1318,14 +1279,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
-                }
+                $exchangeAcceptMessagesSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1370,14 +1324,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeManagedBySMTP+=$normalizedTest
-                }
+                $exchangeManagedBySMTP+=$normalizedTest
             }
             catch 
             {
@@ -1409,15 +1356,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeManagedBySMTP+=$normalizedTest
-                }
-                
+                $exchangeManagedBySMTP+=$normalizedTest                
             }
             catch 
             {
@@ -1428,55 +1367,6 @@ Function get-DLHealthReport
 
     if ($exchangeManagedBySMTP -ne $NULL)
     {
-        #First scan is to ensure that any of the groups listed on the managed by objects are still security.
-        #It is possible someone added it to managed by and changed the group type after.
-
-        foreach ($object in $exchangeManagedBySMTP)
-        {
-            #If the objec thas a non-null group type (is a group) and the value of the group type matches none of the secuity group types.
-            #The object is a distribution list - no good.
-
-            if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
-            {
-                $object.isError=$TRUE
-                $object.isErrorMessage = "GROUP_NO_LONGER_SECURITY_EXCEPTION: A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
-                
-                out-logfile -string object
-
-                $global:preCreateErrors+=$object
-
-                out-logfile -string "A distribution list (not security enabled) was found on managed by."
-                out-logfile -string "The group must be converted to security or removed from managed by."
-                out-logfile -string $object.primarySMTPAddressOrUPN
-            }
-
-            #The group is not a distribution list.
-            #If the SMTP object of the managedBy object equals the original group - check to see if an override is found.
-            #If an override of distribution is found - this is not OK since security is required.
-
-            elseif (($object.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail) -and ($groupTypeOverride -eq "Distribution")) 
-            {
-                out-logfile -string "Group type override detected - group has managed by permissions."
-
-                #Group type is not NULL / Group type is security value.
-
-                if (($object.groupType -ne $NULL) -and (($object.groupType -eq "-2147483640") -or ($object.groupType -eq "-2147483646" -or ($object.groupType -eq "-2147483644"))))
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = "GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: The group being migrated was found on the Owners attribute.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
-
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-        
-                    out-logfile -string "A security group has managed by rights on the distribution list."
-                    out-logfile -string "The administrator has specified to override the group type."
-                    out-logfile -string "The group override must be removed or the object removed from managedBY."
-                    out-logfile -string $object.primarySMTPAddressOrUPN
-                }
-            }
-        }
-
         Out-LogFile -string "The following objects are members of the managedBY:"
         
         out-logfile -string $exchangeManagedBySMTP
@@ -1511,14 +1401,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeModeratedBySMTP+=$normalizedTest
-                }
+                $exchangeModeratedBySMTP+=$normalizedTest
             }
             catch 
             {
@@ -1563,14 +1446,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
-                }
+                $exchangeBypassModerationSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1604,14 +1480,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
-                }
+                $exchangeBypassModerationSMTP+=$normalizedTest
             }
             catch 
             {
@@ -1652,15 +1521,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else 
-                {
-                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
-                }
-                
+                $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest                
             }
             catch 
             {
@@ -1705,13 +1566,7 @@ Function get-DLHealthReport
 
                 out-logfile -string $normalizedTest
 
-                if ($normalizedTest.isError -eq $TRUE)
-                {
-                    $global:preCreateErrors+=$normalizedTest
-                }
-                else {
-                    $allObjectsSendAsAccessNormalized+=$normalizedTest
-                }
+                $allObjectsSendAsAccessNormalized+=$normalizedTest
             }
             catch 
             {
