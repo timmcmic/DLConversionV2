@@ -1114,7 +1114,7 @@ Function get-DLHealthReport
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the members DN to Office 365 identifier."
 
     if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
     {
@@ -1137,7 +1137,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1161,7 +1161,7 @@ Function get-DLHealthReport
         out-logFile -string "The distribution group has no members."    
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the reject members DN to Office 365 identifier."
 
     Out-LogFile -string "REJECT USERS"
 
@@ -1182,7 +1182,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1214,7 +1214,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1237,7 +1237,7 @@ Function get-DLHealthReport
         out-logfile "The group to be migrated has no reject messages from members."    
     }
     
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the accept members DN to Office 365 identifier."
 
     Out-LogFile -string "ACCEPT USERS"
 
@@ -1258,7 +1258,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1290,7 +1290,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1314,7 +1314,7 @@ Function get-DLHealthReport
         out-logFile -string "This group has no accept message from restrictions."    
     }
     
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the managedBy members DN to Office 365 identifier."
 
     Out-LogFile -string "Process MANAGEDBY"
 
@@ -1335,7 +1335,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1367,7 +1367,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1391,7 +1391,7 @@ Function get-DLHealthReport
         out-logfile -string "The group has no managers."    
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the moderatedBy members DN to Office 365 identifier."
 
     Out-LogFile -string "Process MODERATEDBY"
 
@@ -1412,7 +1412,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1436,7 +1436,7 @@ Function get-DLHealthReport
         out-logfile "The group has no moderators."    
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation users members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation users members DN to Office 365 identifier."
 
     Out-LogFile -string "Process BYPASS USERS"
 
@@ -1457,7 +1457,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1470,7 +1470,7 @@ Function get-DLHealthReport
         }
     }
 
-    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation groups members DN to Office 365 identifier."
+    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation groups members DN to Office 365 identifier."
 
     Out-LogFile -string "Process BYPASS GROUPS"
 
@@ -1491,7 +1491,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1532,7 +1532,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1556,7 +1556,7 @@ Function get-DLHealthReport
         out-logfile "The group has no grant send on behalf to."    
     }
 
-    Out-LogFile -string "Invoke get-normalizedDN for any on premises object that the migrated group has send as permissions."
+    Out-LogFile -string "Invoke get-normalizedDNAD for any on premises object that the migrated group has send as permissions."
 
     Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
 
@@ -1577,7 +1577,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
 
                 out-logfile -string $normalizedTest
 
@@ -1646,444 +1646,6 @@ Function get-DLHealthReport
     $forLoopCounter=0 #Resetting counter at next set of queries.
 
     $telemetryFunctionStartTime = get-universalDateTime
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
-    Out-LogFile -string "********************************************************************************"
-
-    out-logfile -string "Being validating all distribution list members."
-    
-    if ($exchangeDLMembershipSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeDLMembershipSMTP)
-        {
-            #Reset the failure.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no DL members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all members with reject rights."
-
-    if ($exchangeRejectMessagesSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL reject messages is in Office 365."
-
-        foreach ($member in $exchangeRejectMessagesSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no reject members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all members with accept rights."
-
-    if ($exchangeAcceptMessagesSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeAcceptMessagesSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-            
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There are no accept members to test."    
-    }
-
-    out-logfile -string "Begin evaluating all managed by members."
-
-    if ($exchangeManagedBySMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeManagedBySMTP)
-        {
-            #Reset Error Variable.
-
-            $isTestError="No"
-            
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no managed by members to evaluate."    
-    }
-
-    out-logfile -string "Being evaluating all moderated by members."
-
-    if ($exchangeModeratedBySMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeModeratedBySMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no moderated by members to evaluate."    
-    }
-
-    out-logfile -string "Being evaluating all bypass moderation members."
-
-    if ($exchangeBypassModerationSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeBypassModerationSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no bypass moderation members to evaluate."    
-    }
-
-    out-logfile -string "Begin evaluation of all grant send on behalf to members."
-
-    if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
-
-        foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
-        {
-            $isTestError = "No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no grant send on behalf to members to evaluate."    
-    }
-
-    out-logfile -string "Begin evaluation all members with send as rights."
-
-    if ($exchangeSendAsSMTP.count -gt 0)
-    {
-        out-logfile -string "Ensuring each DL send as is in Office 365."
-
-        foreach ($member in $exchangeSendAsSMTP)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no members with send as rights."    
-    }
-
-    out-logfile -string "Begin evaluation of groups on premises that the group to be migrated has send as rights on."
-
-    if ($allObjectsSendAsAccessNormalized.count -gt 0)
-    {
-        out-logfile -string "Ensuring that each group on premises that the migrated group has send as rights on is in Office 365."
-
-        foreach ($member in $allObjectsSendAsAccessNormalized)
-        {
-            #Reset error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
-
-            try{
-                $isTestError=test-O365Recipient -member $member
-
-                if ($isTestError -eq "Yes")
-                {
-                    $member.isError = $TRUE
-                    $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-
-                    out-logfile -string $member
-
-                    $global:testOffice365Errors += $member
-                }
-            }
-            catch{
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-    else 
-    {
-        out-logfile -string "There were no members with send as rights."    
-    }
-
-    Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
-    Out-LogFile -string "********************************************************************************"
 
     $telemetryFunctionEndTime = get-universalDateTime
 
