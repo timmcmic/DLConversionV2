@@ -33,6 +33,13 @@ function compare-recipientArrays
             {
                 out-logfile -string "The object has an external directory object id - test based on this."
                 out-logfile -string $member.externalDirectoryObjectID
+
+                $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
+
+                if ($azureData.objectID -contains $functionExternalDirectoryObjectID[1])
+                {
+                    out-logfile -string "Member found in Azure."
+                }
             }
             elseif ($member.objectSID -ne "")
             {
