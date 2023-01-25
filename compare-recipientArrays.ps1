@@ -32,14 +32,17 @@ function compare-recipientArrays
             if ($member.externalDirectoryObjectID -ne "")
             {
                 out-logfile -string "The object has an external directory object id - test based on this."
+                out-logfile -string $member.externalDirectoryObjectID
             }
             elseif ($member.objectSID -ne "")
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
+                out-logfile -string $member.objectSID
             }
             elseif ($member.primarySMTPAddress -ne "")
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
+                out-logfile -string $member.primarySMTPAddress
             }
         }
     }
