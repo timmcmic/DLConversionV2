@@ -2828,6 +2828,20 @@ Function get-DLHealthReport
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string "Normalzing all Office 365 attributes so that they can be easily searched."
+
+    out-logfile -string "Processing accept messages from senders or members."
+
+    try {
+        $office365AcceptMessagesFromSendersOrMembers = get-NormalizedO365 -attributeToNormalize $office365DLConfiguration.AcceptMessagesOnlyFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL accept messages from senders or members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    
+
     #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
