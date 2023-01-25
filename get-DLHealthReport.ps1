@@ -2909,7 +2909,7 @@ Function get-DLHealthReport
         $office365RejectMessagesFromSendersOrMembers=@()
     }
 
-    if ($office365ModeratedBy.count -ne $NULL)
+    if ($office365ModeratedBy -ne $NULL)
     {
         out-xmlfile -itemToExport $office365ModeratedBy -itemNameTOExport $xmlFiles.office365ModeratedByXML.value
     }
