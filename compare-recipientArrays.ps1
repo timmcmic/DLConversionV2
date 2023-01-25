@@ -1,6 +1,6 @@
 function compare-recipientArrays
 {
-    params(
+    param(
         [Parameter(Mandatory = $false)]
         $onPremData=$NULL,
         [Parameter(Mandatory = $false)]
