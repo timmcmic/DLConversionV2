@@ -2892,10 +2892,7 @@ Function get-DLHealthReport
         out-logfile -string "Unable to normalize Office 365 DL grantSendOnBehalfTo members."
         out-logfile -string $_ -isError:$TRUE
     }
-    [array]$office365GrantSendOnBehalfTo = $NULL
-        office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
-
-
+    
     if ($office365AcceptMessagesFromSendersOrMembers -ne $NULL)
     {
         out-xmlfile -itemToExport $office365AcceptMessagesFromSendersOrMembers -itemNameTOExport $xmlFiles.office365AcceptMessagesFromSendersOrMembersXML.value
