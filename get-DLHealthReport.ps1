@@ -2524,6 +2524,10 @@ Function get-DLHealthReport
     $telemetryEndTime = get-universalDateTime
     $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
 
+    #At this time we need to start building the comparison arrays.
+
+    compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership 
+
     # build the properties and metrics #
     $telemetryEventProperties = @{
         DLConversionV2Command = $telemetryEventName

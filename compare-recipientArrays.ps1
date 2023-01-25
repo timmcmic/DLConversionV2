@@ -24,11 +24,23 @@ function compare-recipientArrays
 
         foreach ($member in $onPremData)
         {
-            out-logfile -string ("Evaluating: "+$member.primarySMTPAddressOrUPN)
+            #Group members come in different flavors.
+            #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
+            #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
+            #Lastly are objects that have neither a SID or external directory object ID then we search for mail.
 
-            $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
-
-            
+            if ($member.externalDirectoryObjectID -ne "")
+            {
+                out-logfile -string "The object has an external directory object id - test based on this."
+            }
+            elseif ($member.objectSID -ne "")
+            {
+                out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
+            }
+            elseif ($member.primarySMTPAddress -ne "")
+            {
+                out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
+            }
         }
     }
 
