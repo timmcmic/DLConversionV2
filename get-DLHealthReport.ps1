@@ -2843,7 +2843,107 @@ Function get-DLHealthReport
         out-logfile -string $_ -isError:$TRUE
     }
 
+    out-logfile -string "Processing reject messages from senders or members."
 
+    try {
+        $office365RejectMessagesFromSendersOrMembers = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.RejectMessagesFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL reject messages from senders or members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Processing moderatedBy members"
+
+    try {
+        $office365ModeratedBy = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.ModeratedBy -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL moderatedBy members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Processing bypass moderation from senders or members."
+
+    try {
+        $office365BypassModerationFromSendersOrMembers = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.BypassModerationFromSendersOrMembers -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL bypass moderation from senders members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Processing managed by members."
+
+    try {
+        $office365ManagedBy = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.managedBy -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL managedBY members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Processing grant send on behalf to."
+
+    try {
+        $office365GrantSendOnBehalfTo = get-normalizedO365 -attributeToNormalize $office365DLConfiguration.GrantSendOnBehalfTo -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to normalize Office 365 DL grantSendOnBehalfTo members."
+        out-logfile -string $_ -isError:$TRUE
+    }
+    [array]$office365GrantSendOnBehalfTo = $NULL
+        office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+
+
+    if ($office365AcceptMessagesFromSendersOrMembers -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365AcceptMessagesFromSendersOrMembers -itemNameTOExport $xmlFiles.office365AcceptMessagesFromSendersOrMembersXML.value
+    }
+    else {
+        $office365AcceptMessagesFromSendersOrMembers=@()
+    }
+
+    if ($office365RejectMessagesFromSendersOrMembers -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365RejectMessagesFromSendersOrMembers -itemNameTOExport $xmlFiles.office365RejectMessagesFromSendersOrMembersXML.value
+    }
+    else {
+        $office365RejectMessagesFromSendersOrMembers=@()
+    }
+
+    if ($office365ModeratedBy.count -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365ModeratedBy -itemNameTOExport $xmlFiles.office365ModeratedByXML.value
+    }
+    else {
+        $office365ModeratedBy=@()
+    }
+
+    if ($office365BypassModerationFromSendersOrMembers -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365BypassModerationFromSendersOrMembers -itemNameTOExport $xmlFiles.office365BypassModerationFromSendersOrMembersXML.value
+    }
+    else 
+    {
+        $office365BypassModerationFromSendersOrMembers=@()
+    }
+
+    if ($office365ManagedBy -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365ManagedBy -itemNameTOExport $xmlFiles.office365ManagedByXML.value
+    }
+    else {
+        $office365ManagedBy=@()
+    }
+
+    if ($office365GrantSendOnBehalfTo -ne $NULL)
+    {
+        out-xmlfile -itemToExport $office365GrantSendOnBehalfTo -itemNameTOExport $xmlFiles.office365GrantSendOnBehalfToXML.value
+    }
+    else {
+        $office365GrantSendOnBehalfTo=@()
+    }
 
     #EXIT #Debug Exit
 
