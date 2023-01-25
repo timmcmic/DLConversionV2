@@ -80,7 +80,7 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-NormalizedDN"
+        Out-LogFile -string "BEGIN GET-NormalizedDNAD"
         Out-LogFile -string "********************************************************************************"
         
         #Get the specific user using ad providers.
@@ -191,7 +191,7 @@
         
         out-logfile -string $functionObject
         
-        Out-LogFile -string "END GET-NormalizedDN"
+        Out-LogFile -string "END GET-NormalizedDNAD"
         Out-LogFile -string "********************************************************************************"
         
         #This function is designed to open local and remote powershell sessions.
