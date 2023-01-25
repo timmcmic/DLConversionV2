@@ -378,6 +378,9 @@ Function get-DLHealthReport
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
 
 
+    [array]$global:testOffice365Errors=@()
+
+
     #Define variables for import data - used for importing data into pre-collect.
 
     [array]$importData=@() #Empty array for the import data.
@@ -2840,7 +2843,7 @@ Function get-DLHealthReport
         out-logfile -string $_ -isError:$TRUE
     }
 
-    
+
 
     #EXIT #Debug Exit
 
