@@ -373,7 +373,7 @@ Function get-DLHealthReport
 
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    [string]$global:staticFolderName="\DLMigration\"
+    [string]$global:staticFolderName="\DLHealthCheck\"
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
 
@@ -1088,6 +1088,15 @@ Function get-DLHealthReport
     catch {
         out-logfile -string "Unable to obtain Azure AD DL Membership."
         out-logfile -string $_
+    }
+
+    if ($azureADDLMembership -ne $NULL)
+    {
+        out-logfile -string $azureADDLMembership
+
+        out-logfile -string "Creating an XML file backup of the Azure AD DL Membership."
+
+        out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.Value
     }
 
     Out-LogFile -string "********************************************************************************"
