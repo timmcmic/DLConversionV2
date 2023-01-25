@@ -44,8 +44,6 @@ function compare-recipientArrays
 
                     $azureData = $azureData.removeAt($azureData.objectID.indexOf($functionExternalDirectoryObjectID[1]))
                     out-logfile -string $azureData.count.tostring()
-
-                    $test = $test.RemoveAt($test.primarySMTPAddressOrUPN.IndexOf("zOnPremMemberMigratedDLModern4@e-mcmichael.com"))
                 }
             }
             elseif ($member.objectSID -ne "")
