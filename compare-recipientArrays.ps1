@@ -48,7 +48,7 @@ function compare-recipientArrays
 
                     $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
-                    $azureData = $azureData | where-object {$_.objectID -ne $functionAzureObject.objectID}
+                    $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -81,7 +81,7 @@ function compare-recipientArrays
 
                     $functionAzureObject = $azureData | where-object {$_.OnPremisesSecurityIdentifier -eq $onPremData[$i].objectSID.value}
 
-                    $azureData = $azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier}
+                    $azureData = @($azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier})
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -112,7 +112,7 @@ function compare-recipientArrays
 
                     $functionAzureObject = $azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress}
 
-                    $azureData = $azureData | where-object {$_.mail -ne $functionAzureObject.mail}
+                    $azureData = @($azureData | where-object {$_.mail -ne $functionAzureObject.mail})
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
