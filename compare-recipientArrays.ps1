@@ -22,6 +22,8 @@ function compare-recipientArrays
     if (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
+        out-logfile -string ("On Prem Data Count: "+$onPremData.count)
+        out-logfile -string ("Azure Data Count: "+$azureData.count)
 
         for ($i = ($onPremData.count-1) ; $i -ge 0 ; $i--)
         {
