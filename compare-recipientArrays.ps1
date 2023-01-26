@@ -22,7 +22,7 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        for ($i = 0 ; $i -lt $onPremData.count ; $i++))
+        for ($i = 0 ; $i -lt $onPremData.count ; $i++)
         {
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
