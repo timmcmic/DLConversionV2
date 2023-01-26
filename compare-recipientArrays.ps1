@@ -26,6 +26,7 @@ function compare-recipientArrays
         for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
         {
             $azureData.OnPremisesSecurityIdentifier
+            $azureData.objectID
 
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
