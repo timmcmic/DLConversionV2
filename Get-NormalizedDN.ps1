@@ -488,7 +488,7 @@
                     ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$true
-                    isErrorMessage="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isErrorMessage="OBJECT_NOT_MAIL_ENABLED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
                 }
             }    
         }
