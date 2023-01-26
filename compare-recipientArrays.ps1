@@ -45,7 +45,11 @@ function compare-recipientArrays
 
                     $onPremData
 
+                    $azureData
+
                     $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
+
+                    $functionAzureObject
 
                     $azureData = $azureData | where-object ($_.objectID -ne $functionAzureObject.objectID)
 
