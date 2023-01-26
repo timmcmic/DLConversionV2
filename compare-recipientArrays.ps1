@@ -202,21 +202,10 @@ function compare-recipientArrays
 
         for ($i = ($office365Data.count - 1) ; $i -ge 0 ; $i++)
         {
-            if ($office365Data[$i].externalDirectoryObjectID -contains "_")
+            if ($office365Data[$i].externalDirectoryObjectID -notcontains "_")
             {
-                out-logfile -string "This is a normalized external directory object id."
-
-                $functionExternalDirectoryObjectID = $office365Data[$i].split("_")
-                $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
+                out-logfile -string "Does not contain."
             }
-            else 
-            {
-                out-logfile -string "This is an Office 365 supplied value."
-
-                $functionExternalDirectoryObjectID = $office365Data[$i].externalDirectoryObjectID
-            }
-
-            out-logfile -string ("Calculated external directory object id: "+$functionExternalDirectoryObjectID)
         }
     }
     else 
