@@ -112,7 +112,7 @@ function compare-recipientArrays
 
                     $azureData
 
-                    $azureData = @($azureData | where-object {$_.mail -ne $onPremData[$i].primarySMTPAddress})
+                    $azureData = @($azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress})
 
                     $azureData
                     
