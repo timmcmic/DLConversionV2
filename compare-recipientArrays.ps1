@@ -44,11 +44,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
-
                     $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
                     $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
+
+                    $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -77,11 +77,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = @($onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value})
-
                     $functionAzureObject = $azureData | where-object {$_.OnPremisesSecurityIdentifier -eq $onPremData[$i].objectSID.value}
 
                     $azureData = @($azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier})
+
+                    $onPremData = @($onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value})
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -108,13 +108,13 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
-
-                    $azureData
+                    out-logfile -string "Removing object from azure array..."
 
                     $azureData = @($azureData | where-object {$_.mail -ne $onPremData[$i].primarySMTPAddress})
 
-                    $azureData
+                    out-logfile -string "Removing object from on premises array..."
+
+                    $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
