@@ -89,6 +89,8 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    $azureData.OnPremisesSecurityIdentifier
                 }
                 else {
                     out-logfile -string "Object not found in Azure."
