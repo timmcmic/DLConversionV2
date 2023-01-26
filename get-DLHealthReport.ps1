@@ -1080,7 +1080,7 @@ Function get-DLHealthReport
     {
         out-logfile -string $office365DLMembership
 
-        out-xmlfile -itemToExport $office365DLMembership -itenNameToExport $xmlFiles.office365MembershipXML.value
+        out-xmlfile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365MembershipXML.value
     }
     else
     {
