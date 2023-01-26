@@ -65,15 +65,18 @@ function compare-recipientArrays
             elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
-                out-logfile -string $onPremData[$i].objectSid.Value
+
+                $functionObjectSID = ($onPremData[$i].objectSID.value).tostring()
+
+                out-logfile -string $functionObjectSID
                 
-                if ($azureData.OnPremisesSecurityIdentifier -contains $onPremData[$i].objectSID)
+                if ($azureData.OnPremisesSecurityIdentifier -contains $functionObjectSID)
                 {
                     out-logfile -string "Member found in Azure."
 
                     $onPremData.RemoveAt($i)
 
-                    $azureData.OnPremisesSecurityIdentifier.indexOf($onPremData[$i].objectSID.value.toString())
+                    $azureData.OnPremisesSecurityIdentifier.indexOf($functionObjectSID)
 
                     $azureData.RemoveAt($azureData.OnPremisesSecurityIdentifier.IndexOf($onPremData[$i].ObjectSID.Value))
                     
