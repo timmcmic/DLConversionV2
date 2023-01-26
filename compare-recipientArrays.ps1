@@ -112,6 +112,8 @@ function compare-recipientArrays
 
                     $functionAzureObject = $azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress}
 
+                    out-logfile -string $functionAzureObject.mail
+
                     $azureData = @($azureData | where-object {$_.mail -ne $functionAzureObject.mail})
                     
                     $functionObject = New-Object PSObject -Property @{
@@ -130,26 +132,27 @@ function compare-recipientArrays
                     out-logfile -string "Object not found in Azure."
                 }
             }
-
-            if ($OnPremData.count -lt 1)
-            {
-                out-logfile -string "No on prem users left for evaluation - all found."
-                $onPremData = @()
-            }
-            else {
-                out-logfile -string "On prem array contains data - suspect missing member."
-            }
-            
-            if ($azureData.count -lt 1)
-            {
-                out-logfile -string "No azure users left for evaluation - all found."
-                $azureData = @()
-            }
-            else
-            {
-                out-logfile -string "Azure array contains data - suspect missing member."
-            }
         }
+
+        if ($OnPremData.count -lt 1)
+        {
+            out-logfile -string "No on prem users left for evaluation - all found."
+            $onPremData = @()
+        }
+        else {
+            out-logfile -string "On prem array contains data - suspect missing member."
+        }
+        
+        if ($azureData.count -lt 1)
+        {
+            out-logfile -string "No azure users left for evaluation - all found."
+            $azureData = @()
+        }
+        else
+        {
+            out-logfile -string "Azure array contains data - suspect missing member."
+        }
+
     }
 
     Out-LogFile -string "END compare-recipientArrays"
