@@ -224,7 +224,7 @@ function compare-recipientArrays
 
                 out-logfile -string "Removing object from azure array..."
 
-                $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
+                $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
 
                 $functionObject = New-Object PSObject -Property @{
                     Name = $functionAzureObject.displayName
