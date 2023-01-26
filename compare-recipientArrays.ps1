@@ -93,7 +93,7 @@ function compare-recipientArrays
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
-                out-logfile -string $onPremData[$i].mail
+                out-logfile -string $onPremData[$i].primarySMTPAddress
 
                 if ($azureData.mail -contains $onPremData[$i].primarySMTPAddress)
                 {
@@ -101,7 +101,7 @@ function compare-recipientArrays
 
                     $onPremData.RemoveAt($i)
 
-                    $azureData.RemoveAt($azureData.mail.indexOf($onPremData[$i].mail))
+                    $azureData.RemoveAt($azureData.mail.indexOf($onPremData[$i].primarySMTPAddress))
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
