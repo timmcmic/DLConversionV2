@@ -249,6 +249,55 @@ function compare-recipientArrays
                 out-logfile -string "Member not found in Azure"
             }
         }
+
+        if ($office365Data.count -lt 1)
+        {
+            out-logfile -string "No on prem users left for evaluation - all found."
+            $onPremData = @()
+        }
+        else {
+            out-logfile -string "On prem array contains data - suspect missing member."
+
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $onPremData[$i].name
+                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                    UserPrincipalName = $onPremData[$i].userPrincipalName
+                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                    ObjectSID = $onPremData[$i].objectSID
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_IN_OFFICE365_NOT_IN_AZURE_EXCEPTION"
+                }
+
+                $functionReturnArray += $functionObject
+            }
+        }
+        
+        if ($azureData.count -lt 1)
+        {
+            out-logfile -string "No azure users left for evaluation - all found."
+            $azureData = @()
+        }
+        else
+        {
+            out-logfile -string "Azure array contains data - suspect missing member."
+
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $onPremData[$i].name
+                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                    UserPrincipalName = $onPremData[$i].userPrincipalName
+                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                    ObjectSID = $onPremData[$i].objectSID
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_IN_AZURE_NOT_IN_OFFICE365_EXCEPTION"
+                }
+
+                $functionReturnArray += $functionObject
+            }
+        }
     }
     else 
     {
