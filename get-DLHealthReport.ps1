@@ -525,6 +525,8 @@ Function get-DLHealthReport
         office365BypassModerationFromSendersOrMembersXML= @{"value" = "office365BypassModerationFromSendersOrMembers" ; "Description" = "Export XML of all Office 365 bypass moderatios from senders or member normalized."}
         office365ManagedByXML= @{"value" = "office365ManagedBy" ; "Description" = "Export XML of all Office 365 managedby normalized."}
         office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        onPremMemberEvalXML= @{"value" = "onPremMemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365MemberEvalXML = @{"value" = "office365MemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
@@ -2567,6 +2569,16 @@ Function get-DLHealthReport
     }
     catch {
         out-logfile $_ -isError:$TRUE
+    }
+
+    if ($onPremMemberEval -ne $NULL)
+    {
+        out-xmlFile -itemToExport $onPremMemberEval -itemNameToExport $xmlFiles.onPremMemberEvalXML.value
+    }
+
+    if ($office365MemberEval -ne $NULL)
+    {
+        out-xmlFile -itemToExport $office365MemberEval -itemNameToExport $xmlFiles.office365MemberEvalXML.value
     }
     
 
