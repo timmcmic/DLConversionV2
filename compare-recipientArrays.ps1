@@ -56,6 +56,9 @@ function compare-recipientArrays
                     out-logfile -string "Member found in Azure."
 
                     $onPremData.RemoveAt($i)
+
+                    $azureData.RemoveAt($azureData.objectSID.indexOf($onPremData[$i].objectSID))
+                    out-logfile -string $azureData.Count
                 }
             }
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
@@ -67,6 +70,9 @@ function compare-recipientArrays
                     out-logfile -string "Member found in Azure."
 
                     $onPremData.RemoveAt($i)
+
+                    $azureData.RemoveAt($azureData.mail.indexOf($onPremData[$i].mail))
+                    out-logfile -string $azureData.Count
                 }
             }
 
