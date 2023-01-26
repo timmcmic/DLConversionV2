@@ -110,7 +110,7 @@ function compare-recipientArrays
 
                     $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
 
-                    $functionAzureObject = $azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress}
+                    $functionAzureObject = $azureData | where-object {$_.Mail -eq $onPremData[$i].primarySMTPAddress}
 
                     out-logfile -string $functionAzureObject.mail
 
