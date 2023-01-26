@@ -25,7 +25,6 @@ function compare-recipientArrays
 
         for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
         {
-            out-logfile -string $i.toString()
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
@@ -45,6 +44,8 @@ function compare-recipientArrays
                     $onPremData.RemoveAt($i)
 
                     $functionAzureIndex = $azureData.objectID.indexOf($functionDirectoryObjectID[1])
+
+                    out-logfile -string $functionAzureIndex
 
                     $azureData.RemoveAt($functionAzureIndex)
                 }
