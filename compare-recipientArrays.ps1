@@ -22,8 +22,9 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        for ($i = 0 ; $i -lt $onPremData.count ; $i++)
+        for ($i = ($onPremData.count-1); $i -gt 0 ; $i--)
         {
+            out-logfile -string $i.toString()
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
