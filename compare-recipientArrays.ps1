@@ -11,6 +11,7 @@ function compare-recipientArrays
 
     [array]$functionReturnArray = @()
     $functionExternalDirectoryObjectID = @()
+    $functionAzureIndex = 0
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN compare-recipientArrays"
@@ -42,6 +43,10 @@ function compare-recipientArrays
                     out-logfile -string "Member found in Azure."
 
                     $onPremData.RemoveAt($i)
+
+                    $functionAzureIndex = $azureData.objectID.indexOf($functionDirectoryObjectID[1])
+
+                    $azureData.RemoveAt($functionAzureIndex)
                 }
             }
             elseif ($onPremData[$i].objectSID -ne $NULL)
@@ -68,9 +73,6 @@ function compare-recipientArrays
             }
         }
     }
-
-   out-logfile $onPremData
-   out-logfile $onPremData.Count
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
