@@ -71,6 +71,8 @@ function compare-recipientArrays
                     $onPremData.RemoveAt($i)
                 }
             }
+
+            out-logfile -string $azuredata.Count
         }
     }
 
