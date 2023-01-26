@@ -19,6 +19,8 @@ function compare-recipientArrays
 
     out-logfile -string "Determine if we are comparing on premises and Azure <or> on premises and Exchange Online"
 
+    $onPremData.displayName
+
     if (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
