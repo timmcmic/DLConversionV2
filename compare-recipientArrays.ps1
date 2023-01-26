@@ -47,8 +47,6 @@ function compare-recipientArrays
 
                     $azureData = $azureData | where-object {$_.objectID -ne $functionAzureObject.objectID}
 
-                    $azureData.displayName
-
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
                         PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
@@ -60,28 +58,37 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    if ($onPremData.count -lt 1)
+                    {
+                        $onPremData = @()
+                    }
+
+                    if ($azureData.count -lt 1)
+                    {
+                        $azureData = @()
+                    }
                 }
                 else 
                 {
                     out-logfile -string "Member not found in Azure"
                 }
             }
-            <#
             elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
 
-                $functionObjectSID = ($onPremData[$i].objectSID.value).tostring()
-
-                out-logfile -string $functionObjectSID
+                out-logfile -string $onPremData[$i].objectSID.value
                 
-                if ($azureData.OnPremisesSecurityIdentifier -contains $functionObjectSID)
+                if ($azureData.OnPremisesSecurityIdentifier -contains $onPremData[$i].objectSID.value)
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData.RemoveAt($i)
+                    $onPremData = $onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value}
 
-                    $azureData.RemoveAt($azureData.OnPremisesSecurityIdentifier.indexOf($functionObjectSID))
+                    $functionAzureObject = $azureData | where-object {$_.OnPremisesSecurityIdentifier -eq $onPremData[$i].objectSID.value}
+
+                    $azureData = $azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier}
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -94,6 +101,16 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    if ($onPremData.count -lt 1)
+                    {
+                        $onPremData=@()
+                    }
+
+                    if ($azureData.count -lt 1)
+                    {
+                        $azureData=@()
+                    }
                 }
                 else {
                     out-logfile -string "Object not found in Azure."
@@ -108,9 +125,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData.RemoveAt($i)
+                    $onPremData = $onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress}
 
-                    $azureData.RemoveAt($azureData.mail.indexOf($onPremData[$i].primarySMTPAddress))
+                    $functionAzureObject = $azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress}
+
+                    $azureData = $azureData | where-object {$_.mail -ne $functionAzureObject.mail}
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -123,12 +142,21 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    if ($onPremData.count -lt 1)
+                    {
+                        $onPremData = @()
+                    }
+                    
+                    if ($azureData.count -lt 1)
+                    {
+                        $azureData = @()
+                    }
                 }
                 else {
                     out-logfile -string "Object not found in Azure."
                 }
             }
-            #>
         }
     }
 
