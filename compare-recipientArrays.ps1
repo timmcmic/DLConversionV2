@@ -130,6 +130,9 @@ function compare-recipientArrays
         }
     }
 
+    $azureData
+    $onPremData
+
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 }
