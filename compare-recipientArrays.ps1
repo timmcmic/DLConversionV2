@@ -25,9 +25,6 @@ function compare-recipientArrays
 
         for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
         {
-            $azureData.OnPremisesSecurityIdentifier
-            $azureData.objectID
-
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
@@ -67,6 +64,7 @@ function compare-recipientArrays
                     out-logfile -string "Member not found in Azure"
                 }
             }
+            <#
             elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
@@ -128,6 +126,7 @@ function compare-recipientArrays
                     out-logfile -string "Object not found in Azure."
                 }
             }
+            #>
         }
     }
 
