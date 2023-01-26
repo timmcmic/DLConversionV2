@@ -40,12 +40,6 @@ function compare-recipientArrays
                 if ($azureData.objectID -contains $functionExternalDirectoryObjectID[1])
                 {
                     out-logfile -string "Member found in Azure."
-                    $onPremData = $onPremData.RemoveAt($i)
-                    out-logfile -string $onPremData.count
-
-                    $azureIndex = $azureData.objectID.indexOf($onPremData[$i].externalDirectoryObjectID)
-                    $azureData = $azureData.RemoveAt($azureIndex)
-                    out-logfile -string $azureData.count
                 }
             }
             elseif ($onPremData[$i].objectSID -ne $NULL)
