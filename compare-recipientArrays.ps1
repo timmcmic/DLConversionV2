@@ -19,14 +19,14 @@ function compare-recipientArrays
 
     out-logfile -string "Determine if we are comparing on premises and Azure <or> on premises and Exchange Online"
 
-    $azureData.OnPremisesSecurityIdentifier
-
     if (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
         for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
         {
+            $azureData.OnPremisesSecurityIdentifier
+            
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
