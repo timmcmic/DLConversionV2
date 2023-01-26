@@ -90,6 +90,9 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
                 }
+                else {
+                    out-logfile -string "Object not found in Azure."
+                }
             }
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
             {
@@ -115,6 +118,9 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+                }
+                else {
+                    out-logfile -string "Object not found in Azure."
                 }
             }
         }
