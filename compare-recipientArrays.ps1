@@ -141,6 +141,21 @@ function compare-recipientArrays
         }
         else {
             out-logfile -string "On prem array contains data - suspect missing member."
+
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $onPremData[$i].name
+                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                    UserPrincipalName = $onPremData[$i].userPrincipalName
+                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                    ObjectSID = $onPremData[$i].objectSID
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_ONPREM_NOT_IN_AZURE_EXCEPTION"
+                }
+
+                $functionReturnArray += $functionObject
+            }
         }
         
         if ($azureData.count -lt 1)
@@ -151,10 +166,28 @@ function compare-recipientArrays
         else
         {
             out-logfile -string "Azure array contains data - suspect missing member."
-        }
 
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $onPremData[$i].name
+                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                    UserPrincipalName = $onPremData[$i].userPrincipalName
+                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                    ObjectSID = $onPremData[$i].objectSID
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_IN_AZURE_NOT_ONPREM_EXCEPTION"
+                }
+
+                $functionReturnArray += $functionObject
+            }
+        }
     }
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
+
+    out-logfile $functionReturnArray
+
+    return $functionReturnArray
 }
