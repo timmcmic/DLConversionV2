@@ -30,7 +30,7 @@ function compare-recipientArrays
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
             #Lastly are objects that have neither a SID or external directory object ID then we search for mail.
 
-            if ($onPremData[$i].externalDirectoryObjectID -ne "")
+            if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "The object has an external directory object id - test based on this."
                 out-logfile -string $onPremData[$i].externalDirectoryObjectID
@@ -47,12 +47,12 @@ function compare-recipientArrays
                     out-logfile -string $azureData.count.tostring()
                 }
             }
-            elseif ($onPremData[$i].objectSID -ne "")
+            elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
                 out-logfile -string $onPremData[$i].objectSID
             }
-            elseif ($onPremData[$i].primarySMTPAddress -ne "")
+            elseif ($onPremData[$i].primarySMTPAddress -ne $null)
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
                 out-logfile -string $onPremData[$i].primarySMTPAddress
