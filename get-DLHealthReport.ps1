@@ -1076,11 +1076,11 @@ Function get-DLHealthReport
         out-logfile $_ -isError:$TRUE
     }
 
-    if ($office365DLMembership.count -gt 0)
+    if ($office365DLMembership -ne $NULL)
     {
         out-logfile -string $office365DLMembership
 
-        out-xmlfile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365MembershipXML.value
+        out-xmlfile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365DLMembershipXML.value
     }
     else
     {
