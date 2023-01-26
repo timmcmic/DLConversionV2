@@ -200,7 +200,7 @@ function compare-recipientArrays
     {
         out-logfile -string "This is an Office 365 to Azure evaluation."
 
-        for ($i = ($office365Data.count - 1) ; $i -ge 0 ; $i++)
+        for ($i = ($office365Data.count - 1) ; $i -ge 0 ; $i--)
         {
             if ($office365Data[$i].externalDirectoryObjectID -notcontains "_")
             {
