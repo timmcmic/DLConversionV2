@@ -23,7 +23,7 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        for ($i = ($onPremData.count-1) ; $i -gt -2 ; $i--)
+        for ($i = ($onPremData.count-1) ; $i -ge 0 ; $i--)
         {
             out-logfile -string $i
             #Group members come in different flavors.
