@@ -23,7 +23,7 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
+        for ($i = 0 ; $i -lt $onPremData.count ; $i++)
         {
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
@@ -43,7 +43,7 @@ function compare-recipientArrays
 
                     $onPremData = $onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID}
 
-                    $functionAzureObject = $azureData | where-object {$_.objectID -eq $onPremData[$i].externalDirectoryObjectID}
+                    $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
                     $azureData = $azureData | where-object ($_.objectID -ne $functionAzureObject.objectID)
 
