@@ -47,17 +47,31 @@ function compare-recipientArrays
             elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
-                out-logfile -string $onPremData[$i].objectSID
+                
+                if ($azureData.OnPremisesSecurityIdentifier -contains $onPremData[$i].objectSID)
+                {
+                    out-logfile -string "Member found in Azure."
+
+                    $onPremData.RemoveAt($i)
+                }
             }
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
-                out-logfile -string $onPremData[$i].primarySMTPAddress
+
+                if ($azureData.mail -contains $onPremData[$i].primarySMTPAddress)
+                {
+                    out-logfile -string "Member found in Azure."
+
+                    $onPremData.RemoveAt($i)
+                }
             }
         }
     }
 
-   
+   out-logfile $onPremData
+   out-logfile $onPremData.Count
+
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 }
