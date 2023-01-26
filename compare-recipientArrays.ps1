@@ -204,7 +204,49 @@ function compare-recipientArrays
         {
             if ($office365Data[$i].externalDirectoryObjectID -notcontains "_")
             {
-                out-logfile -string "Does not contain."
+                out-logfile -string "ExternalDirectoryObjectID provided by Office 365."
+
+                $functionExternalDirectoryObjectID = $office365Data[$i].externalDirectoryObjectID
+            }
+            else
+            {
+                out-logfile -string "ExternalDirectoryObjectID calculated by normalized Office 365 object."
+
+                $functionExternalDirectoryObjectID = $office365Data[$i].split["_"]
+                $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
+            }
+
+            out-logfile -string ("ExternalDirectoryObjectID: "+$functionExternalDirectoryObjectID)
+
+            if ($azureData.objectID -contains $functionExternalDirectoryObjectID)
+            {
+                out-logfile -string "Member found in Azure."
+
+                out-logfile -string "Removing object from azure array..."
+
+                $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
+
+                $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
+
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $office365Data[$i].name
+                    PrimarySMTPAddress = $office365Data[$i].primarySMTPAddress
+                    UserPrincipalName = ""
+                    ExternalDirectoryObjectID = $functionExternalDirectoryObjectID
+                    ObjectSID = ""
+                    IsValidMember = "TRUE"
+                    ErrorMessage = "N/A"
+                }
+
+                out-logfile -string "Removing object from on premises array..."
+
+                $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $functionExternalDirectoryObjectID})
+
+                $functionReturnArray += $functionObject
+            }
+            else 
+            {
+                out-logfile -string "Member not found in Azure"
             }
         }
     }
