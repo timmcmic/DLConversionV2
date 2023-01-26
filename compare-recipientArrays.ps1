@@ -153,11 +153,11 @@ function compare-recipientArrays
             foreach ($member in $onPremData)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $onPremData[$i].name
-                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                    UserPrincipalName = $onPremData[$i].userPrincipalName
-                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                    ObjectSID = $onPremData[$i].objectSID
+                    Name = $member.name
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = $member.userPrincipalName
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID = $member.objectSID
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_ONPREM_NOT_IN_AZURE_EXCEPTION"
                 }
@@ -178,11 +178,11 @@ function compare-recipientArrays
             foreach ($member in $onPremData)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $onPremData[$i].name
-                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                    UserPrincipalName = $onPremData[$i].userPrincipalName
-                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                    ObjectSID = $onPremData[$i].objectSID
+                    Name = $member.displayName
+                    PrimarySMTPAddress = $member.mail
+                    UserPrincipalName = $member.userPrincipalName
+                    ExternalDirectoryObjectID = $member.objectID
+                    ObjectSID = $member.OnPremisesSecurityIdentifier
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_IN_AZURE_NOT_ONPREM_EXCEPTION"
                 }
@@ -226,17 +226,17 @@ function compare-recipientArrays
 
                 $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
-                $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
-
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $office365Data[$i].name
-                    PrimarySMTPAddress = $office365Data[$i].primarySMTPAddress
-                    UserPrincipalName = ""
-                    ExternalDirectoryObjectID = $functionExternalDirectoryObjectID
-                    ObjectSID = ""
+                    Name = $functionAzureObject.displayName
+                    PrimarySMTPAddress = $functionAzureObject.mail
+                    UserPrincipalName = $functionAzureObject.userprincipalname
+                    ExternalDirectoryObjectID = $functionAzureObject.objectID
+                    ObjectSID = $functionAzureObject.OnPremisesSecurityIdentifier
                     IsValidMember = "TRUE"
                     ErrorMessage = "N/A"
                 }
+
+                $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
 
                 out-logfile -string "Removing object from on premises array..."
 
@@ -261,11 +261,11 @@ function compare-recipientArrays
             foreach ($member in $onPremData)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $onPremData[$i].name
-                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                    UserPrincipalName = $onPremData[$i].userPrincipalName
-                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                    ObjectSID = $onPremData[$i].objectSID
+                    Name = $member.DisplayName
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = $null
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID = $null
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_IN_OFFICE365_NOT_IN_AZURE_EXCEPTION"
                 }
@@ -286,11 +286,11 @@ function compare-recipientArrays
             foreach ($member in $onPremData)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $onPremData[$i].name
-                    PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                    UserPrincipalName = $onPremData[$i].userPrincipalName
-                    ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                    ObjectSID = $onPremData[$i].objectSID
+                    Name = $member.displayName
+                    PrimarySMTPAddress = $member.mail
+                    UserPrincipalName = $member.userPrincipalName
+                    ExternalDirectoryObjectID = $member.objectID
+                    ObjectSID = $member.OnPremisesSecurityIdentifier
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_IN_AZURE_NOT_IN_OFFICE365_EXCEPTION"
                 }
