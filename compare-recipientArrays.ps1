@@ -22,39 +22,39 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        foreach ($member in $onPremData.toList())
+        for ($i = 0 ; $i -lt $onPremData.count ; $i++))
         {
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
             #Lastly are objects that have neither a SID or external directory object ID then we search for mail.
 
-            if ($member.externalDirectoryObjectID -ne "")
+            if ($onPremData[$i].externalDirectoryObjectID -ne "")
             {
                 out-logfile -string "The object has an external directory object id - test based on this."
-                out-logfile -string $member.externalDirectoryObjectID
+                out-logfile -string $onPremData[$i].externalDirectoryObjectID
 
-                $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
+                $functionExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID.split("_")
 
                 if ($azureData.objectID -contains $functionExternalDirectoryObjectID[1])
                 {
                     out-logfile -string "Member found in Azure."
-                    $onPremData = $onPremData.removeAt($onPremData.externalDirectoryObjectID.indexOf($member.externalDirectoryObjectID))
+                    $onPremData = $onPremData.removeAt($onPremData.externalDirectoryObjectID.indexOf($onPremData[$i].externalDirectoryObjectID))
                     out-logfile -string $onPremData.count.tostring()
 
                     $azureData = $azureData.removeAt($azureData.objectID.indexOf($functionExternalDirectoryObjectID[1]))
                     out-logfile -string $azureData.count.tostring()
                 }
             }
-            elseif ($member.objectSID -ne "")
+            elseif ($onPremData[$i].objectSID -ne "")
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
-                out-logfile -string $member.objectSID
+                out-logfile -string $onPremData[$i].objectSID
             }
-            elseif ($member.primarySMTPAddress -ne "")
+            elseif ($onPremData[$i].primarySMTPAddress -ne "")
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
-                out-logfile -string $member.primarySMTPAddress
+                out-logfile -string $onPremData[$i].primarySMTPAddress
             }
         }
     }
