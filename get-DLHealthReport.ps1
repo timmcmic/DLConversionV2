@@ -2563,7 +2563,7 @@ Function get-DLHealthReport
     }
 
     try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
+        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
