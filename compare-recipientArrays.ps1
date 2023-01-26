@@ -43,7 +43,7 @@ function compare-recipientArrays
                     $onPremData = $onPremData.RemoveAt($i)
                     out-logfile -string $onPremData.count
 
-                    $azureIndex = $azureData.externalDirectoryObjectID.indexOf($onPremData[$i].externalDirectoryObjectID)
+                    $azureIndex = $azureData.objectID.indexOf($onPremData[$i].externalDirectoryObjectID)
                     $azureData = $azureData.RemoveAt($azureIndex)
                     out-logfile -string $azureData.count
                 }
