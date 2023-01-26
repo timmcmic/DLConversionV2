@@ -242,7 +242,7 @@ function compare-recipientArrays
 
                 out-logfile -string "Removing object from on premises array..."
 
-                $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
+                $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $functionExternalDirectoryObjectID})
 
                 $functionReturnArray += $functionObject
             }
