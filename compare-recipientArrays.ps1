@@ -73,7 +73,7 @@ function compare-recipientArrays
 
                     $onPremData.RemoveAt($i)
 
-                    $azureData.OnPremisesSecurityIdentifier.indexOf($onPremData[$i].objectSID.value)
+                    $azureData.OnPremisesSecurityIdentifier.indexOf($onPremData[$i].objectSID.value.toString())
 
                     $azureData.RemoveAt($azureData.OnPremisesSecurityIdentifier.IndexOf($onPremData[$i].ObjectSID.Value))
                     
