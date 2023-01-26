@@ -130,6 +130,25 @@ function compare-recipientArrays
                     out-logfile -string "Object not found in Azure."
                 }
             }
+
+            if ($OnPremData.count -lt 1)
+            {
+                out-logfile -string "No on prem users left for evaluation - all found."
+                $onPremData = @()
+            }
+            else {
+                out-logfile -string "On prem array contains data - suspect missing member."
+            }
+            
+            if ($azureData.count -lt 1)
+            {
+                out-logfile -string "No azure users left for evaluation - all found."
+                $azureData = @()
+            }
+            else
+            {
+                out-logfile -string "Azure array contains data - suspect missing member."
+            }
         }
     }
 
