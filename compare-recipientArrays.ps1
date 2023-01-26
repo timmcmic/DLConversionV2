@@ -65,6 +65,7 @@ function compare-recipientArrays
             elseif ($onPremData[$i].objectSID -ne $NULL)
             {
                 out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
+                out-logfile -string $onPremData[$i].objectSid.Value
                 
                 if ($azureData.OnPremisesSecurityIdentifier -contains $onPremData[$i].objectSID)
                 {
@@ -90,6 +91,7 @@ function compare-recipientArrays
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
             {
                 out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
+                out-logfile -string $onPremData[$i].mail
 
                 if ($azureData.mail -contains $onPremData[$i].primarySMTPAddress)
                 {
