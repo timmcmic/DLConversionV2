@@ -23,11 +23,6 @@ function compare-recipientArrays
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
-        foreach ($member in $onPremData)
-        {
-            out-logfile -string $member.displayName
-        }
-
         for ($i = ($onPremData.count-1) ; $i -gt -2 ; $i--)
         {
             out-logfile -string $i
@@ -64,16 +59,6 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
-
-                    if ($onPremData.count -lt 1)
-                    {
-                        $onPremData = @()
-                    }
-
-                    if ($azureData.count -lt 1)
-                    {
-                        $azureData = @()
-                    }
                 }
                 else 
                 {
@@ -107,16 +92,6 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
-
-                    if ($onPremData.count -lt 1)
-                    {
-                        $onPremData=@()
-                    }
-
-                    if ($azureData.count -lt 1)
-                    {
-                        $azureData=@()
-                    }
                 }
                 else {
                     out-logfile -string "Object not found in Azure."
@@ -148,16 +123,6 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
-
-                    if ($onPremData.count -lt 1)
-                    {
-                        $onPremData = @()
-                    }
-                    
-                    if ($azureData.count -lt 1)
-                    {
-                        $azureData = @()
-                    }
                 }
                 else {
                     out-logfile -string "Object not found in Azure."
