@@ -41,7 +41,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = $onPremData.Removeat($i)
+                    $onPremData = $onPremData.RemoveAt($i)
                 }
             }
             elseif ($onPremData[$i].objectSID -ne $NULL)
