@@ -76,9 +76,7 @@ function compare-recipientArrays
 
                     $onPremData.RemoveAt($i)
 
-                    $azureData.OnPremisesSecurityIdentifier.indexOf($functionObjectSID)
-
-                    $azureData.RemoveAt($azureData.OnPremisesSecurityIdentifier.IndexOf($onPremData[$i].ObjectSID.Value))
+                    $azureData.RemoveAt($azureData.OnPremisesSecurityIdentifier.indexOf($functionObjectSID))
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
