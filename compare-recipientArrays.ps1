@@ -202,7 +202,7 @@ function compare-recipientArrays
 
     if (($azureData -ne $NULL) -and ($office365Data -ne $NULL))
     {
-        out-logfiles -string "This is an Office 365 to Azure evaluation."
+        out-logfile -string "This is an Office 365 to Azure evaluation."
     }
     elseif (($azureData -eq $NULL) -and ($office365Data -eq $NULL))
     {
