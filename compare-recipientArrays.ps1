@@ -44,11 +44,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = $onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID}
+                    [array]$onPremData += $onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID}
 
                     $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
-                    $azureData = $azureData | where-object {$_.objectID -ne $functionAzureObject.objectID}
+                    [array]$azureData = $azureData | where-object {$_.objectID -ne $functionAzureObject.objectID}
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -77,11 +77,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = $onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value}
+                    [array]$onPremData = $onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value}
 
                     $functionAzureObject = $azureData | where-object {$_.OnPremisesSecurityIdentifier -eq $onPremData[$i].objectSID.value}
 
-                    $azureData = $azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier}
+                    [array]$azureData = $azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier}
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
@@ -108,11 +108,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData = $onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress}
+                    [array]$onPremData = $onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress}
 
                     $functionAzureObject = $azureData | where-object {$_.mail -eq $onPremData[$i].primarySMTPAddress}
 
-                    $azureData = $azureData | where-object {$_.mail -ne $functionAzureObject.mail}
+                    [array]$azureData = $azureData | where-object {$_.mail -ne $functionAzureObject.mail}
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
