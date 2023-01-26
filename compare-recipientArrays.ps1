@@ -2,11 +2,11 @@ function compare-recipientArrays
 {
     param(
         [Parameter(Mandatory = $false)]
-        [System.Collections.ArrayList]$onPremData=$NULL,
+        $onPremData=$NULL,
         [Parameter(Mandatory = $false)]
-        [System.Collections.ArrayList]$azureData=$NULL,
+        $azureData=$NULL,
         [Parameter(Mandatory = $false)]
-        [System.Collections.ArrayList]$office365Data=$NULL
+        $office365Data=$NULL
     )
 
     [array]$functionReturnArray = @()
@@ -26,7 +26,7 @@ function compare-recipientArrays
         for ($i = ($onPremData.count-1); $i -ge 0 ; $i--)
         {
             $azureData.OnPremisesSecurityIdentifier
-            
+
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
@@ -43,9 +43,11 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    $onPremData.RemoveAt($i)
+                    $onPremData = $onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID}
 
-                    $azureData.RemoveAt($azureData.objectID.indexOf($functionExternalDirectoryObjectID[1]))
+                    $functionAzureObject = $azureData | where-object {$_.objectID -eq $onPremData[$i].externalDirectoryObjectID}
+
+                    $azureData = $azureData | where-object ($_.objectID = $functionAzureObject.objectID)
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
