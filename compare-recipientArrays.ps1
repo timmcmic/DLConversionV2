@@ -110,7 +110,11 @@ function compare-recipientArrays
 
                     $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
 
+                    $azureData
+
                     $azureData = @($azureData | where-object {$_.mail -ne $onPremData[$i].primarySMTPAddress})
+
+                    $azureData
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
