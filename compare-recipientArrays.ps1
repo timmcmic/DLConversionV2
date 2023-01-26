@@ -44,7 +44,22 @@ function compare-recipientArrays
                     $onPremData.RemoveAt($i)
 
                     $azureData.RemoveAt($azureData.objectID.indexOf($functionExternalDirectoryObjectID[1]))
-                    out-logfile -string $azureData.Count
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $functionReturnArray += $functionObject
+                }
+                else 
+                {
+                    out-logfile -string "Member not found in Azure"
                 }
             }
             elseif ($onPremData[$i].objectSID -ne $NULL)
@@ -58,7 +73,18 @@ function compare-recipientArrays
                     $onPremData.RemoveAt($i)
 
                     $azureData.RemoveAt($azureData.objectSID.indexOf($onPremData[$i].objectSID))
-                    out-logfile -string $azureData.Count
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $functionReturnArray += $functionObject
                 }
             }
             elseif ($onPremData[$i].primarySMTPAddress -ne $null)
@@ -72,11 +98,20 @@ function compare-recipientArrays
                     $onPremData.RemoveAt($i)
 
                     $azureData.RemoveAt($azureData.mail.indexOf($onPremData[$i].mail))
-                    out-logfile -string $azureData.Count
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $functionReturnArray += $functionObject
                 }
             }
-
-            out-logfile -string $azuredata.Count
         }
     }
 
