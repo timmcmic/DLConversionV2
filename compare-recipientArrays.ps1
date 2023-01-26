@@ -43,13 +43,12 @@ function compare-recipientArrays
 
                     $onPremData = $onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID}
 
-                    $onPremData
-
                     $azureData.displayName
 
                     $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
 
                     $functionAzureObject.displayname
+                    $functionAzureObject.objectID
 
                     $azureData = $azureData | where-object ($_.objectID -ne $functionAzureObject.objectID)
 
@@ -137,9 +136,6 @@ function compare-recipientArrays
             #>
         }
     }
-
-    $azureData
-    $onPremData
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
