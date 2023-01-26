@@ -191,6 +191,16 @@ function compare-recipientArrays
             }
         }
     }
+    else 
+    {
+        out-logfile -string "This is not an on-premises to Azure evaluation."
+    }
+
+    if (($azureData -ne $NULL) -and ($office365Data -ne $NULL))
+    {
+        out-logfiles -string "This is an Office 365 to Azure evaluation."
+    }
+
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
