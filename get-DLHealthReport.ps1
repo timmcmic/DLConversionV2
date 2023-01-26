@@ -476,7 +476,7 @@ Function get-DLHealthReport
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
         office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
         office365DLConfigurationPostMigrationXML = @{ "Value" =  "office365DLConfigurationPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
-        office365DLMembershipPostMigrationXML = @{ "Value" =  "office365DLMembershipPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
+        office365DLMembershipXML = @{ "Value" =  "office365DLMembershipXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
         exchangeDLMembershipSMTPXML = @{ "Value" =  "exchangeDLMemberShipSMTPXML" ; "Description" = "XML file that holds the SMTP addresses of the on premises DL membership"}
         exchangeRejectMessagesSMTPXML = @{ "Value" =  "exchangeRejectMessagesSMTPXML" ; "Description" = "XML file that holds the Reject Messages From Senders or Members property of the on premises DL"}
         exchangeAcceptMessagesSMTPXML = @{ "Value" =  "exchangeAcceptMessagesSMTPXML" ; "Description" = "XML file that holds the Accept Messages from Senders or Members property of the on premises DL"}
@@ -579,12 +579,18 @@ Function get-DLHealthReport
     [array]$office365BypassModerationFromSendersOrMembers=$NULL
     [array]$office365ManagedBy = $NULL
     [array]$office365GrantSendOnBehalfTo = $NULL
+    [array]$office365DLMembership = $NULL
     
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
+
+    #Create arrays to track the health objects that will be converted in the reprot.
+
+    [array]$onPremMemberEval = @()
+    [array]$office365MemberEval = @()
 
     #For loop counter.
 
@@ -1061,6 +1067,29 @@ Function get-DLHealthReport
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    out-logfile -string "Capture the Office 365 DL membership."
+
+    try {
+        $office365DLMembership = get-o365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+    }
+    catch {
+        out-logfile $_ -isError:$TRUE
+    }
+
+    if ($office365DLMembership.count -gt 0)
+    {
+        out-logfile -string $office365DLMembership
+
+        out-xmlfile -itemToExport $office365DLMembership -itenNameToExport $xmlFiles.office365MembershipXML.value
+    }
+    else
+    {
+        out-logfile -string "No members to process."
+
+        $office365DLMembership=@()
+    }
+
+    
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
     try{
@@ -2526,7 +2555,20 @@ Function get-DLHealthReport
 
     #At this time we need to start building the comparison arrays.
 
-    compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership 
+    try {
+        $onPremMemberEval = @(compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRUE
+    }
+
+    try {
+        $office365MemberEval = @(compare-recipientArrays -office365Data $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRUE
+    }
+    
 
     # build the properties and metrics #
     $telemetryEventProperties = @{
