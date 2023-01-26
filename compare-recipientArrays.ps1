@@ -22,12 +22,12 @@ function compare-recipientArrays
     if (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
-        out-logfile -string ("On Prem Data Count: "+$onPremData.count)
-        out-logfile -string ("Azure Data Count: "+$azureData.count)
 
         for ($i = ($onPremData.count-1) ; $i -ge 0 ; $i--)
         {
-            out-logfile -string $i
+            out-logfile -string ("On Prem Data Count: "+$onPremData.count)
+            out-logfile -string ("Azure Data Count: "+$azureData.count)
+            out-logfile -string ("Evaluating on prem array id: "+$i)
             #Group members come in different flavors.
             #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
             #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
