@@ -312,14 +312,20 @@ function compare-recipientArrays
 
         for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i--)
         {
-            out-logfile -string $i
             if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "Testing based on external directory object id."
             }
-            elseif ($onPremData[$i].PrimarySMTPAddressOrUPN -ne $NULL)
+            elseif (($onPremData[$i].PrimarySMTPAddress -ne $NULL) -and ($onPremData[$i].recipientOrUser -ne "User"))
             {
                 out-logfile -string "Testing based on primary SMTP address."
+            }
+            elseif ($onPremData[$i].userPrincipalName -ne $NULL)
+            {
+                out-logfile -string "Testing based on user principal name"
+            }
+            else {
+                out-logfile "Did not fit what we expected to find."
             }
         }
     }
