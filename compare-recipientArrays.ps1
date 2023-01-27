@@ -321,6 +321,33 @@ function compare-recipientArrays
             if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "Testing based on external directory object id."
+
+            if ($office365Data.externalDirectoryObjectID -contains $onPremData[$i].externalDirectoryObjectID)
+                {
+                    out-logfile -string "Member found in Azure."
+
+                    out-logfile -string "Removing object from azure array..."
+
+                    #$functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
+
+                    out-logfile -string "Removing object from on premises array..."
+
+                    $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
+
+                    $functionReturnArray += $functionObject
+                }
             }
             elseif (($onPremData[$i].PrimarySMTPAddress -ne $NULL) -and ($onPremData[$i].recipientOrUser -ne "User"))
             {
