@@ -107,7 +107,7 @@
 
                             $functionObject = New-Object PSObject -Property @{
                                 PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
-                                ExternalDirectoryObjectID = ("Value_"+$functionRecipient.externalDirectoryObjectID)
+                                ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
                                 isError=$NULL
                                 isErrorMessage=$null
                             }
