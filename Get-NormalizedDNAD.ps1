@@ -173,6 +173,7 @@
             }
         } until ($stopLoop -eq $TRUE)
         
+        
         $functionObject = New-Object PSObject -Property @{
             Alias = $functionTest.mailNickName
             Name = $functionTest.CN

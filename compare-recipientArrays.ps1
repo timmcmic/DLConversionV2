@@ -328,7 +328,7 @@ function compare-recipientArrays
                 out-logfile -string "Testing based on external directory object id."
                 out-logfile -string $onPremData[$i].externalDirectoryObjectID
 
-                if ($office365Data.externalDirectoryObjectID -contains $onPremData[$i].externalDirectoryObjectID)
+                if ($office365Data | where {$_.externalDirectoryObjectID -eq $onPremData[$i].externalDirectoryObjectID})
                 {
                     out-logfile -string "Member found in Azure."
 
