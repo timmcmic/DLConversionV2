@@ -593,6 +593,7 @@ Function get-DLHealthReport
 
     [array]$onPremMemberEval = @()
     [array]$office365MemberEval = @()
+    [array]$office365AcceptMessagesFromSendersOrMembersEval=@()
 
     #For loop counter.
 
@@ -2566,6 +2567,13 @@ Function get-DLHealthReport
 
     try {
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRUE
+    }
+
+    try {
+        $office365AcceptMessagesFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeAcceptMessagesSMTP -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
