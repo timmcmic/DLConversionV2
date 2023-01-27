@@ -202,6 +202,10 @@ function compare-recipientArrays
 
         for ($i = ($office365Data.count - 1) ; $i -ge 0 ; $i--)
         {
+            out-logfile -string ("Office 365 Data Count: "+$office365Data.count)
+            out-logfile -string ("Azure Data Count: "+$azureData.count)
+            out-logfile -string ("Evaluating on prem array id: "+$i)
+
             if ($office365Data[$i].externalDirectoryObjectID -notcontains "_")
             {
                 out-logfile -string "ExternalDirectoryObjectID provided by Office 365."
@@ -304,14 +308,16 @@ function compare-recipientArrays
         out-logfile -string "No data to be evaluated by the Office 365 / Azure loop."
     }
 
-    out-logfile -string $onPremData.Count
-
     if (($onPremData -ne $NULL) -and ($office365Data -ne $NULL))
     {
         out-logfile -string "Comparing on premises to Office 365 values."
 
         for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i--)
         {
+            out-logfile -string ("On Prem Data Count: "+$onPremData.count)
+            out-logfile -string ("Office 365 Data Count: "+$office365Data.count)
+            out-logfile -string ("Evaluating on prem array id: "+$i)
+
             if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "Testing based on external directory object id."
