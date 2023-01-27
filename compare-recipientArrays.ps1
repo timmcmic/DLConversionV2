@@ -312,6 +312,11 @@ function compare-recipientArrays
     {
         out-logfile -string "Comparing on premises to Office 365 values."
 
+        foreach ($member in $office365Data)
+        {
+            out-logfile -string $member.externalDirectoryObjectID
+        }
+
         for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i--)
         {
             out-logfile -string ("On Prem Data Count: "+$onPremData.count)
@@ -322,8 +327,6 @@ function compare-recipientArrays
             {
                 out-logfile -string "Testing based on external directory object id."
                 out-logfile -string $onPremData[$i].externalDirectoryObjectID
-
-                $office365Data.externalDirectoryObjectID
 
                 if ($office365Data.externalDirectoryObjectID -contains $onPremData[$i].externalDirectoryObjectID)
                 {
