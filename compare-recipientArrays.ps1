@@ -321,6 +321,7 @@ function compare-recipientArrays
             if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "Testing based on external directory object id."
+                out-logfile -string $onPremData[$i].externalDirectoryObjectID
 
             if ($office365Data.externalDirectoryObjectID -contains $onPremData[$i].externalDirectoryObjectID)
                 {
