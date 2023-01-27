@@ -314,7 +314,7 @@ function compare-recipientArrays
             {
                 out-logfile -string "Testing based on external directory object id."
             }
-            elseif ($onPremData[$i].primarySTMPAddressOrUPN -ne $NULL)
+            elseif ($onPremData[$i].PrimarySMTPAddressOrUPN -ne $NULL)
             {
                 out-logfile -string "Testing based on primary SMTP address."
             }
