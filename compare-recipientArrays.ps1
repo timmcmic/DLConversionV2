@@ -308,7 +308,21 @@ function compare-recipientArrays
     {
         out-logfile -string "Comparing on premises to Office 365 values."
 
-        
+        for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i --)
+        {
+            if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
+            {
+                out-logfile -string "Testing based on external directory object id."
+            }
+            elseif ($onPremData[$i].primarySTMPAddress -ne $NULL)
+            {
+                out-logfile -string "Testing based on primary SMTP address."
+            }
+            elseif ($onPremData[$i].userPrincipalName -ne $NULL)
+            {
+                out-logfile -string "Testing based on user principal name."
+            }
+        }
     }
 
 
