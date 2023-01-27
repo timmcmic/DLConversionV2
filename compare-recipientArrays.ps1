@@ -304,6 +304,13 @@ function compare-recipientArrays
         out-logfile -string "No data to be evaluated by the Office 365 / Azure loop."
     }
 
+    if (($onPremData -ne $NULL) -and ($office365Data -ne $NULL))
+    {
+        out-logfile -string "Comparing on premises to Office 365 values."
+
+        
+    }
+
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
