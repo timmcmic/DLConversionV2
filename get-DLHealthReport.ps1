@@ -594,6 +594,11 @@ Function get-DLHealthReport
     [array]$onPremMemberEval = @()
     [array]$office365MemberEval = @()
     [array]$office365AcceptMessagesFromSendersOrMembersEval=@()
+    [array]$office365RejectMessagesFromSendrsOfMembersEval=@()
+    [array]$office365ModeratedByEval=@()
+    [array]$office365BypassModerationFromSendersOrMembersEval=@()
+    [array]$office365ManagedByEval=@()
+    [array]$office365GrantSendOnBehalfToEval=@()
 
     #For loop counter.
 
@@ -2577,6 +2582,41 @@ Function get-DLHealthReport
     }
     catch {
         out-logfile $_ -isError:$TRUE
+    }
+
+    try {
+        $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRU
+    }
+
+    try{
+        $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeModeratedBySMTP -errorAction STOP)
+    }
+    catch{
+        out-logfile $_ -isError:$TRU
+    }
+
+    try{
+        $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRU
+    }
+
+    try{
+        $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeManagedBySMTP -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRU
+    }
+
+    try{
+        $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
+    }
+    catch {
+        out-logfile $_ -isError:$TRU
     }
 
     if ($onPremMemberEval -ne $NULL)
