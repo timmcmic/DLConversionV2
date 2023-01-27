@@ -310,8 +310,9 @@ function compare-recipientArrays
     {
         out-logfile -string "Comparing on premises to Office 365 values."
 
-        for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i --)
+        for ( $i = ($onPremData.count - 1); $i -ge 0 ; $i--)
         {
+            out-logfile -string $i
             if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "Testing based on external directory object id."
