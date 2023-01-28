@@ -106,6 +106,7 @@
                             $functionRecipient = get-o365user -identity $member -errorAction STOP
 
                             $functionObject = New-Object PSObject -Property @{
+                                DisplayName = $functionRecipient.DisplayName
                                 PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
                                 ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
                                 isError=$NULL

@@ -357,13 +357,107 @@ function compare-recipientArrays
             elseif (($onPremData[$i].PrimarySMTPAddress -ne $NULL) -and ($onPremData[$i].recipientOrUser -ne "User"))
             {
                 out-logfile -string "Testing based on primary SMTP address."
+
+                out-logfile -string $onPremData[$i].primarySMTPAddress
+
+                if ($office365Data.primarySMTPAddressOrUPN -contains $onPremData[$i].primarySMTPAddress)
+                {
+                    out-logfile -string "Member found in Azure."
+
+                    out-logfile -string "Removing object from azure array..."
+
+                    #$functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
+
+                    out-logfile -string "Removing object from on premises array..."
+
+                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].primarySMTPAddressOrUPN})
+
+                    $functionReturnArray += $functionObject
+                }
             }
             elseif ($onPremData[$i].userPrincipalName -ne $NULL)
             {
                 out-logfile -string "Testing based on user principal name"
+
+                out-logfile -string $onPremData[$i].userPrincipalName
+
+                if ($office365Data.primarySMTPAddressOrUPN -contains $onPremData[$i].userPrincipalName)
+                {
+                    out-logfile -string "Member found in Azure."
+
+                    out-logfile -string "Removing object from azure array..."
+
+                    #$functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $onPremData[$i].name
+                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
+                        UserPrincipalName = $onPremData[$i].userPrincipalName
+                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
+                        ObjectSID = $onPremData[$i].objectSID
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].userPrincipalName})
+
+                    out-logfile -string "Removing object from on premises array..."
+
+                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].userPrincipalName})
+
+                    $functionReturnArray += $functionObject
+
             }
             else {
                 out-logfile "Did not fit what we expected to find."
+            }
+        }
+
+        if ($onPremData.count -gt 0)
+        {
+            out-logfile -string "Issues with on premises members."
+
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $member.name
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = $member.userPrincipalName
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID = $member.objectSID
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_ONPREM_NOT_IN_OFFICE365_EXCEPTION"
+                }
+            }
+        }
+
+        if ($office365Data.count -gt 0)
+        {
+            out-logfile -string "Issues with Office 365 members."
+
+            foreach ($member in $onPremData)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $member.displayName
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = "N/A"
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID = "N/A"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
+                }
             }
         }
     }
