@@ -2652,25 +2652,25 @@ Function get-DLHealthReport
     if ($office365ModeratedByEval -ne $NULL)
     {
         $office365ModeratedByEval = $office365ModeratedByEval | Sort-Object -property "isValidMember"
-        out-xmlFile -itemToExport $office365ModeratedByEval -itemNameToExport $xmlFiles.office365ModeratedByEval.value
+        out-xmlFile -itemToExport $office365ModeratedByEval -itemNameToExport $xmlFiles.office365ModeratedByEvalXML.value
     }
 
     if ($office365BypassModerationFromSendersOrMembersEval -ne $NULL)
     {
         $office365BypassModerationFromSendersOrMembersEval = $office365BypassModerationFromSendersOrMembersEval | sort-object -property "isValidMember"
-        out-xmlFile -itemToExport $office365BypassModerationFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365BypassModerationFromSendersOrMembersEval.value
+        out-xmlFile -itemToExport $office365BypassModerationFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365BypassModerationFromSendersOrMembersEvalXML.value
     }
 
     if ($office365ManagedByEval -ne $NULL)
     {
         $office365ManagedByEval = $office365ManagedByEval | sort-object -property "isValidMember"
-        out-xmlFile -itemToExport $office365ManagedByEval -itemNameToExport $xmlFiles.office365ManagedByEvall.value
+        out-xmlFile -itemToExport $office365ManagedByEval -itemNameToExport $xmlFiles.office365ManagedByEvalXML.value
     }
 
     if ($office365GrantSendOnBehalfTo -ne $NULL)
     {
         $office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo | sort-object -property "isValidMember"
-        out-xmlFile -itemToExport $office365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.office365GrantSendOnBehalfTo.value
+        out-xmlFile -itemToExport $office365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.office365GrantSendOnBehalfToEvalXML.value
     }
     
 
