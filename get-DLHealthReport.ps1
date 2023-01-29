@@ -2681,7 +2681,7 @@ Function get-DLHealthReport
         out-logfile -string "Exporting reject messages from senders or members evaluation."
 
         $office365RejectMessagesFromSendrsOfMembersEval = $office365RejectMessagesFromSendrsOfMembersEval | sort-object -property "isValidMember"
-        out-xmlFile -itemToExport $office365RejectMessagesFromSendrsOfMembersEval -itemNameToExport $xmlFiles.office365RejectMessagesFromSendrsOfMembersEvalXML.value
+        out-xmlFile -itemToExport $office365RejectMessagesFromSendrsOfMembersEval -itemNameToExport $xmlFiles.office365RejectMessagesFromSendersOrMembersEvalXML.value
     }
     else
     {
