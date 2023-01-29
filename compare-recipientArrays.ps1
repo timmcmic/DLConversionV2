@@ -451,17 +451,33 @@ function compare-recipientArrays
 
             foreach ($member in $onPremData)
             {
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $member.displayName
-                    PrimarySMTPAddress = $member.primarySMTPAddress
-                    UserPrincipalName = "N/A"
-                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                    ObjectSID = "N/A"
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
+                if ($member.isAmbiguous -eq $TRUE)
+                {
+                    out-logfile -string "Member is ambiguous - record different exception."
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.displayName
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = "N/A"
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID = "N/A"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "AMBIGUOUS_MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
+                    }
+                }
+                else {
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.displayName
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = "N/A"
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID = "N/A"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
+                    }
                 }
             }
-
+            
             $functionReturnArray += $functionObject
         }
     }
