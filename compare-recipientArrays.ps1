@@ -345,7 +345,7 @@ function compare-recipientArrays
 
                     out-logfile -string "Removing object from office 365 array..."
 
-                    $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
+                    $office365Data = @($office365Data | where-object {$_.ExternalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
 
                     $functionReturnArray += $functionObject
                 }
@@ -360,7 +360,7 @@ function compare-recipientArrays
 
                 out-logfile -string $onPremData[$i].primarySMTPAddress
 
-                if ($office365Data.primarySMTPAddressOrUPN -contains $onPremData[$i].primarySMTPAddress)
+                if ($office365Data.PrimarySMTPAddressOrUPN -contains $onPremData[$i].primarySMTPAddress)
                 {
                     out-logfile -string "Member found in Azure."
 
@@ -382,7 +382,7 @@ function compare-recipientArrays
 
                     out-logfile -string "Removing object from Office 365 array..."
 
-                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].primarySMTPAddress})
+                    $office365Data = @($office365Data | where-object {$_.PrimarySMTPAddressOrUPN -ne $onPremData[$i].primarySMTPAddress})
 
                     $functionReturnArray += $functionObject
                 }
@@ -415,7 +415,7 @@ function compare-recipientArrays
 
                     out-logfile -string "Removing object from Office 365 array..."
 
-                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $functionObjectToRemove.userPrincipalName})
+                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].userPrincipalName})
 
                     $functionReturnArray += $functionObject
                 }
