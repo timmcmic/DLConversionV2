@@ -449,7 +449,7 @@ function compare-recipientArrays
         {
             out-logfile -string "Issues with Office 365 members."
 
-            foreach ($member in $onPremData)
+            foreach ($member in $office365Data)
             {
                 if ($member.isAmbiguous -eq $TRUE)
                 {
@@ -477,7 +477,7 @@ function compare-recipientArrays
                     }
                 }
             }
-            
+
             $functionReturnArray += $functionObject
         }
     }
