@@ -327,7 +327,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Member found in Azure."
 
-                    out-logfile -string "Removing object from azure array..."
+                    out-logfile -string "Removing object from on premises array."
 
                     #$functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
 
@@ -343,7 +343,7 @@ function compare-recipientArrays
 
                     $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
 
-                    out-logfile -string "Removing object from on premises array..."
+                    out-logfile -string "Removing object from office 365 array..."
 
                     $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
 
@@ -382,7 +382,7 @@ function compare-recipientArrays
 
                     out-logfile -string "Removing object from on premises array..."
 
-                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].primarySMTPAddressOrUPN})
+                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].primarySMTPAddress})
 
                     $functionReturnArray += $functionObject
                 }
@@ -441,6 +441,8 @@ function compare-recipientArrays
                     ErrorMessage = "MEMBER_ONPREM_NOT_IN_OFFICE365_EXCEPTION"
                 }
             }
+
+            $functionReturnArray += $functionObject
         }
 
         if ($office365Data.count -gt 0)
@@ -459,6 +461,8 @@ function compare-recipientArrays
                     ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
                 }
             }
+
+            $functionReturnArray += $functionObject
         }
     }
 
