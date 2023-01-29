@@ -2594,35 +2594,35 @@ Function get-DLHealthReport
         $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRU
+        out-logfile $_ -isError:$TRUE
     }
 
     try{
-        $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeModeratedBySMTP -errorAction STOP)
+        $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365ModeratedBy -onPremData $exchangeModeratedBySMTP -errorAction STOP)
     }
     catch{
-        out-logfile $_ -isError:$TRU
+        out-logfile $_ -isError:$TRUE
     }
 
     try{
-        $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
+        $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365BypassModerationFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRU
+        out-logfile $_ -isError:$TRUE
     }
 
     try{
-        $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeManagedBySMTP -errorAction STOP)
+        $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365ManagedBy -onPremData $exchangeManagedBySMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRU
+        out-logfile $_ -isError:$TRUE
     }
 
     try{
-        $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
+        $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365GrantSendOnBehalfTo -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRU
+        out-logfile $_ -isError:$TRUE
     }
 
     if ($onPremMemberEval -ne $NULL)
