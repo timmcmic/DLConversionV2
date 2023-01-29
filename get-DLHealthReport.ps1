@@ -2525,6 +2525,7 @@ Function get-DLHealthReport
 
     if ($office365ModeratedBy -ne $NULL)
     {
+
         out-xmlfile -itemToExport $office365ModeratedBy -itemNameTOExport $xmlFiles.office365ModeratedByXML.value
     }
     else {
@@ -2569,12 +2570,16 @@ Function get-DLHealthReport
 
     #At this time we need to start building the comparison arrays.
 
+    out-logfile -string "Comparing on premises membership to azure ad membership."
+
     try {
         $onPremMemberEval = @(compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
     }
+
+    out-logfile -string "Comparing azure ad membership to Office 365 membership."
 
     try {
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
@@ -2583,12 +2588,16 @@ Function get-DLHealthReport
         out-logfile $_ -isError:$TRUE
     }
 
+    out-logfile -string "Comparing accept messages from senders or members on premsies to Office 365."
+
     try {
         $office365AcceptMessagesFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeAcceptMessagesSMTP -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
     }
+
+    out-logfile -string "Comparing reject messages from senders or members on premsies to Office 365."
 
     try {
         $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365RejectMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
@@ -2597,12 +2606,16 @@ Function get-DLHealthReport
         out-logfile $_ -isError:$TRUE
     }
 
+    out-logfile -string "Comparing on premises moderated by to Office 365 moderated by."
+
     try{
         $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365ModeratedBy -onPremData $exchangeModeratedBySMTP -errorAction STOP)
     }
     catch{
         out-logfile $_ -isError:$TRUE
     }
+
+    out-logfile -string "Comparing on premises bypass moderation from senders or members to Office 365."
 
     try{
         $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365BypassModerationFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
@@ -2611,12 +2624,16 @@ Function get-DLHealthReport
         out-logfile $_ -isError:$TRUE
     }
 
+    out-logfile -string "Comapring on premsies managed by to Office 365."
+
     try{
         $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365ManagedBy -onPremData $exchangeManagedBySMTP -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
     }
+
+    out-logfile -string "Comparing grant send on behalf to on premsies to Office 365."
 
     try{
         $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365GrantSendOnBehalfTo -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
@@ -2627,50 +2644,94 @@ Function get-DLHealthReport
 
     if ($onPremMemberEval -ne $NULL)
     {
+        out-logfile -string "Exporting on premises member evaluation."
+
         $onPremMembersEval = $onPremMembersEval | sort-object -property "isvalidMember"
         out-xmlFile -itemToExport $onPremMemberEval -itemNameToExport $xmlFiles.onPremMemberEvalXML.value
+    }
+    else
+    {
+        out-logfile -string "No on premises member evaluation to export."
     }
 
     if ($office365MemberEval -ne $NULL)
     {
+        out-logfile -string "Exporting Office 365 member evaluation."
+
         $office365MemberEval = $office365MemberEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365MemberEval -itemNameToExport $xmlFiles.office365MemberEvalXML.value
+    }
+    else {
+        out-logfile -string "No Office 365 member evaluation to export."
     }
 
     if ($office365AcceptMessagesFromSendersOrMembersEval -ne $NULL)
     {
+        out-logfile -string "Exporting accept messages from senders or members evaluation."
+
         $office365AcceptMessagesFromSendersOrMembersEval = $office365AcceptMessagesFromSendersOrMembersEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365AcceptMessagesFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365AcceptMessagesFromSendersOrMembersEvalXML.value
+    }
+    else {
+        out-logfile -string "No accept messages from senders or members evaluation to export."
     }
 
     if ($office365RejectMessagesFromSendrsOfMembersEval -ne $NULL)
     {
+        out-logfile -string "Exporting reject messages from senders or members evaluation."
+
         $office365RejectMessagesFromSendrsOfMembersEval = $office365RejectMessagesFromSendrsOfMembersEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365RejectMessagesFromSendrsOfMembersEval -itemNameToExport $xmlFiles.office365RejectMessagesFromSendrsOfMembersEvalXML.value
+    }
+    else
+    {
+        out-logfile -string "No reject messages from senders or members evaluation to export."
     }
 
     if ($office365ModeratedByEval -ne $NULL)
     {
+        out-logfile -string "Exporting moderated by evaluation."
+
         $office365ModeratedByEval = $office365ModeratedByEval | Sort-Object -property "isValidMember"
         out-xmlFile -itemToExport $office365ModeratedByEval -itemNameToExport $xmlFiles.office365ModeratedByEvalXML.value
+    }
+    else {
+        out-logfile -string "No moderated by evaluation to export."
     }
 
     if ($office365BypassModerationFromSendersOrMembersEval -ne $NULL)
     {
+        out-logfile -string "Exporting bypass moderation from senders or members evaluation."
+
         $office365BypassModerationFromSendersOrMembersEval = $office365BypassModerationFromSendersOrMembersEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365BypassModerationFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365BypassModerationFromSendersOrMembersEvalXML.value
+    }
+    else {
+        out-logfile -string "No bypass moderation from senders or members evaluation to export."
     }
 
     if ($office365ManagedByEval -ne $NULL)
     {
+        out-logfile -string "Exporting managed by evaluation."
+
         $office365ManagedByEval = $office365ManagedByEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365ManagedByEval -itemNameToExport $xmlFiles.office365ManagedByEvalXML.value
+    }
+    else
+    {
+        out-logfile -string "No managed by evaluation to export."
     }
 
     if ($office365GrantSendOnBehalfTo -ne $NULL)
     {
+        out-logfile -string "Exporting grant send on behalf to evaluation."
+
         $office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.office365GrantSendOnBehalfToEvalXML.value
+    }
+    else
+    {
+        out-logfile -string "No grant send on behalf to evaluation to export."
     }
     
 
