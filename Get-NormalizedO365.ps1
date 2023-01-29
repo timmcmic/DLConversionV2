@@ -85,14 +85,38 @@
 
                         $functionRecipient = get-o365Recipient -identity $member -errorAction STOP
 
-                        $functionObject = New-Object PSObject -Property @{
-                            PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
-                            ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
-                            isError=$NULL
-                            isErrorMessage=$null
-                        }
+                        if ($functionRecipient.count -gt 0)
+                        {
+                            out-logfile -string "The attribute to be normalized only contains names.  The name resulted in more than one object being returned via get-recipient."
 
-                        out-logfile -string $functionObject
+                            foreach ($member in $functionRecipient)
+                            {
+                                $functionObject = New-Object PSObject -Property @{
+                                    PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
+                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    isError=$NULL
+                                    isErrorMessage=$null
+                                    isAmbiguous=$TRUE 
+                                }
+
+                                out-logfile -string $functionObject  
+
+                                $functionReturnArray += $functionObject
+                            }
+                        }
+                        else {
+                            out-logfile -string "Only a single object was found - not ambiguous."
+
+                            $functionObject = New-Object PSObject -Property @{
+                                PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
+                                ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                isError=$NULL
+                                isErrorMessage=$null
+                                isAmbiguous=$false
+                            }
+
+                            $functionReturnArray += $functionObject
+                        }
                     }
                     catch {
 
@@ -105,15 +129,42 @@
 
                             $functionRecipient = get-o365user -identity $member -errorAction STOP
 
-                            $functionObject = New-Object PSObject -Property @{
-                                DisplayName = $functionRecipient.DisplayName
-                                PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
-                                ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
-                                isError=$NULL
-                                isErrorMessage=$null
-                            }
+                            if ($functionRecipient.count -gt 0)
+                            {
+                                out-logfile -string "Multiple users were found on ambiguous query."
 
-                            out-logfile -string $functionObject
+                                foreach ($member in $functionRecipient)
+                                {
+                                    $functionObject = New-Object PSObject -Property @{
+                                        DisplayName = $functionRecipient.DisplayName
+                                        PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
+                                        ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                        isError=$NULL
+                                        isErrorMessage=$null
+                                        isAmbiguous=$true
+                                    }
+
+                                    out-logfile -string $functionObject  
+
+                                    $functionReturnArray += $functionObject
+                                }
+                            }
+                            else {
+                                out-logfile -string "Only single user was returned / not ambiguous."
+                                
+                                $functionObject = New-Object PSObject -Property @{
+                                    DisplayName = $functionRecipient.DisplayName
+                                    PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
+                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    isError=$NULL
+                                    isErrorMessage=$null
+                                    isAmbiguous=$false
+                                }
+
+                                out-logfile -string $functionObject  
+
+                                $functionReturnArray += $functionObject
+                            }
                         }
                         catch {
                             out-logfile -string $_
@@ -124,8 +175,6 @@
                 else {
                     out-logfile -string "Member is the organization management built in role group - skip."
                 }
-                
-                $functionReturnArray += $functionObject
             }
         }
         else 
