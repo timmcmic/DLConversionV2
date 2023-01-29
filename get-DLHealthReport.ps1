@@ -527,6 +527,12 @@ Function get-DLHealthReport
         office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         onPremMemberEvalXML= @{"value" = "onPremMemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365MemberEvalXML = @{"value" = "office365MemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365AcceptMessagesFromSendersOrMembersEvalXML = @{"value" = "office365AcceptMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365RejectMessagesFromSendersOrMembersEvalXML = @{"value" = "office365RejectMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365ModeratedByEvalXML = @{"value" = "office365ModeratedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365BypassMOderationFromSendersOrMembersEvalXML = @{"value" = "office365BypassModerationFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365ManagedByEvalXML = @{"value" = "office365ManagedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office36GrantSendOnBehalfToEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
@@ -2621,12 +2627,50 @@ Function get-DLHealthReport
 
     if ($onPremMemberEval -ne $NULL)
     {
+        $onPremMembersEval = $onPremMembersEval | sort-object -property "isvalidMember"
         out-xmlFile -itemToExport $onPremMemberEval -itemNameToExport $xmlFiles.onPremMemberEvalXML.value
     }
 
     if ($office365MemberEval -ne $NULL)
     {
+        $office365MemberEval = $office365MemberEval | sort-object -property "isValidMember"
         out-xmlFile -itemToExport $office365MemberEval -itemNameToExport $xmlFiles.office365MemberEvalXML.value
+    }
+
+    if ($office365AcceptMessagesFromSendersOrMembersEval -ne $NULL)
+    {
+        $office365AcceptMessagesFromSendersOrMembersEval = $office365AcceptMessagesFromSendersOrMembersEval | sort-object -property "isValidMember"
+        out-xmlFile -itemToExport $office365AcceptMessagesFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365AcceptMessagesFromSendersOrMembersEvalXML.value
+    }
+
+    if ($office365RejectMessagesFromSendrsOfMembersEval -ne $NULL)
+    {
+        $office365RejectMessagesFromSendrsOfMembersEval = $office365RejectMessagesFromSendrsOfMembersEval | sort-object -property "isValidMember"
+        out-xmlFile -itemToExport $office365RejectMessagesFromSendrsOfMembersEval -itemNameToExport $xmlFiles.office365RejectMessagesFromSendrsOfMembersEvalXML.value
+    }
+
+    if ($office365ModeratedByEval -ne $NULL)
+    {
+        $office365ModeratedByEval = $office365ModeratedByEval | Sort-Object -property "isValidMember"
+        out-xmlFile -itemToExport $office365ModeratedByEval -itemNameToExport $xmlFiles.office365ModeratedByEval.value
+    }
+
+    if ($office365BypassModerationFromSendersOrMembersEval -ne $NULL)
+    {
+        $office365BypassModerationFromSendersOrMembersEval = $office365BypassModerationFromSendersOrMembersEval | sort-object -property "isValidMember"
+        out-xmlFile -itemToExport $office365BypassModerationFromSendersOrMembersEval -itemNameToExport $xmlFiles.office365BypassModerationFromSendersOrMembersEval.value
+    }
+
+    if ($office365ManagedByEval -ne $NULL)
+    {
+        $office365ManagedByEval = $office365ManagedByEval | sort-object -property "isValidMember"
+        out-xmlFile -itemToExport $office365ManagedByEval -itemNameToExport $xmlFiles.office365ManagedByEvall.value
+    }
+
+    if ($office365GrantSendOnBehalfTo -ne $NULL)
+    {
+        $office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo | sort-object -property "isValidMember"
+        out-xmlFile -itemToExport $office365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.office365GrantSendOnBehalfTo.value
     }
     
 
