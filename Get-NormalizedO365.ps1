@@ -92,6 +92,7 @@
                             foreach ($object in $functionRecipient)
                             {
                                 $functionObject = New-Object PSObject -Property @{
+                                    DisplayName = $object.displayName
                                     PrimarySMTPAddressOrUPN = $object.primarySMTPAddress
                                     ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
                                     isError=$NULL
@@ -108,6 +109,7 @@
                             out-logfile -string "Only a single object was found - not ambiguous."
 
                             $functionObject = New-Object PSObject -Property @{
+                                DisplayName = $functionRecipient.displayName
                                 PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
                                 ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
                                 isError=$NULL
