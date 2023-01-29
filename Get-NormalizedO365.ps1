@@ -92,8 +92,8 @@
                             foreach ($member in $functionRecipient)
                             {
                                 $functionObject = New-Object PSObject -Property @{
-                                    PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
-                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    PrimarySMTPAddressOrUPN = $member.primarySMTPAddress
+                                    ExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
                                     isError=$NULL
                                     isErrorMessage=$null
                                     isAmbiguous=$TRUE 
@@ -136,9 +136,9 @@
                                 foreach ($member in $functionRecipient)
                                 {
                                     $functionObject = New-Object PSObject -Property @{
-                                        DisplayName = $functionRecipient.DisplayName
-                                        PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
-                                        ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                        DisplayName = $member.DisplayName
+                                        PrimarySMTPAddressOrUPN = $member.UserPrincipalName
+                                        ExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
                                         isError=$NULL
                                         isErrorMessage=$null
                                         isAmbiguous=$true
