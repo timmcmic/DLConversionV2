@@ -418,7 +418,7 @@ function compare-recipientArrays
                     $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].userPrincipalName})
 
                     $functionReturnArray += $functionObject
-
+                }
             }
             else {
                 out-logfile "Did not fit what we expected to find."
@@ -461,7 +461,6 @@ function compare-recipientArrays
             }
         }
     }
-
 
     Out-LogFile -string "END compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
