@@ -2591,7 +2591,7 @@ Function get-DLHealthReport
     }
 
     try {
-        $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
+        $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365RejectMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
     }
     catch {
         out-logfile $_ -isError:$TRUE
