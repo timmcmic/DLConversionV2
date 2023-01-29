@@ -347,7 +347,9 @@ function compare-recipientArrays
 
                     $functionObjectToRemove = $office365Data | where-object {$_.externalDirectoryObjectID -eq $onPremData[$i].externalDirectoryObjectID}
 
-                    $office365Data = @($office365Data | where-object {$_ -ne $functionObjectToRemove})
+                    out-logfile -string $functionObjectToRemove
+
+                    $office365Data = @($office365Data | where-object {$_externalDirectoryObjectID -ne $functionObjectToRemove.externalDirectoryObjectID})
 
                     $functionReturnArray += $functionObject
                 }
@@ -386,7 +388,9 @@ function compare-recipientArrays
 
                     $functionObjectToRemove = $office365Data | where-object {$_.primarySMTPAddressOrUPN -eq $onPremData[$i].primarySMTPAddress}
 
-                    $office365Data = @($office365Data | where-object {$_ -ne $functionObjectToRemove})
+                    out-logfile -string $functionObjectToRemove
+
+                    $office365Data = @($office365Data | where-object {$_primarySMTPAddressOrUPN -ne $functionObjectToRemove.primarySMTPAddress})
 
                     $functionReturnArray += $functionObject
                 }
@@ -421,7 +425,9 @@ function compare-recipientArrays
 
                     $functionObjectToRemove =  $office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $onPremData[$i].userPrincipalName}
 
-                    $office365Data = @($office365Data | where-object {$_ -ne $functionObjectToRemove})
+                    out-logfile -string $functionObjectToRemove
+
+                    $office365Data = @($office365Data | where-object {$_.primarySMTPAddressOrUPN -ne $functionObjectToRemove.userPrincipalName})
 
                     $functionReturnArray += $functionObject
                 }
