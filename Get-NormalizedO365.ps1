@@ -89,11 +89,11 @@
                         {
                             out-logfile -string "The attribute to be normalized only contains names.  The name resulted in more than one object being returned via get-recipient."
 
-                            foreach ($member in $functionRecipient)
+                            foreach ($object in $functionRecipient)
                             {
                                 $functionObject = New-Object PSObject -Property @{
-                                    PrimarySMTPAddressOrUPN = $member.primarySMTPAddress
-                                    ExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
+                                    PrimarySMTPAddressOrUPN = $object.primarySMTPAddress
+                                    ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
                                     isError=$NULL
                                     isErrorMessage=$null
                                     isAmbiguous=$TRUE 
@@ -115,6 +115,8 @@
                                 isAmbiguous=$false
                             }
 
+                            out-logfile -string $functionObject
+
                             $functionReturnArray += $functionObject
                         }
                     }
@@ -133,12 +135,12 @@
                             {
                                 out-logfile -string "Multiple users were found on ambiguous query."
 
-                                foreach ($member in $functionRecipient)
+                                foreach ($object in $functionRecipient)
                                 {
                                     $functionObject = New-Object PSObject -Property @{
-                                        DisplayName = $member.DisplayName
-                                        PrimarySMTPAddressOrUPN = $member.UserPrincipalName
-                                        ExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
+                                        DisplayName = $object.DisplayName
+                                        PrimarySMTPAddressOrUPN = $object.UserPrincipalName
+                                        ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
                                         isError=$NULL
                                         isErrorMessage=$null
                                         isAmbiguous=$true
