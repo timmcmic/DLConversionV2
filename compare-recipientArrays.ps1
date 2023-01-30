@@ -379,9 +379,55 @@ function compare-recipientArrays
                     ErrorMessage = "N/A"
                 }
 
-                out-logfile -string $functionObject
+                out-logfile -string "Being Office 365 -> On premises evaluation."
+                out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
 
-                $functionReturnArray += $functionObject
+                $functionExeternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
+
+                out-logfile -string $functionExternalDirectoryObjectID
+                
+                if ($onPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+                {
+                    out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
+
+                    $functionObject.isPresentOnPremises = "True"
+                    $functionObject.isValidMember = "TRUE"
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+                }
+                elseif ($onPremData.objectSID -contains $functionObject.objectSID)
+                {
+                    out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
+                    $functionObject.isPresentOnPremsies = "True"
+                    $functionObject.isValidMember = "TRUE"
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+                }
+                elseif ($onPremData.primarySMTPAddress -contains $member.primarySMTPAddress)
+                {
+                    out-logfile -string ("The object was located by primary SMTP Address: "+$member.primarySMTPAddress)
+
+                    $functionObject.isPresentOnPremises = "True"
+                    $functionObject.isValidMember = "TRUE"
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+                }
+                else 
+                {
+                    out-logfile -string "The object was not located in the on premises membership - NOT GOOD."
+
+                    $functionObject.ErrorMessage = "MEMBER_OFFICE365_NOT_IN_ONPREMISES_EXCEPTION"
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+                }
             }
             else
             {
