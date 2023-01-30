@@ -133,8 +133,6 @@ function compare-recipientProperties
 
     if ($onPremData.msExchGroupJoinRestriction -eq $NULL)
     {
-        out-logfile -string $onPremData.msExchGroupJoinRestriction
-
         $functionMemberJoinRestriction="Closed"
 
         out-logfile -string $functionMemberJoinRestriction
@@ -159,7 +157,7 @@ function compare-recipientProperties
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
             isValidInExchangeOnline = "True"
-            IsValidMember = "True"
+            IsValidMember = "TRUE"
             ErrorMessage = "N/A"
         }
 
@@ -186,6 +184,64 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject    
     }
+
+    out-logfile -string "Evaluate member depart restriction."
+
+    if ($onPremData.msExchGroupDepartRestriction -eq $NULL)
+    {
+        $functionMemberDepartRestriction = "Closed"
+
+        out-logfile -string $functionMemberDepartRestriction
+    }
+    else
+    {
+        out-logfile -string $onPremData.msExchGroupDepartRestriction
+
+        $functionMemberDepartRestriction = $onPremData.msExchGroupDepartRestriction
+
+        out-logfile -string $functionMemberDepartRestriction
+    }
+
+    if ($office365Data.MemberDepartRestriction -eq $functionMemberDepartRestriction)
+    {
+        out-logfile -string "Member depart restriction value is valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MemberDepartRestriction"
+            OnPremisesValue = $functionMemberDepartRestriction
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MemberDepartRestriction          
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else
+    {
+        out-logfile -string "Member depart restriction value is not valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MemberJoinRestriction"
+            OnPremisesValue = $functionMemberJoinRestriction
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
