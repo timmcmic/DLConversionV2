@@ -358,12 +358,12 @@ function compare-recipientArrays
 
             out-logfile -string "Starting Exchange Online -> Azure Evaluation"
 
-            if ($azureData.externalDirectoryObjectID -contains $member.externalDirectoryObjectID)
+            if ($azureData.objectID -contains $member.externalDirectoryObjectID)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
-                $functionAzureObject = $azureData | where {$_.externalDirectoryObjectID -eq $member.externalDirectoryObjectID}
+                $functionAzureObject = $azureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
 
                 $functionObject = New-Object PSObject -Property @{
                     Name = $member.name
