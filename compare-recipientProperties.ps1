@@ -14,6 +14,8 @@ function compare-recipientProperties
     $functionModerationFlags = $NULL
     $functionMemberJoinRestriction=$NULL
     $functionreportToOwner=$NULL
+    $functionReportToOriginator=$NULL
+    $functionoofReplyToOriginator=$NULL
 
 
     Out-LogFile -string "********************************************************************************"
@@ -305,6 +307,118 @@ function compare-recipientProperties
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluate report to originator enabled."
+
+    if ($onPremData.reportToOriginator -eq $NULL)
+    {
+        $functionReportToOriginator = $FALSE
+
+        out-logfile -string $functionReportToOriginator
+    }
+    else 
+    {
+        out-logfile -string $onPremData.reportToOriginator
+
+        $functionReportToOriginator = $onPremData.reportToOriginator
+
+        out-logfile -string $functionReportToOriginator
+    }
+
+    if ($office365Data.ReportToOriginatorEnabled -eq $functionReportToOriginator)
+    {
+        out-logfile -string "Report to originator enabled value is valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ReportToOriginatorEnabled"
+            OnPremisesValue = $functionReportToOriginator
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ReportToOriginatorEnabled         
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "Report to originator enabled value is invalid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ReportToOriginatorEnabled"
+            OnPremisesValue = $functionReportToOriginator
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ReportToOriginatorEnabled         
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluating OOF reply to originator."
+
+    if ($onPremData.oofReplyToOriginator -eq $NULL)
+    {
+        $functionoofReplyToOriginator = $FALSE
+
+        out-logfile -string $functionoofReplyToOriginator
+    }
+    else 
+    {
+        out-logfile -string $onPremData.oofReplyToOriginator
+
+        $functionoofReplyToOriginator = $onPremData.oofReplyToOriginator
+
+        out-logfile -string $functionoofReplyToOriginator
+    }
+
+    if ($office365Data.SendOofMessageToOriginatorEnabled -eq $functionoofReplyToOriginator)
+    {
+        out-logfile -string "Send OOF messages to originator enabled value is valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SendOofMessageToOriginatorEnabled"
+            OnPremisesValue = $functionoofReplyToOriginator
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "Send OOF messages to originator enabled value is valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SendOofMessageToOriginatorEnabled"
+            OnPremisesValue = $functionoofReplyToOriginator
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "N/A"
         }
 
         out-logfile -string $functionObject
