@@ -750,7 +750,7 @@ function compare-recipientArrays
 
                 if ($office365Data.externalDirectoryObjectID -contains $onPremData[$i].externalDirectoryObjectID)
                 {
-                    out-logfile -string "Member found in Azure."
+                    out-logfile -string "Member found in Office 365."
 
                     out-logfile -string "Removing object from office 365 array..."
 
@@ -766,6 +766,9 @@ function compare-recipientArrays
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
                         ObjectSID = $onPremData[$i].objectSID
+                        isPresentOnPremises = "True"
+                        isPresentInAzure = "N/A"
+                        isPresentInExchangeOnline = "True"
                         IsValidMember = "TRUE"
                         ErrorMessage = "N/A"
                     }
@@ -803,6 +806,9 @@ function compare-recipientArrays
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
                         ObjectSID = $onPremData[$i].objectSID
+                        isPresentOnPremises = "True"
+                        isPresentInAzure = "N/A"
+                        isPresentInExchangeOnline = "True"
                         IsValidMember = "TRUE"
                         ErrorMessage = "N/A"
                     }
@@ -839,6 +845,9 @@ function compare-recipientArrays
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
                         ObjectSID = $onPremData[$i].objectSID
+                        isPresentOnPremises = "True"
+                        isPresentInAzure = "N/A"
+                        isPresentInExchangeOnline = "True"
                         IsValidMember = "TRUE"
                         ErrorMessage = "N/A"
                     }
@@ -868,6 +877,9 @@ function compare-recipientArrays
                     UserPrincipalName = $member.userPrincipalName
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                     ObjectSID = $member.objectSID
+                    isPresentOnPremises = "True"
+                    isPresentInAzure = "N/A"
+                    isPresentInExchangeOnline = "False"
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_ONPREM_NOT_IN_OFFICE365_EXCEPTION"
                 }
@@ -894,6 +906,9 @@ function compare-recipientArrays
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID = "N/A"
+                        isPresentOnPremises = "False"
+                        isPresentInAzure = "N/A"
+                        isPresentInExchangeOnline = "True"
                         IsValidMember = "FALSE"
                         ErrorMessage = "AMBIGUOUS_MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
                     }
@@ -905,6 +920,9 @@ function compare-recipientArrays
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID = "N/A"
+                        isPresentOnPremises = "False"
+                        isPresentInAzure = "N/A"
+                        isPresentInExchangeOnline = "True"
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
                     }
