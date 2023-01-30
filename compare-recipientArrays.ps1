@@ -7,6 +7,8 @@ function compare-recipientArrays
         $azureData=$NULL,
         [Parameter(Mandatory = $false)]
         $office365Data=$NULL,
+        [Parameter(Mandatory = $false)]
+        $isProxyTest=$false
     )
 
     [array]$functionReturnArray = @()
@@ -17,7 +19,7 @@ function compare-recipientArrays
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 
-    if (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null))
+    if (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null) -and ($isProxyTest -eq $TRUE))
     {
         out-logfile -string "Comparing data from all three directories - this has to be proxy addresses."
 
@@ -35,7 +37,7 @@ function compare-recipientArrays
                     isPresentOnPremises = "Source"
                     isPresentInAzure = "True"
                     isPresentInExchangeOnline = "False"
-                    isValid = "N/A"
+                    isValidMember = "N/A"
                     ErrorMessage = "N/A"
                 }
 
@@ -45,12 +47,12 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is present in Exchange Online - this is good."
                     $functionObject.isPresentInExchangeOnline = "True"
-                    $functionObject.isValid = "True"
+                    $functionObject.isValidMember = "True"
                 }
                 else 
                 {
                     out-logfile -string "Email address is not present in Exchange Online - this is bad."
-                    $functionObject.isValid = "False"
+                    $functionObject.isValidMember = "False"
                     $functionObject.errorMessage = "EXCEPTION_ONPREMSIES_PROXY_MISSING_EXCHANGE_ONLINE"
                 }
             }
@@ -63,7 +65,7 @@ function compare-recipientArrays
                     isPresentOnPremises = "Source"
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "False"
-                    isValid = "False"
+                    isValidMember = "False"
                     ErrorMessage = "EXCEPTION_ONPREMSIES_PROXY_MISSING_AZURE_ACTIVE_DIRECTORY"
                 }
             }
@@ -94,12 +96,12 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is present in onPremises directory - this is good."
                     $functionObject.isPresentOnPremises = "True"
-                    $functionObject.isValid = "True"
+                    $functionObject.isValidMember = "True"
                 }
                 else 
                 {
                     out-logfile -string "Email address is not present in on premises directory - this is bad."
-                    $functionObject.isValid = "False"
+                    $functionObject.isValidMember = "False"
                     $functionObject.errorMessage = "EXCEPTION_OFFICE365_PROXY_MISSING_ONPREMISES_DIRECTORY"
                 }
             }
@@ -112,7 +114,7 @@ function compare-recipientArrays
                     isPresentOnPremises = "False"
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "Source"
-                    isValid = "False"
+                    isValidMember = "False"
                     ErrorMessage = "EXCEPTION_OFFICE365_PROXY_MISSING_AZURE_ACTIVE_DIRECTORY"
                 }
             }

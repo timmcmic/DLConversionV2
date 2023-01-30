@@ -533,6 +533,7 @@ Function get-DLHealthReport
         office365BypassMOderationFromSendersOrMembersEvalXML = @{"value" = "office365BypassModerationFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ManagedByEvalXML = @{"value" = "office365ManagedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365GrantSendOnBehalfToEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365ProxyAddressesEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
@@ -589,6 +590,7 @@ Function get-DLHealthReport
     [array]$office365GrantSendOnBehalfTo = $NULL
     [array]$office365DLMembership = $NULL
     
+    
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
@@ -605,6 +607,7 @@ Function get-DLHealthReport
     [array]$office365BypassModerationFromSendersOrMembersEval=@()
     [array]$office365ManagedByEval=@()
     [array]$office365GrantSendOnBehalfToEval=@()
+    [array]$office365ProxyAddressesEval = @()
 
     #For loop counter.
 
@@ -2576,7 +2579,7 @@ Function get-DLHealthReport
         $onPremMemberEval = @(compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing azure ad membership to Office 365 membership."
@@ -2585,7 +2588,17 @@ Function get-DLHealthReport
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "Comparing proxy addresses between all directories."
+
+    try
+    {
+        $office365ProxyAddressesEval = @(compare-recipientArrays -onPremData $originalDLConfiguration.proxyAddresses -azureData $azureADDlConfiguration.proxyAddresses -Office365Data $office365DLConfiguration.emailAddresses -isProxyTest:$TRUE -errorAction STOP)
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing accept messages from senders or members on premsies to Office 365."
@@ -2594,7 +2607,7 @@ Function get-DLHealthReport
         $office365AcceptMessagesFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeAcceptMessagesSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing reject messages from senders or members on premsies to Office 365."
@@ -2603,7 +2616,7 @@ Function get-DLHealthReport
         $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365RejectMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing on premises moderated by to Office 365 moderated by."
@@ -2612,7 +2625,7 @@ Function get-DLHealthReport
         $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365ModeratedBy -onPremData $exchangeModeratedBySMTP -errorAction STOP)
     }
     catch{
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing on premises bypass moderation from senders or members to Office 365."
@@ -2621,7 +2634,7 @@ Function get-DLHealthReport
         $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365BypassModerationFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comapring on premsies managed by to Office 365."
@@ -2630,7 +2643,7 @@ Function get-DLHealthReport
         $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365ManagedBy -onPremData $exchangeManagedBySMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     out-logfile -string "Comparing grant send on behalf to on premsies to Office 365."
@@ -2639,7 +2652,7 @@ Function get-DLHealthReport
         $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365GrantSendOnBehalfTo -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
     }
     catch {
-        out-logfile $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     if ($onPremMemberEval -ne $NULL)
@@ -2663,6 +2676,18 @@ Function get-DLHealthReport
     }
     else {
         out-logfile -string "No Office 365 member evaluation to export."
+    }
+
+    if ($office365ProxyAddressesEval -ne $NULL)
+    {
+        out-logfile -string "Exporting Office 365 Proxy Address evaluation."
+        $office365ProxyAddressesEval = $office365ProxyAddressesEval | sort-object -property "isValidMember"
+
+        out-xmlFile -itemToExport $office365ProxyAddressesEval -itemNameToExport $xmlFiles.office365ProxyAddressesEvalXML.value
+    }
+    else
+    {
+        out-logfile -string "No office 365 proxy addresses evaluation to report."
     }
 
     if ($office365AcceptMessagesFromSendersOrMembersEval -ne $NULL)
