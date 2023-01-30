@@ -2573,6 +2573,8 @@ Function get-DLHealthReport
 
     #At this time we need to start building the comparison arrays.
 
+    <#
+
     out-logfile -string "Comparing on premises membership to azure ad membership."
 
     try {
@@ -2586,6 +2588,17 @@ Function get-DLHealthReport
 
     try {
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    #>
+
+    out-logfile -string "Beginning list membership comparison."
+
+    try {
+        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE

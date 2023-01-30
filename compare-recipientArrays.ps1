@@ -122,6 +122,10 @@ function compare-recipientArrays
             $functionReturnArray += $functionObject
         }
     }
+    elseif (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null) -and ($isProxyTest -eq $FALSE))
+    {
+        out-logfile -string "Comparing data from all three directories - this has to be membership."
+    }
     elseif (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
