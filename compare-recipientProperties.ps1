@@ -488,6 +488,88 @@ function compare-recipientProperties
 
     Out-logfile -string "Evaluating extension attributes."
 
+    if ($onPremData.extensionAttribute1 -eq $NULL)
+    {
+        $onPremData.extensionAttribute1 = ""
+    }
+
+    if ($onPremData.extensionAttribute2 -eq $NULL)
+    {
+        $onPremData.extensionAttribute2 = ""
+    }
+
+    if ($onPremData.extensionAttribute3 -eq $NULL)
+    {
+        $onPremData.extensionAttribute3 = ""
+    }
+
+    if ($onPremData.extensionAttribute4 -eq $NULL)
+    {
+        $onPremData.extensionAttribute4 = ""
+    }
+
+    if ($onPremData.extensionAttribute5 -eq $NULL)
+    {
+        $onPremData.extensionAttribute5 = ""
+    }
+
+    if ($onPremData.extensionAttribute6 -eq $NULL)
+    {
+        $onPremData.extensionAttribute6 = ""
+    }
+
+    if ($onPremData.extensionAttribute7 -eq $NULL)
+    {
+        $onPremData.extensionAttribute7 = ""
+    }
+
+    if ($onPremData.extensionAttribute8 -eq $NULL)
+    {
+        $onPremData.extensionAttribute8 = ""
+    }
+
+    if ($onPremData.extensionAttribute9 -eq $NULL)
+    {
+        $onPremData.extensionAttribute9 = ""
+    }
+
+    if ($onPremData.extensionAttribute10 -eq $NULL)
+    {
+        $onPremData.extensionAttribute10 = ""
+    }
+
+    if ($onPremData.extensionAttribute11 -eq $NULL)
+    {
+        $onPremData.extensionAttribute11 = ""
+    }
+
+    if ($onPremData.extensionAttribute12 -eq $NULL)
+    {
+        $onPremData.extensionAttribute12 = ""
+    }
+
+    if ($onPremData.extensionAttribute13 -eq $NULL)
+    {
+        $onPremData.extensionAttribute13 = ""
+    }
+
+    if ($onPremData.extensionAttribute14 -eq $NULL)
+    {
+        $onPremData.extensionAttribute14 = ""
+    }
+
+    if ($onPremData.extensionAttribute15 -eq $NULL)
+    {
+        $onPremData.extensionAttribute15 = ""
+    }
+
+
+
+
+
+
+
+
     if ($onPremData.extensionAttribute1 -eq $office365Data.customAttribute1)
     {
         out-logfile -string "Blank"
