@@ -309,6 +309,7 @@ function compare-recipientArrays
                         out-logfile -string "Member found in Exchange Online - GOOD."
 
                         $functionObject.isPresentInExchangeOnline = "True"
+                        $functionObject.isValidMember = "TRUE"
 
                         out-logfile -string $functionObject
 
