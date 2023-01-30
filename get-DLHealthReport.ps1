@@ -533,7 +533,7 @@ Function get-DLHealthReport
         office365BypassMOderationFromSendersOrMembersEvalXML = @{"value" = "office365BypassModerationFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ManagedByEvalXML = @{"value" = "office365ManagedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365GrantSendOnBehalfToEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
-        office365ProxyAddressesEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365ProxyAddressesEvalXML = @{"value" = "office365ProxyAddressesEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
