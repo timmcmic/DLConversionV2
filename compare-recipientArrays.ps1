@@ -377,6 +377,10 @@ function compare-recipientArrays
                     IsValidMember = "FALSE"
                     ErrorMessage = "N/A"
                 }
+
+                out-logfile -string .\.git
+
+                $functionReturnArray += $functionObject
             }
             else
             {
