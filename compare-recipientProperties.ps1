@@ -1148,6 +1148,66 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    out-logfile -string "Evaluating display name."
+
+    if ($onPremData.displayName -eq $azureData.displayName)
+    {
+        out-logfile -string "On premises and azure value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "DisplayName"
+            OnPremisesValue = $onPremData.displayName
+            AzureADValue = $azureData.displayName
+            isValidInAzure = "True"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "N/A"
+            IsValidMember = "False"
+            ErrorMessage = "N/A"
+        }
+
+        if ($azureData.displayName -eq $office365Data.displayName)
+        {
+            out-logfile -string "Azure AD to Exchange Online values are valid."
+
+            $functionObject.exchangeOnlineValue = $office365Data.displayName
+            $functionObject.isValidInExchangeOnline = "True"
+            $functionObject.isValidMember = "TRUE"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+        else 
+        {
+            out-logfile -string "Azure AD to Exchange Online values are not valid."
+
+            $functionObject.errorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+    }
+    else 
+    {
+        out-logfile -string "On premsies and azure values are not valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "DisplayName"
+            OnPremisesValue = $onPremData.displayName
+            AzureADValue = $azureData.displayName
+            isValidInAzure = "True"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "N/A"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_AZURE_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
 
