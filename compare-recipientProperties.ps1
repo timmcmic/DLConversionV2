@@ -13,6 +13,7 @@ function compare-recipientProperties
     $functionGroupType = $NULL
     $functionModerationFlags = $NULL
     $functionMemberJoinRestriction=$NULL
+    $functionreportToOwner=$NULL
 
 
     Out-LogFile -string "********************************************************************************"
@@ -257,7 +258,59 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    out-logfile -string "Evaluate report to manager enabled."
 
+    if ($onPremData.reportToOwner -eq $NULL)    
+    {
+        $functionreportToOwner = $FALSE
+
+        out-logfile -string $functionreportToOwner
+    }
+    else 
+    {
+        out-logfile -string $onPremData.reportToOwner
+
+        $functionReportToOwner = $onPremData.reportToOwner
+    }
+
+    if ($office365Data.ReportToManagerEnabled -eq $functionReportToOwner)
+    {
+        out-logfile -string "Report to manager enabled value is valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ReportToManagerEnabled"
+            OnPremisesValue = $functionreportToOwner
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ReportToManagerEnabled          
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "Report to manager enabled value is not valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ReportToManagerEnabled"
+            OnPremisesValue = $functionreportToOwner
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ReportToManagerEnabled          
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
