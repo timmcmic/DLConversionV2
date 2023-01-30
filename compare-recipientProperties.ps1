@@ -121,7 +121,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.bypassNestedModerationEnabled           
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "N/A"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
         }
 
         out-logfile -string $functionObject
@@ -177,7 +177,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "N/A"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
         }
 
         out-logfile -string $functionObject
@@ -233,7 +233,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "N/A"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
         }
 
         out-logfile -string $functionObject
@@ -241,7 +241,7 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
-    
+
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
