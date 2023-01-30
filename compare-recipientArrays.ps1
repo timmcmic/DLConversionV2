@@ -349,6 +349,40 @@ function compare-recipientArrays
                 }
             }
         }
+
+        out-logfile -string "Starting the comparison in the reverse order - compare Exchange Online -> Azure -> On Premises."
+
+        foreach ($member in $office365Data)
+        {
+            out-logfile -string ("Evaluating member: "+$member.externalDirectoryObjectID)
+
+            out-logfile -string "Starting Exchange Online -> Azure Evaluation"
+
+            if ($azureData.externalDirectoryObjectID -contains $member.externalDirectoryObjectID)
+            {
+                out-logfile -string "The object was found in Azure AD. -> GOOD"
+                out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
+
+                $functionAzureObject = $azureData | where {$_.externalDirectoryObjectID -eq $member.externalDirectoryObjectID}
+
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $member.name
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = $functionAzureObject.userPrincipalName
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
+                    isPresentOnPremises = "False"
+                    isPresentInAzure = "True"
+                    isPresentInExchangeOnline = "Source"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "N/A"
+                }
+            }
+            else
+            {
+                out-logfile -string "The object was not found in Azure AD -> BAD"
+            }
+        }
     }
     <#
     elseif (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
