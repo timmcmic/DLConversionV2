@@ -86,7 +86,7 @@ function compare-recipientArrays
                     isPresentOnPremises = "False"
                     isPresentInAzure = "True"
                     isPresentInExchangeOnline = "Source"
-                    isValid = "N/A"
+                    isValidMember = "N/A"
                     ErrorMessage = "N/A"
                 }
 
