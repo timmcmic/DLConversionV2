@@ -168,7 +168,7 @@ function compare-recipientArrays
 
                     out-logfile -string "Member found in Azure evaluate Exchange Online."
 
-                    if ($office365Data.externalDirectoryObjectID -contains $member.externalDirectoryObjectID)
+                    if ($office365Data.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
                     {
                         out-logfile -string "Member found in Exchange Online - GOOD"
 
@@ -230,7 +230,7 @@ function compare-recipientArrays
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = ("User_"+$functionExternalDirectoryObjectID.objectID)
+                        ExternalDirectoryObjectID = $functionExternalDirectoryObjectID.objectID
                         ObjectSID =$member.objectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "True"
