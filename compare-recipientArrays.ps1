@@ -378,13 +378,30 @@ function compare-recipientArrays
                     ErrorMessage = "N/A"
                 }
 
-                out-logfile -string .\.git
+                out-logfile -string $functionObject
 
                 $functionReturnArray += $functionObject
             }
             else
             {
                 out-logfile -string "The object was not found in Azure AD -> BAD"
+
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $member.name
+                    PrimarySMTPAddress = $member.primarySMTPAddress
+                    UserPrincipalName = $member.userPrincipalName
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    ObjectSID ="N/A"
+                    isPresentOnPremises = "False"
+                    isPresentInAzure = "False"
+                    isPresentInExchangeOnline = "Source"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "MEMBER_OFFICE365_NOT_IN_AZURE_EXCEPTION"
+                }
+
+                out-logfile -string $functionObject
+
+                $functionReturnArray += $functionObject
             }
         }
     }
