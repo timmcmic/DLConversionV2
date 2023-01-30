@@ -486,6 +486,13 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    Out-logfile -string "Evaluating extension attributes."
+
+    if ($onPremData.extensionAttribute1 -eq $office365Data.customAttribute1)
+    {
+        out-logfile -string "Blank"
+    }
+
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
 
