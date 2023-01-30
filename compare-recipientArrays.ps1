@@ -356,6 +356,7 @@ function compare-recipientArrays
         {
             out-logfile -string ("Evaluating member: "+$member.externalDirectoryObjectID)
 
+            out-logfile -string "In this case start comparison by external directory oubject id - all Office 365 objects have it unless it's a room distribution list."
             out-logfile -string "Starting Exchange Online -> Azure Evaluation"
 
             if ($azureData.objectID -contains $member.externalDirectoryObjectID)
