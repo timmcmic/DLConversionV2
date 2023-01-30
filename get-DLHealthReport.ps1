@@ -608,6 +608,7 @@ Function get-DLHealthReport
     [array]$office365ManagedByEval=@()
     [array]$office365GrantSendOnBehalfToEval=@()
     [array]$office365ProxyAddressesEval = @()
+    [array]$office365AttributeEval = @()
 
     #For loop counter.
 
@@ -2666,6 +2667,13 @@ Function get-DLHealthReport
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
+    }
+
+    try {
+        $office365AttributeEval = @(compare-recipientProperties -office365Data $office365DLConfiguration -onPremData $originalDLConfiguration -azureData $azureADDlConfiguration -errorAction STOP)
+    }
+    catch {
+        out-logile -string $_ -isError:$TRUE
     }
 
     if ($onPremMemberEval -ne $NULL)
