@@ -440,9 +440,11 @@ function compare-recipientArrays
                     IsValidMember = "FALSE"
                     ErrorMessage = "MEMBER_ONPREM_NOT_IN_OFFICE365_EXCEPTION"
                 }
+
+                $functionReturnArray += $functionObject
             }
 
-            $functionReturnArray += $functionObject
+            
         }
 
         if ($office365Data.count -gt 0)
@@ -476,9 +478,9 @@ function compare-recipientArrays
                         ErrorMessage = "MEMBER_IN_OFFICE365_NOT_ONPREM_EXCEPTION"
                     }
                 }
-            }
 
-            $functionReturnArray += $functionObject
+                $functionReturnArray += $functionObject
+            }
         }
     }
 
