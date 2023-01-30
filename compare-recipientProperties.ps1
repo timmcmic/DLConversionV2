@@ -563,16 +563,589 @@ function compare-recipientProperties
         $onPremData.extensionAttribute15 = ""
     }
 
-
-
-
-
-
-
-
     if ($onPremData.extensionAttribute1 -eq $office365Data.customAttribute1)
     {
-        out-logfile -string "Blank"
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute1"
+            OnPremisesValue = $onPremData.customAttribute1
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute1      
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute1"
+            OnPremisesValue = $onPremData.customAttribute1
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute1      
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute2 -eq $office365Data.customAttribute2)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute2"
+            OnPremisesValue = $onPremData.customAttribute2
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute2      
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute2"
+            OnPremisesValue = $onPremData.customAttribute2
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute2      
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute3 -eq $office365Data.customAttribute3)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute3"
+            OnPremisesValue = $onPremData.customAttribute3
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute3 
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute3"
+            OnPremisesValue = $onPremData.customAttribute3
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute3      
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute4 -eq $office365Data.customAttribute4)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute4"
+            OnPremisesValue = $onPremData.customAttribute4
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute4     
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute4"
+            OnPremisesValue = $onPremData.customAttribute4
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute4     
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute5 -eq $office365Data.customAttribute5)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute5"
+            OnPremisesValue = $onPremData.customAttribute5
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute5
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute5"
+            OnPremisesValue = $onPremData.customAttribute5
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute5
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute6 -eq $office365Data.customAttribute6)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute6"
+            OnPremisesValue = $onPremData.customAttribute6
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute6
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute6"
+            OnPremisesValue = $onPremData.customAttribute6
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute6
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute7 -eq $office365Data.customAttribute7)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute7"
+            OnPremisesValue = $onPremData.customAttribute7
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute7
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute7"
+            OnPremisesValue = $onPremData.customAttribute7
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute7
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute8 -eq $office365Data.customAttribute8)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute8"
+            OnPremisesValue = $onPremData.customAttribute8
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute8
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute8"
+            OnPremisesValue = $onPremData.customAttribute8
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute8
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute9 -eq $office365Data.customAttribute9)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute9"
+            OnPremisesValue = $onPremData.customAttribute9
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute9
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute9"
+            OnPremisesValue = $onPremData.customAttribute9
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute9
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute10 -eq $office365Data.customAttribute10)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute10"
+            OnPremisesValue = $onPremData.customAttribute10
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute10
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute10"
+            OnPremisesValue = $onPremData.customAttribute10
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute10
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute11 -eq $office365Data.customAttribute11)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute11"
+            OnPremisesValue = $onPremData.customAttribute11
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute11
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute11"
+            OnPremisesValue = $onPremData.customAttribute11
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute11
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute12 -eq $office365Data.customAttribute12)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute12"
+            OnPremisesValue = $onPremData.customAttribute12
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute12
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute12"
+            OnPremisesValue = $onPremData.customAttribute12
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute12
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute13 -eq $office365Data.customAttribute13)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute13"
+            OnPremisesValue = $onPremData.customAttribute13
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute13
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute13"
+            OnPremisesValue = $onPremData.customAttribute13
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute13
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute14 -eq $office365Data.customAttribute14)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute14"
+            OnPremisesValue = $onPremData.customAttribute14
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute14
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute14"
+            OnPremisesValue = $onPremData.customAttribute14
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute14
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.extensionAttribute15 -eq $office365Data.customAttribute15)
+    {
+        out-logfile -string "On premises and exchange online value are valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute15"
+            OnPremisesValue = $onPremData.customAttribute15
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute15
+            isValidInExchangeOnline = "True"
+            IsValidMember = "True"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online value are not valid.."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "CustomAttribute15"
+            OnPremisesValue = $onPremData.customAttribute15
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.customAttribute15
+            isValidInExchangeOnline = "False"
+            IsValidMember = "False"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
     }
 
     Out-LogFile -string "END compare-recipientProperties"
