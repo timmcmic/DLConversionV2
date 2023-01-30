@@ -400,7 +400,7 @@ function compare-recipientArrays
                 elseif ($onPremData.objectSID -contains $functionObject.objectSID)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
-                    $functionObject.isPresentOnPremsies = "True"
+                    $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
 
                     out-logfile -string $functionObject
