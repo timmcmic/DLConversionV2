@@ -275,6 +275,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray +=$functionObject
                 }
             }
         }
