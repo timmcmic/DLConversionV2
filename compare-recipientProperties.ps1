@@ -408,7 +408,7 @@ function compare-recipientProperties
     }
     else 
     {
-        out-logfile -string "Send OOF messages to originator enabled value is valid."
+        out-logfile -string "Send OOF messages to originator enabled value is not valid."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SendOofMessageToOriginatorEnabled"
@@ -418,7 +418,67 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluating mail nickname / alias."
+
+    if ($onPremData.mailNickName -eq $azureData.mailNickName)
+    {
+        out-logfile -string "On premises mail nickname value = azure value."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "Alias / MailNickName"
+            OnPremisesValue = $onPremData.mailNickName
+            AzureADValue = $azureData.mailNickName
+            isValidInAzure = "True"
+            ExchangeOnlineValue = "N/A"       
+            isValidInExchangeOnline = "N/A"
+            IsValidMember = "FALSE"
             ErrorMessage = "N/A"
+        }
+
+        if ($azureData.mailNickName -eq $office365Data.alias)
+        {
+            out-logfile -string "Azure AD mail nickname value = exchange online alias."
+
+            $functionObject.exchangeOnlineValue = $office365Data.Alias
+            $functionObject.isValidInExchangeOnline = "True"
+            $functionObject.isValidMember = "TRUE"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+        else 
+        {
+            out-logfile -string "Azure AD mail nickname value not equal exchange online value."
+
+            $functionObject.errorMessage = "VALUE_AZUREAD_NOT_EQUAL_OFFICE365_EXCEPTION"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+    }
+    else
+    {
+        out-logfile -string "On premises mail nickname value not equal azure value."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "Alias / MailNickName"
+            OnPremisesValue = $onPremData.mailNickName
+            AzureADValue = $azureData.mailNickName
+            isValidInAzure = "False"
+            ExchangeOnlineValue = "N/A"       
+            isValidInExchangeOnline = "N/A"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_AZURE_EXCEPTION"
         }
 
         out-logfile -string $functionObject
