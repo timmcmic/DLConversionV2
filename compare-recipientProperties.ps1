@@ -137,11 +137,19 @@ function compare-recipientProperties
 
         out-logfile -string $functionMemberJoinRestriction
     }
+    elseif ($onPremData.msExchGroupJoinRestriction -eq 0)
+    {
+        out-logfile -string $onPremData.msExchGroupJoinRestriction
+
+        $functionMemberJoinRestriction = "Closed"
+
+        out-logfile -string $functionMemberJoinRestriction
+    }
     else 
     {
         out-logfile -string $onPremData.msExchGroupJoinRestriction
 
-        $functionMemberJoinRestriction = $onPremData.msExchGroupJoinRestriction
+        $functionMemberJoinRestriction = "ApprovalRequired"
 
         out-logfile -string $functionMemberJoinRestriction
     }
@@ -193,11 +201,19 @@ function compare-recipientProperties
 
         out-logfile -string $functionMemberDepartRestriction
     }
+    elseif ($onPremData.msExchGroupDepartRestriction -eq 0)
+    {
+        out-logfile -string $onPremData.msExchGroupDepartRestriction
+
+        $functionMemberDepartRestriction = "Closed"
+
+        out-logfile -string $functionMemberDepartRestriction
+    }
     else
     {
         out-logfile -string $onPremData.msExchGroupDepartRestriction
 
-        $functionMemberDepartRestriction = $onPremData.msExchGroupDepartRestriction
+        $functionMemberDepartRestriction = "Open"
 
         out-logfile -string $functionMemberDepartRestriction
     }
