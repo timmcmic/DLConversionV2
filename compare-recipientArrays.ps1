@@ -6,7 +6,7 @@ function compare-recipientArrays
         [Parameter(Mandatory = $false)]
         $azureData=$NULL,
         [Parameter(Mandatory = $false)]
-        $office365Data=$NULL
+        $office365Data=$NULL,
     )
 
     [array]$functionReturnArray = @()
@@ -17,9 +17,110 @@ function compare-recipientArrays
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string "Determine if we are comparing on premises and Azure <or> on premises and Exchange Online"
+    if (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null))
+    {
+        out-logfile -string "Comparing data from all three directories - this has to be proxy addresses."
 
-    if (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
+        out-logfile -string "Start comparing on premsies to AzureAD to Office 365."
+
+        foreach ($member in $onPremData)
+        {
+            out-logfile -string "Testing azure for presence of proxy address."
+            out-logfile -string $member
+
+            if ($azureData -contains $member)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    ProxyAdress = $member
+                    isPresentOnPremises = "Source"
+                    isPresentInAzure = "True"
+                    isPresentInExchangeOnline = "False"
+                    isValid = "N/A"
+                    ErrorMessage = "N/A"
+                }
+
+                out-logfile -string "Address present in Azure.  Testing Exchange Online"
+
+                if ($office365Data -contains $member)
+                {
+                    out-logfile -string "Email address is present in Exchange Online - this is good."
+                    $functionObject.isPresentInExchangeOnline = "True"
+                    $functionObject.isValid = "True"
+                }
+                else 
+                {
+                    out-logfile -string "Email address is not present in Exchange Online - this is bad."
+                    $functionObject.isValid = "False"
+                    $functionObject.errorMessage = "EXCEPTION_ONPREMSIES_PROXY_MISSING_EXCHANGE_ONLINE"
+                }
+            }
+            else 
+            {
+                out-logfile -string "Proxy address not present in Azure AD.  No further testing required."
+
+                $functionObject = New-Object PSObject -Property @{
+                    ProxyAdress = $member
+                    isPresentOnPremises = "Source"
+                    isPresentInAzure = "False"
+                    isPresentInExchangeOnline = "False"
+                    isValid = "False"
+                    ErrorMessage = "EXCEPTION_ONPREMSIES_PROXY_MISSING_AZURE_ACTIVE_DIRECTORY"
+                }
+            }
+
+            $functionReturnArray += $functionObject
+        }
+
+        out-logfile -string "Start comparing Exchange Online to Azure AD to On premises."
+
+        foreach ($member in $office365Data)
+        {
+            out-logfile -string $member
+
+            if ($azureData -contains $member)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    ProxyAdress = $member
+                    isPresentOnPremises = "False"
+                    isPresentInAzure = "True"
+                    isPresentInExchangeOnline = "Source"
+                    isValid = "N/A"
+                    ErrorMessage = "N/A"
+                }
+
+                out-logfile -string "Address present in Azure.  Testing on premises..."
+
+                if ($onPremData -contains $member)
+                {
+                    out-logfile -string "Email address is present in onPremises directory - this is good."
+                    $functionObject.isPresentOnPremises = "True"
+                    $functionObject.isValid = "True"
+                }
+                else 
+                {
+                    out-logfile -string "Email address is not present in on premises directory - this is bad."
+                    $functionObject.isValid = "False"
+                    $functionObject.errorMessage = "EXCEPTION_OFFICE365_PROXY_MISSING_ONPREMISES_DIRECTORY"
+                }
+            }
+            else 
+            {
+                out-logfile -string "Proxy address not present in Azure AD.  No further testing required."
+
+                $functionObject = New-Object PSObject -Property @{
+                    ProxyAdress = $member
+                    isPresentOnPremises = "False"
+                    isPresentInAzure = "False"
+                    isPresentInExchangeOnline = "Source"
+                    isValid = "False"
+                    ErrorMessage = "EXCEPTION_OFFICE365_PROXY_MISSING_AZURE_ACTIVE_DIRECTORY"
+                }
+            }
+
+            $functionReturnArray += $functionObject
+        }
+    }
+    elseif (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
     {
         out-logfile -string "This is a comparison of on premises and Azure AD data."
 
