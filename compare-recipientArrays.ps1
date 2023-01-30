@@ -386,6 +386,9 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
                 }
+                else {
+                    out-logfile -string "On premises primary SMTP address not found in Office 365 data."
+                }
             }
             elseif ($onPremData[$i].userPrincipalName -ne $NULL)
             {
@@ -418,6 +421,9 @@ function compare-recipientArrays
                     $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].userPrincipalName})
 
                     $functionReturnArray += $functionObject
+                }
+                else {
+                    out-logfile -string "On premises user principal name not found in Office 365 data."
                 }
             }
             else {
