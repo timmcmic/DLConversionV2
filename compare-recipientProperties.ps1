@@ -1433,10 +1433,6 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluate simple display name."
 
-    if ($onPremData.simpleDisplayNamePrintable -eq $NULL)
-    {
-        $onPremData.simpleDisplayNamePrintable = ""
-    }
 
     if ($onPremData.simpleDisplayNamePrintable -eq $office365Data.simpleDisplayName)
     {
