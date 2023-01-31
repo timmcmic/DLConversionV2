@@ -429,6 +429,33 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluating mail nickname / alias."
 
+    if ($onPremData.MailNickName -eq $NULL)
+    {
+        $onPremData.mailNickName = "!*NotSet*!"
+    }
+    elesif ($onPremData.mailnickname -eq "")
+    {
+        $onPremData.mailNickName = "!*NotSet*!"
+    }
+
+    if ($azureData.mailNickName -eq $NULL)
+    {
+        $azureData.mailNickName = "!*NotSet*!"
+    }
+    elseif ($azureData.mailNickName -eq "")
+    {
+        $azureData.mailNickName = "!*NotSet*!"
+    }
+
+    if ($office365Data.alias -eq $NULL)
+    {
+        $office365Data.alias = "!*NotSet*!"
+    }
+    elseif ($office365Data.alias -eq "")
+    {
+        $office365Data.alias = "!*NotSet*!"
+    }
+
     if ($onPremData.mailNickName -eq $azureData.mailNickName)
     {
         out-logfile -string "On premises mail nickname value = azure value."
@@ -491,77 +518,154 @@ function compare-recipientProperties
 
     if ($onPremData.extensionAttribute1 -eq $NULL)
     {
-        $onPremData.extensionAttribute1 = ""
+        $onPremData.extensionAttribute1 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute2 -eq $NULL)
     {
-        $onPremData.extensionAttribute2 = ""
+        $onPremData.extensionAttribute2 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute3 -eq $NULL)
     {
-        $onPremData.extensionAttribute3 = ""
+        $onPremData.extensionAttribute3 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute4 -eq $NULL)
     {
-        $onPremData.extensionAttribute4 = ""
+        $onPremData.extensionAttribute4 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute5 -eq $NULL)
     {
-        $onPremData.extensionAttribute5 = ""
+        $onPremData.extensionAttribute5 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute6 -eq $NULL)
     {
-        $onPremData.extensionAttribute6 = ""
+        $onPremData.extensionAttribute6 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute7 -eq $NULL)
     {
-        $onPremData.extensionAttribute7 = ""
+        $onPremData.extensionAttribute7 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute8 -eq $NULL)
     {
-        $onPremData.extensionAttribute8 = ""
+        $onPremData.extensionAttribute8 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute9 -eq $NULL)
     {
-        $onPremData.extensionAttribute9 = ""
+        $onPremData.extensionAttribute9 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute10 -eq $NULL)
     {
-        $onPremData.extensionAttribute10 = ""
+        $onPremData.extensionAttribute10 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute11 -eq $NULL)
     {
-        $onPremData.extensionAttribute11 = ""
+        $onPremData.extensionAttribute11 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute12 -eq $NULL)
     {
-        $onPremData.extensionAttribute12 = ""
+        $onPremData.extensionAttribute12 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute13 -eq $NULL)
     {
-        $onPremData.extensionAttribute13 = ""
+        $onPremData.extensionAttribute13 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute14 -eq $NULL)
     {
-        $onPremData.extensionAttribute14 = ""
+        $onPremData.extensionAttribute14 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute15 -eq $NULL)
     {
-        $onPremData.extensionAttribute15 = ""
+        $onPremData.extensionAttribute15 = "!*NotSet*!"
+    }
+
+    Out-logfile -string "Evaluating extension attributes."
+
+    if ($office365Data.customAttribute1 -eq $NULL)
+    {
+        $office365Data.customAttribute1 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute2 -eq $NULL)
+    {
+        $office365Data.customAttribute2 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute3 -eq $NULL)
+    {
+        $office365Data.customAttribute3 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute4 -eq $NULL)
+    {
+        $office365Data.customAttribute4 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute5 -eq $NULL)
+    {
+        $office365Data.customAttribute5 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute6 -eq $NULL)
+    {
+        $office365Data.customAttribute6 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute7 -eq $NULL)
+    {
+        $office365Data.customAttribute7 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute8 -eq $NULL)
+    {
+        $office365Data.customAttribute8 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute9 -eq $NULL)
+    {
+        $office365Data.customAttribute9 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute10 -eq $NULL)
+    {
+        $office365Data.customAttribute10 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute11 -eq $NULL)
+    {
+        $office365Data.customAttribute11 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute12 -eq $NULL)
+    {
+        $office365Data.customAttribute12 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute13 -eq $NULL)
+    {
+        $office365Data.customAttribute13 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute14 -eq $NULL)
+    {
+        $office365Data.customAttribute14 = "!*NotSet*!"
+    }
+
+    if ($office365Data.customAttribute15 -eq $NULL)
+    {
+        $office365Data.customAttribute15 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute1 -eq $office365Data.customAttribute1)
@@ -1151,6 +1255,33 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluating display name."
 
+    if ($onPremData.displayname -eq $NULL)
+    {
+        $onPremData.displayName = "!*NotSet*!"
+    }
+    elseif ($onPremData.displayName -eq "")
+    {
+        $onPremData.displayname = "!*NotSet*!"
+    }
+
+    if ($azureData.displayName -eq $NULL)
+    {
+        $azureData.displayname = "!*NotSet*!"
+    }
+    elseif ($azureData.displayName -eq "")
+    {
+        $azureData.displayName = "!*NotSet*!"
+    }
+
+    if ($office365Data.displayName -eq $NULL)
+    {
+        $office365Data.DisplayName = "!*NotSet*!"
+    }
+    elseif ($office365Data.displayName -eq "")
+    {
+        $office365Data.displayName = "!*NotSet*!"
+    }
+
     if ($onPremData.displayName -eq $azureData.displayName)
     {
         out-logfile -string "On premises and azure value are valid.."
@@ -1321,6 +1452,33 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    if ($onPremData.mail -eq $NULL)
+    {
+        $onPremData.mail = "!*NotSet*!"
+    }
+    elseif ($onPremData.mail -eq "")
+    {
+        $onPremData.mail = "!*NotSet*!"
+    }
+
+    if ($azureData.mail -eq $NULL)
+    {
+        $azureData.mail = "!*NotSet*!"
+    }
+    elseif ($azureData.mail -eq "")
+    {
+        $azureData.mail = "!*NotSet*!"
+    }
+
+    if ($office365Data.primarySMTPAddress -eq $NULL)
+    {
+        $office365Data.primarySMTPAddress = "!*NotSet*!"
+    }
+    elseif ($office365Data.primarySMTPAddress -eq "")
+    {
+        $office365Data.primarySMTPAddress = "!*NotSet*!"
+    }
+
     out-logfile -string "Evaluation of primary SMTP address."
 
     if ($onPremData.mail -eq $azuredata.mail)
@@ -1435,7 +1593,20 @@ function compare-recipientProperties
 
     if ($onPremData.displayNamePrintable -eq $NULL)
     {
-        $onPremData.displayNamePrintable = ""
+        $onPremData.displayNamePrintable = "!*NotSet*!"
+    }
+    elseif ($onPremData.displayNamePrintable -eq "")
+    {
+        $onPremData.displayNamePrintable = "!*NotSet*!"
+    }
+
+    if ($office365Data.simpleDisplayName -eq $NULL)
+    {
+        $office365Data.simpleDisplayName = "!*NotSet*!"
+    }
+    elseif ($office365Data.simpleDisplayName -eq "")
+    {
+        $office365Data.simpleDisplayName = "!*NotSet*!"
     }
 
     if ($onPremData.DisplayNamePrintable -eq $office365Data.simpleDisplayName)
