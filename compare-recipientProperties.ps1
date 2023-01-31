@@ -1723,7 +1723,11 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
-    if ($onPremData.msExchSenderHintTranslations -eq $NULL)
+    if ($onPremData.msExchSenderHintTranslations.count -eq 0)
+    {
+        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
+    }
+    elseif ($onPremData.msExchSenderHintTranslations -eq $NULL)
     {
         $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
     }
@@ -1732,6 +1736,10 @@ function compare-recipientProperties
         $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
     }
 
+    if ($office365Data.MailTipTranslations.count -eq 0)
+    {
+        $office365Data.MailTipTranslations = "!*NotSet*!"
+    }
     if ($office365Data.MailTipTranslations -eq $NULL)
     {
         $office365Data.MailTipTranslations = "!*NotSet*!"
