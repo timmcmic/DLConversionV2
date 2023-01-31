@@ -155,6 +155,12 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
+            else 
+            {
+                out-logfile -string "Object does not have a proxy address - consider a synced security group?"
+
+                $functionPrimarySMTPAddress = "N/A"
+            }
 
             if ($azureData.objectID -contains $member.externalDirectoryObjectID)
             {
