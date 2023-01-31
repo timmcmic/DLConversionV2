@@ -433,7 +433,7 @@ function compare-recipientProperties
     {
         $onPremData.mailNickName = "!*NotSet*!"
     }
-    elesif ($onPremData.mailnickname -eq "")
+    elseif($onPremData.mailnickname -eq "")
     {
         $onPremData.mailNickName = "!*NotSet*!"
     }
