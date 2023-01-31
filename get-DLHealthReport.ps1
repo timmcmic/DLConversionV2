@@ -2864,27 +2864,40 @@ th {
 } 
 "@
 
+    if ($office365memberEval.count -gt 0)
+    {
+        out-logfile -string "Office 365 Member Eval count > 0"
+
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Membership Analysis</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid'
+        }
+
+        write-hashTable -hashTable $params
+
+        out-logfile -string "Creating hash table of the objects to output."
+
+        $office365MemberEvalHash = $office365MemberEval.getEnumerator()
+            | select    @{n='MemberName';e={$_.Name}},
+                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
+                        @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
+                        @{n='UserPrincipalName';e={$_.UserPrincipalName}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -or ($_.IsPresentOnPremises -ne "True")) { 'yellow' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+    }    
+
+    $html_members = $office365MemberEvalHash | ConvertTo-EnhancedHTMLFragment @params
+
+
     out-logfile -string "Generate members html segment."
 
-    $params = @{'As'='Table';
-            'PreContent'='<h2>&diams; Membership Analysis</h2>';
-            'EvenRowCssClass'='even';
-            'OddRowCssClass'='odd';
-            'MakeTableDynamic'=$true;
-            'TableCssClass'='grid';
-            'Properties'=
-        @{n='MemberName';e={$_.Name}},
-        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
-        @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
-        @{n='UserPrincipalName';e={$_.UserPrincipalName}},
-        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -or ($_.IsPresentOnPremises -ne "True")) { 'yellow' }}},
-        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
-        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
-        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-        @{n='ErrorMessage';e={$_.ErrorMessage}}
-    }
-
-    $html_members = $office365MemberEval | ConvertTo-EnhancedHTMLFragment @params
+e
 
     out-logfile -string "Build and output the HTML report."
 
