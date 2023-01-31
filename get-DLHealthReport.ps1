@@ -2863,8 +2863,17 @@ th {
     font-weight:bold;
 } 
 "@
+    out-logfile -string "Split the on premises data from the Office 365 data."
 
-    out-logfile -string $style
+    $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
+
+    out-logfile -string $onPremMemberEval
+
+    out-logfile -string "Split the cloud data from the on premises data."
+
+    $office365MemberEval = $office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+
+    out-logfile -string $office365MemberEval
 
     out-logfile -string "Generate HTML fragment for Office365MemberEval."
 

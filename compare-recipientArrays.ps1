@@ -158,7 +158,7 @@ function compare-recipientArrays
                 out-logfile -string "Being Office 365 -> On premises evaluation."
                 out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
 
-                $functionExeternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
+                $functionExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
 
                 out-logfile -string $functionExternalDirectoryObjectID
                 
