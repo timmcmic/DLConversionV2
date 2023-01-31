@@ -16,6 +16,7 @@ function compare-recipientProperties
     $functionreportToOwner=$NULL
     $functionReportToOriginator=$NULL
     $functionoofReplyToOriginator=$NULL
+    $functionHiddenFromAddressListEnabled =$NULL
 
 
     Out-LogFile -string "********************************************************************************"
@@ -1207,6 +1208,277 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject
     }
+
+    out-logfile -string "Evaluating hidden from address list enabled."
+
+    if ($onPremData.hiddenFromAddressListEnabled -eq $NULL)
+    {
+        $functionHiddenFromAddressListEnabled = $FALSE
+
+        out-logfile -string $functionHiddenFromAddressListEnabled
+    }
+    else
+    {
+        out-logfile -string $onPremData.hiddenFromAddressListEnabled
+
+        $functionHiddenFromAddressListEnabled = $onPremData.hiddenFromAddressListEnabled
+
+        out-logfile -string $functionHiddenFromAddressListEnabled 
+    }
+
+    if ($office365.HiddenFromAddressListsEnabled -eq $functionHiddenFromAddressListEnabled)
+    {
+        out-logfile -string "On premises and exchange online value are valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "HiddenFromAddressListEnabled"
+            OnPremisesValue = $onPremData.hiddenFromAddressListEnabled
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premsies and office 365 values are not valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "HiddenFromAddressListEnabled"
+            OnPremisesValue = $onPremData.hiddenFromAddressListEnabled
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluating moderation enabled."
+
+    if ($onPremData.msExchEnableModeration -eq $NULL)
+    {
+        $functionModerationEnabled = $FALSE
+
+        out-logfile -string $functionModerationEnabled
+    }
+    else
+    {
+        out-logfile -string $onPremData.msExchEnableModeration
+
+        $functionModerationEnabled = $onPremData.msExchEnableModeration
+
+        out-logfile -string $functionModerationEnabled
+    }
+
+    if ($functionModerationEnabled -eq $office365Data.ModerationEnabled)
+    {
+        out-logfile -string "On premises and exchange online values are valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ModerationEnabled"
+            OnPremisesValue = $functionModerationEnabled
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ModerationEnabled
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "On premises and exchange online values are not valid."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ModerationEnabled"
+            OnPremisesValue = $functionModerationEnabled
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.ModerationEnabled
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluation of primary SMTP address."
+
+    if ($onPremData.mail -eq $azuredata.mail)
+    {
+        out-logfile -string "On premises mail matches azure ad mail."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "Mail / PrimarySMTPAddress"
+            OnPremisesValue = $onPremData.mail
+            AzureADValue = $azureData.mail
+            isValidInAzure = "True"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "N/A"
+        }
+
+        if ($azureData.mail -eq $office365.primarySMTPAddress)
+        {
+            out-logfile "Azure mail attribute matches office 365 primary smtp address."
+
+            $functionObject.exchangeOnlineValue = $office365.primarySMTPAddress
+            $functionObject.isValidInExchangeOnline = "True"
+            $functionObject.isValidMember = "TRUE"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+        else
+        {
+            $functionObject.errorMessage = "VALUE_AZURE_NOT_EQUAL_OFFICE365_EXCEPTION"
+
+            out-logfile -string $functionObject
+
+            $functionReturnArray += $functionObject
+        }
+    }
+    else
+    {
+        out-logfile -string "On premises mail attribute does not match azure mail attribute."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "Mail / PrimarySMTPAddress"
+            OnPremisesValue = $onPremData.mail
+            AzureADValue = $azureData.mail
+            isValidInAzure = "True"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_AZURE_EXCEPTION"
+        }
+    }
+
+    out-logfile -string "Evaluate require sender authentication."
+
+    if ($onPremData.msExchRequireAuthToSendTo -eq $NULL)
+    {
+        $functionRequireAuthToSendTo = $FALSE
+
+        out-logfile -string $functionRequireAuthToSendTo
+    }
+    else
+    {
+        out-logfile -string $onPremData.msExchRequireAuthToSendTo
+
+        $functionRequireAuthToSendTo = $onPremData.msExchRequireAuthToSendTo
+
+        out-logfile -string $functionRequireAuthToSendTo
+    }
+
+    if ($office365Data.RequireSenderAuthenticationEnabled -eq $functionRequireAuthToSendTo)
+    {
+        out-logfile -string "Require authentication matches between on premises and exchange online."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "RequireSenderAuthenticationEnabled"
+            OnPremisesValue = $functionRequireAuthToSendTo
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.RequireSenderAuthenticationEnabled
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else
+    {
+        out-logfile -string "Require authentication does not match between on premsies and office 365."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "RequireSenderAuthenticationEnabled"
+            OnPremisesValue = $functionRequireAuthToSendTo
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.RequireSenderAuthenticationEnabled
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluate simple display name."
+
+    if ($onPremData.simpleDisplayName -eq $NULL)
+    {
+        $onPremData.simpleDisplayName = ""
+    }
+
+    if ($onPremData.simpleDisplayName -eq $office365Data.simpleDisplayName)
+    {
+        out-logfile -string "Simple display name matches between on premies and exchange online."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SimpleDisplayName"
+            OnPremisesValue = $onPremData.simpleDisplayName
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.simpledisplayname
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "Simple display name does not match between on premies and exchange online."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SimpleDisplayName"
+            OnPremisesValue = $onPremData.simpleDisplayName
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.simpledisplayname
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    
+
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
