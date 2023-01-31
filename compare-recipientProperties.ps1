@@ -1232,7 +1232,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            OnPremisesValue = $onPremData.hiddenFromAddressListEnabled
+            OnPremisesValue = $functionHiddenFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
