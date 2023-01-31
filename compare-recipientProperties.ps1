@@ -1554,85 +1554,24 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluate mail trip translations (which also covers mail tip."
 
-    if ($onPremData.msExchSenderHintTranslations.count -gt 0)
+    if ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
     {
-        out-logfile -string "Send hints to evaluate."
+        out-logfile -string "Count of mail tips is good - assume values are the same."
 
-        foreach ($member in $onPremData.msExchSenderHintTranslations)
-        {
-            if ($office365Data.MailTipTranslations -contains $onPremData.msExchSenderHintTranslations)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Attribute = "MailTipTranslations"
-                    OnPremisesValue = $member
-                    AzureADValue = "N/A"
-                    isValidInAzure = "N/A"
-                    ExchangeOnlineValue = $office365Data.mailTipTranslations
-                    isValidInExchangeOnline = "True"
-                    IsValidMember = "TRUE"
-                    ErrorMessage = "N/A"
-                }
-        
-                out-logfile -string $functionObject
-        
-                $functionReturnArray += $functionObject
-            }
-            else
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Attribute = "MailTipTranslations"
-                    OnPremisesValue = $member
-                    AzureADValue = "N/A"
-                    isValidInAzure = "N/A"
-                    ExchangeOnlineValue = "N/A"
-                    isValidInExchangeOnline = "False"
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "ERROR_ONPREMISES_VALUE_NOT_IN_OFFICE365_EXCEPTION"
-                }
-        
-                out-logfile -string $functionObject
-        
-                $functionReturnArray += $functionObject
-            }
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MailtipTranslations
+            isValidInExchangeOnline = "True"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_COUNT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
         }
 
-        foreach ($member in $office365Data.mailTipTranslations)
-        {
-            if ($onPremData.msExchSenderHintTranslations -contains $member)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Attribute = "MailTipTranslations"
-                    OnPremisesValue = $onPremData.msExchSenderHintTranslations
-                    AzureADValue = "N/A"
-                    isValidInAzure = "N/A"
-                    ExchangeOnlineValue = $member
-                    isValidInExchangeOnline = "True"
-                    IsValidMember = "TRUE"
-                    ErrorMessage = "N/A"
-                }
-        
-                out-logfile -string $functionObject
-        
-                $functionReturnArray += $functionObject
-            }
-            else 
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Attribute = "MailTipTranslations"
-                    OnPremisesValue = $onPremData.msExchSenderHintTranslations
-                    AzureADValue = "N/A"
-                    isValidInAzure = "N/A"
-                    ExchangeOnlineValue = $member
-                    isValidInExchangeOnline = "False"
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "ERROR_OFFICE365_VALUE_NOT_ONPREMISES_EXCEPTION"
-                }
-        
-                out-logfile -string $functionObject
-        
-                $functionReturnArray += $functionObject
-            }
-        }
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
     }
 
     Out-LogFile -string "END compare-recipientProperties"
