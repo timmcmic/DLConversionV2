@@ -2880,7 +2880,7 @@ th {
 
         out-logfile -string "Creating hash table of the objects to output."
 
-        $office365MemberEvalHash = $office365MemberEval.getEnumerator()
+        $office365MemberEvalHash = $office365MemberEval.getEnumerator()`
             | select    @{n='MemberName';e={$_.Name}},
                         @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
                         @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
