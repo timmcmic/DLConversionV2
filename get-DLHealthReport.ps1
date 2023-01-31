@@ -2958,8 +2958,8 @@ th {
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
-        'Title'="System Report for $computer";
-        'PreContent'="<h1>System Report for $computer</h1>";
+        'Title'="Distribution List Health Report for $groupSMTPAddress";
+        'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
         'HTMLFragments'=$htmlSections}
         ConvertTo-EnhancedHTML @params |
         Out-File -FilePath c:\temp\test.html
