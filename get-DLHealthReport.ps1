@@ -2967,9 +2967,9 @@ th {
         'TableCssClass'='grid';
         'MakeHiddenSection'=$true;
         'Properties'=   @{n='Attribute';e={$_.Attribute}},
-                        @{n='OnPremisesValue';e={$_.OnPremisesValue}},
+                        @{n='OnPremisesValue';e={if ($_.OnPremisesValue -ne $NULL){$_.OnPremisesValue}else{""}}},
                         @{n='IsValidInAzure';e={$_.IsValidInAzure};css={if ($_.isValidInAzure -eq "False") { 'red' }}},
-                        @{n='AzureADValue';e={$_.AzureADValue}},
+                        @{n='AzureADValue';e={if ($_.AzureADValue -ne $NULL){$_.AzureADValue}else{""}}},
                         @{n='ExchangeOnlineValue';e={$_.ExchangeOnlineValue}},
                         @{n='isValidInExchangeOnline';e={$_.isValidInExchangeOnline};css={if ($_.isValidInExchangeOnline -eq "False") { 'red' }}},
                         @{n='IsValidMember';e={$_.IsValidMember};css={if ($_.IsValidMember -eq "False"){ 'red' }}},
