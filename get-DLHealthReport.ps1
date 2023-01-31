@@ -2755,7 +2755,7 @@ Function get-DLHealthReport
         OnPremisesAcceptMessagesFromSendersOrMembersCount = $exchangeAcceptMessagesSMTP.count
         Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
         OnPremisesRejectMessagesFromSendersOrMembersCount = $exchangeRejectMessagesSMTP.count
-        Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers
+        Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers.count
         OnPremisesModeratedByCount = $exchangeModeratedBySMTP.count
         Office365ModeratedByCount = $office365ModeratedBy.count
         OnPremisesManagedByCount = $exchangeManagedBySMTP.count
