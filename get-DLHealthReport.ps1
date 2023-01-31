@@ -2632,7 +2632,7 @@ Function get-DLHealthReport
         $office365AttributeEval = @(compare-recipientProperties -office365Data $office365DLConfiguration -onPremData $originalDLConfiguration -azureData $azureADDlConfiguration -errorAction STOP)
     }
     catch {
-        out-logile -string $_ -isError:$TRUE
+        out-logfile -string $_ -isError:$TRUE
     }
 
     if ($office365AttributeEval -ne $NULL)
