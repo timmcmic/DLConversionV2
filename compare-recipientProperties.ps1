@@ -1723,42 +1723,14 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
-    if ($onPremData.msExchSenderHintTranslations.count -eq 0)
-    {
-        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
-    }
-    elseif ($onPremData.msExchSenderHintTranslations -eq $NULL)
-    {
-        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
-    }
-    elseif ($onPremData.msExchSenderHintTranslations -ne "")
-    {
-        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
-    }
-
-    if ($office365Data.MailTipTranslations.count -eq 0)
-    {
-        $office365Data.MailTipTranslations = "!*NotSet*!"
-    }
-    if ($office365Data.MailTipTranslations -eq $NULL)
-    {
-        $office365Data.MailTipTranslations = "!*NotSet*!"
-    }
-    elseif ($office365Data.MailTipTranslations -eq "")
-    {
-        $office365Data.MailTipTranslations = "!*NotSet*!"
-    }
-
-    out-logfile -string "Evaluate mail trip translations (which also covers mail tip."
-
     if (($onPremData.msExchSenderHintTranslations -eq "!*NotSet*!") -and ($office365Data.MailtipTranslations -eq "!*NotSet*!"))
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            OnPremisesValue = "ManuallyVerify"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.MailtipTranslations
+            ExchangeOnlineValue = "ManuallyVerify"
             isValidInExchangeOnline = "True"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_COUNT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
