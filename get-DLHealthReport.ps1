@@ -2792,6 +2792,78 @@ Function get-DLHealthReport
         out-logfile -string $functionObject
 
         out-xmlfile -itemToExport $functionObject -itemNameToExport $xmlFiles.summaryCountsXML.value
+
+        #=============================================================================================================================================
+        #=============================================================================================================================================
+        #=============================================================================================================================================
+
+        out-logfile -string "Building the HTML report for export."
+
+        out-logfile -string "Define CSS for the report."
+
+        $style = @"
+body {
+    color:#333333;
+    font-family:Calibri,Tahoma;
+    font-size: 10pt;
+}
+
+h1 {
+    text-align:center;
+}
+
+h2 {
+    border-top:1px solid #666666;
+}
+
+th {
+    font-weight:bold;
+    color:#eeeeee;
+    background-color:#333333;
+    cursor:pointer;
+}
+
+.odd  { background-color:#ffffff; }
+
+.even { background-color:#dddddd; }
+
+.paginate_enabled_next, .paginate_enabled_previous {
+    cursor:pointer; 
+    border:1px solid #222222; 
+    background-color:#dddddd; 
+    padding:2px; 
+    margin:4px;
+    border-radius:2px;
+}
+
+.paginate_disabled_previous, .paginate_disabled_next {
+    color:#666666; 
+    cursor:pointer;
+    background-color:#dddddd; 
+    padding:2px; 
+    margin:4px;
+    border-radius:2px;
+}
+
+.dataTables_info { margin-bottom:4px; }
+
+.sectionheader { cursor:pointer; }
+
+.sectionheader:hover { color:red; }
+
+.grid { width:100% }
+
+.red {
+    color:red;
+    font-weight:bold;
+} 
+"@
+
+
+
+        #=============================================================================================================================================
+        #=============================================================================================================================================
+        #=============================================================================================================================================
     
 
     # build the properties and metrics #
