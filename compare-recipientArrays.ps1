@@ -145,7 +145,7 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
-            elseif ($member.externalEmailAddress -ne "$NULL") 
+            elseif ($member.externalEmailAddress -ne "") 
             {
                 out-logfile -string "External email address is present."
 
