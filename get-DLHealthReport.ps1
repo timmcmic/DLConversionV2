@@ -2858,7 +2858,7 @@ th {
     font-weight:bold;
 } 
 
-.yello {
+.yellow {
     color:yellow;
     font-weight:bold;
 } 
