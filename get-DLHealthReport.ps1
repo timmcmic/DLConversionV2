@@ -2858,8 +2858,8 @@ th {
     font-weight:bold;
 } 
 
-.yellow {
-    color:yellow;
+.green {
+    color:green;
     font-weight:bold;
 } 
 "@
@@ -2884,7 +2884,7 @@ th {
                         @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
                         @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
                         @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if ($_.isPresentExchangeOnline -eq "False"){ 'yellow' }}}
+                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if ($_.isPresentExchangeOnline -eq "False"){ 'red' }}}
 
         }
 
