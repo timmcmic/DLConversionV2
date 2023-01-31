@@ -33,7 +33,7 @@ function compare-recipientArrays
             if ($azureData -contains $member)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    ProxyAdress = $member
+                    ProxyAdDress = $member
                     isPresentOnPremises = "Source"
                     isPresentInAzure = "True"
                     isPresentInExchangeOnline = "False"
@@ -61,7 +61,7 @@ function compare-recipientArrays
                 out-logfile -string "Proxy address not present in Azure AD.  No further testing required."
 
                 $functionObject = New-Object PSObject -Property @{
-                    ProxyAdress = $member
+                    ProxyAddress = $member
                     isPresentOnPremises = "Source"
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "False"
@@ -82,7 +82,7 @@ function compare-recipientArrays
             if ($azureData -contains $member)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    ProxyAdress = $member
+                    ProxyAddress = $member
                     isPresentOnPremises = "False"
                     isPresentInAzure = "True"
                     isPresentInExchangeOnline = "Source"
@@ -110,7 +110,7 @@ function compare-recipientArrays
                 out-logfile -string "Proxy address not present in Azure AD.  No further testing required."
 
                 $functionObject = New-Object PSObject -Property @{
-                    ProxyAdress = $member
+                    ProxyAddress = $member
                     isPresentOnPremises = "False"
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "Source"
