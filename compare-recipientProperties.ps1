@@ -1734,6 +1734,25 @@ function compare-recipientProperties
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "ManuallyVerify"
             isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    elseif ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
+    {
+        out-logfile -string "Count of mail tips is good - assume values are the same."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = "ManuallyVerify"
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "ManuallyVerify"
+            isValidInExchangeOnline = "True"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_COUNT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
         }
