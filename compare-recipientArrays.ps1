@@ -135,6 +135,27 @@ function compare-recipientArrays
             out-logfile -string "In this case start comparison by external directory oubject id - all Office 365 objects have it unless it's a room distribution list."
             out-logfile -string "Starting Exchange Online -> Azure Evaluation"
 
+            out-logfile -string "Determining if the object has a primary SMTP address or only an external address.  Guest users <or> mail contacts may have external addresses."
+
+            if ($member.primarySMTPAddress -ne $NULL)
+            {
+                out-logfile -string "Primary SMTP Address is present."
+
+                $functionPrimarySMTPAddress = $member.primarySMTPAddress
+
+                out-logfile -string $functionPrimarySMTPAddress
+            }
+            elseif ($member.externalEmailAddress -ne $NULL) 
+            {
+                out-logfile -string "External email address is present."
+
+                $functionPrimarySMTPAddress = $member.externalEmailAddress.split(":")
+
+                $functionPrimarySMTPAddress = $functionPrimarySMTPAddress[1]
+
+                out-logfile -string $functionPrimarySMTPAddress
+            }
+
             if ($azureData.objectID -contains $member.externalDirectoryObjectID)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
@@ -148,7 +169,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
@@ -178,7 +199,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID ="N/A"
@@ -189,8 +210,6 @@ function compare-recipientArrays
                         ErrorMessage = "N/A"
                     }
                 }
-
-         
 
                 out-logfile -string "Being Office 365 -> On premises evaluation."
                 out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
