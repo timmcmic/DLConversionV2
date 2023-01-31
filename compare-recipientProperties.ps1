@@ -1338,11 +1338,11 @@ function compare-recipientProperties
             ErrorMessage = "N/A"
         }
 
-        if ($azureData.mail -eq $office365.primarySMTPAddress)
+        if ($azureData.mail -eq $office365Data.primarySMTPAddress)
         {
             out-logfile "Azure mail attribute matches office 365 primary smtp address."
 
-            $functionObject.exchangeOnlineValue = $office365.primarySMTPAddress
+            $functionObject.exchangeOnlineValue = $office365Data.primarySMTPAddress
             $functionObject.isValidInExchangeOnline = "True"
             $functionObject.isValidMember = "TRUE"
 
@@ -1433,18 +1433,18 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluate simple display name."
 
-    if ($onPremData.simpleDisplayName -eq $NULL)
+    if ($onPremData.simpleDisplayNamePrintable -eq $NULL)
     {
-        $onPremData.simpleDisplayName = ""
+        $onPremData.simpleDisplayNamePrintable = ""
     }
 
-    if ($onPremData.simpleDisplayName -eq $office365Data.simpleDisplayName)
+    if ($onPremData.simpleDisplayNamePrintable -eq $office365Data.simpleDisplayName)
     {
         out-logfile -string "Simple display name matches between on premies and exchange online."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SimpleDisplayName"
-            OnPremisesValue = $onPremData.simpleDisplayName
+            OnPremisesValue = $onPremData.simpleDisplayNamePrintable
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.simpledisplayname
@@ -1463,7 +1463,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SimpleDisplayName"
-            OnPremisesValue = $onPremData.simpleDisplayName
+            OnPremisesValue = $onPremData.simpleDisplayNamePrintable
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.simpledisplayname
