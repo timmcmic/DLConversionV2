@@ -535,6 +535,7 @@ Function get-DLHealthReport
         office365GrantSendOnBehalfToEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ProxyAddressesEvalXML = @{"value" = "office365ProxyAddressesEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365AttributeEvalXML = @{"value" = "office365AttributeEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        summaryCountsXML = @{"value" = "summaryCountsXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
@@ -1671,21 +1672,6 @@ Function get-DLHealthReport
 
     out-logfile -string ("Time to Normalize DNs: "+$telemetryNormalizeDN.toString())
 
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-    out-logFile -string "Summary of group information:"
-    out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
-    out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
-    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
-    out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
-    out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
-    out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
-    out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
-    out-logfile -string ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
-    out-logfile -string ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
-    out-logfile -string ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count)
-    out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-
     #Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
@@ -1951,19 +1937,7 @@ Function get-DLHealthReport
 
     out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
 
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-    out-logfile -string ("Summary of dependencies found:")
-    out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
-    out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
-    out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
-    out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
-    out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
-    out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
-    out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
-    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-
-
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
@@ -2429,22 +2403,6 @@ Function get-DLHealthReport
     $telemetryCollectOffice365Dependency = ($telemetryFunctionEndTime - $telemetryFunctionStartTime).seconds
 
     out-logfile -string ("Time to gather Office 365 dependencies: "+$telemetryCollectOffice365Dependency.tostring())
-
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-    out-logfile -string ("Summary of dependencies found:")
-    out-logfile -string ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
-    out-logfile -string ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count)
-    out-logfile -string ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
-    out-logfile -string ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
-    out-logfile -string ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
-    out-logfile -string ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
-    out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
-    out-logfile -string ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
-    out-logfile -string ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
-    out-logfile -string ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
-    out-logfile -string ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)
-    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
-
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
@@ -2787,6 +2745,53 @@ Function get-DLHealthReport
     {
         out-logfile -string "No grant send on behalf to evaluation to export."
     }
+
+    Out-logfile -string "Record Counts."
+
+    $functionObject = New-Object PSObject -Property @{
+        OnPremisesMemberCount = $exchangeDLMembershipSMTP.count
+        AzureADMemberCount = $azureADDlMembership.count
+        Office365DLMemberCount = $office365DLMembership.count
+        OnPremisesAcceptMessagesFromSendersOrMembersCount = $exchangeAcceptMessagesSMTP.count
+        Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
+        OnPremisesRejectMessagesFromSendersOrMembersCount = $exchangeRejectMessagesSMTP.count
+        Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers
+        OnPremisesModeratedByCount = $exchangeModeratedBySMTP.count
+        Office365ModeratedByCount = $office365ModeratedBy.count
+        OnPremisesManagedByCount = $exchangeManagedBySMTP.count
+        Office365ManagedByCount = $office365ManagedBy.count
+        OnPremisesBypassModerationFromSendersOrMembers = $exchangeBypassModerationSMTP.count
+        Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
+        OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
+        Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
+        OnPremisesSendAsRightsOnGroup = $exchangeSendAsSMTP.count
+        Office365SendAsRightsOnGroup = $allOffice365SendAsAccessOnGroup.count
+        OnPremisesSendAsRightsOnOtherObjects = $allObjectsSendAsAccessNormalized.Count
+        Office365SendAsRightsOnOtherObjects = $allOffice365SendAsAccess.count
+        OnPremisesFullMailboxAccessRights = $allObjectsFullMailboxAccess.count
+        Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
+        OnPremsiesMailboxFolderRights = $allMailboxesFolderPermissions.count
+        Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
+        OnPremisesMemberOfOtherObjects = $allGroupsMemberOf.count
+        Office365MemberOfOtherObjects = $allOffice365MemberOf.count
+        OnPremsiesAcceptMessagesFromSendersOrMembersOtherObjects = $allGroupsAccept.count
+        Office365AcceptMessagesFromSendersOrMembersOtherObjects = $allOffice365Accept.count
+        OnPremisesRejectMessagesFromSendersOrMembersOtherObjects = $allGroupsReject.count
+        Office365RejectMessagesFromSendersOrMembersOtherObjects = $allOffice365Reject.count
+        OnPremiseManagedByOtherObjects = $allGroupsManagedBy.count
+        OnPremisesCoManagedByOtherObjects = $allGroupsCoManagedByBL.Count
+        Office365ManagedByOtherObjects = $allOffice365ManagedBy.count
+        OnPremisesBypassModerationFromSendersOrMembersOtherObjects = $allGroupsBypassModeration.count
+        Office365BypassModerationFromSendersOrMembersOtherObjects = $allOffice365BypassModeration.count
+        OnPremisesGrantSendOnBehalfToOtherObjects = $allGroupsGrantSendOnBehalfTo.count
+        Office365GrantSendOnBehalfToOtherObjects = $allOffice365GrantSendOnBehalfTo.count
+        OnPremisesMailboxForwardingAddress = $allUsersForwardingAddress.count
+        Office365MailboxForwardingAddress = $allOffice365ForwardingAddress.count
+        }
+
+        out-logfile -string $functionObject
+
+        out-xmlfile -itemToExport $functionObject -itemNameToExport $xmlFiles.summaryCountsXML.value
     
 
     # build the properties and metrics #
