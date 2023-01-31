@@ -2873,7 +2873,7 @@ th {
             'MakeTableDynamic'=$true;
             'TableCssClass'='grid';
             'Properties'='Membership',
-        @{n='Name';e={$_.Name}},
+        @{n='MemberName';e={$_.Name}},
         @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
         @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
         @{n='UserPrincipalName';e={$_.UserPrincipalName}},
@@ -2888,14 +2888,14 @@ th {
 
     out-logfile -string "Build and output the HTML report."
 
-
+<#
     $params = @{'CssStyleSheet'=$style;
                     'Title'="Distribution List Health Report for $groupSMTPAddress";
                     'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
                     'HTMLFragments'=@($html_members)}
     ConvertTo-EnhancedHTML @params |
     Out-File -FilePath c:\temp\health.html
-
+#>
 
     #=============================================================================================================================================
     #=============================================================================================================================================
