@@ -1554,48 +1554,84 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluate mail trip translations (which also covers mail tip."
 
-    if ($onPremData.msExchSenderHintTranslations -eq $NULL)
+    if ($onPremData.msExchSenderHintTranslations.count -gt 0)
     {
-        $onPremData.msExchSenderHintTranslations = ""
-    }
+        out-logfile -string "Send hints to evaluate."
 
-    if ($office365Data.MailTipTranslations -eq $onPremData.msExchSenderHintTranslations)
-    {
-        out-logfile -string "MailTipTranslations is the same between on premises and Office 365."
-
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "MailTipTranslations"
-            OnPremisesValue = $onPremData.msExchSenderHintTranslations
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.MailTipTranslations 
-            isValidInExchangeOnline = "True"
-            IsValidMember = "TRUE"
-            ErrorMessage = "N/A"
+        foreach ($member in $onPremData.msExchSenderHintTranslations)
+        {
+            if ($office365Data.MailTipTranslations -contains $onPremData.msExchSenderHintTranslations)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Attribute = "MailTipTranslations"
+                    OnPremisesValue = $member
+                    AzureADValue = "N/A"
+                    isValidInAzure = "N/A"
+                    ExchangeOnlineValue = $office365Data.mailTipTranslations
+                    isValidInExchangeOnline = "True"
+                    IsValidMember = "TRUE"
+                    ErrorMessage = "N/A"
+                }
+        
+                out-logfile -string $functionObject
+        
+                $functionReturnArray += $functionObject
+            }
+            else
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Attribute = "MailTipTranslations"
+                    OnPremisesValue = $member
+                    AzureADValue = "N/A"
+                    isValidInAzure = "N/A"
+                    ExchangeOnlineValue = "N/A"
+                    isValidInExchangeOnline = "False"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "ERROR_ONPREMISES_VALUE_NOT_IN_OFFICE365_EXCEPTION
+                }
+        
+                out-logfile -string $functionObject
+        
+                $functionReturnArray += $functionObject
+            }
         }
 
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-    else 
-    {
-        out-logfile -string "Mail tip translations are not the same between on premises and exchange online."
-
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "MailTipTranslations"
-            OnPremisesValue = $onPremData.msExchSenderHintTranslations
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.MailTipTranslations 
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        foreach ($member in $office365Data.mailTipTranslations)
+        {
+            if ($onPremData.msExchSenderHintTranslations -contains $member)
+            {
+                $functionObject = New-Object PSObject -Property @{
+                    Attribute = "MailTipTranslations"
+                    OnPremisesValue = $onPremData.msExchSenderHintTranslations
+                    AzureADValue = "N/A"
+                    isValidInAzure = "N/A"
+                    ExchangeOnlineValue = $member
+                    isValidInExchangeOnline = "True"
+                    IsValidMember = "TRUE"
+                    ErrorMessage = "N/A"
+                }
+        
+                out-logfile -string $functionObject
+        
+                $functionReturnArray += $functionObject
+            }
+            else {
+                $functionObject = New-Object PSObject -Property @{
+                    Attribute = "MailTipTranslations"
+                    OnPremisesValue = $onPremData.msExchSenderHintTranslations
+                    AzureADValue = "N/A"
+                    isValidInAzure = "N/A"
+                    ExchangeOnlineValue = $member
+                    isValidInExchangeOnline = "False"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "ERROR_OFFICE365_VALUE_NOT_ONPREMISES_EXCEPTION"
+                }
+        
+                out-logfile -string $functionObject
+        
+                $functionReturnArray += $functionObject
+            }
         }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
     }
 
     Out-LogFile -string "END compare-recipientProperties"
