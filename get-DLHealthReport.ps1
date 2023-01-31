@@ -534,6 +534,7 @@ Function get-DLHealthReport
         office365ManagedByEvalXML = @{"value" = "office365ManagedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365GrantSendOnBehalfToEvalXML = @{"value" = "office365GrantSendOnBehalfToEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ProxyAddressesEvalXML = @{"value" = "office365ProxyAddressesEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365AttributeEvalXML = = @{"value" = "office365AttributeEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
     }
 
 
@@ -2674,6 +2675,13 @@ Function get-DLHealthReport
     }
     catch {
         out-logile -string $_ -isError:$TRUE
+    }
+
+    if ($office365AttributeEval -ne $NULL)
+    {
+        out-logfile -string "Exporting the office 365 attribute eval."
+
+        out-xmlFile -itemToExport $office365AttributeEval -itemNameToExport $xmlFiles.office365AttributeEvalXML.value
     }
 
     if ($onPremMemberEval -ne $NULL)
