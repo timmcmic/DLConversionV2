@@ -564,8 +564,6 @@ function compare-recipientProperties
         $onPremData.extensionAttribute15 = ""
     }
 
-    if ($onPremData.)
-
     if ($onPremData.extensionAttribute1 -eq $office365Data.customAttribute1)
     {
         out-logfile -string "On premises and exchange online value are valid.."
