@@ -243,9 +243,9 @@ function compare-recipientArrays
 
                     $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
                 }
-                elseif ($onPremData.primarySMTPAddress -contains $member.primarySMTPAddress)
+                elseif ($onPremData.primarySMTPAddress -contains $functionPrimarySMTPAddress)
                 {
-                    out-logfile -string ("The object was located by primary SMTP Address: "+$member.primarySMTPAddress)
+                    out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
 
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
@@ -254,7 +254,7 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionObject.primarySMTPAddress)
+                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
 
                     $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
                 }
