@@ -2874,8 +2874,7 @@ th {
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
-        'Properties'=
-            @{n='MemberName';e={$_.MemberName}},
+        'Properties'='MemberName',
             @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
             @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
             @{n='UserPrincipalName';e={$_.UserPrincipalName}},
