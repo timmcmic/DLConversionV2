@@ -2930,13 +2930,22 @@ th {
 
         $htmlSections += $html_members_onPrem
     }
+
+    if ($htmlSections.count -gt 0)
+    {
+        $params = @{'CssStyleSheet'=$style;
+        'Title'="System Report for $computer";
+        'PreContent'="<h1>System Report for $computer</h1>";
+        'HTMLFragments'=$htmlSections}
+        ConvertTo-EnhancedHTML @params |
+        Out-File -FilePath c:\temp\test.html
+    }
+    else
+    {
+        out-logfile -string "No HTML report to generate - no data provided."
+    }
     
-    $params = @{'CssStyleSheet'=$style;
-    'Title'="System Report for $computer";
-    'PreContent'="<h1>System Report for $computer</h1>";
-    'HTMLFragments'=$htmlSections}
-    ConvertTo-EnhancedHTML @params |
-    Out-File -FilePath c:\temp\test.html
+    
 
     #=============================================================================================================================================
     #=============================================================================================================================================
