@@ -2970,7 +2970,7 @@ th {
                         @{n='OnPremisesValue';e={if ($_.OnPremisesValue -ne ""){$_.OnPremisesValue}else{""}}},
                         @{n='IsValidInAzure';e={$_.IsValidInAzure};css={if ($_.isValidInAzure -eq "False") { 'red' }}},
                         @{n='AzureADValue';e={if ($_.AzureADValue -ne ""){$_.AzureADValue}else{""}}},
-                        @{n='ExchangeOnlineValue';e={$_.ExchangeOnlineValue}},
+                        @{n='ExchangeOnlineValue';e={if ($_.ExchangeOnlineValue -ne ""){$_.ExchangeOnlineValue}else{""}}},
                         @{n='isValidInExchangeOnline';e={$_.isValidInExchangeOnline};css={if ($_.isValidInExchangeOnline -eq "False") { 'red' }}},
                         @{n='IsValidMember';e={$_.IsValidMember};css={if ($_.IsValidMember -eq "False"){ 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
