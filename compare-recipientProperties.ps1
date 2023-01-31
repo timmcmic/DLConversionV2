@@ -1477,8 +1477,126 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
-    
+    out-logfile -string "Evaluating send moderation notifications."
 
+    if (($onPremData.msExchModerationFlags -eq "0") -or ($onPremData.msExchModerationFlags -eq "1")  )
+    {
+        out-logfile -string ("The moderation flags are 0 / 2 / 6 - send notifications to never."+$onPremData.msExchModerationFlags)
+
+        $functionSendModerationNotifications="Never"
+
+        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+    }
+    elseif (($onPremData.msExchModerationFlags -eq "2") -or ($onPremData.msExchModerationFlags -eq "3")  )
+    {
+        out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting send notifications to internal."+$onPremData.msExchModerationFlags)
+
+        $functionSendModerationNotifications="Internal"
+
+        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+
+    }
+    elseif (($onPremData.msExchModerationFlags -eq "6") -or ($onPremData.msExchModerationFlags -eq "7")  )
+    {
+        out-logfile -string ("The moderation flags are 0 / 2 / 6 - setting send notifications to always."+$onPremData.msExchModerationFlags)
+
+        $functionSendModerationNotifications="Always"
+
+        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+    }
+    else 
+    {
+        out-logFile -string ("The moderation flags are not set.  Setting to default of always.")
+        
+        $functionSendModerationNotifications="Always"
+
+        out-logFile -string ("The function send moderation notification is = "+$functionSendModerationNotifications)
+    }
+
+    if ($functionSendModerationNotifications -eq $office365Data.SendModerationNotifications)
+    {
+        out-logfile -string "Send moderation notifications matches between on premises and exchange online."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SendMOderationNotifications"
+            OnPremisesValue = $functionSendModerationNotifications
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.SendModerationNotifications
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else
+    {
+        out-logfile -string "Send moderation notifications does not match between on premises and office 365."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "SendMOderationNotifications"
+            OnPremisesValue = $functionSendModerationNotifications
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.SendModerationNotifications
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    out-logfile -string "Evaluate mail trip translations (which also covers mail tip."
+
+    if ($onPremData.msExchSenderHintTranslations -eq $NULL)
+    {
+        $onPremData.msExchSenderHintTranslations = ""
+    }
+
+    if ($office365Data.MailTipTranslations -eq $onPremData.msExchSenderHintTranslations)
+    {
+        out-logfile -string "MailTipTranslations is the same between on premises and Office 365."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MailTipTranslations 
+            isValidInExchangeOnline = "True"
+            IsValidMember = "TRUE"
+            ErrorMessage = "N/A"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    else 
+    {
+        out-logfile -string "Mail tip translations are not the same between on premises and exchange online."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MailTipTranslations 
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
