@@ -2892,7 +2892,7 @@ th {
                         @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
                         @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
                         @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "False") { 'red' }}},
                         @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
@@ -2920,7 +2920,7 @@ th {
                         @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
                         @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
                         @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "False") { 'red' }}},
                         @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
@@ -2944,7 +2944,7 @@ th {
         'MakeHiddenSection'=$true;
         'Properties'=   @{n='ProxyAddress';e={$_.proxyAddress}},
                         @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "False") { 'red' }}},
                         @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
