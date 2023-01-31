@@ -2884,8 +2884,9 @@ th {
                         @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
                         @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
                         @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if ($_.isPresentExchangeOnline -eq "False"){ 'red' }}}
-
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
         }
 
         $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
