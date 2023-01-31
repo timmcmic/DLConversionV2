@@ -2877,7 +2877,7 @@ th {
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
         'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}}
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}}
         }
 
         $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
