@@ -242,6 +242,10 @@ function compare-recipientArrays
                     $functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
 
                     $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+
+                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+
+                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
                 }
                 elseif ($onPremData.primarySMTPAddress -contains $functionPrimarySMTPAddress)
                 {
@@ -257,6 +261,10 @@ function compare-recipientArrays
                     $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
 
                     $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+
+                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+
+                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
                 }
                 else 
                 {
