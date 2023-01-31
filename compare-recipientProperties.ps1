@@ -1587,7 +1587,7 @@ function compare-recipientProperties
                     ExchangeOnlineValue = "N/A"
                     isValidInExchangeOnline = "False"
                     IsValidMember = "FALSE"
-                    ErrorMessage = "ERROR_ONPREMISES_VALUE_NOT_IN_OFFICE365_EXCEPTION
+                    ErrorMessage = "ERROR_ONPREMISES_VALUE_NOT_IN_OFFICE365_EXCEPTION"
                 }
         
                 out-logfile -string $functionObject
@@ -1615,7 +1615,8 @@ function compare-recipientProperties
         
                 $functionReturnArray += $functionObject
             }
-            else {
+            else 
+            {
                 $functionObject = New-Object PSObject -Property @{
                     Attribute = "MailTipTranslations"
                     OnPremisesValue = $onPremData.msExchSenderHintTranslations
