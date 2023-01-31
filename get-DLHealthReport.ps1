@@ -2936,7 +2936,7 @@ th {
     if ($office365ProxyAddressEval.count -gt 0)
     {
         $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+        'PreContent'='<h2>&diams; Proxy Address Evaluation</h2>';
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
