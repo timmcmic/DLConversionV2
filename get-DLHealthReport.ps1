@@ -2876,7 +2876,8 @@ th {
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
-        'Properties'=   @{n='Member';e={$_.name}}
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}}
         }
 
         $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
