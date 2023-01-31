@@ -2890,6 +2890,8 @@ th {
                         @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
+
+        write-hashTable -hashTable $office365MemberEvalHash
     }    
 
     $html_members = $office365MemberEvalHash | ConvertTo-EnhancedHTMLFragment @params
