@@ -2876,15 +2876,7 @@ th {
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
-        'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
-                        @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
-                        @{n='UserPrincipalName';e={$_.UserPrincipalName}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -or ($_.IsPresentOnPremises -ne "True")) { 'yellow' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        'Properties'=   @{n='Member';e={$_.name}}
         }
 
         $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
