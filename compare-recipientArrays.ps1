@@ -145,9 +145,9 @@ function compare-recipientArrays
                 $functionObject = New-Object PSObject -Property @{
                     Name = $member.name
                     PrimarySMTPAddress = $member.primarySMTPAddress
-                    UserPrincipalName = $functionAzureObject.userPrincipalName
+                    UserPrincipalName = (if ($functionAzureObject.userPrincipalName -ne $NULL) {$functionAzureObject.userPrincipalName} else {"N/A"})
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                    ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
+                    ObjectSID = (if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL) {$functionAzureObject.OnPremisesSecurityIdentifier} else {"N/A"})
                     isPresentOnPremises = "False"
                     isPresentInAzure = "True"
                     isPresentInExchangeOnline = "Source"
