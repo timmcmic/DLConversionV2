@@ -1723,9 +1723,44 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    if ($onPremData.msExchSenderHintTranslations -eq $NULL)
+    {
+        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
+    }
+    elseif ($onPremData.msExchSenderHintTranslations -ne "")
+    {
+        $onPremData.msExchSenderHintTranslations = "!*NotSet*!"
+    }
+
+    if ($office365Data.MailTipTranslations -eq $NULL)
+    {
+        $office365Data.MailTipTranslations = "!*NotSet*!"
+    }
+    elseif ($office365Data.MailTipTranslations -eq "")
+    {
+        $office365Data.MailTipTranslations = "!*NotSet*!"
+    }
+
     out-logfile -string "Evaluate mail trip translations (which also covers mail tip."
 
-    if ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
+    if (($onPremData.msExchSenderHintTranslations -eq "!*NotSet*!") -and ($office365Data.MailtipTranslations -eq "!*NotSet*!"))
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MailtipTranslations
+            isValidInExchangeOnline = "True"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_COUNT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+    elseif ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
     {
         out-logfile -string "Count of mail tips is good - assume values are the same."
 
@@ -1749,7 +1784,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            OnPremisesValue = "$onPremData.msExchSenderHintTranslations"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MailtipTranslations
