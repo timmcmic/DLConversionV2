@@ -2933,7 +2933,7 @@ th {
 
     out-logfile -string "Generate report for proxy address verification."
 
-    if ($office365ProxyAddressEval.count -gt 0)
+    if ($office365ProxyAddressesEval.count -gt 0)
     {
         $params = @{'As'='Table';
         'PreContent'='<h2>&diams; Proxy Address Evaluation</h2>';
@@ -2950,7 +2950,7 @@ th {
                         @{n='ErrorMessage';e={$_.ErrorMessage}}
         }
 
-        $html_proxyAddresses = ConvertTo-EnhancedHTMLFragment -InputObject $office365ProxyAddressEval @params
+        $html_proxyAddresses = ConvertTo-EnhancedHTMLFragment -InputObject $office365ProxyAddressesEval @params
 
         $htmlSections += $html_proxyAddresses
     }
