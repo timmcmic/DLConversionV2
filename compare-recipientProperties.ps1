@@ -1573,6 +1573,24 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject
     }
+    else {
+        out-logfile -string "Mail tip translation counts are not the same - assume out of sync error."
+
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "MailTipTranslations"
+            OnPremisesValue = $onPremData.msExchSenderHintTranslations
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = $office365Data.MailtipTranslations
+            isValidInExchangeOnline = "True"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_COUNT_NOT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
 
     Out-LogFile -string "END compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
