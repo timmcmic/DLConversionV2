@@ -2882,8 +2882,8 @@ th {
                         @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
                         @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
                         @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -and ($_.IsPresentOnPremises -ne "True")) { 'red' }}}
-
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
         }
 
         $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
