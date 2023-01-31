@@ -1433,14 +1433,18 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluate simple display name."
 
+    if ($onPremData.displayNamePrintable -eq $NULL)
+    {
+        $onPremData.displayNamePrintable = ""
+    }
 
-    if ($onPremData.simpleDisplayNamePrintable -eq $office365Data.simpleDisplayName)
+    if ($onPremData.DisplayNamePrintable -eq $office365Data.simpleDisplayName)
     {
         out-logfile -string "Simple display name matches between on premies and exchange online."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SimpleDisplayName"
-            OnPremisesValue = $onPremData.simpleDisplayNamePrintable
+            OnPremisesValue = $onPremData.DisplayNamePrintable
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.simpledisplayname

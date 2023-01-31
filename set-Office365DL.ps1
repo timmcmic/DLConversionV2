@@ -386,9 +386,9 @@
                 $functionDisplayName = $office365DLConfiguration.displayName    
             }
 
-            if ($originalDLConfiguration.simpleDisplayNamePrintable -ne $NULL)
+            if ($originalDLConfiguration.DisplayNamePrintable -ne $NULL)
             {
-                $functionSimpleDisplayName = $originalDLConfiguration.simpleDisplayNamePrintable
+                $functionSimpleDisplayName = $originalDLConfiguration.displayNamePrintable
             }
             else 
             {
