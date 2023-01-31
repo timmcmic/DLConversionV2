@@ -2873,29 +2873,39 @@ th {
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
-        'TableCssClass'='grid'
+        'TableCssClass'='grid';
+        'Properties'=
+            @{n='MemberName';e={$_.MemberName}},
+            @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
+            @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
+            @{n='UserPrincipalName';e={$_.UserPrincipalName}},
+            @{n='objectSID';e={$_.objectSID}},
+            @{n='PresentActiveDirectory';e={$_.PresentActiveDirectory};css={if (($_.presentActiveDirectory -ne "Source") -or ($_.presentActiveDirectory -ne "True")) { 'yellow' }}},
+            @{n='PresentAzureActiveDirectory';e={$_.PresentAzureActiveDirectory};css={if ($_.presentAzureActiveDirectory -ne "True") { 'yellow' }}},
+            @{n='PresentExchangeOnline';e={$_.PresentExchangeOnline};css={if (($_.PresentExchangeOnline -ne "Source") -or ($_.PresentExchangeOnline -ne "True")) { 'yellow' }}},
+            @{n='ValidMember';e={$_.ValidMember};css={if ($_.validMember -ne "True") { 'red' }}},
+            @{n='ErrorMessage';e={$_.ErrorMessage}}
         }
 
-        write-hashTable -hashTable $params
+        foreach ($member in $office365MemberEval)
+        {
+            $props =    @{'MemberName'=$member.name;
+                        'ExternalDirectoryObjectID'=$member.externalDirectoryObjectID;
+                        'PrimarySMTPAddress'=$member.primarySMTPAddress;
+                        'UserPrincipalName'=$member.userPrincipalName;
+                        'ObjectSID'=$member.objectSID;
+                        'PresentActiveDirectory'=$member.isPresentOnPremises;
+                        'PresentAzureActiveDirectory'=$member.isPresentInAzure;
+                        'PresentExchangeOnline'=$member.isPresentExchangeOnline;
+                        'ValidMember'=$member.isValidMember;
+                        'ErrorMessage'=$member.ErrorMessage}
+        }
 
-        out-logfile -string "Creating hash table of the objects to output."
+        $office365MemberEvalHash = new-object -TypeName PSObject -Property $props
 
-        $office365MemberEvalHash = $office365MemberEval.getEnumerator()`
-            | select    @{n='MemberName';e={$_.Name}},
-                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
-                        @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
-                        @{n='UserPrincipalName';e={$_.UserPrincipalName}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -or ($_.IsPresentOnPremises -ne "True")) { 'yellow' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        $html_members = $office365MemberEvalHash | ConvertTo-EnhancedHTMLFragment @params
 
-        write-hashTable -hashTable $office365MemberEvalHash
     }    
-
-    $html_members = $office365MemberEvalHash | ConvertTo-EnhancedHTMLFragment @params
-
 
     out-logfile -string "Generate members html segment."
 
