@@ -2864,62 +2864,39 @@ th {
 } 
 "@
 
-    if ($office365memberEval.count -gt 0)
-    {
-        out-logfile -string "Office 365 Member Eval count > 0"
+    out-logfile -string $style
 
+    out-logfile -string "Generate HTML fragment for Office365MemberEval."
+
+    if ($office365MemberEval.count -gt 0)
+    {
         $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Membership Analysis</h2>';
+        'PreContent'='<h2>&diams; Member Analysis</h2>';
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
-        'Properties'='MemberName',
-            @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
-            @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
-            @{n='UserPrincipalName';e={$_.UserPrincipalName}},
-            @{n='objectSID';e={$_.objectSID}},
-            @{n='PresentActiveDirectory';e={$_.PresentActiveDirectory};css={if (($_.presentActiveDirectory -ne "Source") -or ($_.presentActiveDirectory -ne "True")) { 'yellow' }}},
-            @{n='PresentAzureActiveDirectory';e={$_.PresentAzureActiveDirectory};css={if ($_.presentAzureActiveDirectory -ne "True") { 'yellow' }}},
-            @{n='PresentExchangeOnline';e={$_.PresentExchangeOnline};css={if (($_.PresentExchangeOnline -ne "Source") -or ($_.PresentExchangeOnline -ne "True")) { 'yellow' }}},
-            @{n='ValidMember';e={$_.ValidMember};css={if ($_.validMember -ne "True") { 'red' }}},
-            @{n='ErrorMessage';e={$_.ErrorMessage}}
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={$_.externalDirectoryObjectID}},
+                        @{n='PrimarySMTPAddress';e={$_.PrimarySMTPAddress}},
+                        @{n='UserPrincipalName';e={$_.UserPrincipalName}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if (($_.isPresentOnPremsies -ne "Source") -or ($_.IsPresentOnPremises -ne "True")) { 'yellow' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'yellow' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentExchangeOnline};css={if (($_.isPresentExchangeOnline -ne "Source") -or ($_.isPresentExchangeOnline -ne "True")) { 'yellow' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
         }
 
-        foreach ($member in $office365MemberEval)
-        {
-            $props =    @{'MemberName'=$member.name;
-                        'ExternalDirectoryObjectID'=$member.externalDirectoryObjectID;
-                        'PrimarySMTPAddress'=$member.primarySMTPAddress;
-                        'UserPrincipalName'=$member.userPrincipalName;
-                        'ObjectSID'=$member.objectSID;
-                        'PresentActiveDirectory'=$member.isPresentOnPremises;
-                        'PresentAzureActiveDirectory'=$member.isPresentInAzure;
-                        'PresentExchangeOnline'=$member.isPresentExchangeOnline;
-                        'ValidMember'=$member.isValidMember;
-                        'ErrorMessage'=$member.ErrorMessage}
-        }
+        $html_members = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
+    }
 
-        $office365MemberEvalHash = new-object -TypeName PSObject -Property $props
-
-        $html_members = $office365MemberEvalHash | ConvertTo-EnhancedHTMLFragment @params
-
-    }    
-
-    out-logfile -string "Generate members html segment."
-
-e
-
-    out-logfile -string "Build and output the HTML report."
-
-<#
+    
     $params = @{'CssStyleSheet'=$style;
-                    'Title'="Distribution List Health Report for $groupSMTPAddress";
-                    'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
-                    'HTMLFragments'=@($html_members)}
+    'Title'="System Report for $computer";
+    'PreContent'="<h1>System Report for $computer</h1>";
+    'HTMLFragments'=@($html_members)}
     ConvertTo-EnhancedHTML @params |
-    Out-File -FilePath c:\temp\health.html
-#>
+    Out-File -FilePath c:\temp\test.html
 
     #=============================================================================================================================================
     #=============================================================================================================================================
