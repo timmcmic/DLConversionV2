@@ -1723,8 +1723,10 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
-    if (($onPremData.msExchSenderHintTranslations -eq "!*NotSet*!") -and ($office365Data.MailtipTranslations -eq "!*NotSet*!"))
+    if ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
     {
+        out-logfile -string "Count of mail tips is good - assume values are the same."
+
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
             OnPremisesValue = "ManuallyVerify"
@@ -1740,34 +1742,15 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject
     }
-    elseif ($onPremData.msExchSenderHintTranslations.count -eq $office365Data.MailtipTranslations.count)
-    {
-        out-logfile -string "Count of mail tips is good - assume values are the same."
-
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "MailTipTranslations"
-            OnPremisesValue = $onPremData.msExchSenderHintTranslations
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.MailtipTranslations
-            isValidInExchangeOnline = "True"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_COUNT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
     else {
         out-logfile -string "Mail tip translation counts are not the same - assume out of sync error."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = "$onPremData.msExchSenderHintTranslations"
+            OnPremisesValue = "ManuallyVerify"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.MailtipTranslations
+            ExchangeOnlineValue = "ManuallyVerify"
             isValidInExchangeOnline = "True"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_COUNT_NOT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
