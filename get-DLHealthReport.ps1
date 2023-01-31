@@ -2931,6 +2931,30 @@ th {
         $htmlSections += $html_members_onPrem
     }
 
+    out-logfile -string "Generate report for proxy address verification."
+
+    if ($office365ProxyAddressEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='ProxyAddress';e={$_.proxyAddress}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -ne "True") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_proxyAddresses = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
+
+        $htmlSections += $html_proxyAddresses
+    }
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
@@ -2950,6 +2974,48 @@ th {
     #=============================================================================================================================================
     #=============================================================================================================================================
     #=============================================================================================================================================
+
+    <#
+    $functionObject = New-Object PSObject -Property @{
+        OnPremisesMemberCount = $exchangeDLMembershipSMTP.count
+        AzureADMemberCount = $azureADDlMembership.count
+        Office365DLMemberCount = $office365DLMembership.count
+        OnPremisesAcceptMessagesFromSendersOrMembersCount = $exchangeAcceptMessagesSMTP.count
+        Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
+        OnPremisesRejectMessagesFromSendersOrMembersCount = $exchangeRejectMessagesSMTP.count
+        Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers.count
+        OnPremisesModeratedByCount = $exchangeModeratedBySMTP.count
+        Office365ModeratedByCount = $office365ModeratedBy.count
+        OnPremisesManagedByCount = $exchangeManagedBySMTP.count
+        Office365ManagedByCount = $office365ManagedBy.count
+        OnPremisesBypassModerationFromSendersOrMembers = $exchangeBypassModerationSMTP.count
+        Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
+        OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
+        Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
+        OnPremisesSendAsRightsOnGroup = $exchangeSendAsSMTP.count
+        Office365SendAsRightsOnGroup = $allOffice365SendAsAccessOnGroup.count
+        OnPremisesSendAsRightsOnOtherObjects = $allObjectsSendAsAccessNormalized.Count
+        Office365SendAsRightsOnOtherObjects = $allOffice365SendAsAccess.count
+        OnPremisesFullMailboxAccessRights = $allObjectsFullMailboxAccess.count
+        Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
+        OnPremsiesMailboxFolderRights = $allMailboxesFolderPermissions.count
+        Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
+        OnPremisesMemberOfOtherObjects = $allGroupsMemberOf.count
+        Office365MemberOfOtherObjects = $allOffice365MemberOf.count
+        OnPremsiesAcceptMessagesFromSendersOrMembersOtherObjects = $allGroupsAccept.count
+        Office365AcceptMessagesFromSendersOrMembersOtherObjects = $allOffice365Accept.count
+        OnPremisesRejectMessagesFromSendersOrMembersOtherObjects = $allGroupsReject.count
+        Office365RejectMessagesFromSendersOrMembersOtherObjects = $allOffice365Reject.count
+        OnPremiseManagedByOtherObjects = $allGroupsManagedBy.count
+        OnPremisesCoManagedByOtherObjects = $allGroupsCoManagedByBL.Count
+        Office365ManagedByOtherObjects = $allOffice365ManagedBy.count
+        OnPremisesBypassModerationFromSendersOrMembersOtherObjects = $allGroupsBypassModeration.count
+        Office365BypassModerationFromSendersOrMembersOtherObjects = $allOffice365BypassModeration.count
+        OnPremisesGrantSendOnBehalfToOtherObjects = $allGroupsGrantSendOnBehalfTo.count
+        Office365GrantSendOnBehalfToOtherObjects = $allOffice365GrantSendOnBehalfTo.count
+        OnPremisesMailboxForwardingAddress = $allUsersForwardingAddress.count
+        Office365MailboxForwardingAddress = $allOffice365ForwardingAddress.count
+        }#>
     
 
     # build the properties and metrics #
