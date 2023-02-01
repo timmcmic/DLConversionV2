@@ -1567,6 +1567,8 @@ function compare-recipientProperties
 
         out-logfile -string $functionHiddenFromAddressListEnabled 
     }
+
+    $test = $functionHiddenFromAddressListEnabled 
     
     if ($office365Data.HiddenFromAddressListsEnabled -eq $functionHiddenFromAddressListEnabled)
     {
@@ -1574,7 +1576,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            onpremisesvalue = $functionHiddenFromAddressListEnabled
+            onpremisesvalue = $test
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
