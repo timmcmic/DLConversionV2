@@ -3566,7 +3566,7 @@ th {
     {
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Distribution List Membership</h2>'}
+                    'PreContent'='<h2>&diams;Active Directory Distribution List Membership Expanded</h2>'}
 
         $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
 
@@ -3587,7 +3587,125 @@ th {
         out-logfile -string "No HTML report to generate - no data provided."
     }
     
+    out-logfile -string "Creating HTML output for Azure AD Membership."
+
+    if ($azureADDlMembership.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Azure Active Directory Distribution List Membership Expanded</h2>'}
+
+        $html_azureADMembers = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDlMembership @params
+
+        $htmlSections += $html_azureADMembers
+    }
+
+    out-logfile -string "Creating HTML output for Office 365 Membership."
+
+    if ($office365DLMembership.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Distribution List Membership Expanded</h2>'}
+
+        $html_office365Members = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLMembership @params
+
+        $htmlSections += $html_office365Members
+    }
+
+    out-logfile -string "Creating HTML output for normalized on premises accept messages from."
+
+    if ($exchangeAcceptMessagesSMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Accept Messages From Senders Or Members Expanded</h2>'}
+
+        $html_onPremExpandedAccept = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeAcceptMessagesSMTP @params
+
+        $htmlSections += $html_onPremExpandedAccept
+    }
+
+    out-logfile -string "Creating HTML output for normalized on premises reject messages from."
+
+    if ($exchangeRejectMessagesSMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Reject Messages From Senders Or Members Expanded</h2>'}
+
+        $html_onPremExpandedReject = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeRejectMessagesSMTP @params
+
+        $htmlSections += $html_onPremExpandedReject
+    }
     
+    out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
+
+    if ($exchangeModeratedBySMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory ModeratedBy Expanded</h2>'}
+
+        $html_onPremExpandedModeratedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeModeratedBySMTP @params
+
+        $htmlSections += $html_onPremExpandedModeratedBy
+    }
+
+    out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
+
+    if ($exchangeManagedBySMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory ManagedBy Expanded</h2>'}
+
+        $html_onPremExpandedManagedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeManagedBySMTP @params
+
+        $htmlSections += $html_onPremExpandedManagedBy
+    }
+
+    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+
+    if ($exchangeBypassModerationSMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Bypass Moderation From Senders Or Members Expanded</h2>'}
+
+        $html_onPremExpandedBypassModeration = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeBypassModerationSMTP @params
+
+        $htmlSections += $html_onPremExpandedBypassModeration
+    }
+
+    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+
+    if ($exchangeGrantSendOnBehalfToSMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
+
+        $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
+
+        $htmlSections += $html_onPremExpandedGrantSend
+    }
+
+
+
+    if ($htmlSections.count -gt 0)
+    {
+        $params = @{'CssStyleSheet'=$style;
+        'Title'="Distribution List Health Report for $groupSMTPAddress";
+        'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
+        'HTMLFragments'=$htmlSections}
+        ConvertTo-EnhancedHTML @params |
+        Out-File -FilePath c:\temp\test.html
+    }
+    else
+    {
+        out-logfile -string "No HTML report to generate - no data provided."
+    }
 
     #=============================================================================================================================================
     #=============================================================================================================================================
@@ -3595,20 +3713,18 @@ th {
 
     <#
     $functionObject = New-Object PSObject -Property @{
-        OnPremisesMemberCount = $exchangeDLMembershipSMTP.count
-        AzureADMemberCount = $azureADDlMembership.count
-        Office365DLMemberCount = $office365DLMembership.count
-        OnPremisesAcceptMessagesFromSendersOrMembersCount = $exchangeAcceptMessagesSMTP.count
+
+
         Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
-        OnPremisesRejectMessagesFromSendersOrMembersCount = $exchangeRejectMessagesSMTP.count
+
         Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers.count
-        OnPremisesModeratedByCount = $exchangeModeratedBySMTP.count
+        OnPremisesModeratedByCount = 
         Office365ModeratedByCount = $office365ModeratedBy.count
-        OnPremisesManagedByCount = $exchangeManagedBySMTP.count
+        OnPremisesManagedByCount = 
         Office365ManagedByCount = $office365ManagedBy.count
-        OnPremisesBypassModerationFromSendersOrMembers = $exchangeBypassModerationSMTP.count
+        OnPremisesBypassModerationFromSendersOrMembers = 
         Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
-        OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
+        OnPremisesGrantSendOnBehalfTo = 
         Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
 
  
