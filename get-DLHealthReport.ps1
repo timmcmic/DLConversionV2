@@ -3394,7 +3394,7 @@ th {
     {
         $params = @{'As'='List';
         'MakeHiddenSection'=$true;
-        'PreContent'='<h2>&diams;Active Directory Objects with Group with Full Mailbox Access</h2>';
+        'PreContent'='<h2>&diams;On Premises Mailbox with Group with Full Mailbox Access</h2>';
         'Properties'=   @{n='MemberDN';e={$_.Identity}}
         }
 
