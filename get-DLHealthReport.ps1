@@ -922,6 +922,10 @@ Function get-DLHealthReport
     }
 
     $originalDLConfigurationHTML = $originalDLConfiguration | foreach { $_ } 
+
+    $originalDLConfigurationHTML
+
+    exit
     
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
