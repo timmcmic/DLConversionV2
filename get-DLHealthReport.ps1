@@ -2869,6 +2869,8 @@ th {
 
     if ($originalDLConfiguration -ne $NULL)
     {
+        $originalDLConfiguration
+        
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
                     'PreContent'='<h2>&diams;Active Directory Distribution List Configuration</h2>'}
