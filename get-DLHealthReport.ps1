@@ -921,7 +921,7 @@ Function get-DLHealthReport
         out-logfile -string $_ -isError:$TRUE
     }
 
-    $originalDLConfigurationHTML = $originalDLConfiguration
+    $originalDLConfigurationHTML = ($originalDLConfiguration | ConvertTo-Json) | ConvertFrom-Json
     
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
