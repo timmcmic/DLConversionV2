@@ -518,137 +518,137 @@ function compare-recipientProperties
 
     if ($onPremData.extensionAttribute1 -eq $NULL)
     {
-        $onPremData.extensionAttribute1 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute1 -eq "")
     {
-        $onPremData.extensionAttribute1 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute2 -eq $NULL)
     {
-        $onPremData.extensionAttribute2 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute2 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute2 -eq "")
     {
-        $onPremData.extensionAttribute2 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute2 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute3 -eq $NULL)
     {
-        $onPremData.extensionAttribute3 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute3 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute3 -eq "")
     {
-        $onPremData.extensionAttribute3 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute3 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute4 -eq $NULL)
     {
-        $onPremData.extensionAttribute4 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute4 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute4 -eq "")
     {
-        $onPremData.extensionAttribute4 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute4 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute5 -eq $NULL)
     {
-        $onPremData.extensionAttribute5 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute5 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute5 -eq "")
     {
-        $onPremData.extensionAttribute5 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute5 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute6 -eq $NULL)
     {
-        $onPremData.extensionAttribute6 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute6 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute6 -eq "")
     {
-        $onPremData.extensionAttribute6 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute6 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute7 -eq $NULL)
     {
-        $onPremData.extensionAttribute7 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute7 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute7 -eq "")
     {
-        $onPremData.extensionAttribute7 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute7 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute8 -eq $NULL)
     {
-        $onPremData.extensionAttribute8 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute8 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute8 -eq "")
     {
-        $onPremData.extensionAttribute8 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute8 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute9 -eq $NULL)
     {
-        $onPremData.extensionAttribute9 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute9 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute9 -eq "")
     {
-        $onPremData.extensionAttribute9 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute9 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute10 -eq $NULL)
     {
-        $onPremData.extensionAttribute10 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute10 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute10 -eq "")
     {
-        $onPremData.extensionAttribute10 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute10 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute11 -eq $NULL)
     {
-        $onPremData.extensionAttribute11 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute11 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute11 -eq "")
     {
-        $onPremData.extensionAttribute11 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute11 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute12 -eq $NULL)
     {
-        $onPremData.extensionAttribute12 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute12 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute12 -eq "")
     {
-        $onPremData.extensionAttribute12 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute12 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute13 -eq $NULL)
     {
-        $onPremData.extensionAttribute13 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute13 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute13 -eq "")
     {
-        $onPremData.extensionAttribute13 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute13 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute14 -eq $NULL)
     {
-        $onPremData.extensionAttribute14 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute14 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute14 -eq "")
     {
-        $onPremData.extensionAttribute14 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute14 -Value "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute15 -eq $NULL)
     {
-        $onPremData.extensionAttribute15 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute15 -Value "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute15 -eq "")
     {
-        $onPremData.extensionAttribute15 = "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute15 -Value "!*NotSet*!"
     }
 
     Out-logfile -string "Evaluating extension attributes."
