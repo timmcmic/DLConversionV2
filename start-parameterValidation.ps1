@@ -91,6 +91,7 @@
             $remoteDriveLetter,
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
             [AllowNull()]
             $threadCount=0
         )
@@ -219,7 +220,7 @@
             {
                 Out-LogFile -string "ERROR:  Only one method of azure cloud authentication can be specified.  Use either azure cloud credentials or azure cloud certificate thumbprint." -isError:$TRUE
             }
-            elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
+            elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq "") -and ($threadCount -ne 0))
             {
                 out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." 
                 out-logfile -string "https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/" -isError:$TRUE

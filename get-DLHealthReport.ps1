@@ -761,7 +761,7 @@ Function get-DLHealthReport
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 0
 
     #Validate that all information for the certificate connection has been provieed.
 
