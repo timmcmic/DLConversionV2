@@ -3236,8 +3236,7 @@ th {
         $params = @{'As'='List';
         'MakeHiddenSection'=$true;
         'PreContent'='<h2>&diams;Group Member Of Other Groups</h2>';
-        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
-                        @{n='MemberCN';e={$_.canonicalName}}
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
         }
 
         $html_members_onPremMemberOf = ConvertTo-EnhancedHTMLFragment -InputObject $allgroupsmemberof @params
@@ -3252,8 +3251,7 @@ th {
         $params = @{'As'='List';
         'MakeHiddenSection'=$true;
         'PreContent'='<h2>&diams;Group Accept Messages From Senders or Members on Other Groups</h2>';
-        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
-                        @{n='MemberCN';e={$_.canonicalName}}
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
         }
 
         $html_members_onPremAccept = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsAccept @params
@@ -3267,14 +3265,127 @@ th {
     {
         $params = @{'As'='List';
         'MakeHiddenSection'=$true;
-        'PreContent'='<h2>&diams;Group Accept Messages From Senders or Members on Other Groups</h2>';
-        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
-                        @{n='MemberCN';e={$_.canonicalName}}
+        'PreContent'='<h2>&diams;Group Reject Messages From Senders or Members on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
         }
 
         $html_members_onPremReject = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsReject @params
 
         $htmlSections += $html_members_onPremReject
+    }
+
+    out-logfile -string "Build HTML file for groups managed by."
+
+    $allGroupsManagedByHTML = $allGroupsManagedBy + $allGroupsCoManagedByBL
+
+    if ($allGroupsManagedByHTML.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Group ManagedBy on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_onPremManagedBy = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsManagedByHTML @params
+
+        $htmlSections += $html_members_onPremManagedBy
+    }
+
+    out-logfile -string "Build HTML file for bypass moderation from senders or members."
+
+    if ($allGroupsBypassModeration.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Group Bypass Moderation From Senders or Members on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_onPremBypass = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsBypassModeration @params
+
+        $htmlSections += $html_members_onPremBypass
+    }
+
+    out-logfile -string "Build HTML file for grant send on behalf to."
+
+    if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Grant Send On Behalf To on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_onPremGrant = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsGrantSendOnBehalfTo @params
+
+        $htmlSections += $html_members_onPremGrant
+    }
+
+    out-logfile -string "Build HTML file for forwarding."
+
+    if ($allUsersForwardingAddress.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Actve Directory Recipients With Group As ForwardingAddress</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_onPremForward = ConvertTo-EnhancedHTMLFragment -InputObject $allUsersForwardingAddress @params
+
+        $htmlSections += $html_members_onPremForward
+    }
+
+    out-logfile -string "Build HTML for send as on group.."
+
+    if ($exchangeSendAsSMTP.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Active Directory Objects with SendAs on Group</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.DN}}
+        }
+
+        $html_members_onPremSendAsOnGroup = ConvertTo-EnhancedHTMLFragment -InputObject $exchangeSendAsSMTP @params
+
+        $htmlSections += $html_members_onPremSendAsOnGroup
+    }
+
+    out-logfile -string "Build HTML of SendAs on other objects."
+
+    if ($allObjectsSendAsAccessNormalized.Count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Active Directory Objects with Group with SendAs Rights</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.DN}}
+        }
+
+        $html_members_onPremSendAs = ConvertTo-EnhancedHTMLFragment -InputObject $allObjectsSendAsAccessNormalized @params
+
+        $htmlSections += $html_members_onPremSendAs
+    }
+
+    out-logfile -string "Build HTML File for Mailbox Folder Permissions."
+
+    if ($allMailboxesFolderPermissions.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; On Premises Mailbox Folder Permissions For Group</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='FolderID';e={$_.identity}},
+                        @{n='FolderName';e={$_.folderName}},
+                        @{n='AccessRights';e={$_.accessRights}},
+                        @{n='AccessRights';e={if ($_.sharingPermissionFlags.count -gt 0){$_.sharingPermissionsFlags}else{""}}}
+        }
+
+        $html_members_onPremMailboxFolder = ConvertTo-EnhancedHTMLFragment -InputObject $allMailboxesFolderPermissions @params
+
+        $htmlSections += $html_members_onPremMailboxFolder
     }
 
 
@@ -3315,13 +3426,13 @@ th {
         Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
         OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
         Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
-        OnPremisesSendAsRightsOnGroup = $exchangeSendAsSMTP.count
+
         Office365SendAsRightsOnGroup = $allOffice365SendAsAccessOnGroup.count
-        OnPremisesSendAsRightsOnOtherObjects = $allObjectsSendAsAccessNormalized.Count
+
         Office365SendAsRightsOnOtherObjects = $allOffice365SendAsAccess.count
         OnPremisesFullMailboxAccessRights = $allObjectsFullMailboxAccess.count
         Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
-        OnPremsiesMailboxFolderRights = $allMailboxesFolderPermissions.count
+ 
         Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
         
         Office365MemberOfOtherObjects = $allOffice365MemberOf.count
@@ -3329,14 +3440,13 @@ th {
         Office365AcceptMessagesFromSendersOrMembersOtherObjects = $allOffice365Accept.count
 
         Office365RejectMessagesFromSendersOrMembersOtherObjects = $allOffice365Reject.count
-        OnPremiseManagedByOtherObjects = $allGroupsManagedBy.count
-        OnPremisesCoManagedByOtherObjects = $allGroupsCoManagedByBL.Count
+
         Office365ManagedByOtherObjects = $allOffice365ManagedBy.count
-        OnPremisesBypassModerationFromSendersOrMembersOtherObjects = $allGroupsBypassModeration.count
+
         Office365BypassModerationFromSendersOrMembersOtherObjects = $allOffice365BypassModeration.count
-        OnPremisesGrantSendOnBehalfToOtherObjects = $allGroupsGrantSendOnBehalfTo.count
+
         Office365GrantSendOnBehalfToOtherObjects = $allOffice365GrantSendOnBehalfTo.count
-        OnPremisesMailboxForwardingAddress = $allUsersForwardingAddress.count
+
         Office365MailboxForwardingAddress = $allOffice365ForwardingAddress.count
         }#>
     
