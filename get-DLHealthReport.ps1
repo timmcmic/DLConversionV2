@@ -2978,10 +2978,18 @@ th {
 
     out-logfile -string "Generate report for proxy address verification."
 
+    out-logfile -string "Split the on premises data from the Office 365 data."
+
+    $onPremProxyAddressEval = $office365ProxyAddressEval | where-object {$_.isPresentOnPremises -eq "Source"}
+
+    out-logfile -string "Split the cloud data from the on premises data."
+
+    $office365ProxyAddressEval = $office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+
     if ($office365ProxyAddressesEval.count -gt 0)
     {
         $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Proxy Address Evaluation</h2>';
+        'PreContent'='<h2>&diams; Proxy Address Evaluation :: Office 365 -> Active Directory</h2>';
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
@@ -2999,6 +3007,29 @@ th {
 
         $htmlSections += $html_proxyAddresses
     }
+
+    if ($onPremProxyAddressEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Proxy Address Evaluation :: Active Directory -> Office 365</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='ProxyAddress';e={$_.proxyAddress}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremises -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_proxyAddresses2 = ConvertTo-EnhancedHTMLFragment -InputObject $onPremProxyAddressEval @params
+
+        $htmlSections += $html_proxyAddresses2
+    }
+
 
     out-logfile -string "Generate report for attribute verification."
 
