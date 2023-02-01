@@ -2967,7 +2967,7 @@ th {
         'TableCssClass'='grid';
         'MakeHiddenSection'=$true;
         'Properties'=   @{n='Attribute';e={$_.Attribute}},
-                        @{n='OnPremisesValue';e={$_.OnPremisesValue}},
+                        @{n='OnPremisesValue';e={$_.OnPremisesValue}}
                         
         }
 
