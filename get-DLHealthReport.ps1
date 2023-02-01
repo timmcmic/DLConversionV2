@@ -2966,7 +2966,8 @@ th {
         'MakeTableDynamic'=$true;
         'TableCssClass'='grid';
         'MakeHiddenSection'=$true;
-        'Properties'=   @{n='Attribute';e={$_.Attribute}}
+        'Properties'=   @{n='Attribute';e={$_.Attribute}},
+                        @{n='OnPremisesValue';e={$_.OnPremisesValue}},
                         
         }
 
