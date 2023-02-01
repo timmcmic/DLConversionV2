@@ -369,7 +369,7 @@ function compare-recipientProperties
         out-logfile -string $functionObject
 
         $functionReturnArray += $functionObject
-    }!
+    }
 
     out-logfile -string "Evaluating OOF reply to originator."
 
