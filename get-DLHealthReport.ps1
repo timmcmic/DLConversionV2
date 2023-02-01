@@ -3403,6 +3403,21 @@ th {
         $htmlSections += $html_members_onPremFullAccess
     }
 
+    out-logfile -string "Build HTML for Office 365 Members."
+
+    if ($allOffice365MemberOf.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group As A Member</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365MemberOf = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365MemberOf @params
+
+        $htmlSections += $html_members_office365MemberOf
+    }
+
     out-logfile -string "Building HTML for Office 365 Accept Messages From Senders Or Members."
 
     if ($allOffice365Accept.count -gt 0)
@@ -3478,6 +3493,73 @@ th {
         $htmlSections += $html_members_office365Forward
     }
 
+    out-logfile -string "Build HTML for Office 365 Send As on Group."
+
+    if ($allOffice365SendAsAccessOnGroup.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with SendAs Rights on the Group</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.Trustee}}
+        }
+
+        $html_members_office365SendAs = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365SendAsAccessOnGroup @params
+
+        $htmlSections += $html_members_office365SendAs
+    }
+
+    out-logfile -string "Build HTML for Office 365 Send As on Other Objects"
+
+    if ($allOffice365SendAsAccess.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group Having SendAs Rights</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.Identity}}
+        }
+
+        $html_members_office365SendAs2 = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365SendAsAccess @params
+
+        $htmlSections += $html_members_office365SendAs2
+    }
+
+    out-logfile -string "Build HTML File for Mailbox Folder Permissions in Office 365."
+
+    if ($allOffice365MailboxFolderPermissions.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; On Premises Mailbox Folder Permissions For Group</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='FolderID';e={$_.identity}},
+                        @{n='FolderName';e={$_.folderName}},
+                        @{n='AccessRights';e={$_.accessRights}},
+                        @{n='SharingPermissionsFlags';e={if ($_.sharingPermissionsFlags -ne $NULL){$_.sharingPermissionsFlags}else{""}}}
+        }
+
+        $html_members_office365MailboxFolder = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365MailboxFolderPermissions @params
+
+        $htmlSections += $html_members_office365MailboxFolder
+    }
+
+    out-logfile -string "Build HTML File for FullMailbox Access Permissions in Office 365."
+
+    if ($allOffice365FullMailboxAccess.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;On Premises Mailbox with Group with Full Mailbox Access</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.Identity}}
+        }
+
+        $html_members_Office365FullAccess = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365FullMailboxAccess @params
+
+        $htmlSections += $html_members_Office365FullAccess
+    }
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
@@ -3516,25 +3598,16 @@ th {
         OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
         Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
 
-        Office365SendAsRightsOnGroup = $allOffice365SendAsAccessOnGroup.count
-
-        Office365SendAsRightsOnOtherObjects = $allOffice365SendAsAccess.count
 
         Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
  
-        Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
-        
-        Office365MemberOfOtherObjects = $allOffice365MemberOf.count
+
+    
 
 
 
 
 
-
-
-   
-
-        Office365MailboxForwardingAddress = $allOffice365ForwardingAddress.count
         }#>
     
 
