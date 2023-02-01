@@ -518,7 +518,7 @@ function compare-recipientProperties
 
     if ($onPremData.extensionAttribute1 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!"
+        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!" -force
     }
     elseif ($onPremData.extensionAttribute1 -eq "")
     {
