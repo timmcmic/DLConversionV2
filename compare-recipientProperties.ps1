@@ -518,137 +518,137 @@ function compare-recipientProperties
 
     if ($onPremData.extensionAttribute1 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute1 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute1 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute1 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute1 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute2 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute2 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute2 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute2 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute2 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute2 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute3 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute3 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute3 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute3 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute3 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute3 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute4 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute4 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute4 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute4 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute4 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute4 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute5 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute5 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute5 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute5 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute5 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute5 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute6 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute6 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute6 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute6 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute6 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute6 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute7 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute7 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute7 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute7 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute7 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute7 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute8 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute8 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute8 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute8 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute8 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute8 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute9 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute9 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute9 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute9 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute9 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute9 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute10 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute10 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute10 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute10 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute10 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute10 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute11 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute11 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute11 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute11 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute11 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute11 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute12 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute12 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute12 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute12 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute12 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute12 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute13 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute13 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute13 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute13 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute13 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute13 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute14 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute14 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute14 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute14 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute14 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute14 = "!*NotSet*!"
     }
 
     if ($onPremData.extensionAttribute15 -eq $NULL)
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute15 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute15 = "!*NotSet*!"
     }
     elseif ($onPremData.extensionAttribute15 -eq "")
     {
-        $onPremData | add-member -MemberType NoteProperty -Name extensionAttribute15 -Value "!*NotSet*!" -force
+        $onPremData.extensionAttribute15 = "!*NotSet*!"
     }
 
     Out-logfile -string "Evaluating extension attributes."
@@ -794,7 +794,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute1"
-            OnPremisesValue = $onPremData.customAttribute1
+            OnPremisesValue = $onPremData.extensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute1      
@@ -813,7 +813,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute1"
-            OnPremisesValue = $onPremData.customAttribute1
+            OnPremisesValue = $onPremData.extensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute1      
@@ -833,7 +833,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute2"
-            OnPremisesValue = $onPremData.customAttribute2
+            OnPremisesValue = $onPremData.extensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute2      
@@ -852,7 +852,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute2"
-            OnPremisesValue = $onPremData.customAttribute2
+            OnPremisesValue = $onPremData.extensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute2      
@@ -872,7 +872,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute3"
-            OnPremisesValue = $onPremData.customAttribute3
+            OnPremisesValue = $onPremData.extensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute3 
@@ -891,7 +891,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute3"
-            OnPremisesValue = $onPremData.customAttribute3
+            OnPremisesValue = $onPremData.extensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute3      
@@ -911,7 +911,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute4"
-            OnPremisesValue = $onPremData.customAttribute4
+            OnPremisesValue = $onPremData.extensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute4     
@@ -930,7 +930,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute4"
-            OnPremisesValue = $onPremData.customAttribute4
+            OnPremisesValue = $onPremData.extensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute4     
@@ -944,13 +944,14 @@ function compare-recipientProperties
         $functionReturnArray += $functionObject
     }
 
+    
     if ($onPremData.extensionAttribute5 -eq $office365Data.customAttribute5)
     {
         out-logfile -string "On premises and exchange online value are valid.."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute5"
-            OnPremisesValue = $onPremData.customAttribute5
+            OnPremisesValue = $onPremData.extensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute5
@@ -969,7 +970,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute5"
-            OnPremisesValue = $onPremData.customAttribute5
+            OnPremisesValue = $onPremData.extensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute5
@@ -989,7 +990,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute6"
-            OnPremisesValue = $onPremData.customAttribute6
+            OnPremisesValue = $onPremData.extensionAttribute6
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute6
@@ -1008,7 +1009,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute6"
-            OnPremisesValue = $onPremData.customAttribute6
+            OnPremisesValue = $onPremData.extensionAttribute6
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute6
@@ -1028,7 +1029,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute7"
-            OnPremisesValue = $onPremData.customAttribute7
+            OnPremisesValue = $onPremData.extensionAttribute7
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute7
@@ -1047,7 +1048,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute7"
-            OnPremisesValue = $onPremData.customAttribute7
+            OnPremisesValue = $onPremData.extensionAttribute7
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute7
@@ -1067,7 +1068,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute8"
-            OnPremisesValue = $onPremData.customAttribute8
+            OnPremisesValue = $onPremData.extensionAttribute8
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute8
@@ -1086,7 +1087,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute8"
-            OnPremisesValue = $onPremData.customAttribute8
+            OnPremisesValue = $onPremData.extensionAttribute8
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute8
@@ -1106,7 +1107,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute9"
-            OnPremisesValue = $onPremData.customAttribute9
+            OnPremisesValue = $onPremData.extensionAttribute9
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute9
@@ -1125,7 +1126,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute9"
-            OnPremisesValue = $onPremData.customAttribute9
+            OnPremisesValue = $onPremData.extensionAttribute9
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute9
@@ -1145,7 +1146,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute10"
-            OnPremisesValue = $onPremData.customAttribute10
+            OnPremisesValue = $onPremData.extensionAttribute10
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute10
@@ -1164,7 +1165,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute10"
-            OnPremisesValue = $onPremData.customAttribute10
+            OnPremisesValue = $onPremData.extensionAttribute10
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute10
@@ -1184,7 +1185,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute11"
-            OnPremisesValue = $onPremData.customAttribute11
+            OnPremisesValue = $onPremData.extensionAttribute11
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute11
@@ -1203,7 +1204,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute11"
-            OnPremisesValue = $onPremData.customAttribute11
+            OnPremisesValue = $onPremData.extensionAttribute11
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute11
@@ -1223,7 +1224,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute12"
-            OnPremisesValue = $onPremData.customAttribute12
+            OnPremisesValue = $onPremData.extensionAttribute12
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute12
@@ -1242,7 +1243,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute12"
-            OnPremisesValue = $onPremData.customAttribute12
+            OnPremisesValue = $onPremData.extensionAttribute12
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute12
@@ -1262,7 +1263,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute13"
-            OnPremisesValue = $onPremData.customAttribute13
+            OnPremisesValue = $onPremData.extensionAttribute13
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute13
@@ -1281,7 +1282,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute13"
-            OnPremisesValue = $onPremData.customAttribute13
+            OnPremisesValue = $onPremData.extensionAttribute13
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute13
@@ -1301,7 +1302,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute14"
-            OnPremisesValue = $onPremData.customAttribute14
+            OnPremisesValue = $onPremData.extensionAttribute14
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute14
@@ -1320,7 +1321,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute14"
-            OnPremisesValue = $onPremData.customAttribute14
+            OnPremisesValue = $onPremData.extensionAttribute14
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute14
@@ -1340,7 +1341,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute15"
-            OnPremisesValue = $onPremData.customAttribute15
+            OnPremisesValue = $onPremData.extensionAttribute15
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute15
@@ -1359,13 +1360,103 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute15"
-            OnPremisesValue = $onPremData.customAttribute15
+            OnPremisesValue = $onPremData.extensionAttribute15
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute15
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
             ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.msExchExtensionAttribute1 -ne $NULL)
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ExtensionCustomAttribte1"
+            OnPremisesValue = $onPremData.msExchExtensionAttribute1
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.msExchExtensionAttribute2 -ne $NULL)
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ExtensionCustomAttribte1"
+            OnPremisesValue = $onPremData.msExchExtensionAttribute2
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.msExchExtensionAttribute3 -ne $NULL)
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ExtensionCustomAttribte1"
+            OnPremisesValue = $onPremData.msExchExtensionAttribute3
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.msExchExtensionAttribute4 -ne $NULL)
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ExtensionCustomAttribte1"
+            OnPremisesValue = $onPremData.msExchExtensionAttribute4
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
+        }
+
+        out-logfile -string $functionObject
+
+        $functionReturnArray += $functionObject
+    }
+
+    if ($onPremData.msExchExtensionAttribute5 -ne $NULL)
+    {
+        $functionObject = New-Object PSObject -Property @{
+            Attribute = "ExtensionCustomAttribte1"
+            OnPremisesValue = $onPremData.msExchExtensionAttribute5
+            AzureADValue = "N/A"
+            isValidInAzure = "N/A"
+            ExchangeOnlineValue = "N/A"
+            isValidInExchangeOnline = "False"
+            IsValidMember = "FALSE"
+            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
         }
 
         out-logfile -string $functionObject
@@ -1893,96 +1984,6 @@ function compare-recipientProperties
             isValidInExchangeOnline = "True"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_COUNT_NOT_EQUAL_MANUAL_VERIFICATION_REQUIRED"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-
-    if ($onPremData.msExchExtensionAttribute1 -ne $NULL)
-    {
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute1
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = "N/A"
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-
-    if ($onPremData.msExchExtensionAttribute2 -ne $NULL)
-    {
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute2
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = "N/A"
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-
-    if ($onPremData.msExchExtensionAttribute3 -ne $NULL)
-    {
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute3
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = "N/A"
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-
-    if ($onPremData.msExchExtensionAttribute4 -ne $NULL)
-    {
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute4
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = "N/A"
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
-        }
-
-        out-logfile -string $functionObject
-
-        $functionReturnArray += $functionObject
-    }
-
-    if ($onPremData.msExchExtensionAttribute5 -ne $NULL)
-    {
-        $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute5
-            AzureADValue = "N/A"
-            isValidInAzure = "N/A"
-            ExchangeOnlineValue = "N/A"
-            isValidInExchangeOnline = "False"
-            IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_NOT_REPLICATED_TO_OFFICE365"
         }
 
         out-logfile -string $functionObject
