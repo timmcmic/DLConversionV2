@@ -411,7 +411,7 @@ function compare-recipientArrays
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ExternalDirectoryObjectID = $functionExternalDirectoryObjectID.objectID
                         ObjectSID =$member.objectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "True"
