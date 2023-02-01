@@ -3528,7 +3528,7 @@ th {
     if ($allOffice365MailboxFolderPermissions.count -gt 0)
     {
         $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; On Premises Mailbox Folder Permissions For Group</h2>';
+        'PreContent'='<h2>&diams; Office 365 Mailbox Folder Permissions For Group</h2>';
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
@@ -3551,13 +3551,26 @@ th {
     {
         $params = @{'As'='List';
         'MakeHiddenSection'=$true;
-        'PreContent'='<h2>&diams;On Premises Mailbox with Group with Full Mailbox Access</h2>';
+        'PreContent'='<h2>&diams;Office 365 Mailbox with Group with Full Mailbox Access</h2>';
         'Properties'=   @{n='MemberDN';e={$_.Identity}}
         }
 
         $html_members_Office365FullAccess = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365FullMailboxAccess @params
 
         $htmlSections += $html_members_Office365FullAccess
+    }
+
+    out-logfile -string "Creating HTML output for normalized membership."
+
+    if ($exchangeDLMembershipSMTP.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Distribution List Membership</h2>'}
+
+        $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
+
+        $htmlSections += $html_exchangeMembers
     }
 
     if ($htmlSections.count -gt 0)
