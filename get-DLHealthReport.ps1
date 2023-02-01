@@ -2981,6 +2981,19 @@ th {
         $htmlSections += $html_attributes
     }
 
+    out-logfile -string "Creating output for original distribution list configuration."
+
+    if ($originalDLConfiguration -ne $NULL)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>Active Directory Distribution List Configuration</h2>'}
+
+        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -intputObject $originalDLConfiguration @params
+
+        $htmlSections += $html_originalDLConfig
+    }
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
