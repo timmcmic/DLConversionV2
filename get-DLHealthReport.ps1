@@ -2914,13 +2914,13 @@ th {
 
     $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
 
-    $onPremMemberEval = $onPremMemberEval | sort-object "isValidMember"
+    $onPremMemberEval = $onPremMemberEval | sort-object -=property "isValidMember"
 
     out-logfile -string "Split the cloud data from the on premises data."
 
     $office365MemberEval = $office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
 
-    $office365MemberEval = $office365MemberEval | sort-object "isValidMember"
+    $office365MemberEval = $office365MemberEval | sort-object -property "isValidMember"
 
     out-logfile -string "Generate HTML fragment for Office365MemberEval."
 
@@ -3228,6 +3228,8 @@ th {
 
         $htmlSections += $html_members_grantsend
     }
+
+
 
 
     if ($htmlSections.count -gt 0)
