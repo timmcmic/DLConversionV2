@@ -2914,9 +2914,13 @@ th {
 
     $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
 
+    $onPremMemberEval = $onPremMemberEval | sort-object "isValidMember"
+
     out-logfile -string "Split the cloud data from the on premises data."
 
     $office365MemberEval = $office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+
+    $office365MemberEval = $office365MemberEval | sort-object "isValidMember"
 
     out-logfile -string "Generate HTML fragment for Office365MemberEval."
 
