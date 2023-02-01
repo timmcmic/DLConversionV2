@@ -1555,7 +1555,7 @@ function compare-recipientProperties
 
     if ($onPremData.msExchHideFromAddressLists -eq $NULL)
     {
-        $functionHiddenFromAddressListEnabled = $FALSE
+        [boolean]$functionHiddenFromAddressListEnabled = $FALSE
 
         out-logfile -string $functionHiddenFromAddressListEnabled
     }
@@ -1563,7 +1563,7 @@ function compare-recipientProperties
     {
         out-logfile -string $onPremData.msExchHideFromAddressLists
 
-        $functionHiddenFromAddressListEnabled = $onPremData.msExchHideFromAddressLists
+        [boolean]$functionHiddenFromAddressListEnabled = $onPremData.msExchHideFromAddressLists
 
         out-logfile -string $functionHiddenFromAddressListEnabled 
     }
