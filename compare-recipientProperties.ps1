@@ -1567,7 +1567,7 @@ function compare-recipientProperties
 
         out-logfile -string $functionHiddenFromAddressListEnabled 
     }
-
+    
     if ($office365Data.HiddenFromAddressListsEnabled -eq $functionHiddenFromAddressListEnabled)
     {
         out-logfile -string "On premises and exchange online value are valid."
