@@ -920,6 +920,8 @@ Function get-DLHealthReport
     {
         out-logfile -string $_ -isError:$TRUE
     }
+
+    $originalDLConfigurationHTML = $originalDLConfiguration
     
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
@@ -1080,6 +1082,8 @@ Function get-DLHealthReport
     {
         out-logFile -string $_ -isError:$TRUE
     }    
+
+    $office365DLConfigurationHTML = $office365DLConfiguration
     
     Out-LogFile -string $office365DLConfiguration
 
@@ -2867,15 +2871,13 @@ th {
 
     out-logfile -string "Creating output for original distribution list configuration."
 
-    if ($originalDLConfiguration -ne $NULL)
+    if ($originalDLConfigurationHTML -ne $NULL)
     {
-        $originalDLConfiguration
-        
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
                     'PreContent'='<h2>&diams;Active Directory Distribution List Configuration</h2>'}
 
-        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfiguration @params
+        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfigurationHTML @params
 
         $htmlSections += $html_originalDLConfig
     }
@@ -2972,8 +2974,6 @@ th {
 
     out-logfile -string "Generate report for attribute verification."
 
-    <#
-
     if ($office365AttributeEval.count -gt 0)
     {
         $params = @{'As'='Table';
@@ -2997,7 +2997,6 @@ th {
 
         $htmlSections += $html_attributes
     }
-#>
 
     if ($htmlSections.count -gt 0)
     {
