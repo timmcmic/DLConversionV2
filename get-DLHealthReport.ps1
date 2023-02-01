@@ -3229,7 +3229,53 @@ th {
         $htmlSections += $html_members_grantsend
     }
 
+    out-logfile -string "Build HTML file for groups member of."
 
+    if ($allgroupsmemberof.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Group Member Of Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
+                        @{n='MemberCN';e={$_.canonicalName}}
+        }
+
+        $html_members_onPremMemberOf = ConvertTo-EnhancedHTMLFragment -InputObject $allgroupsmemberof @params
+
+        $htmlSections += $html_members_onPremMemberOf
+    }
+    
+    out-logfile -string "Build HTML file for groups accept messages from."
+
+    if ($allGroupsAccept.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Group Accept Messages From Senders or Members on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
+                        @{n='MemberCN';e={$_.canonicalName}}
+        }
+
+        $html_members_onPremAccept = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsAccept @params
+
+        $htmlSections += $html_members_onPremAccept
+    }
+
+    out-logfile -string "Build HTML file for groups reject messages from."
+
+    if ($allGroupsReject.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Group Accept Messages From Senders or Members on Other Groups</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}},
+                        @{n='MemberCN';e={$_.canonicalName}}
+        }
+
+        $html_members_onPremReject = ConvertTo-EnhancedHTMLFragment -InputObject $allGroupsReject @params
+
+        $htmlSections += $html_members_onPremReject
+    }
 
 
     if ($htmlSections.count -gt 0)
@@ -3277,11 +3323,11 @@ th {
         Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
         OnPremsiesMailboxFolderRights = $allMailboxesFolderPermissions.count
         Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
-        OnPremisesMemberOfOtherObjects = $allGroupsMemberOf.count
+        
         Office365MemberOfOtherObjects = $allOffice365MemberOf.count
-        OnPremsiesAcceptMessagesFromSendersOrMembersOtherObjects = $allGroupsAccept.count
+
         Office365AcceptMessagesFromSendersOrMembersOtherObjects = $allOffice365Accept.count
-        OnPremisesRejectMessagesFromSendersOrMembersOtherObjects = $allGroupsReject.count
+
         Office365RejectMessagesFromSendersOrMembersOtherObjects = $allOffice365Reject.count
         OnPremiseManagedByOtherObjects = $allGroupsManagedBy.count
         OnPremisesCoManagedByOtherObjects = $allGroupsCoManagedByBL.Count
