@@ -3403,6 +3403,80 @@ th {
         $htmlSections += $html_members_onPremFullAccess
     }
 
+    out-logfile -string "Building HTML for Office 365 Accept Messages From Senders Or Members."
+
+    if ($allOffice365Accept.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group Accept Messages From Senders Or Members</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365Accept = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365Accept @params
+
+        $htmlSections += $html_members_office365Accept
+    }
+
+    out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+    if ($allOffice365Reject.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group Accept Messages From Senders Or Members</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365Reject = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365Reject @params
+
+        $htmlSections += $html_members_office365Reject
+    }
+
+    out-logfile -string "Building HTML for Office 365 ManagedBy."
+
+    if ($allOffice365ManagedBy.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group ManagedBy Permissions</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365Managed = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365ManagedBy @params
+
+        $htmlSections += $html_members_office365Managed
+    }
+
+    out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+    if ($allOffice365BypassModeration.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group Bypass Moderation From Senders Or Members</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365Bypass = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365BypassModeration @params
+
+        $htmlSections += $html_members_office365Bypass
+    }
+
+    out-logfile -string "Build HTML for Office 365 Forwarding Address."
+
+    if ($allOffice365ForwardingAddress.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Office 365 Recipients with Group As ForwardingAddress</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.distinguishedName}}
+        }
+
+        $html_members_office365Forward = ConvertTo-EnhancedHTMLFragment -InputObject $allOffice365ForwardingAddress @params
+
+        $htmlSections += $html_members_office365Forward
+    }
 
     if ($htmlSections.count -gt 0)
     {
@@ -3452,15 +3526,13 @@ th {
         
         Office365MemberOfOtherObjects = $allOffice365MemberOf.count
 
-        Office365AcceptMessagesFromSendersOrMembersOtherObjects = $allOffice365Accept.count
 
-        Office365RejectMessagesFromSendersOrMembersOtherObjects = $allOffice365Reject.count
 
-        Office365ManagedByOtherObjects = $allOffice365ManagedBy.count
 
-        Office365BypassModerationFromSendersOrMembersOtherObjects = $allOffice365BypassModeration.count
 
-        Office365GrantSendOnBehalfToOtherObjects = $allOffice365GrantSendOnBehalfTo.count
+
+
+   
 
         Office365MailboxForwardingAddress = $allOffice365ForwardingAddress.count
         }#>
