@@ -923,9 +923,6 @@ Function get-DLHealthReport
 
     $originalDLConfigurationHTML = $originalDLConfiguration | foreach { $_ } 
 
-    $originalDLConfigurationHTML
-
-    exit
     
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
@@ -1087,7 +1084,7 @@ Function get-DLHealthReport
         out-logFile -string $_ -isError:$TRUE
     }    
 
-    $office365DLConfigurationHTML = $office365DLConfiguration
+    $office365DLConfigurationHTML = $office365DLConfiguration | foreach { $_ } 
     
     Out-LogFile -string $office365DLConfiguration
 
