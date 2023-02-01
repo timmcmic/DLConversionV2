@@ -2914,7 +2914,7 @@ th {
 
     $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
 
-    $onPremMemberEval = $onPremMemberEval | sort-object -=property isValidMember
+    $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
 
     out-logfile -string "Split the cloud data from the on premises data."
 
