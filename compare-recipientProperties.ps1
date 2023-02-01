@@ -1577,7 +1577,7 @@ function compare-recipientProperties
             onpremisesvalue = $functionHiddenFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
+            ExchangeOnlineValue = $office365Data.HiddenFromAddressListsEnabled
             isValidInExchangeOnline = "True"
             IsValidMember = "TRUE"
             ErrorMessage = "N/A"
