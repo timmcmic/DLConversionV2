@@ -2968,9 +2968,9 @@ th {
         'MakeHiddenSection'=$true;
         'Properties'=   @{n='Attribute';e={$_.Attribute}},
                         @{n='OnPremisesValue';e={$_.OnPremisesValue}},
-                        @{n='IsValidInAzure';e={$_.isValidInAzure}},
-                        @{n='AzureADValue';e={$_.AzureADValue}}
-                        <#@{n='ExchangeOnlineValue';e={$_.ExchangeOnlineValue}}
+                        @{n='IsValidInAzure';e={$_.isValidInAzure}}
+                        <#@{n='AzureADValue';e={$_.AzureADValue}}
+                        @{n='ExchangeOnlineValue';e={$_.ExchangeOnlineValue}}
                         @{n='isValidInExchangeOnline';e={$_.isValidInExchangeOnline};css={if ($_.isValidInExchangeOnline -eq "False") { 'red' }}},
                         @{n='IsValidMember';e={$_.IsValidMember};css={if ($_.IsValidMember -eq "False"){ 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}#>
