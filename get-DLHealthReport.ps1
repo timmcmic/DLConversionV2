@@ -3022,6 +3022,175 @@ th {
         $htmlSections += $html_attributes
     }
 
+    out-logfile -string "Build HTML for accept messages from senders or members."
+
+    if ($office365AcceptMessagesFromSendersOrMembersEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 Accept Messages From Senders or Members</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_accept = ConvertTo-EnhancedHTMLFragment -InputObject $office365AcceptMessagesFromSendersOrMembersEval @params
+
+        $htmlSections += $html_members_accept
+    }
+
+    out-logfile -string "Build HTML for reject messages from senders or members."
+
+    if ($office365RejectMessagesFromSendrsOfMembersEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 Reject Messages From Senders or Members</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_reject = ConvertTo-EnhancedHTMLFragment -InputObject $office365RejectMessagesFromSendrsOfMembersEval @params
+
+        $htmlSections += $html_members_reject
+    }
+
+    out-logfile -string "Build HTML for bypass moderation from senders or members."
+
+    if ($office365BypassModerationFromSendersOrMembersEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_bypass = ConvertTo-EnhancedHTMLFragment -InputObject $office365BypassModerationFromSendersOrMembersEval @params
+
+        $htmlSections += $html_members_bypass
+    }
+
+    out-logfile -string "Generate HTML for moderated by"
+
+    if ($office365ModeratedByEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 ModeratedBy</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_moderatedby = ConvertTo-EnhancedHTMLFragment -InputObject $office365ModeratedByEval @params
+
+        $htmlSections += $html_members_moderatedby
+    }
+
+    out-logfile -string "Generated HTML for managed by."
+
+    if ($office365ManagedByEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 ManagedBy</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_managedBY = ConvertTo-EnhancedHTMLFragment -InputObject $office365ManagedByEval @params
+
+        $htmlSections += $html_members_managedBy
+    }
+
+    out-logfile -string "Build HTML for grant send on behalf to."
+
+    if ($office365GrantSendOnBehalfToEval.count -gt 0)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 ManagedBy</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        'Properties'=   @{n='Member';e={$_.name}},
+                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        }
+
+        $html_members_grantsend = ConvertTo-EnhancedHTMLFragment -InputObject $office365GrantSendOnBehalfToEval @params
+
+        $htmlSections += $html_members_grantsend
+    }
+
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
