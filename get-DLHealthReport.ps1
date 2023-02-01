@@ -3755,29 +3755,11 @@ th {
         $htmlSections += $html_officeGrantExpanded 
     }
 
-    out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
-
-    if ($office365GrantSendOnBehalfTo.count)
+    if ($functionObject -ne $NULL)
     {
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
                     'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
-
-        $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
-
-        $htmlSections += $html_officeGrantExpanded 
-    }
-
-    if ($functionObject -ne $NULL)
-    {
-        $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Resource Item Counts Discovered</h2>';
-        'EvenRowCssClass'='even';
-        'OddRowCssClass'='odd';
-        'MakeTableDynamic'=$true;
-        'TableCssClass'='grid';
-        'MakeHiddenSection'=$true;
-        }
 
         $html_members_counts = ConvertTo-EnhancedHTMLFragment -InputObject $functionObject @params
 
