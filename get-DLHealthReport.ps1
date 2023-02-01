@@ -2967,11 +2967,11 @@ th {
         'TableCssClass'='grid';
         'MakeHiddenSection'=$true;
         'Properties'=   @{n='Attribute';e={$_.Attribute}},
-                        @{n='OnPremisesValue';e={if ($_.OnPremisesValue -ne ""){$_.OnPremisesValue}else{""}}},
-                        @{n='IsValidInAzure';e={$_.IsValidInAzure};css={if ($_.isValidInAzure -eq "False") { 'red' }}},
-                        @{n='AzureADValue';e={if ($_.AzureADValue -ne ""){$_.AzureADValue}else{""}}},
-                        @{n='ExchangeOnlineValue';e={if (($_.ExchangeOnlineValue -ne "") -or ($_.ExchangeOnlineValue -ne $NULL)){$_.ExchangeOnlineValue}else{""}}}
-                        <#@{n='isValidInExchangeOnline';e={$_.isValidInExchangeOnline};css={if ($_.isValidInExchangeOnline -eq "False") { 'red' }}},
+                        @{n='OnPremisesValue';e={$_.OnPremisesValue}},
+                        @{n='IsValidInAzure';e={$_.isValidInAzure}},
+                        @{n='AzureADValue';e={$_.AzureADValue}},
+                        <#@{n='ExchangeOnlineValue';e={$_.ExchangeOnlineValue}}
+                        @{n='isValidInExchangeOnline';e={$_.isValidInExchangeOnline};css={if ($_.isValidInExchangeOnline -eq "False") { 'red' }}},
                         @{n='IsValidMember';e={$_.IsValidMember};css={if ($_.IsValidMember -eq "False"){ 'red' }}},
                         @{n='ErrorMessage';e={$_.ErrorMessage}}#>
         }
