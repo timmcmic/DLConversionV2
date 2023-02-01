@@ -1189,6 +1189,10 @@ Function get-DLHealthReport
 
         out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.Value
     }
+    else 
+    {
+        $azureADDLMembership = @()
+    }
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
