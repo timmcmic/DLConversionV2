@@ -2970,6 +2970,8 @@ th {
 
     out-logfile -string "Generate report for attribute verification."
 
+    <#
+
     if ($office365AttributeEval.count -gt 0)
     {
         $params = @{'As'='Table';
@@ -2993,7 +2995,7 @@ th {
 
         $htmlSections += $html_attributes
     }
-
+#>
 
     if ($htmlSections.count -gt 0)
     {
