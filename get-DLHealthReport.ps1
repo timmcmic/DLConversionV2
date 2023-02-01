@@ -749,7 +749,7 @@ Function get-DLHealthReport
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    #start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
 
     #Validating that all portions for exchange certificate auth are present.
 
