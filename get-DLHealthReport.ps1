@@ -3388,6 +3388,21 @@ th {
         $htmlSections += $html_members_onPremMailboxFolder
     }
 
+    out-logfile -string "Building HTML for Full Mailbox Access."
+
+    if ($allObjectsFullMailboxAccess.count -gt 0)
+    {
+        $params = @{'As'='List';
+        'MakeHiddenSection'=$true;
+        'PreContent'='<h2>&diams;Active Directory Objects with Group with Full Mailbox Access</h2>';
+        'Properties'=   @{n='MemberDN';e={$_.Identity}}
+        }
+
+        $html_members_onPremFullAccess = ConvertTo-EnhancedHTMLFragment -InputObject $allObjectsFullMailboxAccess @params
+
+        $htmlSections += $html_members_onPremFullAccess
+    }
+
 
     if ($htmlSections.count -gt 0)
     {
@@ -3430,7 +3445,7 @@ th {
         Office365SendAsRightsOnGroup = $allOffice365SendAsAccessOnGroup.count
 
         Office365SendAsRightsOnOtherObjects = $allOffice365SendAsAccess.count
-        OnPremisesFullMailboxAccessRights = $allObjectsFullMailboxAccess.count
+
         Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
  
         Office365MailboxFolderRights = $allOffice365MailboxFolderPermissions.count
