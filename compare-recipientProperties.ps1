@@ -516,7 +516,7 @@ function compare-recipientProperties
 
     Out-logfile -string "Evaluating extension attributes."
 
-    if ($onPremData.extensionAttribute1.count -eq 0)
+    if ($onPremData.extensionAttribute1 -eq $NULL)
     {
         $onPremData.extensionAttribute1 = "!*NotSet*!"
     }
@@ -525,7 +525,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute1 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute2.count -eq 0)
+    if ($onPremData.extensionAttribute2 -eq $NULL)
     {
         $onPremData.extensionAttribute2 = "!*NotSet*!"
     }
@@ -534,7 +534,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute2 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute3.count -eq 0)
+    if ($onPremData.extensionAttribute3 -eq $NULL)
     {
         $onPremData.extensionAttribute3 = "!*NotSet*!"
     }
@@ -543,7 +543,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute3 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute4.count -eq 0)
+    if ($onPremData.extensionAttribute4 -eq $NULL)
     {
         $onPremData.extensionAttribute4 = "!*NotSet*!"
     }
@@ -552,7 +552,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute4 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute5.count -eq 0)
+    if ($onPremData.extensionAttribute5 -eq $NULL)
     {
         $onPremData.extensionAttribute5 = "!*NotSet*!"
     }
@@ -561,7 +561,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute5 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute6.count -eq 0)
+    if ($onPremData.extensionAttribute6 -eq $NULL)
     {
         $onPremData.extensionAttribute6 = "!*NotSet*!"
     }
@@ -570,7 +570,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute6 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute7.count -eq 0)
+    if ($onPremData.extensionAttribute7 -eq $NULL)
     {
         $onPremData.extensionAttribute7 = "!*NotSet*!"
     }
@@ -579,7 +579,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute7 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute8.count -eq 0)
+    if ($onPremData.extensionAttribute8 -eq $NULL)
     {
         $onPremData.extensionAttribute8 = "!*NotSet*!"
     }
@@ -588,7 +588,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute8 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute9.count -eq 0)
+    if ($onPremData.extensionAttribute9 -eq $NULL)
     {
         $onPremData.extensionAttribute9 = "!*NotSet*!"
     }
@@ -597,7 +597,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute9 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute10.count -eq 0)
+    if ($onPremData.extensionAttribute10 -eq $NULL)
     {
         $onPremData.extensionAttribute10 = "!*NotSet*!"
     }
@@ -606,7 +606,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute10 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute11.count -eq 0)
+    if ($onPremData.extensionAttribute11 -eq $NULL)
     {
         $onPremData.extensionAttribute11 = "!*NotSet*!"
     }
@@ -615,7 +615,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute11 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute12.count -eq 0)
+    if ($onPremData.extensionAttribute12 -eq $NULL)
     {
         $onPremData.extensionAttribute12 = "!*NotSet*!"
     }
@@ -624,7 +624,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute12 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute13.count -eq 0)
+    if ($onPremData.extensionAttribute13 -eq $NULL)
     {
         $onPremData.extensionAttribute13 = "!*NotSet*!"
     }
@@ -633,7 +633,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute13 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute14.count -eq 0)
+    if ($onPremData.extensionAttribute14 -eq $NULL)
     {
         $onPremData.extensionAttribute14 = "!*NotSet*!"
     }
@@ -642,7 +642,7 @@ function compare-recipientProperties
         $onPremData.extensionAttribute14 = "!*NotSet*!"
     }
 
-    if ($onPremData.extensionAttribute15.count -eq 0)
+    if ($onPremData.extensionAttribute15 -eq $NULL)
     {
         $onPremData.extensionAttribute15 = "!*NotSet*!"
     }
@@ -653,7 +653,7 @@ function compare-recipientProperties
 
     Out-logfile -string "Evaluating extension attributes."
 
-    if ($office365Data.customAttribute1.count -eq 0)
+    if ($office365Data.customAttribute1 -eq $NULL)
     {
         $office365Data.customAttribute1 = "!*NotSet*!"
     }
@@ -662,7 +662,7 @@ function compare-recipientProperties
         $office365Data.customAttribute1 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute2.count -eq 0)
+    if ($office365Data.customAttribute2 -eq $NULL)
     {
         $office365Data.customAttribute2 = "!*NotSet*!"
     }
@@ -671,7 +671,7 @@ function compare-recipientProperties
         $office365Data.customAttribute2 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute3.count -eq 0)
+    if ($office365Data.customAttribute3 -eq $NULL)
     {
         $office365Data.customAttribute3 = "!*NotSet*!"
     }
@@ -680,7 +680,7 @@ function compare-recipientProperties
         $office365Data.customAttribute3 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute4.count -eq 0)
+    if ($office365Data.customAttribute4 -eq $NULL)
     {
         $office365Data.customAttribute4 = "!*NotSet*!"
     }
@@ -689,7 +689,7 @@ function compare-recipientProperties
         $office365Data.customAttribute4 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute5.count -eq 0)
+    if ($office365Data.customAttribute5 -eq $NULL)
     {
         $office365Data.customAttribute5 = "!*NotSet*!"
     }
@@ -698,7 +698,7 @@ function compare-recipientProperties
         $office365Data.customAttribute5 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute6.count -eq 0)
+    if ($office365Data.customAttribute6 -eq $NULL)
     {
         $office365Data.customAttribute6 = "!*NotSet*!"
     }
@@ -707,7 +707,7 @@ function compare-recipientProperties
         $office365Data.customAttribute6 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute7.count -eq 0)
+    if ($office365Data.customAttribute7 -eq $NULL)
     {
         $office365Data.customAttribute7 = "!*NotSet*!"
     }
@@ -716,7 +716,7 @@ function compare-recipientProperties
         $office365Data.customAttribute7 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute8.count -eq 0)
+    if ($office365Data.customAttribute8 -eq $NULL)
     {
         $office365Data.customAttribute8 = "!*NotSet*!"
     }
@@ -725,7 +725,7 @@ function compare-recipientProperties
         $office365Data.customAttribute8 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute9.count -eq 0)
+    if ($office365Data.customAttribute9 -eq $NULL)
     {
         $office365Data.customAttribute9 = "!*NotSet*!"
     }
@@ -734,7 +734,7 @@ function compare-recipientProperties
         $office365Data.customAttribute9 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute10.count -eq 0)
+    if ($office365Data.customAttribute10 -eq $NULL)
     {
         $office365Data.customAttribute10 = "!*NotSet*!"
     }
@@ -743,7 +743,7 @@ function compare-recipientProperties
         $office365Data.customAttribute10 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute11.count -eq 0)
+    if ($office365Data.customAttribute11 -eq $NULL)
     {
         $office365Data.customAttribute11 = "!*NotSet*!"
     }
@@ -752,7 +752,7 @@ function compare-recipientProperties
         $office365Data.customAttribute11 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute12.count -eq 0)
+    if ($office365Data.customAttribute12 -eq $NULL)
     {
         $office365Data.customAttribute12 = "!*NotSet*!"
     }
@@ -761,7 +761,7 @@ function compare-recipientProperties
         $office365Data.customAttribute12 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute13.count -eq 0)
+    if ($office365Data.customAttribute13 -eq $NULL)
     {
         $office365Data.customAttribute13 = "!*NotSet*!"
     }
@@ -770,7 +770,7 @@ function compare-recipientProperties
         $office365Data.customAttribute13 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute14.count -eq 0)
+    if ($office365Data.customAttribute14 -eq $NULL)
     {
         $office365Data.customAttribute14 = "!*NotSet*!"
     }
@@ -779,7 +779,7 @@ function compare-recipientProperties
         $office365Data.customAttribute14 = "!*NotSet*!"
     }
 
-    if ($office365Data.customAttribute15.count -eq 0)
+    if ($office365Data.customAttribute15 -eq $NULL)
     {
         $office365Data.customAttribute15 = "!*NotSet*!"
     }
