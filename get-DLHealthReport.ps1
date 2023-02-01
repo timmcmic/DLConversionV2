@@ -376,6 +376,9 @@ Function get-DLHealthReport
     [string]$global:staticFolderName="\DLHealthCheck\"
     [string]$global:staticAuditFolderName="\AuditData\"
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
+    [string]$htmlFileName = "DLHealth.html"
+
+    [string]$htmlFile = $logFolderPath+$global:staticFolderName+$htmlFileName
 
 
     [array]$global:testOffice365Errors=@()
@@ -3722,7 +3725,7 @@ th {
     {
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+                    'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
 
         $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
 
@@ -3773,7 +3776,7 @@ th {
         'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
         'HTMLFragments'=$htmlSections}
         ConvertTo-EnhancedHTML @params |
-        Out-File -FilePath c:\temp\test.html
+        Out-File -FilePath $htmlFile
     }
     else
     {
