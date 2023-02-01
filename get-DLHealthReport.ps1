@@ -931,7 +931,7 @@ Function get-DLHealthReport
                     'MakeHiddenSection'=$true;
                     'PreContent'='<h2>&diams;Active Directory Distribution List Configuration</h2>'}
 
-        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfigurationHTML @params
+        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfiguration @params
 
         $htmlSections += $html_originalDLConfig
     }
