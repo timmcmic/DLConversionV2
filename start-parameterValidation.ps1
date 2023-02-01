@@ -88,7 +88,11 @@
             $maxThreadCount,
             [Parameter(Mandatory = $true,ParameterSetName = 'RemoteDriveLetter')]
             [AllowNull()]
-            $remoteDriveLetter
+            $remoteDriveLetter,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [AllowNull()]
+            $threadCount=0
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -265,7 +269,7 @@
             {
                 Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
             }
-            elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
+            elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq "") -and ($threadCount -ne 0))
             {
                 out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
             }
