@@ -412,7 +412,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -serverNames $serverNames
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -serverNames $serverNames -threadCount $totalThreadCount
 
     #Validating that all portions for exchange certificate auth are present.
 
