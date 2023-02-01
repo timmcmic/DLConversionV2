@@ -23,6 +23,7 @@ function compare-recipientProperties
     Out-LogFile -string "BEGIN compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
 
+    <#
     out-logfile -string "Begin compare group type."
 
     if (($onPremData.groupType -eq "-2147483640") -or ($onPremData.groupType -eq "-2147483646") -or ($onPremData.groupType -eq "-2147483644"))
@@ -74,6 +75,8 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject
     }
+
+    #>
 
     out-logfile -string "Evaluate bypass nested moderation enabled."
 
