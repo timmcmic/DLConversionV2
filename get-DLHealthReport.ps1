@@ -3380,7 +3380,7 @@ th {
         'Properties'=   @{n='FolderID';e={$_.identity}},
                         @{n='FolderName';e={$_.folderName}},
                         @{n='AccessRights';e={$_.accessRights}},
-                        @{n='AccessRights';e={if ($_.sharingPermissionsFlags -ne $NULL){$_.sharingPermissionsFlags}else{""}}}
+                        @{n='SharingPermissionsFlags';e={if ($_.sharingPermissionsFlags -ne $NULL){$_.sharingPermissionsFlags}else{""}}}
         }
 
         $html_members_onPremMailboxFolder = ConvertTo-EnhancedHTMLFragment -InputObject $allMailboxesFolderPermissions @params
