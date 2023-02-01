@@ -380,6 +380,8 @@ Function get-DLHealthReport
 
     [array]$global:testOffice365Errors=@()
 
+    [array]$htmlSections = @()
+
 
     #Define variables for import data - used for importing data into pre-collect.
 
@@ -921,8 +923,18 @@ Function get-DLHealthReport
         out-logfile -string $_ -isError:$TRUE
     }
 
-    $originalDLConfigurationHTML = $originalDLConfiguration | convertTo-Json
-    $originalDLConfigurationHTML = $originalDLConfigurationHTML | convertFrom-JSON
+    out-logfile -string "Creating the HTML representation of this data for reporting."
+
+    if ($originalDLConfiguration -ne $NULL)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Active Directory Distribution List Configuration</h2>'}
+
+        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfigurationHTML @params
+
+        $htmlSections += $html_originalDLConfig
+    }
 
     
     Out-LogFile -string "Log original DL configuration."
@@ -1085,7 +1097,18 @@ Function get-DLHealthReport
         out-logFile -string $_ -isError:$TRUE
     }    
 
-    $office365DLConfigurationHTML = $office365DLConfiguration | foreach { $_ } 
+    out-logfile -string "Creating the HTML representation of this object for reporting."
+
+    if ($office365DlConfiguration -ne $NULL)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Exchange Online Distribution List Configuration</h2>'}
+
+        $html_office365DLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLConfiguration @params
+
+        $htmlSections += $html_office365DLConfig
+    }
     
     Out-LogFile -string $office365DLConfiguration
 
@@ -1124,6 +1147,19 @@ Function get-DLHealthReport
     catch{
         out-logfile -string $_
         out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+    }
+
+    out-logfile -string "Creating the Azure AD HTML representation"
+
+    if ($azureADDLConfiguration -ne $NULL)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Azure Active Directory Distribution List Configuration</h2>'}
+
+        $html_AzureADDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDLConfiguration @params
+
+        $htmlSections += $html_AzureADDLConfig
     }
 
     if ($azureADDLConfiguration -ne $NULL)
@@ -2869,21 +2905,7 @@ th {
     font-weight:bold;
 } 
 "@
-    [array]$htmlSections = @()
-
-    out-logfile -string "Creating output for original distribution list configuration."
-
-    if ($originalDLConfigurationHTML -ne $NULL)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Distribution List Configuration</h2>'}
-
-        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfigurationHTML @params
-
-        $htmlSections += $html_originalDLConfig
-    }
-
+    
     out-logfile -string "Split the on premises data from the Office 365 data."
 
     $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
