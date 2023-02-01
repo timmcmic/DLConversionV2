@@ -2989,7 +2989,7 @@ th {
                     'MakeHiddenSection'=$true;
                     'PreContent'='<h2>Active Directory Distribution List Configuration</h2>'}
 
-        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -intputObject $originalDLConfiguration @params
+        $html_originalDLConfig = ConvertTo-EnhancedHTMLFragment -inputObject $originalDLConfiguration @params
 
         $htmlSections += $html_originalDLConfig
     }
