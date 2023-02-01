@@ -17,7 +17,7 @@ function compare-recipientArrays
         [Parameter(Mandatory = $true,ParameterSetName = 'AllTest')]
         $isAllTest=$false,
         [Parameter(Mandatory = $true,ParameterSetName = 'AttributeTest')]
-        $isAttribute=$false
+        $isAttributeTest=$false
     )
 
     [array]$functionReturnArray = @()
