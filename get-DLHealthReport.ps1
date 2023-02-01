@@ -2600,7 +2600,7 @@ Function get-DLHealthReport
     out-logfile -string "Beginning list membership comparison."
 
     try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -errorAction STOP)
+        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2619,7 +2619,7 @@ Function get-DLHealthReport
     out-logfile -string "Comparing accept messages from senders or members on premsies to Office 365."
 
     try {
-        $office365AcceptMessagesFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeAcceptMessagesSMTP -errorAction STOP)
+        $office365AcceptMessagesFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365AcceptMessagesFromSendersOrMembers -onPremData $exchangeAcceptMessagesSMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2628,7 +2628,7 @@ Function get-DLHealthReport
     out-logfile -string "Comparing reject messages from senders or members on premsies to Office 365."
 
     try {
-        $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365RejectMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -errorAction STOP)
+        $office365RejectMessagesFromSendrsOfMembersEval = @(compare-recipientArrays -office365Data $office365RejectMessagesFromSendersOrMembers -onPremData $exchangeRejectMessagesSMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2637,7 +2637,7 @@ Function get-DLHealthReport
     out-logfile -string "Comparing on premises moderated by to Office 365 moderated by."
 
     try{
-        $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365ModeratedBy -onPremData $exchangeModeratedBySMTP -errorAction STOP)
+        $office365ModeratedByEval = @(compare-recipientArrays -office365Data $office365ModeratedBy -onPremData $exchangeModeratedBySMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch{
         out-logfile -string $_ -isError:$TRUE
@@ -2646,7 +2646,7 @@ Function get-DLHealthReport
     out-logfile -string "Comparing on premises bypass moderation from senders or members to Office 365."
 
     try{
-        $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365BypassModerationFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -errorAction STOP)
+        $office365BypassModerationFromSendersOrMembersEval = @(compare-recipientArrays -office365Data $office365BypassModerationFromSendersOrMembers -onPremData $exchangeBypassModerationSMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2655,7 +2655,7 @@ Function get-DLHealthReport
     out-logfile -string "Comapring on premsies managed by to Office 365."
 
     try{
-        $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365ManagedBy -onPremData $exchangeManagedBySMTP -errorAction STOP)
+        $office365ManagedByEval = @(compare-recipientArrays -office365Data $office365ManagedBy -onPremData $exchangeManagedBySMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2664,7 +2664,7 @@ Function get-DLHealthReport
     out-logfile -string "Comparing grant send on behalf to on premsies to Office 365."
 
     try{
-        $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365GrantSendOnBehalfTo -onPremData $exchangeGrantSendOnBehalfToSMTP -errorAction STOP)
+        $office365GrantSendOnBehalfToEval = @(compare-recipientArrays -office365Data $office365GrantSendOnBehalfTo -onPremData $exchangeGrantSendOnBehalfToSMTP -isAttributeTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE

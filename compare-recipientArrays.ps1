@@ -1,14 +1,23 @@
 function compare-recipientArrays
 {
     param(
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true,ParameterSetName = 'ProxyAddresses')]
+        [Parameter(Mandatory = $true,ParameterSetName = 'AllTest')]
+        [Parameter(Mandatory = $true,ParameterSetName = 'AttributeTest')]
         $onPremData=$NULL,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true,ParameterSetName = 'ProxyAddresses')]
+        [Parameter(Mandatory = $true,ParameterSetName = 'AllTest')]
         $azureData=$NULL,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true,ParameterSetName = 'ProxyAddresses')]
+        [Parameter(Mandatory = $true,ParameterSetName = 'AllTest')]
+        [Parameter(Mandatory = $true,ParameterSetName = 'AttributeTest')]
         $office365Data=$NULL,
-        [Parameter(Mandatory = $false)]
-        $isProxyTest=$false
+        [Parameter(Mandatory = $true,ParameterSetName = 'ProxyAddresses')]
+        $isProxyTest=$false,
+        [Parameter(Mandatory = $true,ParameterSetName = 'AllTest')]
+        $isAllTest=$false,
+        [Parameter(Mandatory = $true,ParameterSetName = 'AttributeTest')]
+        $isAttribute=$false
     )
 
     [array]$functionReturnArray = @()
@@ -19,7 +28,7 @@ function compare-recipientArrays
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 
-    if (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null) -and ($isProxyTest -eq $TRUE))
+    if($isProxyTest -eq $TRUE)
     {
         out-logfile -string "Comparing data from all three directories - this has to be proxy addresses."
 
@@ -122,7 +131,7 @@ function compare-recipientArrays
             $functionReturnArray += $functionObject
         }
     }
-    elseif (($onPremData -ne $null) -and ($azureData -ne $null) -and ($office365Data -ne $null) -and ($isProxyTest -eq $FALSE))
+    elseif ($isAllTest -eq $TRUE)
     {
         out-logfile -string "Comparing data from all three directories - this has to be membership."
 
@@ -812,7 +821,7 @@ function compare-recipientArrays
         }
     }
     #>
-    elseif (($onPremData -ne $NULL) -and ($office365Data -ne $NULL))
+    elseif ($isAttributeTest -eq $TRUE)
     {
         out-logfile -string "Comparing on premises to Office 365 values."
 
@@ -1010,6 +1019,10 @@ function compare-recipientArrays
                 $functionReturnArray += $functionObject
             }
         }
+    }
+    else 
+    {
+        out-logfile -string "Something went wrong on this comparison call and we did not do anything."
     }
 
     Out-LogFile -string "END compare-recipientArrays"
