@@ -23,7 +23,6 @@ function compare-recipientProperties
     Out-LogFile -string "BEGIN compare-recipientProperties"
     Out-LogFile -string "********************************************************************************"
 
-    <#
     out-logfile -string "Begin compare group type."
 
     if (($onPremData.groupType -eq "-2147483640") -or ($onPremData.groupType -eq "-2147483646") -or ($onPremData.groupType -eq "-2147483644"))
@@ -43,7 +42,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "GroupType"
-            OnPremisesValue = $functionGroupType
+            onpremisesvalue = $functionGroupType
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.groupType            
@@ -62,7 +61,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "GroupType"
-            OnPremisesValue = $functionGroupType
+            onpremisesvalue = $functionGroupType
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.groupType            
@@ -75,8 +74,6 @@ function compare-recipientProperties
 
         $functionReturnArray += $functionObject
     }
-
-    #>
 
     out-logfile -string "Evaluate bypass nested moderation enabled."
 
@@ -103,7 +100,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "BypassNestedModerationEnabled"
-            OnPremisesValue = $functionModerationFlags
+            onpremisesvalue = $functionModerationFlags
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.bypassNestedModerationEnabled           
@@ -122,7 +119,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "BypassNestedModerationEnabled"
-            OnPremisesValue = $functionModerationFlags
+            onpremisesvalue = $functionModerationFlags
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.bypassNestedModerationEnabled           
@@ -167,7 +164,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MemberJoinRestriction"
-            OnPremisesValue = $functionMemberJoinRestriction
+            onpremisesvalue = $functionMemberJoinRestriction
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
@@ -186,7 +183,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MemberJoinRestriction"
-            OnPremisesValue = $functionMemberJoinRestriction
+            onpremisesvalue = $functionMemberJoinRestriction
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
@@ -231,7 +228,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MemberDepartRestriction"
-            OnPremisesValue = $functionMemberDepartRestriction
+            onpremisesvalue = $functionMemberDepartRestriction
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MemberDepartRestriction          
@@ -250,7 +247,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MemberJoinRestriction"
-            OnPremisesValue = $functionMemberJoinRestriction
+            onpremisesvalue = $functionMemberJoinRestriction
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
@@ -285,7 +282,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ReportToManagerEnabled"
-            OnPremisesValue = $functionreportToOwner
+            onpremisesvalue = $functionreportToOwner
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ReportToManagerEnabled          
@@ -304,7 +301,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ReportToManagerEnabled"
-            OnPremisesValue = $functionreportToOwner
+            onpremisesvalue = $functionreportToOwner
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ReportToManagerEnabled          
@@ -341,7 +338,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ReportToOriginatorEnabled"
-            OnPremisesValue = $functionReportToOriginator
+            onpremisesvalue = $functionReportToOriginator
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ReportToOriginatorEnabled         
@@ -360,7 +357,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ReportToOriginatorEnabled"
-            OnPremisesValue = $functionReportToOriginator
+            onpremisesvalue = $functionReportToOriginator
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ReportToOriginatorEnabled         
@@ -372,7 +369,7 @@ function compare-recipientProperties
         out-logfile -string $functionObject
 
         $functionReturnArray += $functionObject
-    }
+    }!
 
     out-logfile -string "Evaluating OOF reply to originator."
 
@@ -397,7 +394,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SendOofMessageToOriginatorEnabled"
-            OnPremisesValue = $functionoofReplyToOriginator
+            onpremisesvalue = $functionoofReplyToOriginator
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
@@ -416,7 +413,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SendOofMessageToOriginatorEnabled"
-            OnPremisesValue = $functionoofReplyToOriginator
+            onpremisesvalue = $functionoofReplyToOriginator
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
@@ -465,7 +462,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "Alias / MailNickName"
-            OnPremisesValue = $onPremData.mailNickName
+            onpremisesvalue = $onPremData.mailNickName
             AzureADValue = $azureData.mailNickName
             isValidInAzure = "True"
             ExchangeOnlineValue = "N/A"       
@@ -503,7 +500,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "Alias / MailNickName"
-            OnPremisesValue = $onPremData.mailNickName
+            onpremisesvalue = $onPremData.mailNickName
             AzureADValue = $azureData.mailNickName
             isValidInAzure = "False"
             ExchangeOnlineValue = "N/A"       
@@ -797,7 +794,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute1"
-            OnPremisesValue = $onPremData.extensionAttribute1
+            onpremisesvalue = $onPremData.extensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute1      
@@ -816,7 +813,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute1"
-            OnPremisesValue = $onPremData.extensionAttribute1
+            onpremisesvalue = $onPremData.extensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute1      
@@ -836,7 +833,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute2"
-            OnPremisesValue = $onPremData.extensionAttribute2
+            onpremisesvalue = $onPremData.extensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute2      
@@ -855,7 +852,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute2"
-            OnPremisesValue = $onPremData.extensionAttribute2
+            onpremisesvalue = $onPremData.extensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute2      
@@ -875,7 +872,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute3"
-            OnPremisesValue = $onPremData.extensionAttribute3
+            onpremisesvalue = $onPremData.extensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute3 
@@ -894,7 +891,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute3"
-            OnPremisesValue = $onPremData.extensionAttribute3
+            onpremisesvalue = $onPremData.extensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute3      
@@ -914,7 +911,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute4"
-            OnPremisesValue = $onPremData.extensionAttribute4
+            onpremisesvalue = $onPremData.extensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute4     
@@ -933,7 +930,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute4"
-            OnPremisesValue = $onPremData.extensionAttribute4
+            onpremisesvalue = $onPremData.extensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute4     
@@ -954,7 +951,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute5"
-            OnPremisesValue = $onPremData.extensionAttribute5
+            onpremisesvalue = $onPremData.extensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute5
@@ -973,7 +970,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute5"
-            OnPremisesValue = $onPremData.extensionAttribute5
+            onpremisesvalue = $onPremData.extensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute5
@@ -993,7 +990,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute6"
-            OnPremisesValue = $onPremData.extensionAttribute6
+            onpremisesvalue = $onPremData.extensionAttribute6
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute6
@@ -1012,7 +1009,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute6"
-            OnPremisesValue = $onPremData.extensionAttribute6
+            onpremisesvalue = $onPremData.extensionAttribute6
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute6
@@ -1032,7 +1029,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute7"
-            OnPremisesValue = $onPremData.extensionAttribute7
+            onpremisesvalue = $onPremData.extensionAttribute7
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute7
@@ -1051,7 +1048,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute7"
-            OnPremisesValue = $onPremData.extensionAttribute7
+            onpremisesvalue = $onPremData.extensionAttribute7
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute7
@@ -1071,7 +1068,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute8"
-            OnPremisesValue = $onPremData.extensionAttribute8
+            onpremisesvalue = $onPremData.extensionAttribute8
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute8
@@ -1090,7 +1087,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute8"
-            OnPremisesValue = $onPremData.extensionAttribute8
+            onpremisesvalue = $onPremData.extensionAttribute8
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute8
@@ -1110,7 +1107,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute9"
-            OnPremisesValue = $onPremData.extensionAttribute9
+            onpremisesvalue = $onPremData.extensionAttribute9
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute9
@@ -1129,7 +1126,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute9"
-            OnPremisesValue = $onPremData.extensionAttribute9
+            onpremisesvalue = $onPremData.extensionAttribute9
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute9
@@ -1149,7 +1146,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute10"
-            OnPremisesValue = $onPremData.extensionAttribute10
+            onpremisesvalue = $onPremData.extensionAttribute10
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute10
@@ -1168,7 +1165,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute10"
-            OnPremisesValue = $onPremData.extensionAttribute10
+            onpremisesvalue = $onPremData.extensionAttribute10
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute10
@@ -1188,7 +1185,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute11"
-            OnPremisesValue = $onPremData.extensionAttribute11
+            onpremisesvalue = $onPremData.extensionAttribute11
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute11
@@ -1207,7 +1204,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute11"
-            OnPremisesValue = $onPremData.extensionAttribute11
+            onpremisesvalue = $onPremData.extensionAttribute11
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute11
@@ -1227,7 +1224,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute12"
-            OnPremisesValue = $onPremData.extensionAttribute12
+            onpremisesvalue = $onPremData.extensionAttribute12
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute12
@@ -1246,7 +1243,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute12"
-            OnPremisesValue = $onPremData.extensionAttribute12
+            onpremisesvalue = $onPremData.extensionAttribute12
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute12
@@ -1266,7 +1263,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute13"
-            OnPremisesValue = $onPremData.extensionAttribute13
+            onpremisesvalue = $onPremData.extensionAttribute13
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute13
@@ -1285,7 +1282,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute13"
-            OnPremisesValue = $onPremData.extensionAttribute13
+            onpremisesvalue = $onPremData.extensionAttribute13
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute13
@@ -1305,7 +1302,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute14"
-            OnPremisesValue = $onPremData.extensionAttribute14
+            onpremisesvalue = $onPremData.extensionAttribute14
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute14
@@ -1324,7 +1321,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute14"
-            OnPremisesValue = $onPremData.extensionAttribute14
+            onpremisesvalue = $onPremData.extensionAttribute14
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute14
@@ -1344,7 +1341,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute15"
-            OnPremisesValue = $onPremData.extensionAttribute15
+            onpremisesvalue = $onPremData.extensionAttribute15
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute15
@@ -1363,7 +1360,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "CustomAttribute15"
-            OnPremisesValue = $onPremData.extensionAttribute15
+            onpremisesvalue = $onPremData.extensionAttribute15
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.customAttribute15
@@ -1381,7 +1378,7 @@ function compare-recipientProperties
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute1
+            onpremisesvalue = $onPremData.msExchExtensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "N/A"
@@ -1399,7 +1396,7 @@ function compare-recipientProperties
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute2
+            onpremisesvalue = $onPremData.msExchExtensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "N/A"
@@ -1417,7 +1414,7 @@ function compare-recipientProperties
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute3
+            onpremisesvalue = $onPremData.msExchExtensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "N/A"
@@ -1435,7 +1432,7 @@ function compare-recipientProperties
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute4
+            onpremisesvalue = $onPremData.msExchExtensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "N/A"
@@ -1453,7 +1450,7 @@ function compare-recipientProperties
     {
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ExtensionCustomAttribte1"
-            OnPremisesValue = $onPremData.msExchExtensionAttribute5
+            onpremisesvalue = $onPremData.msExchExtensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "N/A"
@@ -1502,7 +1499,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "DisplayName"
-            OnPremisesValue = $onPremData.displayName
+            onpremisesvalue = $onPremData.displayName
             AzureADValue = $azureData.displayName
             isValidInAzure = "True"
             ExchangeOnlineValue = "N/A"
@@ -1540,7 +1537,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "DisplayName"
-            OnPremisesValue = $onPremData.displayName
+            onpremisesvalue = $onPremData.displayName
             AzureADValue = $azureData.displayName
             isValidInAzure = "True"
             ExchangeOnlineValue = "N/A"
@@ -1577,7 +1574,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            OnPremisesValue = $functionHiddenFromAddressListEnabled
+            onpremisesvalue = $functionHiddenFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
@@ -1596,7 +1593,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            OnPremisesValue = $onPremData.hiddenFromAddressListEnabled
+            onpremisesvalue = $onPremData.hiddenFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
@@ -1633,7 +1630,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ModerationEnabled"
-            OnPremisesValue = $functionModerationEnabled
+            onpremisesvalue = $functionModerationEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ModerationEnabled
@@ -1652,7 +1649,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "ModerationEnabled"
-            OnPremisesValue = $functionModerationEnabled
+            onpremisesvalue = $functionModerationEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.ModerationEnabled
@@ -1701,7 +1698,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "Mail / PrimarySMTPAddress"
-            OnPremisesValue = $onPremData.mail
+            onpremisesvalue = $onPremData.mail
             AzureADValue = $azureData.mail
             isValidInAzure = "True"
             ExchangeOnlineValue = "N/A"
@@ -1737,7 +1734,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "Mail / PrimarySMTPAddress"
-            OnPremisesValue = $onPremData.mail
+            onpremisesvalue = $onPremData.mail
             AzureADValue = $azureData.mail
             isValidInAzure = "True"
             ExchangeOnlineValue = "N/A"
@@ -1770,7 +1767,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "RequireSenderAuthenticationEnabled"
-            OnPremisesValue = $functionRequireAuthToSendTo
+            onpremisesvalue = $functionRequireAuthToSendTo
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.RequireSenderAuthenticationEnabled
@@ -1789,7 +1786,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "RequireSenderAuthenticationEnabled"
-            OnPremisesValue = $functionRequireAuthToSendTo
+            onpremisesvalue = $functionRequireAuthToSendTo
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.RequireSenderAuthenticationEnabled
@@ -1829,7 +1826,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SimpleDisplayName"
-            OnPremisesValue = $onPremData.DisplayNamePrintable
+            onpremisesvalue = $onPremData.DisplayNamePrintable
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.simpledisplayname
@@ -1848,7 +1845,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SimpleDisplayName"
-            OnPremisesValue = $onPremData.simpleDisplayNamePrintable
+            onpremisesvalue = $onPremData.simpleDisplayNamePrintable
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.simpledisplayname
@@ -1904,7 +1901,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SendMOderationNotifications"
-            OnPremisesValue = $functionSendModerationNotifications
+            onpremisesvalue = $functionSendModerationNotifications
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.SendModerationNotifications
@@ -1923,7 +1920,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "SendMOderationNotifications"
-            OnPremisesValue = $functionSendModerationNotifications
+            onpremisesvalue = $functionSendModerationNotifications
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = $office365Data.SendModerationNotifications
@@ -1943,7 +1940,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = "ManuallyVerify"
+            onpremisesvalue = "ManuallyVerify"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "ManuallyVerify"
@@ -1962,7 +1959,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = "ManuallyVerify"
+            onpremisesvalue = "ManuallyVerify"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "ManuallyVerify"
@@ -1980,7 +1977,7 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "MailTipTranslations"
-            OnPremisesValue = "ManuallyVerify"
+            onpremisesvalue = "ManuallyVerify"
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
             ExchangeOnlineValue = "ManuallyVerify"
