@@ -3598,8 +3598,6 @@ th {
         OnPremisesGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
         Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
 
-
-        Office365FullMailboxAccessRights = $allOffice365FullMailboxAccess.count
  
 
     
