@@ -2980,11 +2980,11 @@ th {
 
     out-logfile -string "Split the on premises data from the Office 365 data."
 
-    $onPremProxyAddressEval = $office365ProxyAddressEval | where-object {$_.isPresentOnPremises -eq "Source"}
+    $onPremProxyAddressEval = $office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"}
 
     out-logfile -string "Split the cloud data from the on premises data."
 
-    $office365ProxyAddressEval = $office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+    $office365ProxyAddressesEval = $office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
 
     if ($office365ProxyAddressesEval.count -gt 0)
     {
