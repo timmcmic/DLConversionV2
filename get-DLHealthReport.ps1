@@ -3572,20 +3572,6 @@ th {
 
         $htmlSections += $html_exchangeMembers
     }
-
-    if ($htmlSections.count -gt 0)
-    {
-        $params = @{'CssStyleSheet'=$style;
-        'Title'="Distribution List Health Report for $groupSMTPAddress";
-        'PreContent'="<h1>Distribution List Health Report for $groupSMTPAddress</h1>";
-        'HTMLFragments'=$htmlSections}
-        ConvertTo-EnhancedHTML @params |
-        Out-File -FilePath c:\temp\test.html
-    }
-    else
-    {
-        out-logfile -string "No HTML report to generate - no data provided."
-    }
     
     out-logfile -string "Creating HTML output for Azure AD Membership."
 
@@ -3691,7 +3677,112 @@ th {
         $htmlSections += $html_onPremExpandedGrantSend
     }
 
+    out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
 
+    if ($office365AcceptMessagesFromSendersOrMembers.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+
+        $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
+
+        $htmlSections += $html_officeAcceptExpanded
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
+
+    if ($office365RejectMessagesFromSendersOrMembers.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+
+        $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
+
+        $htmlSections += $html_officeRejectExpanded
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
+
+    if ($office365ModeratedBy.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+
+        $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
+
+        $htmlSections += $html_officeModeratedExpanded
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
+
+    if ($office365ManagedBy.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+
+        $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
+
+        $htmlSections += $html_officeManagedByExpanded
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
+
+    if ($office365BypassModerationFromSendersOrMembers.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
+
+        $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
+
+        $htmlSections += $html_officeBypassExpanded
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+
+    if ($office365GrantSendOnBehalfTo.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+
+        $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
+
+        $htmlSections += $html_officeGrantExpanded 
+    }
+
+    out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+
+    if ($office365GrantSendOnBehalfTo.count)
+    {
+        $params = @{'As'='List';
+                    'MakeHiddenSection'=$true;
+                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+
+        $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
+
+        $htmlSections += $html_officeGrantExpanded 
+    }
+
+    if ($functionObject -ne $NULL)
+    {
+        $params = @{'As'='Table';
+        'PreContent'='<h2>&diams; Resource Item Counts Discovered</h2>';
+        'EvenRowCssClass'='even';
+        'OddRowCssClass'='odd';
+        'MakeTableDynamic'=$true;
+        'TableCssClass'='grid';
+        'MakeHiddenSection'=$true;
+        }
+
+        $html_members_counts = ConvertTo-EnhancedHTMLFragment -InputObject $functionObject @params
+
+        $htmlSections += $html_members_counts
+    }
 
     if ($htmlSections.count -gt 0)
     {
@@ -3715,13 +3806,7 @@ th {
     $functionObject = New-Object PSObject -Property @{
 
 
-        Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
-
-        Office365RejectMessagesFromSendersOrMembersCount = $office365RejectMessagesFromSendersOrMembers.count
-        OnPremisesModeratedByCount = 
-        Office365ModeratedByCount = $office365ModeratedBy.count
-        OnPremisesManagedByCount = 
-        Office365ManagedByCount = $office365ManagedBy.count
+        Office365ManagedByCount = 
         OnPremisesBypassModerationFromSendersOrMembers = 
         Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
         OnPremisesGrantSendOnBehalfTo = 
