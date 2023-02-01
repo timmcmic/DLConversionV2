@@ -3167,7 +3167,7 @@ th {
     if ($office365GrantSendOnBehalfToEval.count -gt 0)
     {
         $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 ManagedBy</h2>';
+        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Office 365 Grant Send On Behalf To</h2>';
         'EvenRowCssClass'='even';
         'OddRowCssClass'='odd';
         'MakeTableDynamic'=$true;
