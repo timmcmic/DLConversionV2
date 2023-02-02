@@ -98,6 +98,7 @@ function convert-O365DLSettingsToOnPremSettings
         msExchRecipientTypeDetails=$office3365DLConfiguration.RecipientTypeDetails
         'msDS-ExternalDirectoryObjectId' = $office365DLConfiguration.externalDirectoryObjectID
         distinguishedName = $office365DLConfiguration.distinguishedName
+        name = $office365DLConfiguration.name
     }
 
     out-logfile -string $functionObject
