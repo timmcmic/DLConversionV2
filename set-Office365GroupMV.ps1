@@ -558,7 +558,23 @@
                 {
                     #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                    if ($member.externalDirectoryObjectID -ne $NULL)
+                    if ($member.isAmbiguous -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                            Alias = $functionMailNickName
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group RejectMessagesFromSendersOrMembers"
+                            ErrorMessage = ("AMBIGUOUS_RECIPIENT_EXCEPTION: Member of RejectMessagesFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
+                    elseif ($member.externalDirectoryObjectID -ne $NULL)
                     {
                         out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
@@ -620,7 +636,7 @@
                                 Alias = $functionMailNickName
                                 Name = $originalDLConfiguration.name
                                 Attribute = "Cloud Distribution Group RejectMessagesFromSendersOrMembers"
-                                ErrorMessage = ("Member of RejectMessagesFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                                ErrorMessage = ("DL_PROPERTY_UPDATE_EXCEPTION: Member of RejectMessagesFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
                                 ErrorMessageDetail = $_
                             }
 
@@ -649,6 +665,22 @@
                 {
                     #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
     
+                    if ($member.isAmbiguous -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                            Alias = $functionMailNickName
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group AcceptMessagesOnlyFromSendersOrMembers"
+                            ErrorMessage = ("AMBIGUOUS_RECIPIENT_EXCEPTION: Member of AcceptMessagesOnlyFromSendersOrMembers "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
                     if ($member.externalDirectoryObjectID -ne $NULL)
                     {
                         out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
@@ -738,7 +770,23 @@
                 {
                     #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                    if ($member.externalDirectoryObjectID -ne $NULL)
+                    if ($member.isAmbiguous -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                            Alias = $functionMailNickName
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group ManagedBy"
+                            ErrorMessage = ("AMBIGUOUS_RECIPIENT_EXCEPTION: Member of ManagedBy "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
+                    elseif ($member.externalDirectoryObjectID -ne $NULL)
                     {
                         out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
@@ -828,7 +876,23 @@
                 {
                     #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                    if ($member.externalDirectoryObjectID -ne $NULL)
+                    if ($member.isAmbiguous -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                            Alias = $functionMailNickName
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group ModeratedBy"
+                            ErrorMessage = ("AMBIGUOUS_RECIPIENT_EXCEPTION: Member of ModeratedBy "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
+                    elseif ($member.externalDirectoryObjectID -ne $NULL)
                     {
                         out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
@@ -1011,7 +1075,23 @@
                 {
                     #Implement some protections for larger operations to ensure we do not exhaust our powershell budget.
 
-                    if ($member.externalDirectoryObjectID -ne $NULL)
+                    if ($member.isAmbiguous -eq $TRUE)
+                    {
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                            ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                            Alias = $functionMailNickName
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group GrantSendOnBehalfTo"
+                            ErrorMessage = ("Member of GrantSendOnBehalfTo "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
+                    elseif ($member.externalDirectoryObjectID -ne $NULL)
                     {
                         out-LogFile -string ("Processing member = "+$member.externalDirectoryObjectID)
 
