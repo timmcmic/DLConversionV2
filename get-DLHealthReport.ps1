@@ -832,7 +832,7 @@ Function get-DLHealthReport
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
 
-   if ($azureADCredential -ne $NULL)
+   if ($azureCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
