@@ -1120,7 +1120,7 @@ Function Start-Office365GroupMigration
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-   if ($exchangeOnlineCredential -ne $NULL)
+   if ($exchangeOnlineCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 

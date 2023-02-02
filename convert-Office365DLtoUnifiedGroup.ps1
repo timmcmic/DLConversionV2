@@ -768,7 +768,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-   if ($exchangeOnlineCredential -ne $NULL)
+   if ($exchangeCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
