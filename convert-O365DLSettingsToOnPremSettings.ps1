@@ -93,6 +93,11 @@ function convert-O365DLSettingsToOnPremSettings
         mail=$office365DConfiguration.WindowsEmailAddress
         legacyExchangeDN=$office365DConfiguration.LegacyExchangeDN
         groupType=$functionGroupType
+        msExchRemoteRecipientType="N/A"
+        msExchRecipientDisplayType=$office365DLConfiguration.RecipientType
+        msExchRecipientTypeDetails=$office3365DLConfiguration.RecipientTypeDetails
+        'msDS-ExternalDirectoryObjectId' = $office365DLConfiguration.externalDirectoryObjectID
+        distinguishedName = $office365DLConfiguration.distinguishedName
     }
 
     out-logfile -string $functionObject

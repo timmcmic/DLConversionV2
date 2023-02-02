@@ -885,7 +885,32 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-logfile -string "Validating security group override."
 
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
+    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($isHealthCheck -eq $FALSE))
+    {
+        $errorObject = New-Object PSObject -Property @{
+            Alias = $originalDLConfiguration.mailNickName
+            Name = $originalDLConfiguration.Name
+            PrimarySMTPAddressOrUPN = $originalDLConfiguration.mail
+            GUID = $originalDLConfiguraiton.objectGUID
+            RecipientType = $originalDLConfiguration.objectClass
+            ExchangeRecipientTypeDetails = $originalDLConfiguration.msExchRecipientTypeDetails
+            ExchangeRecipientDisplayType = $originalDLConfiguration.msExchRecipientDisplayType
+            ExchangeRemoteRecipientType = $originalDLConfiguration.msExchRemoteRecipientType
+            GroupType = $originalDLConfiguration.groupType
+            RecipientOrUser = "Recipient"
+            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+            OnPremADAttribute = "SecurityGroupCheck"
+            OnPremADAttributeCommonName = "SecurityGroupCheck"
+            DN = $originalDLConfiguration.distinguishedName
+            ParentGroupSMTPAddress = $groupSMTPAddress
+            isAlreadyMigrated = "N/A"
+            isError=$true
+            isErrorMessage="UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration."
+        }
+
+        $global:preCreateErrors+=$errorObject
+    }
+    elseif ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
     {
         out-logfile -string "Group type in Office 365 is security."
         out-logfile -string "The administrator must specify -overrideSecurityGroupCheck to allow the migration to proceed."
