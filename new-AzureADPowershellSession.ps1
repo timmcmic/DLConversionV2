@@ -43,7 +43,7 @@
         Param
         (
             [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
-            [pscredential]$azureADCredential=$NULL,,
+            [pscredential]$azureADCredential=$NULL,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
             [string]$azureCertificateThumbPrint,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
