@@ -501,7 +501,7 @@ Function Start-MultipleDistributionListMigration
 
         Out-LogFile -string "Valdating azure credentials."
 
-        start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+        start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 5
 
         #Validate that all information for the certificate connection has been provieed.
 

@@ -1011,7 +1011,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount $totalThreadCount
 
     #Validate that all information for the certificate connection has been provieed.
 
@@ -1124,7 +1124,7 @@ Function Start-DistributionListMigration
       #User specified non-certifate authentication credentials.
 
         try {
-            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -threadCount $totalThreadCount
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
         }
         catch {
             out-logfile -string "Unable to create the Azure AD powershell session using credentials."
