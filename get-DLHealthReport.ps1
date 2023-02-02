@@ -837,7 +837,7 @@ Function get-DLHealthReport
       #User specified non-certifate authentication credentials.
 
         try {
-            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -threadCount 0
         }
         catch {
             out-logfile -string "Unable to create the Azure AD powershell session using credentials."

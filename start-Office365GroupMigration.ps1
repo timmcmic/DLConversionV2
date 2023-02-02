@@ -1094,7 +1094,7 @@ Function Start-Office365GroupMigration
       #User specified non-certifate authentication credentials.
 
         try {
-            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -threadCount $totalThreadCount
         }
         catch {
             out-logfile -string "Unable to create the Azure AD powershell session using credentials."
