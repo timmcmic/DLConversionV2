@@ -137,6 +137,8 @@ Function test-preO365GroupConversion
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         [Parameter(Mandatory = $false)]
+        [boolean]$overrideSecurityGroupCheck = $false,
+        [Parameter(Mandatory = $false)]
         [boolean]$addManagersAsMembers = $false,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
