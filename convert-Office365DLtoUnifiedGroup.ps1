@@ -885,7 +885,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-logfile -string "Validating security group override."
 
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($isHealthCheck -eq $FALSE))
+    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($isHealthCheck -eq $TRUE))
     {
         $errorObject = New-Object PSObject -Property @{
             Alias = $originalDLConfiguration.mailNickName
