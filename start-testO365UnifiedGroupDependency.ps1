@@ -260,6 +260,11 @@
                     {
                         out-logfile -string "Manager is not a member of the DL - error."
 
+                        #Ok this is hokie - but here's the deal.
+                        #Since passing this stuff around in powershell is an implicit pointer and not an actual copy.
+                        #If the manager is also not a member and is also invalid - you end up with two errors with the same message but for different reasons
+                        #Dropping this into a dummy array so the references are kept in the pre-create errors.
+
                         $functionArray=@()
                         $functionArray+=$member
 
