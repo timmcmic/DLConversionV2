@@ -1110,17 +1110,6 @@
 
             if ($exchangeSendAsSMTP -ne $NULL)
             {
-                if ($exchangeSendAsSMTP.primarySMTPAddressOrUPN -contains $originalDLConfiguration.mail)
-                {
-                    $functionIndex = $exchangeSendAsSMTP.primarySMTPAddressOrUPN.indexOf($originalDlConfiguration.mail)
-                    out-logfile -string $functionIndex
-
-                    out-logfile -string $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN
-                    $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN = $office365DLConfigurationPostMigration.primarySMTPAddress
-                    out-logfile -string $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN
-                }
-
-
                 foreach ($member in $exchangeSendAsSMTP)
                 {
                     if ($member.externalDirectoryObjectID -ne $NULL)

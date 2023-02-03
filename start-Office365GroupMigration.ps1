@@ -1215,8 +1215,7 @@ Function Start-Office365GroupMigration
 
     Out-logfile -string "Validating security group override."
 
-
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($isHealthCheck -eq $TRUE))
+    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
     {
         $errorObject = New-Object PSObject -Property @{
             Alias = $originalDLConfiguration.mailNickName
@@ -1240,14 +1239,6 @@ Function Start-Office365GroupMigration
         }
 
         $global:preCreateErrors+=$errorObject
-    }
-    elseif ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
-    {
-        out-logfile -string "Group type on premises is security."
-        out-logfile -string "The administrator must specify -overrideSecurityGroupCheck to allow the migration to proceed."
-        out-logfile -string "Office 365 Groups are not security principals.  It is possible that permissions may be lost in Office 365 as a result of deleting and recreating the group during migration."
-
-        out-logfile -string "UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration." -isError:$TRUE
     }
     else 
     {
