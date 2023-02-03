@@ -1339,7 +1339,7 @@ Function get-DLHealthReport
 
     Out-LogFile -string "ACCEPT USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
     {
         foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
         {
