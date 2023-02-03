@@ -603,6 +603,19 @@
                 out-logfile -string "Updating reject messages SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP
                 }
@@ -709,6 +722,19 @@
     
                 out-logfile -string "Updating accept messages SMTP with unique values."
                 out-logfile -string $functionRecipients
+
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
     
                 try {
                     set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP
@@ -815,6 +841,19 @@
                 out-logfile -string "Updating managed by SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     add-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType Owners -links $functionRecipients -errorAction STOP
                 }
@@ -920,6 +959,19 @@
 
                 out-logfile -string "Updating moderated by SMTP with unique values."
                 out-logfile -string $functionRecipients
+
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
 
                 try {
                     set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -moderatedBy $functionRecipients -errorAction STOP
@@ -1116,6 +1168,19 @@
                 #Becuase groups could have been mirgated and retained - this ensures that all SMTP addresses and GUIDs in the array are unique.
 
                 $functionRecipients = $functionRecipients | select-object -Unique
+
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
 
                 out-logfile -string "Updating grant send on behalf to SMTP with unique values."
                 out-logfile -string $functionRecipients
