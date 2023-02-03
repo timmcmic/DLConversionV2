@@ -260,10 +260,13 @@
                     {
                         out-logfile -string "Manager is not a member of the DL - error."
 
-                        $member.isError = $TRUE
-                        $member.isErrorMessage = "UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+                        $functionArray=@()
+                        $functionArray+=$member
 
-                        $global:preCreateErrors+=$member
+                        $functionArray[0].isError = $TRUE
+                        $functionArray[0].isErrorMessage = "UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+
+                        $global:preCreateErrors+=$functionArray[0]
                     }
                 }
             }
