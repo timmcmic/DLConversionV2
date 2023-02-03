@@ -1213,38 +1213,6 @@ Function Start-Office365GroupMigration
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
-    Out-logfile -string "Validating security group override."
-
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
-    {
-        $errorObject = New-Object PSObject -Property @{
-            Alias = $originalDLConfiguration.mailNickName
-            Name = $originalDLConfiguration.Name
-            PrimarySMTPAddressOrUPN = $originalDLConfiguration.mail
-            GUID = $originalDLConfiguraiton.objectGUID
-            RecipientType = $originalDLConfiguration.objectClass
-            ExchangeRecipientTypeDetails = $originalDLConfiguration.msExchRecipientTypeDetails
-            ExchangeRecipientDisplayType = $originalDLConfiguration.msExchRecipientDisplayType
-            ExchangeRemoteRecipientType = $originalDLConfiguration.msExchRemoteRecipientType
-            GroupType = $originalDLConfiguration.groupType
-            RecipientOrUser = "Recipient"
-            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
-            OnPremADAttribute = "SecurityGroupCheck"
-            OnPremADAttributeCommonName = "SecurityGroupCheck"
-            DN = $originalDLConfiguration.distinguishedName
-            ParentGroupSMTPAddress = $groupSMTPAddress
-            isAlreadyMigrated = "N/A"
-            isError=$true
-            isErrorMessage="UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration."
-        }
-
-        $global:preCreateErrors+=$errorObject
-    }
-    else 
-    {
-        out-logfile -string "Group is not security on premises therefore the administrator does not need to override and acknowledge potentially lost permissions."
-    }
-
     if ($retainSendAsOnPrem -eq $TRUE)
     {
         out-logfile -string "Administrator has choosen to audit on premsies send as."
@@ -2134,7 +2102,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -overrideSecurityGroupCheck $overrideSecurityGroupCheck-errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
