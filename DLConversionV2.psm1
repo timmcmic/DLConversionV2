@@ -324,7 +324,7 @@ Function Start-DistributionListMigration
         [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential,
+        [pscredential]$azureADCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
@@ -999,7 +999,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -threadCount $totalThreadCount
 
     #Validating that all portions for exchange certificate auth are present.
 
@@ -1011,7 +1011,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount $totalThreadCount
 
     #Validate that all information for the certificate connection has been provieed.
 
@@ -1119,7 +1119,7 @@ Function Start-DistributionListMigration
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
 
-   if ($azureADCredential -ne $NULL)
+   if ($azureCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
@@ -1658,7 +1658,7 @@ Function Start-DistributionListMigration
 
     Out-LogFile -string "ACCEPT USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
     {
         foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
         {

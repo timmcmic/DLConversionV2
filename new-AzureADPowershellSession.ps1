@@ -42,8 +42,8 @@
 
         Param
         (
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
-            [pscredential]$azureADCredential,
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
+            [pscredential]$azureADCredential=$NULL,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
             [string]$azureCertificateThumbPrint,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
@@ -80,15 +80,31 @@
 
         if ($isCertAuth -eq $False)
         {
-            try 
+            if ($azureADCredential -ne $NULL)
             {
-                Out-LogFile -string "Creating the azure active directory powershell session."
+                try 
+                {
+                    Out-LogFile -string "Creating the azure active directory powershell session."
 
-                Connect-AzureAD -Credential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+                    Connect-AzureAD -Credential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+                }
+                catch 
+                {
+                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                }
             }
-            catch 
+            else
             {
-                Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                try 
+                {
+                    Out-LogFile -string "Creating the azure active directory powershell session."
+
+                    Connect-AzureAD -azureEnvironmentName $azureEnvironmentName
+                }
+                catch 
+                {
+                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                }
             }
         }
         elseif ($isCertAuth -eq $TRUE) 

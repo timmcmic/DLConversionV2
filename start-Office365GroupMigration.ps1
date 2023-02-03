@@ -289,7 +289,7 @@ Function Start-Office365GroupMigration
         [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential,
+        [pscredential]$azureADCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
@@ -969,7 +969,7 @@ Function Start-Office365GroupMigration
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -threadCount $totalThreadCount
 
     #Validating that all portions for exchange certificate auth are present.
 
@@ -981,7 +981,7 @@ Function Start-Office365GroupMigration
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 0
 
     #Validate that all information for the certificate connection has been provieed.
 
@@ -1089,7 +1089,7 @@ Function Start-Office365GroupMigration
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
 
-   if ($azureADCredential -ne $NULL)
+   if ($azureCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
@@ -1120,7 +1120,7 @@ Function Start-Office365GroupMigration
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-   if ($exchangeOnlineCredential -ne $NULL)
+   if ($exchangeOnlineCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
@@ -1212,21 +1212,6 @@ Function Start-Office365GroupMigration
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
-
-    Out-logfile -string "Validating security group override."
-
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
-    {
-        out-logfile -string "Group type on premises is security."
-        out-logfile -string "The administrator must specify -overrideSecurityGroupCheck to allow the migration to proceed."
-        out-logfile -string "Office 365 Groups are not security principals.  It is possible that permissions may be lost in Office 365 as a result of deleting and recreating the group during migration."
-
-        out-logfile -string "UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration." -isError:$TRUE
-    }
-    else 
-    {
-        out-logfile -string "Group is not security on premises therefore the administrator does not need to override and acknowledge potentially lost permissions."
-    }
 
     if ($retainSendAsOnPrem -eq $TRUE)
     {
@@ -1588,7 +1573,7 @@ Function Start-Office365GroupMigration
 
     Out-LogFile -string "ACCEPT USERS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
     {
         foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
         {
@@ -1605,7 +1590,7 @@ Function Start-Office365GroupMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -2117,7 +2102,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized $allObjectsSendAsAccessNormalized -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -overrideSecurityGroupCheck $overrideSecurityGroupCheck -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."

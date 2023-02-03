@@ -43,7 +43,7 @@
 
         Param
         (
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
             [pscredential]$exchangeOnlineCredentials,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
             [string]$exchangeOnlineCertificateThumbPrint,
@@ -97,15 +97,31 @@
 
         if ($isCertAuth -eq $False)
         {
-            try 
+            if ($exchangeOnlineCredentials -ne $NULL)
             {
-                Out-LogFile -string "Creating the exchange online powershell session."
-
-                Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -LogDirectoryPath $debugLogPath -LogLevel All
+                try 
+                {
+                    Out-LogFile -string "Creating the exchange online powershell session."
+    
+                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -LogDirectoryPath $debugLogPath -LogLevel All
+                }
+                catch 
+                {
+                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                }
             }
-            catch 
+            else
             {
-                Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                try 
+                {
+                    Out-LogFile -string "Creating the exchange online powershell session."
+    
+                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -LogDirectoryPath $debugLogPath -LogLevel All
+                }
+                catch 
+                {
+                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
+                }
             }
         }
         elseif ($isCertAuth -eq $TRUE) 

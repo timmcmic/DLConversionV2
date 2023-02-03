@@ -88,7 +88,12 @@
             $maxThreadCount,
             [Parameter(Mandatory = $true,ParameterSetName = 'RemoteDriveLetter')]
             [AllowNull()]
-            $remoteDriveLetter
+            $remoteDriveLetter,
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
+            [AllowNull()]
+            $threadCount=0
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -215,7 +220,7 @@
             {
                 Out-LogFile -string "ERROR:  Only one method of azure cloud authentication can be specified.  Use either azure cloud credentials or azure cloud certificate thumbprint." -isError:$TRUE
             }
-            elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq ""))
+            elseif (($azureADCredential -eq $NULL) -and ($azureCertificateThumbprint -eq "") -and ($threadCount -ne 0))
             {
                 out-logfile -string "ERROR:  One permissions method to connect to Azure AD must be specified." 
                 out-logfile -string "https://timmcmic.wordpress.com/2022/09/18/office-365-distribution-list-migration-version-2-0-part-20/" -isError:$TRUE
@@ -265,7 +270,7 @@
             {
                 Out-LogFile -string "ERROR:  Only one method of cloud authentication can be specified.  Use either cloud credentials or cloud certificate thumbprint." -isError:$TRUE
             }
-            elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq ""))
+            elseif (($exchangeOnlineCredential -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq "") -and ($threadCount -ne 0))
             {
                 out-logfile -string "ERROR:  One permissions method to connect to Exchange Online must be specified." -isError:$TRUE
             }

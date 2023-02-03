@@ -76,49 +76,109 @@
 
             foreach ($member in $attributeToNormalize)
             {
-                out-logfile -string ("Testing member: "+$member)
-
-                try {
-                    out-logfile -string "Testing for recipient type."
-
-                    $functionRecipient = get-o365Recipient -identity $member -errorAction STOP
-
-                    $functionObject = New-Object PSObject -Property @{
-                        PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
-                        ExternalDirectoryObjectID = ("Value_"+$functionRecipient.externalDirectoryObjectID)
-                        isError=$NULL
-                        isErrorMessage=$null
-                    }
-
-                    out-logfile -string $functionObject
-                }
-                catch {
-
-                    out-logfile -string $_
-                    out-logfile -string "Testing for recipient type failed."
+                if ($member -ne "Organization Management")
+                {
+                    out-logfile -string ("Testing member: "+$member)
 
                     try {
+                        out-logfile -string "Testing for recipient type."
 
-                        out-logfile -string "Testing object for user type."
+                        $functionRecipient = get-o365Recipient -identity $member -errorAction STOP
 
-                        $functionRecipient = get-o365user -identity $member -errorAction STOP
+                        if ($functionRecipient.count -gt 0)
+                        {
+                            out-logfile -string "The attribute to be normalized only contains names.  The name resulted in more than one object being returned via get-recipient."
 
-                        $functionObject = New-Object PSObject -Property @{
-                            PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
-                            ExternalDirectoryObjectID = ("Value_"+$functionRecipient.externalDirectoryObjectID)
-                            isError=$NULL
-                            isErrorMessage=$null
+                            foreach ($object in $functionRecipient)
+                            {
+                                $functionObject = New-Object PSObject -Property @{
+                                    DisplayName = $object.displayName
+                                    PrimarySMTPAddressOrUPN = $object.primarySMTPAddress
+                                    ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
+                                    isError=$NULL
+                                    isErrorMessage=$null
+                                    isAmbiguous=$TRUE 
+                                }
+
+                                out-logfile -string $functionObject  
+
+                                $functionReturnArray += $functionObject
+                            }
                         }
+                        else {
+                            out-logfile -string "Only a single object was found - not ambiguous."
 
-                        out-logfile -string $functionObject
+                            $functionObject = New-Object PSObject -Property @{
+                                DisplayName = $functionRecipient.displayName
+                                PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
+                                ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                isError=$NULL
+                                isErrorMessage=$null
+                                isAmbiguous=$false
+                            }
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+                        }
                     }
                     catch {
+
                         out-logfile -string $_
-                        out-logfile -string "A user or recipient in the group cannot be located." -isError:$TRUE
+                        out-logfile -string "Testing for recipient type failed."
+
+                        try {
+
+                            out-logfile -string "Testing object for user type."
+
+                            $functionRecipient = get-o365user -identity $member -errorAction STOP
+
+                            if ($functionRecipient.count -gt 0)
+                            {
+                                out-logfile -string "Multiple users were found on ambiguous query."
+
+                                foreach ($object in $functionRecipient)
+                                {
+                                    $functionObject = New-Object PSObject -Property @{
+                                        DisplayName = $object.DisplayName
+                                        PrimarySMTPAddressOrUPN = $object.UserPrincipalName
+                                        ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
+                                        isError=$NULL
+                                        isErrorMessage=$null
+                                        isAmbiguous=$true
+                                    }
+
+                                    out-logfile -string $functionObject  
+
+                                    $functionReturnArray += $functionObject
+                                }
+                            }
+                            else {
+                                out-logfile -string "Only single user was returned / not ambiguous."
+                                
+                                $functionObject = New-Object PSObject -Property @{
+                                    DisplayName = $functionRecipient.DisplayName
+                                    PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
+                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    isError=$NULL
+                                    isErrorMessage=$null
+                                    isAmbiguous=$false
+                                }
+
+                                out-logfile -string $functionObject  
+
+                                $functionReturnArray += $functionObject
+                            }
+                        }
+                        catch {
+                            out-logfile -string $_
+                            out-logfile -string "A user or recipient in the group cannot be located." -isError:$TRUE
+                        }
                     }
                 }
-
-                $functionReturnArray += $functionObject
+                else {
+                    out-logfile -string "Member is the organization management built in role group - skip."
+                }
             }
         }
         else 

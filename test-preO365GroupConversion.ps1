@@ -123,7 +123,7 @@ Function test-preO365GroupConversion
         [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential,
+        [pscredential]$azureADCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
@@ -136,6 +136,8 @@ Function test-preO365GroupConversion
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
+        [Parameter(Mandatory = $false)]
+        [boolean]$overrideSecurityGroupCheck = $false,
         [Parameter(Mandatory = $false)]
         [boolean]$addManagersAsMembers = $false,
         #Definte parameters for pre-collected permissions
@@ -214,7 +216,7 @@ Function test-preO365GroupConversion
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    convert-Office365DLtoUnifiedGroup -groupSMTPAddress $groupSMTPAddress -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365 -addManagersAsMembers $addManagersAsMembers
+    convert-Office365DLtoUnifiedGroup -groupSMTPAddress $groupSMTPAddress -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365 -addManagersAsMembers $addManagersAsMembers -overrideSecurityGroupCheck $overrideSecurityGroupCheck
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigrationO365Group"

@@ -131,7 +131,7 @@ Function Test-PreMigrationO365Group
         [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential,
+        [pscredential]$azureADCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
@@ -151,6 +151,8 @@ Function Test-PreMigrationO365Group
         [boolean]$useCollectedSendAsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$overrideSecurityGroupCheck=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$addManagersAsMembers = $false,
         #Define parameters for multi-threaded operations
@@ -240,7 +242,7 @@ Function Test-PreMigrationO365Group
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    start-office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedSendAsOnPrem $useCollectedSendAsOnPrem -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365 -addManagersAsMembers $addManagersAsMembers
+    start-office365GroupMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -useCollectedFullMailboxAccessOffice365 $useCollectedFullMailboxAccessOffice365 -useCollectedSendAsOnPrem $useCollectedSendAsOnPrem -useCollectedFolderPermissionsOffice365 $useCollectedFolderPermissionsOffice365 -addManagersAsMembers $addManagersAsMembers -overrideSecurityGroupCheck $overrideSecurityGroupCheck
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigrationO365Group"

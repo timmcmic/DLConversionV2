@@ -253,7 +253,7 @@ Function Convert-Office365DLtoUnifiedGroup
         [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential,
+        [pscredential]$azureADCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
         [string]$azureEnvironmentName="AzureCloud",
@@ -673,7 +673,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -threadCount $totalThreadCount
 
     #Validating that all portions for exchange certificate auth are present.
 
@@ -685,7 +685,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-LogFile -string "Validating Azure AD Credentials."
 
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 0
 
     #Validate that all information for the certificate connection has been provieed.
 
@@ -737,7 +737,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
 
-   if ($azureADCredential -ne $NULL)
+   if ($azureCertificateThumbprint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
@@ -768,7 +768,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-   if ($exchangeOnlineCredential -ne $NULL)
+   if ($exchangeOnlineCertificateThumbPrint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
@@ -885,7 +885,32 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-logfile -string "Validating security group override."
 
-    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
+    if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($isHealthCheck -eq $TRUE))
+    {
+        $errorObject = New-Object PSObject -Property @{
+            Alias = $originalDLConfiguration.mailNickName
+            Name = $originalDLConfiguration.Name
+            PrimarySMTPAddressOrUPN = $originalDLConfiguration.mail
+            GUID = $originalDLConfiguraiton.objectGUID
+            RecipientType = $originalDLConfiguration.objectClass
+            ExchangeRecipientTypeDetails = $originalDLConfiguration.msExchRecipientTypeDetails
+            ExchangeRecipientDisplayType = $originalDLConfiguration.msExchRecipientDisplayType
+            ExchangeRemoteRecipientType = $originalDLConfiguration.msExchRemoteRecipientType
+            GroupType = $originalDLConfiguration.groupType
+            RecipientOrUser = "Recipient"
+            ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
+            OnPremADAttribute = "SecurityGroupCheck"
+            OnPremADAttributeCommonName = "SecurityGroupCheck"
+            DN = $originalDLConfiguration.distinguishedName
+            ParentGroupSMTPAddress = $groupSMTPAddress
+            isAlreadyMigrated = "N/A"
+            isError=$true
+            isErrorMessage="UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration."
+        }
+
+        $global:preCreateErrors+=$errorObject
+    }
+    elseif ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($overrideSecurityGroupCheck -eq $FALSE))
     {
         out-logfile -string "Group type in Office 365 is security."
         out-logfile -string "The administrator must specify -overrideSecurityGroupCheck to allow the migration to proceed."
