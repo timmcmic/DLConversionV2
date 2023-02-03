@@ -260,18 +260,30 @@
                     {
                         out-logfile -string "Manager is not a member of the DL - error."
 
-                        #Ok this is hokie - but here's the deal.
-                        #Since passing this stuff around in powershell is an implicit pointer and not an actual copy.
-                        #If the manager is also not a member and is also invalid - you end up with two errors with the same message but for different reasons
-                        #Dropping this into a dummy array so the references are kept in the pre-create errors.
+                        $functionObject = New-Object PSObject -Property @{
+                            Alias = $member.alias
+                            Name = $member.name
+                            PrimarySMTPAddressOrUPN = $member.primarySMTPAddressOrUPN
+                            GUID = $member.GUID
+                            RecipientType = $member.recipientType
+                            ExchangeRecipientTypeDetails = $member.ExchangeRecipientTypeDetails
+                            ExchangeRecipientDisplayType = $member.ExchangeRecipientDisplayType
+                            ExchangeRemoteRecipientType = $member.exchangeRemoteRecipientType
+                            GroupType = $member.groupType
+                            RecipientOrUser = $member.recipientOrUser
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            OnPremADAttribute = $member.OnPremADAttribute
+                            OnPremADAttributeCommonName = $member.OnPremADAttributeCommonName
+                            DN = $member.dn
+                            ParentGroupSMTPAddress = $member.ParentGroupSMTPAddress
+                            isAlreadyMigrated = $member.isAlreadyMigrated
+                            isError=$true
+                            isErrorMessage="UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
+                        }
 
-                        $functionArray=@()
-                        $functionArray= $funtionArray + $member 
+                        out-logfile -string $functionObject
 
-                        $functionArray[0].isError = $TRUE
-                        $functionArray[0].isErrorMessage = "UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
-
-                        $global:preCreateErrors+=$functionArray[0]
+                        $global:preCreateErrors+=$functionObject
                     }
                 }
             }
