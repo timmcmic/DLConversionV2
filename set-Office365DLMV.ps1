@@ -536,6 +536,19 @@
                 out-logfile -string "Updating reject messages SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
                 }
@@ -625,6 +638,19 @@
     
                 out-logfile -string "Updating accept messages SMTP with unique values."
                 out-logfile -string $functionRecipients
+
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
     
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
@@ -715,6 +741,19 @@
                 out-logfile -string "Updating managed by SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -managedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
                 }
@@ -803,6 +842,19 @@
 
                 out-logfile -string "Updating moderated by SMTP with unique values."
                 out-logfile -string $functionRecipients
+
+                out-logfile -string "Testing if recipients contains the migrated group SMTP address - replace with new group SMTP."
+                out-logfile -string 'This allows all attributes to be set prior to renaming.'
+
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
 
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -moderatedBy $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
@@ -893,6 +945,16 @@
                 out-logfile -string "Updating bypass moderation from senders or members SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -BypassModerationFromSendersOrMembers $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
                 }
@@ -982,6 +1044,16 @@
                 out-logfile -string "Updating grant send on behalf to SMTP with unique values."
                 out-logfile -string $functionRecipients
 
+                if ($functionRecipients -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $functionRecipients.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $functionRecipients[$functionIndex]
+                    $functionRecipients[$functionIndex] = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $functionRecipients[$functionIndex]
+                }
+
                 try {
                     set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -GrantSendOnBehalfTo $functionRecipients -errorAction STOP -BypassSecurityGroupManagerCheck
                 }
@@ -1038,6 +1110,17 @@
 
             if ($exchangeSendAsSMTP -ne $NULL)
             {
+                if ($exchangeSendAsSMTP.primarySMTPAddressOrUPN -contains $originalDLConfiguration.mail)
+                {
+                    $functionIndex = $exchangeSendAsSMTP.primarySMTPAddressOrUPN.indexOf($originalDlConfiguration.mail)
+                    out-logfile -string $functionIndex
+
+                    out-logfile -string $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN
+                    $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN = $office365DLConfigurationPostMigration.primarySMTPAddress
+                    out-logfile -string $exchangeSendAsSMTP[$functionIndex].primarySMTPAddressOrUPN
+                }
+
+
                 foreach ($member in $exchangeSendAsSMTP)
                 {
                     if ($member.externalDirectoryObjectID -ne $NULL)
