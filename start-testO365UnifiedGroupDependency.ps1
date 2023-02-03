@@ -266,7 +266,7 @@
                         #Dropping this into a dummy array so the references are kept in the pre-create errors.
 
                         $functionArray=@()
-                        $functionArray+=$member
+                        $functionArray= $funtionArray + $member 
 
                         $functionArray[0].isError = $TRUE
                         $functionArray[0].isErrorMessage = "UNIFIED_GROUP_MIGRATION_MANAGER_NOT_MEMBER_EXCEPTION: Office 365 Groups require all owners to be members.  ManagedBY is mapped to owners - this manager is not a member of the group.  The manage must be removed, use the switch -addManagersAsMembers to add all managers, or manually add this manager as a member."
