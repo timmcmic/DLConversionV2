@@ -133,7 +133,7 @@
 
             try
             {
-                $functionTest = get-azureADGroup -filter "`"onPremisesSecurityIdentifier eq $member.GUID`""
+                $functionTest = get-azureADGroup -filter "onPremisesSecurityIdentifier eq $member.GUID"
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
