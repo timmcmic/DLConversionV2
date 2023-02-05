@@ -133,7 +133,7 @@
 
             try
             {
-                $functionFilter =  "onPremisesSecurityIdentifier eq '$member.GUID'"
+                $functionFilter =  "onPremisesSecurityIdentifier eq $member.GUID"
                 out-logfile -string $functionFilter
 
                 $functionCommand = "Get-AzureADGroup -filter `'$functionFilter' -errorAction STOP"
