@@ -138,7 +138,7 @@
                 $functionFilter =  "onPremisesSecurityIdentifier eq '$functionSID'"
                 out-logfile -string $functionFilter
 
-                $functionCommand = "Get-AzureADGroup -filter `'$functionFilter' -errorAction STOP"
+                $functionCommand = "Get-AzureADGroup -filter '$functionFilter' -errorAction STOP"
                 out-logfile -string $functionCommand
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
