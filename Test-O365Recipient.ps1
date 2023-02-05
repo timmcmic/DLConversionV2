@@ -135,9 +135,7 @@
             {
                 $functionTest = get-azureADGroup -filter "OnPremisesSecurityIdentifier eq '$member.GUID'" -errorAction STOP
 
-                $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
-                $member.alias = $functionTest.MailNickName
-
+                $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId
             }
             catch
             {

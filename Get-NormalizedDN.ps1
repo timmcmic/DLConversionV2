@@ -463,6 +463,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                    }
                 }
                 else 
                 {
