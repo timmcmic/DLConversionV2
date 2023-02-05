@@ -133,7 +133,17 @@
 
             try
             {
-                $functionTest = get-azureADGroup -filter "onPremisesSecurityIdentifier eq '$member.GUID'" -errorAction STOP
+                $functionFilter =  "onPremisesSecurityIdentifier eq `'$member.GUID'"
+                out-logfile -string $functionFilter
+
+                $functionCommand = "Get-AzureADGroup -filter `'$functionFilter' -errorAction STOP"
+                out-logfile -string $functionCommand
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                $functiontest = invoke-command -scriptBlock $scriptBlock
+
+                out-logfile -string $functiontest
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
