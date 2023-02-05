@@ -125,6 +125,27 @@
                 $isTestError="Yes"
             }
         }
+        elseif ($member.recipientOrUser -eq "SecurityGroup")
+        {
+            out-logfile -string "Found a security group as a member."
+            out-logfile -string "Testing based on GUID which was overloaded with the groups SID."
+            out-logfile -string ("Testing SID: "+$member.GUID)
+
+            try
+            {
+                $functionTest = get-azureADGroup -filter "OnPremisesSecurityIdentifier eq '$member.GUID'" -errorAction STOP
+
+                $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
+                $member.alias = $functionTest.MailNickName
+
+            }
+            catch
+            {
+                out-logfile -string ("The recipient was not found in Office 365.  ERROR -- "+$member.GUID)
+                out-logfile -string $_
+                $isTestError="Yes"
+            }
+        }
         else 
         {
             out-logfile -string "An invalid object was passed to test-o365recipient - failing."

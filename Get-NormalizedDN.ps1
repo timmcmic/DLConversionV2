@@ -440,6 +440,30 @@
                         isErrorMessage=""
                     }
                 }
+                if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
+                {
+                    out-logfile -string "The group object is a security group - which is now represented in Exchange Online."
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $NULL
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $NULL
+                        GUID = $functionTest.objectSID
+                        RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $NULL
+                        ExchangeRecipientDisplayType = $NULL
+                        ExchangeRemoteRecipientType = $NULL
+                        GroupType = $functionTest.GroupType
+                        RecipientOrUser = "SecurityGroup"
+                        ExternalDirectoryObjectID = $NULL
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
+                        DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
+                        isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=""
+                }
                 else 
                 {
                     out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
