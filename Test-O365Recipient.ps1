@@ -133,6 +133,12 @@
 
             try
             {
+                $functionFilter = "onPremisesSecurityIdentifier eq "
+                out-logfile -string $functionFilter
+
+                $functionFilter += $member.GUID
+                out-logfile -string $functionFilter
+                
                 $functionTest = get-azureADGroup -filter "onPremisesSecurityIdentifier eq $member.GUID"
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
