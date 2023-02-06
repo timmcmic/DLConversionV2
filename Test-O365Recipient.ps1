@@ -157,6 +157,8 @@
 
                 $scriptBlock=[scriptBlock]::create($functionCommand)
 
+                $functionTest = invoke-command -ScriptBlock $scriptBlock
+
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
             }
