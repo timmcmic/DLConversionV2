@@ -148,7 +148,7 @@
                 $functionFilter += "`'"
                 out-logfile -string $functionFilter
 
-                $functionFilter = "`""
+                $functionFilter += "`""
                 out-logfile -string $functionFilter
 
                 $functionTest = get-azureADGroup -filter $functionFilter
