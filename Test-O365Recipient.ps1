@@ -151,7 +151,7 @@
                 $functionFilter += "`""
                 out-logfile -string $functionFilter
 
-                $functionCommand = get-azureADGroup -filter $functionFilter
+                $functionCommand = "get-azureADGroup -filter $functionFilter"
 
                 out-logfile -string $functionCommand
 
