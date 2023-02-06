@@ -151,7 +151,11 @@
                 $functionFilter += "`""
                 out-logfile -string $functionFilter
 
-                $functionTest = get-azureADGroup -filter `$functionFilter
+                $functionCommand = get-azureADGroup -filter $functionFilter
+
+                out-logfile -string $functionCommand
+
+                $scriptBlock=[scriptBlock]::create($functionCommand)
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
