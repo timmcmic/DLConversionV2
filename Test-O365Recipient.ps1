@@ -138,8 +138,8 @@
 
                 $functionFilter += $member.GUID
                 out-logfile -string $functionFilter
-                
-                $functionTest = get-azureADGroup -filter "onPremisesSecurityIdentifier eq $member.GUID"
+
+                $functionTest = get-azureADGroup -filter `"$functionFilter`"
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
