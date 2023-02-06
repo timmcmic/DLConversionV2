@@ -133,7 +133,10 @@
 
             try
             {
-                $functionFilter = "onPremisesSecurityIdentifier eq "
+                $functionFilter = "`""
+                out-logfile -string $functionFilter
+
+                $functionFilter += "onPremisesSecurityIdentifier eq "
                 out-logfile -string $functionFilter
 
                 $functionFilter += "`'"
@@ -145,7 +148,10 @@
                 $functionFilter += "`'"
                 out-logfile -string $functionFilter
 
-                $functionTest = get-azureADGroup -filter `"$functionFilter`"
+                $functionFilter = "`""
+                out-logfile -string $functionFilter
+
+                $functionTest = get-azureADGroup -filter $functionFilter
 
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
                 $member.alias = $functionTest.mailNickName
