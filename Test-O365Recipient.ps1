@@ -134,20 +134,10 @@
             try
             {
                 $functionFilter = "`""
-                out-logfile -string $functionFilter
-
                 $functionFilter += "onPremisesSecurityIdentifier eq "
-                out-logfile -string $functionFilter
-
                 $functionFilter += "`'"
-                out-logfile -string $functionFilter
-
                 $functionFilter += $member.GUID
-                out-logfile -string $functionFilter
-
                 $functionFilter += "`'"
-                out-logfile -string $functionFilter
-
                 $functionFilter += "`""
                 out-logfile -string $functionFilter
 
