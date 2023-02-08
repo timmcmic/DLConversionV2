@@ -83,7 +83,7 @@
                     try {
                         out-logfile -string "Testing for recipient type."
 
-                        $functionRecipient = get-o365Recipient -identity $member -errorAction STOP
+                        $functionRecipient = get-o365Recipient -filter {name -eq $member} -errorAction STOP
 
                         if ($functionRecipient.count -gt 0)
                         {
