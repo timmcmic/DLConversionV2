@@ -4447,7 +4447,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedname -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremADAttributes.onPremAcceptMessagesFromDLMembers.Value -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremADAttributes.onPremRejectMessagesFromSenders.Value -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
@@ -4509,7 +4509,7 @@ Function Start-DistributionListMigration
             if ($member.distinguishedName -ne $originalDLConfiguration.distinguishedname)
             {
                 try{
-                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremADAttributes.onPremRejectMessagesFromDLMembers.Value -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
+                    $isTestError=start-replaceOnPrem -routingContact $routingContactConfiguration -attributeOperation $onPremADAttributes.onPremAcceptMessagesFromSenders.Value -canonicalObject $member -adCredential $activeDirectoryCredential -globalCatalogServer $globalCatalogServer -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_
