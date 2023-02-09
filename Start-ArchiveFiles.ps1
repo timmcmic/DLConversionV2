@@ -55,7 +55,7 @@
 
         $functionNameSplit = $functionNameSplit[-1].split(".")
 
-        if ($funtionNameSplit.count -gt 2)
+        if ($functionNameSplit.count -gt 2)
         {
             out-logfile -string "DL Name contains one or more periods."
 
