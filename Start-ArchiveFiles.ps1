@@ -72,9 +72,13 @@
             }
 
             out-logfile -string $tempName
-        }
 
-        $functionNameSplit = $tempName
+            $functionNameSplit = $tempName
+        }
+        else 
+        {
+            $functionNameSplit = $functionNameSplit[0]
+        }
 
         out-logfile -string "Split string for group name."
         out-logfile -string $functionNameSplit
@@ -85,7 +89,7 @@
 
             out-logfile -string "Success - renaming directory."
 
-            $functionFolderName = $functionNameSplit[0]+"-Success"
+            $functionFolderName = $functionNameSplit+"-Success"
             $functionFolderName = $functionDate+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
