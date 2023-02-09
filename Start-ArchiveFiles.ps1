@@ -63,9 +63,9 @@
 
             for ($i = 0 ; $i -lt $functionNameSplit.count - 1 ; $i++)
             {
-                $tempName = $tempName + $functionSplitName[$i]
+                $tempName = $tempName + $functionNameSplit[$i]
 
-                if (($i+1) -lt ($functionSplitName.count - 1))
+                if (($i+1) -lt ($functionNameSplit.count - 1))
                 {
                     $tempName = $tempName + "."
                 }
@@ -74,7 +74,7 @@
             out-logfile -string $tempName
         }
 
-        $functionSplitName = $tempName
+        $functionNameSplit = $tempName
 
         out-logfile -string "Split string for group name."
         out-logfile -string $functionNameSplit
