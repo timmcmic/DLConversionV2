@@ -70,7 +70,11 @@
                     $tempName = $tempName + "."
                 }
             }
+
+            out-logfile -string $tempName
         }
+
+        $functionSplitName = $tempName
 
         out-logfile -string "Split string for group name."
         out-logfile -string $functionNameSplit
