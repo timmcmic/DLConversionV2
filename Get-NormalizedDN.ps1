@@ -440,7 +440,7 @@
                         isErrorMessage=""
                     }
                 }
-                if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
+                elseif (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
                 {
                     out-logfile -string "The group object is a security group - which is now represented in Exchange Online."
 
