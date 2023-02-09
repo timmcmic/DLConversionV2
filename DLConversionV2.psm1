@@ -337,9 +337,9 @@ Function Start-DistributionListMigration
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        [Parameter(Mandatory = $true)]
-        [string]$dnNoSyncOU,
         #Defining optional parameters for retention and upgrade
+        [Parameter(Mandatory = $false)]
+        [string]$dnNoSyncOU = "NotSet",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
@@ -984,6 +984,17 @@ Function Start-DistributionListMigration
     Out-LogFile -string "********************************************************************************"
 
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
+
+    out-logfile -string "Validating and DN for no sync OU is specified if not health check"
+
+    if (($isHealthCheck -eq $FALSE) -and ($dnNoSyncOU = "NotSet"))
+    {
+        out-logfile -string "A no sync OU DN is required when not performing a health check." -isError:$TRUE        
+    }
+    else 
+    {
+        out-logfile -string "A no sync OU DN is not required for this operation as it is a health check."
+    }
 
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 

@@ -200,9 +200,9 @@ Function Start-MultipleMachineDistributionListMigration
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        [Parameter(Mandatory = $true)]
-        [string]$dnNoSyncOU,
         #Defining optional parameters for retention and upgrade
+        [Parameter(Mandatory = $false)]
+        [string]$dnNoSyncOU = "NotSet",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
