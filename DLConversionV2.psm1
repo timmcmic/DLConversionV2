@@ -987,7 +987,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Validating and DN for no sync OU is specified if not health check"
 
-    if (($isHealthCheck -eq $FALSE) -and ($dnNoSyncOU = "NotSet"))
+    if (($isHealthCheck -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
     {
         out-logfile -string "A no sync OU DN is required when not performing a health check." -isError:$TRUE        
     }
