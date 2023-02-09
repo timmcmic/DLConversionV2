@@ -1299,11 +1299,15 @@ Function Start-DistributionListMigration
 
     #Record what was returned.
 
-    if ($allObjectSendAsAccess.count -ne 0)
+    if ($allObjectSendAsAccess -ne $NULL)
     {
         out-logfile -string $allObjectSendAsAccess
 
         out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $xmlFiles.allGroupsSendAsXML.value
+    }
+    else 
+    {
+        $allObjectsSendAsAccess=@()
     }
 
     Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
@@ -1341,11 +1345,15 @@ Function Start-DistributionListMigration
 
     #Record what was returned.
 
-    if ($allObjectsFullMailboxAccess.count -ne 0)
+    if ($allObjectsFullMailboxAccess -ne $null)
     {
         out-logfile -string $allObjectsFullMailboxAccess
 
         out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $xmlFiles.allGroupsFullMailboxAccessXML.value
+    }
+    else
+    {
+        $allObjectsFullMailboxAccess = @()
     }
 
     out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
@@ -1385,11 +1393,15 @@ Function Start-DistributionListMigration
 
     #Record what was returned.
 
-    if ($allMailboxesFolderPermissions.count -ne 0)
+    if ($allMailboxesFolderPermissions -ne $NULL)
     {
         out-logfile -string $allMailboxesFolderPermissions
 
         out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $xmlFiles.allMailboxesFolderPermissionsXML.value
+    }
+    else
+    {
+        $allMailboxesFolderPermissions=@()
     }
 
     #If there are any sendAs or mailbox access permissiosn for the group.
