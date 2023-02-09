@@ -104,7 +104,7 @@
             
             out-logfile -string "FAILED - renaming directory."
 
-            $functionFolderName = $functionNameSplit[0]+"-FAILED"
+            $functionFolderName = $functionNameSplit+"-FAILED"
             $functionFolderName = $functionDate+"-"+$functionFolderName
             $functionOriginalPath= $logFolderPath+$global:staticFolderName
 
