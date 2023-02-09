@@ -55,6 +55,23 @@
 
         $functionNameSplit = $functionNameSplit[-1].split(".")
 
+        if ($funtionNameSplit.count -gt 2)
+        {
+            out-logfile -string "DL Name contains one or more periods."
+
+            [string]$tempName = ""
+
+            for ($i = 0 ; $i -lt $functionNameSplit.count - 1 ; $i++)
+            {
+                $tempName = $tempName + $functionSplitName[$i]
+
+                if (($i+1) -lt ($functionSplitName.count - 1))
+                {
+                    $tempName = $tempName + "."
+                }
+            }
+        }
+
         out-logfile -string "Split string for group name."
         out-logfile -string $functionNameSplit
 
