@@ -328,6 +328,8 @@ function compare-recipientArrays
             $switchTest = $member.externalDirectoryObjectID[0]
             out-logfile -string ("Testing: "+$switchTest)
 
+            $functionAzureData = New-Object -TypeName "System.Collections.ArrayList"
+
             switch ($switchTest)
             {
                 "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1)}
