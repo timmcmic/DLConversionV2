@@ -134,8 +134,6 @@ function compare-recipientArrays
         out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
         out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
         out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
-
-        exit
     }
 
     #===========================================================================================
@@ -325,12 +323,35 @@ function compare-recipientArrays
                 $functionPrimarySMTPAddress = "N/A"
             }
 
-            if ($azureData.objectID -contains $member.externalDirectoryObjectID)
+            out-logfile -string "Determine which subset of Azure data we should be querying against."
+
+            $switchTest = $member.externalDirectoryObjectID[0]
+            out-logfile -string ("Testing: "+$switchTest)
+
+            switch ($switchTest)
+            {
+                "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1)}
+                "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2)}
+                "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3)}
+                "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList4)}
+                "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList5)}
+                "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList6)}
+                "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList7)}
+                "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList8)}
+                "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList9)}
+                "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListA)}
+                "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListB)}
+                "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListC)}
+                "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListD)}
+                "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
+            }
+
+            if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
-                $functionAzureObject = $azureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
+                $functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
 
                 if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL)
                 {
@@ -379,6 +400,11 @@ function compare-recipientArrays
                         ErrorMessage = "N/A"
                     }
                 }
+
+                out-logfile -string "Removing object from azure data subset."
+                out-logfile -string ("Azure Data Count Pre-Remove: "+$functionAzureData.count)
+                $functionAzureData.remove($functionAzureObject)
+                out-logfile -string ("Azure Data Count Post-Remove: "+$functionAzureData.count)
 
                 out-logfile -string "Being Office 365 -> On premises evaluation."
                 out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
