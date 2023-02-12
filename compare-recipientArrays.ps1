@@ -185,7 +185,7 @@ function compare-recipientArrays
         out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
         out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
 
-        .\createAzureLists
+        createAzureLists
     }
 
     #===========================================================================================
@@ -297,7 +297,14 @@ function compare-recipientArrays
     {
         out-logfile -string "Calling function to create the array lists."
 
-        .\createArrayLists
+        createArrayLists
+
+        out-logfile -string ("On Prem Array Count: "+$onPremData.count)
+        out-logfile -string ("On Prem List Count: "+$onPremDataList.count)
+        out-logfile -string ("Azure Data Array Count: "+$azureData.count)
+        out-logfile -string ("Azure Data List Count: "+$azureDataList.count)
+        out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
+        out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
 
         out-logfile -string "Comparing data from all three directories - this has to be membership."
 
