@@ -580,6 +580,7 @@ function compare-recipientArrays
                     
                     out-logfile -string "On Prem Data List Pre-Remove: "+$functonOnPremDataListSid.count
                     $functionIndex = $functonOnPremDataListSID.objectSID.indexOf($functionObject.ObjectSID)
+                    
                     if ($functionIndex -ge 0)
                     {
                         $functionOnPremDataListSid.removeAt($functionIndex)
