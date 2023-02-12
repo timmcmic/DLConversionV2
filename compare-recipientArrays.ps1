@@ -104,7 +104,36 @@ function compare-recipientArrays
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListE)
         $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
 
-        exit
+        out-logfile -string "Output azure array list counts for debugging."
+
+        out-logfile -string ("Azure Function Data List 1: "+$functionAzureDataList1.count)
+        out-logfile -string ("Azure Function Data List 1: "+$functionAzureDataList1Orig.count)
+        out-logfile -string ("Azure Function Data List 2: "+$functionAzureDataList2.count)
+        out-logfile -string ("Azure Function Data List 2: "+$functionAzureDataList2Orig.count)
+        out-logfile -string ("Azure Function Data List 3: "+$functionAzureDataList3.count)
+        out-logfile -string ("Azure Function Data List 3: "+$functionAzureDataList3Orig.count)
+        out-logfile -string ("Azure Function Data List 4: "+$functionAzureDataList4.count)
+        out-logfile -string ("Azure Function Data List 4: "+$functionAzureDataList4Orig.count)
+        out-logfile -string ("Azure Function Data List 5: "+$functionAzureDataList5.count)
+        out-logfile -string ("Azure Function Data List 5: "+$functionAzureDataList5Orig.count)
+        out-logfile -string ("Azure Function Data List 6: "+$functionAzureDataList6.count)
+        out-logfile -string ("Azure Function Data List 6: "+$functionAzureDataList6Orig.count)
+        out-logfile -string ("Azure Function Data List 7: "+$functionAzureDataList7.count)
+        out-logfile -string ("Azure Function Data List 7: "+$functionAzureDataList7Orig.count)
+        out-logfile -string ("Azure Function Data List 8: "+$functionAzureDataList8.count)
+        out-logfile -string ("Azure Function Data List 8: "+$functionAzureDataList8Orig.count)
+        out-logfile -string ("Azure Function Data List 9: "+$functionAzureDataList9.count)
+        out-logfile -string ("Azure Function Data List 9: "+$functionAzureDataList9Orig.count)
+        out-logfile -string ("Azure Function Data List A: "+$functionAzureDataListA.count)
+        out-logfile -string ("Azure Function Data List A: "+$functionAzureDataListAOrig.count)
+        out-logfile -string ("Azure Function Data List B: "+$functionAzureDataListB.count)
+        out-logfile -string ("Azure Function Data List B: "+$functionAzureDataListBOrig.count)
+        out-logfile -string ("Azure Function Data List C: "+$functionAzureDataListC.count)
+        out-logfile -string ("Azure Function Data List C: "+$functionAzureDataListCOrig.count)
+        out-logfile -string ("Azure Function Data List D: "+$functionAzureDataListD.count)
+        out-logfile -string ("Azure Function Data List D: "+$functionAzureDataListDOrig.count)
+        out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
+        out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListEOrig.count)
     }
 
     #===========================================================================================
