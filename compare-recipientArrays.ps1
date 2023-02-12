@@ -540,6 +540,9 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
 
+                $functionIndex = $functionOnPremData.indexOf($functionExternalDirectoryObjectID)
+                out-logfile -string $functionIndex
+
                 if (($functionIndex = $functionOnPremData.indexOf($functionExternalDirectoryObjectID)) -ge 0)
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
