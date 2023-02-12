@@ -28,6 +28,7 @@ function compare-recipientArrays
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
 
+    #===========================================================================================
     function createArrayLists
     {
         out-logfile -string "Preparing array to array list conversion for work in this function."
@@ -53,6 +54,8 @@ function compare-recipientArrays
 
         exit
     }
+
+    #===========================================================================================
 
     if($isProxyTest -eq $TRUE)
     {
