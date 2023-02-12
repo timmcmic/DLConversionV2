@@ -32,15 +32,15 @@ function compare-recipientArrays
     {
         out-logfile -string "Preparing array to array list conversion for work in this function."
 
-        $onPremDataList = New-Object -TypeName "System.Collections.ArrayLists"
-        $azureDataList = New-Object -TypeName "System.Collections.ArrayLists"
-        $office365DataList = New-Object -TypeName "System.Collections.ArrayLists"
+        $onPremDataList = New-Object -TypeName "System.Collections.ArrayList"
+        $azureDataList = New-Object -TypeName "System.Collections.ArrayList"
+        $office365DataList = New-Object -TypeName "System.Collections.ArrayList"
 
         out-logfile -string "Moving the array information into array lists for manipulation."
 
-        $onPremDataList = [System.Collections.ArrayLists]@($onPremData)
-        $azureDataList = [System.Collections.ArrayLists]@($azyreDataList)
-        $office365DataList = [System.Collections.ArrayLists]@($office365DataList)
+        $onPremDataList = [System.Collections.ArrayList]@($onPremData)
+        $azureDataList = [System.Collections.ArrayList]@($azyreDataList)
+        $office365DataList = [System.Collections.ArrayList]@($office365DataList)
 
         out-logfie -string "Record count comparisons for evaluation / debugging"
 
@@ -220,7 +220,7 @@ function compare-recipientArrays
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
                         isPresentOnPremises = "False"
-                        isPresentInAzure = "True"
+                        isPresentInAzure = "True"$test
                         isPresentInExchangeOnline = "Source"
                         IsValidMember = "FALSE"
                         ErrorMessage = "N/A"
