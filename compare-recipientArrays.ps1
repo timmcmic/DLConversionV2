@@ -159,6 +159,10 @@ function compare-recipientArrays
     }
     elseif ($isAllTest -eq $TRUE)
     {
+        out-logfile -string "Calling function to create the array lists."
+
+        createArrayLists
+
         out-logfile -string "Comparing data from all three directories - this has to be membership."
 
         out-logfile -string "Starting the comparison in the reverse order - compare Exchange Online -> Azure -> On Premises."
