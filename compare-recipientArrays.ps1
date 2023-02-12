@@ -396,7 +396,7 @@ function compare-recipientArrays
 
             out-logfile -string "Determining if the object has a primary SMTP address or only an external address.  Guest users <or> mail contacts may have external addresses."
 
-            if ($member.primarySMTPAddress.length -gt 0)
+            if ($member.primarySMTPAddress.length -ne "")
             {
                 out-logfile -string "Primary SMTP Address is present."
 
@@ -404,7 +404,7 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
-            elseif ($member.externalEmailAddress.lengh -gt 0) 
+            elseif ($member.externalEmailAddress -ne $NULL) 
             {
                 out-logfile -string "External email address is present."
                 out-logfile -string $member.externalEmailAddress
@@ -535,8 +535,6 @@ function compare-recipientArrays
                     "e" {out-logfile -string "Matched OnPrem Data Set E" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListE)}
                     "f" {out-logfile -string "Matched OnPrem Data Set F" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListF)}
                 }
-
-                out-logfile -string $functionOnPremData.Count
 
                 #Use index of so that we do not need to query the data more than once.
 
