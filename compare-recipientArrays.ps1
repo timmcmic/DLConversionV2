@@ -39,7 +39,7 @@ function compare-recipientArrays
         out-logfile -string "Moving the array information into array lists for manipulation."
 
         $onPremDataList = [System.Collections.ArrayList]@($onPremData)
-        $azureDataList = [System.Collections.ArrayList]@($azyreDataList)
+        $azureDataList = [System.Collections.ArrayList]@($azureDataList)
         $office365DataList = [System.Collections.ArrayList]@($office365DataList)
 
         out-logfile -string "Record count comparisons for evaluation / debugging"
