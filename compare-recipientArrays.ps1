@@ -94,6 +94,10 @@ function compare-recipientArrays
         out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
         out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSID.count)
         out-logfile -string ("On Prem Function Data List SMTP: "+$functionOnPremDataListSMTP.count)
+        
+        $functionOnPremDataListCount =   $functionOnPremDataList0.count+$functionOnPremDataList1.count+$functionOnPremDataList2.count+$functionOnPremDataList3.count+$functionOnPremDataList4.count+$functionOnPremDataList5.count+$functionOnPremDataList6.count+$functionOnPremDataList7.count+$functionOnPremDataList8.count+$functionOnPremDataList9.count+$functionOnPremDataListA.count+        $functionOnPremDataListB.count+$functionOnPremDataListC.count+$functionOnPremDataListD.count+$functionOnPremDataListE.count
+
+        out-logfile -string ("Total array data count validation: "+$functionOnPremDataListCount)
     }
 
     #===========================================================================================
@@ -222,7 +226,11 @@ function compare-recipientArrays
         out-logfile -string ("Azure Function Data List D: "+$functionAzureDataListD.count)
         out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
         out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
-        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
+        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count).
+
+        $functionAzureDataListCount =   $functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+        $functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count
+
+        out-logfile -string ("Total array data count validation: "+$functionAzureDataListCount)
     }
 
     #===========================================================================================
