@@ -30,8 +30,7 @@ function compare-recipientArrays
 
     #===========================================================================================
 
-    $createOnPremLists
-    {
+    $createOnPremLists={
         out-logfile -string "Creating the split lists of On Premises Data."
 
         $functonOnPremDataList1 = New-Object -TypeName "System.Collections.ArrayList"
