@@ -71,7 +71,7 @@ function compare-recipientArrays
         $script:functionAzureDataListOrigF = New-Object -TypeName "System.Collections.ArrayList"
 
         $script:functionAzureData = New-Object -TypeName "System.Collections.ArrayList"
-        
+
         out-logfile -string "Initialize the azure data lists with values."
 
         $functionAzureDataList1 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("1")} | sort-object -property objectID)
@@ -174,7 +174,7 @@ function compare-recipientArrays
 
         out-logfile -string "Moving the array information into array lists for manipulation."
 
-        onPremDataList = [System.Collections.ArrayList]@($onPremData)
+        $onPremDataList = [System.Collections.ArrayList]@($onPremData)
         $azureDataList = [System.Collections.ArrayList]@($azureData)
         $office365DataList = [System.Collections.ArrayList]@($office365Data)
 
