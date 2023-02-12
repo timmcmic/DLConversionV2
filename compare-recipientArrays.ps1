@@ -47,6 +47,8 @@ function compare-recipientArrays
         $functonOnPremDataListD = New-Object -TypeName "System.Collections.ArrayList" 
         $functonOnPremDataListE = New-Object -TypeName "System.Collections.ArrayList" 
         $functonOnPremDataListF = New-Object -TypeName "System.Collections.ArrayList"  
+        $functonOnPremDataListSID = New-Object -TypeName "System.Collections.ArrayList"  
+        $functonOnPremDataListSMTP = New-Object -TypeName "System.Collections.ArrayList" 
 
         out-logfile -string "Prepare the on premises split array list data."
 
@@ -65,6 +67,9 @@ function compare-recipientArrays
         $functionOnPremDataListD = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_d"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataListE = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_e"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataListF = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_f"))} | sort-object -property externalDirectoryObjectID)
+        $functionOnPremDataListSID = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL)} | sort-object -property objectSID)
+        $functionOnPremDataListSMTP = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL)} | sort-object -property objectSID)
+
 
         out-logfile -string "Record counts of objects for debugging."
 
@@ -82,6 +87,8 @@ function compare-recipientArrays
         out-logfile -string ("OnPrem Function Data List C: "+$functionOnPremDataListC.count)
         out-logfile -string ("OnPrem Function Data List D: "+$functionOnPremDataListD.count)
         out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
+        out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSID.count)
+        out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSMTP.count)
 
         exit
     }
