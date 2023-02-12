@@ -518,22 +518,22 @@ function compare-recipientArrays
 
                 switch ($switchTest)
                 {
-                    "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList0)}
-                    "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList1)}
-                    "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList2)}
-                    "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList3)}
-                    "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList4)}
-                    "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList5)}
-                    "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList6)}
-                    "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList7)}
-                    "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList8)}
-                    "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList9)}
-                    "a" {out-logfile -string "Matched Azure Data Set A" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListA)}
-                    "b" {out-logfile -string "Matched Azure Data Set B" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListB)}
-                    "c" {out-logfile -string "Matched Azure Data Set C" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListC)}
-                    "d" {out-logfile -string "Matched Azure Data Set D" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListD)}
-                    "e" {out-logfile -string "Matched Azure Data Set E" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListE)}
-                    "f" {out-logfile -string "Matched Azure Data Set F" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListF)}
+                    "0" {out-logfile -string "Matched OnPrem Data Set 0" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList0)}
+                    "1" {out-logfile -string "Matched OnPrem Data Set 1" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList1)}
+                    "2" {out-logfile -string "Matched OnPrem Data Set 2" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList2)}
+                    "3" {out-logfile -string "Matched OnPrem Data Set 3" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList3)}
+                    "4" {out-logfile -string "Matched OnPrem Data Set 4" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList4)}
+                    "5" {out-logfile -string "Matched OnPrem Data Set 5" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList5)}
+                    "6" {out-logfile -string "Matched OnPrem Data Set 6" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList6)}
+                    "7" {out-logfile -string "Matched OnPrem Data Set 7" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList7)}
+                    "8" {out-logfile -string "Matched OnPrem Data Set 8" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList8)}
+                    "9" {out-logfile -string "Matched OnPrem Data Set 9" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList9)}
+                    "a" {out-logfile -string "Matched OnPrem Data Set A" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListA)}
+                    "b" {out-logfile -string "Matched OnPrem Data Set B" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListB)}
+                    "c" {out-logfile -string "Matched OnPrem Data Set C" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListC)}
+                    "d" {out-logfile -string "Matched OnPrem Data Set D" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListD)}
+                    "e" {out-logfile -string "Matched OnPrem Data Set E" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListE)}
+                    "f" {out-logfile -string "Matched OnPrem Data Set F" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListF)}
                 }
 
                 #Use index of so that we do not need to query the data more than once.
