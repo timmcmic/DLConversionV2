@@ -33,6 +33,7 @@ function compare-recipientArrays
     $createOnPremLists={
         out-logfile -string "Creating the split lists of On Premises Data."
 
+        $functonOnPremDataList0 = New-Object -TypeName "System.Collections.ArrayList"
         $functonOnPremDataList1 = New-Object -TypeName "System.Collections.ArrayList"
         $functonOnPremDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
         $functonOnPremDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
@@ -52,6 +53,7 @@ function compare-recipientArrays
 
         out-logfile -string "Prepare the on premises split array list data."
 
+        $functionOnPremDataList0 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataList1 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataList2 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataList3 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID)
@@ -73,6 +75,7 @@ function compare-recipientArrays
 
         out-logfile -string "Record counts of objects for debugging."
 
+        out-logfile -string ("OnPrem Function Data List 1: "+$functionOnPremDataList0.count)
         out-logfile -string ("OnPrem Function Data List 1: "+$functionOnPremDataList1.count)
         out-logfile -string ("OnPrem Function Data List 2: "+$functionOnPremDataList2.count)
         out-logfile -string ("OnPrem Function Data List 3: "+$functionOnPremDataList3.count)
@@ -98,6 +101,7 @@ function compare-recipientArrays
     $createAzureLists={
         out-logfile -string "Creating the split lists of Azure Data."
 
+        $functionAzureDataList0 = New-Object -TypeName "System.Collections.ArrayList"
         $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
         $functionAzureDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
         $functionAzureDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
@@ -112,6 +116,7 @@ function compare-recipientArrays
         $functionAzureDataListD = New-Object -TypeName "System.Collections.ArrayList" 
         $functionAzureDataListE = New-Object -TypeName "System.Collections.ArrayList" 
         $functionAzureDataListF = New-Object -TypeName "System.Collections.ArrayList"  
+        $functionAzureDataListOrig0 = New-Object -TypeName "System.Collections.ArrayList"
         $functionAzureDataListOrig1 = New-Object -TypeName "System.Collections.ArrayList"
         $functionAzureDataListOrig2 = New-Object -TypeName "System.Collections.ArrayList" 
         $functionAzureDataListOrig3 = New-Object -TypeName "System.Collections.ArrayList" 
@@ -131,6 +136,7 @@ function compare-recipientArrays
 
         out-logfile -string "Initialize the azure data lists with values."
 
+        $functionAzureDataList0 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("0")} | sort-object -property objectID)
         $functionAzureDataList1 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("1")} | sort-object -property objectID)
         $functionAzureDataList2 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("2")} | sort-object -property objectID)
         $functionAzureDataList3 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("3")} | sort-object -property objectID)
@@ -150,6 +156,8 @@ function compare-recipientArrays
         
         out-logfile -string "Serialize the data into new array lists since this data set is evaluated twice in the all evaluation."
 
+        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList0)
+        $functionAzureDataList0Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList1)
         $functionAzureDataList1Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList2)
@@ -411,6 +419,7 @@ function compare-recipientArrays
 
             switch ($switchTest)
             {
+                "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList0)}
                 "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1)}
                 "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2)}
                 "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3)}
