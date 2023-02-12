@@ -39,7 +39,41 @@ function compare-recipientArrays
     #===========================================================================================
     function createAzureLists
     {
-    
+        out-logfile -string "Creating the split lists of Azure Data."
+
+        $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
+        $functionAzureDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList4 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList5 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList6 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList7 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList8 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataList9 = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataListA = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataListC = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataListD = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataListE = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionAzureDataListF = New-Object -TypeName "System.Collections.ArrayList"  
+
+        out-logfile -string "Initialize the azure data lists with values."
+
+        $functionAzureDataList1 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("1")} | sort-object -property objectID)
+        $functionAzureDataList2 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("2")} | sort-object -property objectID)
+        $functionAzureDataList3 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("3")} | sort-object -property objectID)
+        $functionAzureDataList4 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("4")} | sort-object -property objectID)
+        $functionAzureDataList5 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("5")} | sort-object -property objectID)
+        $functionAzureDataList6 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("6")} | sort-object -property objectID)
+        $functionAzureDataList7 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("7")} | sort-object -property objectID)
+        $functionAzureDataList8 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("8")} | sort-object -property objectID)
+        $functionAzureDataList9 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("9")} | sort-object -property objectID)
+        $functionAzureDataListA = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("a")} | sort-object -property objectID)
+        $functionAzureDataListC = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("b")} | sort-object -property objectID)
+        $functionAzureDataListD = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("c")} | sort-object -property objectID)
+        $functionAzureDataListE = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("d")} | sort-object -property objectID)
+        $functionAzureDataListF = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("e")} | sort-object -property objectID)
+        
+
     }
 
     #===========================================================================================
