@@ -538,7 +538,7 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
 
-                if (($functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)) -ge 0)
+                if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
 
@@ -550,10 +550,11 @@ function compare-recipientArrays
                     $functionReturnArray += $functionObject
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
+                    $functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjecctID)
                     $functionOnPremData.removeAt($functionIndex)
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
                 }
-                elseif (($functionIndex = $functonOnPremDataListSID.objectSID.indexOf($functionObject.ObjectSID)) -ge 0)
+                elseif ($fuctionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     $functionObject.isPresentOnPremises = "True"
@@ -572,10 +573,11 @@ function compare-recipientArrays
                     out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
                     
                     out-logfile -string "On Prem Data List Pre-Remove: "+$functonOnPremDataListSid.count
+                    $functionIndex = $functonOnPremDataListSID.objectSID.indexOf($functionObject.ObjectSID)
                     $functionOnPremDataListSid.removeAt($functionIndex)
                     out-logfile -string "On Prem Data List Post-Remove: "+$functonOnPremDataListSid.count
                 }
-                elseif (($functionIndex = $functonOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)) -ge 0)
+                elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
                 {
                     out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
 
@@ -595,6 +597,7 @@ function compare-recipientArrays
                     out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
 
                     out-logfile -string "On Prem Data List Pre-Remove: "+$functonOnPremDataListSMTP.count
+                    $functionIndex = $functonOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
                     $functionOnPremDataListSMTP.removeAt($functionIndex)
                     out-logfile -string "On Prem Data List Post-Remove: "+$functonOnPremDataListSMTP.count
                 }
