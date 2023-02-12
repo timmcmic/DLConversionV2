@@ -96,13 +96,13 @@ function compare-recipientArrays
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListA)
         $functionAzureDataListAOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListB)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        $functionAzureDataListBOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListC)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        $functionAzureDataListCOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListD)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        $functionAzureDataListDOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListE)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        $functionAzureDataListEOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
 
         out-logfile -string "Output azure array list counts for debugging."
 
@@ -134,6 +134,8 @@ function compare-recipientArrays
         out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
         out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
         out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
+
+        exit
     }
 
     #===========================================================================================
