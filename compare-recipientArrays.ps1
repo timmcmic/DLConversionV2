@@ -87,6 +87,8 @@ function compare-recipientArrays
         $functionAzureDataListC = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("c")} | sort-object -property objectID)
         $functionAzureDataListD = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("d")} | sort-object -property objectID)
         $functionAzureDataListE = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("e")} | sort-object -property objectID)
+        $functionAzureDataListF = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("f")} | sort-object -property objectID)
+
         
         out-logfile -string "Serialize the data into new array lists since this data set is evaluated twice in the all evaluation."
 
@@ -118,6 +120,8 @@ function compare-recipientArrays
         $functionAzureDataListDOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListE)
         $functionAzureDataListEOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListF)
+        $functionAzureDataListFOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
 
         out-logfile -string "Output azure array list counts for debugging."
 
@@ -359,6 +363,7 @@ function compare-recipientArrays
                 "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListC)}
                 "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListD)}
                 "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
+                "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListF)}
             }
 
             if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
