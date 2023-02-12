@@ -348,6 +348,10 @@ function compare-recipientArrays
                 "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
             }
 
+            out-logfile -string $functionAzureData
+            
+            exit
+
             if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
