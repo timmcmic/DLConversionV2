@@ -220,7 +220,7 @@ function compare-recipientArrays
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
                         isPresentOnPremises = "False"
-                        isPresentInAzure = "True"$test
+                        isPresentInAzure = "True"
                         isPresentInExchangeOnline = "Source"
                         IsValidMember = "FALSE"
                         ErrorMessage = "N/A"
