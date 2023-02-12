@@ -64,6 +64,8 @@ function compare-recipientArrays
     $functionAzureDataListOrigE = New-Object -TypeName "System.Collections.ArrayList" 
     $functionAzureDataListOrigF = New-Object -TypeName "System.Collections.ArrayList"
 
+    $functionAzureData = New-Object -TypeName "System.Collections.ArrayList"
+
     #===========================================================================================
     function createOnPremLists
     {
@@ -340,8 +342,6 @@ function compare-recipientArrays
 
             $switchTest = $member.externalDirectoryObjectID[0]
             out-logfile -string ("Testing: "+$switchTest)
-
-            $functionAzureData = New-Object -TypeName "System.Collections.ArrayList"
 
             switch ($switchTest)
             {
