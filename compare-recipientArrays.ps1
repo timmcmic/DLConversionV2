@@ -536,6 +536,8 @@ function compare-recipientArrays
                     "f" {out-logfile -string "Matched OnPrem Data Set F" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListF)}
                 }
 
+                out-logfile -string $functionOnPremData.Count
+
                 #Use index of so that we do not need to query the data more than once.
 
                 if (($functionIndex = $functionOnPremData.indexOf($functionExternalDirectoryObjectID)) -ge 0)
