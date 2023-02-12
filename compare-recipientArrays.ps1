@@ -361,8 +361,8 @@ function compare-recipientArrays
                 "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
             }
 
-            out-logfile -string $functionAzureDataList2
-            out-logfile -string $functionAzureData
+            out-logfile -string $functionAzureDataList2.Count
+            out-logfile -string $functionAzureData.Count
             
             exit
 
