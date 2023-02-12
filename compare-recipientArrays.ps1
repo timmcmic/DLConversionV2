@@ -103,6 +103,8 @@ function compare-recipientArrays
         $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
         $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListE)
         $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+
+        exit
     }
 
     #===========================================================================================
@@ -139,7 +141,7 @@ function compare-recipientArrays
         out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
         out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
 
-        exit
+        createAzureLists
     }
 
     #===========================================================================================
