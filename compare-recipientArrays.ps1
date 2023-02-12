@@ -191,6 +191,8 @@ function compare-recipientArrays
 
         out-logfile -string "Output azure array list counts for debugging."
 
+        out-logfile -string ("Azure Function Data List 0: "+$functionAzureDataList0.count)
+        out-logfile -string ("Azure Function Data List Original 0: "+$functionAzureDataList0Orig.count)
         out-logfile -string ("Azure Function Data List 1: "+$functionAzureDataList1.count)
         out-logfile -string ("Azure Function Data List Original 1: "+$functionAzureDataList1Orig.count)
         out-logfile -string ("Azure Function Data List 2: "+$functionAzureDataList2.count)
