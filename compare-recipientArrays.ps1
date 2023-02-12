@@ -82,6 +82,7 @@ function compare-recipientArrays
         out-logfile -string ("OnPrem Function Data List D: "+$functionOnPremDataListD.count)
         out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
 
+        exit
     }
 
     #===========================================================================================
@@ -241,6 +242,8 @@ function compare-recipientArrays
         out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
 
         .$createAzureLists
+
+        .$createOnPremLists
     }
 
     #===========================================================================================
