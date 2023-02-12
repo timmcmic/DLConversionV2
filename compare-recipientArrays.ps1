@@ -226,9 +226,9 @@ function compare-recipientArrays
         out-logfile -string ("Azure Function Data List D: "+$functionAzureDataListD.count)
         out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
         out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
-        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count).
+        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
 
-        $functionAzureDataListCount =$functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+$functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count
+        $functionAzureDataListCount=$functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+$functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count
 
         out-logfile -string ("Total array data count validation: "+$functionAzureDataListCount.tostring())
     }
