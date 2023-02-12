@@ -328,6 +328,8 @@ function compare-recipientArrays
             {
                 out-logfile -string "External email address is present."
 
+                out-logfile -string $member
+
                 $functionPrimarySMTPAddress = $member.externalEmailAddress.split(":")
 
                 $functionPrimarySMTPAddress = $functionPrimarySMTPAddress[1]
