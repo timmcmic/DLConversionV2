@@ -38,7 +38,7 @@ function compare-recipientArrays
 
     #===========================================================================================
 
-    $createAzureLists{
+    $createAzureLists={
         out-logfile -string "Creating the split lists of Azure Data."
 
         $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
