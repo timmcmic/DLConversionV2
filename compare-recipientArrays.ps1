@@ -316,7 +316,7 @@ function compare-recipientArrays
 
             out-logfile -string "Determining if the object has a primary SMTP address or only an external address.  Guest users <or> mail contacts may have external addresses."
 
-            if ($member.primarySMTPAddress -ne "")
+            if (($member.primarySMTPAddress -ne "") -and ($member.primarySMTPAddress -ne $NULL))
             {
                 out-logfile -string "Primary SMTP Address is present."
 
@@ -324,9 +324,10 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
-            elseif ($member.externalEmailAddress -ne "") 
+            elseif (($member.externalEmailAddress -ne "") -and ($member.externalEmailAddress -ne $NULL)) 
             {
                 out-logfile -string "External email address is present."
+                out-logfile -string $member.externalEmailAddress
 
                 out-logfile -string $member
 
