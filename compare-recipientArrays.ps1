@@ -42,7 +42,7 @@ function compare-recipientArrays
         $azureDataList = [System.Collections.ArrayList]@($azyreDataList)
         $office365DataList = [System.Collections.ArrayList]@($office365DataList)
 
-        out-logfie -string "Record count comparisons for evaluation / debugging"
+        out-logfile -string "Record count comparisons for evaluation / debugging"
 
         out-logfile -string ("On Prem Array Count: "+$onPremData.count)
         out-logfile -string ("On Prem List Count: "+$onPremDataList.count)
