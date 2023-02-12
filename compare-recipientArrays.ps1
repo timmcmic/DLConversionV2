@@ -50,6 +50,8 @@ function compare-recipientArrays
         out-logfile -string ("Azure Data List Count: "+$azureDataList.count)
         out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
         out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
+
+        exit
     }
 
     if($isProxyTest -eq $TRUE)
