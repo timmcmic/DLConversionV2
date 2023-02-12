@@ -21,12 +21,48 @@ function compare-recipientArrays
     )
 
     [array]$functionReturnArray = @()
-    $functionExternalDirectoryObjectID = @()
-    $functionAzureIndex = 0
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
+
+    out-logfile -string "Preparing array to array list conversion for work in this function."
+
+    $onPremDataList = New-Object -TypeName "System.Collections.ArrayList"
+    $azureDataList = New-Object -TypeName "System.Collections.ArrayList"
+    $office365DataList = New-Object -TypeName "System.Collections.ArrayList"
+
+    out-logfile -string "Creating the split lists of Azure Data."
+
+    $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
+    $functionAzureDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList4 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList5 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList6 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList7 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList8 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataList9 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListA = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListC = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListD = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListE = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListF = New-Object -TypeName "System.Collections.ArrayList"  
+    $functionAzureDataListOrig1 = New-Object -TypeName "System.Collections.ArrayList"
+    $functionAzureDataListOrig2 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig3 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig4 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig5 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig6 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig7 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig8 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrig9 = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrigA = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrigC = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrigD = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrigE = New-Object -TypeName "System.Collections.ArrayList" 
+    $functionAzureDataListOrigF = New-Object -TypeName "System.Collections.ArrayList"
 
     #===========================================================================================
     function createOnPremLists
@@ -39,23 +75,6 @@ function compare-recipientArrays
     #===========================================================================================
     function createAzureLists
     {
-        out-logfile -string "Creating the split lists of Azure Data."
-
-        $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionAzureDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList4 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList5 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList6 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList7 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList8 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList9 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListA = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListC = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListD = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListE = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListF = New-Object -TypeName "System.Collections.ArrayList"  
-
         out-logfile -string "Initialize the azure data lists with values."
 
         $functionAzureDataList1 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("1")} | sort-object -property objectID)
@@ -149,12 +168,6 @@ function compare-recipientArrays
     #===========================================================================================
     function createArrayLists
     {
-        out-logfile -string "Preparing array to array list conversion for work in this function."
-
-        $onPremDataList = New-Object -TypeName "System.Collections.ArrayList"
-        $azureDataList = New-Object -TypeName "System.Collections.ArrayList"
-        $office365DataList = New-Object -TypeName "System.Collections.ArrayList"
-
         out-logfile -string "Moving the array information into array lists for manipulation."
 
         $onPremDataList = [System.Collections.ArrayList]@($onPremData)
