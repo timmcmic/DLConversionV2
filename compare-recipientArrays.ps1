@@ -88,11 +88,11 @@ function compare-recipientArrays
         out-logfile -string ("OnPrem Function Data List D: "+$functionOnPremDataListD.count)
         out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
         out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSID.count)
-        out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSMTP.count)
+        out-logfile -string ("On Prem Function Data List SMTP: "+$functionOnPremDataListSMTP.count)
 
         exit
     }
-
+$
     #===========================================================================================
 
     #===========================================================================================
