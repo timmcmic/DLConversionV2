@@ -37,8 +37,8 @@ function compare-recipientArrays
     #===========================================================================================
 
     #===========================================================================================
-    function createAzureLists
-    {
+
+    $createAzureLists{
         out-logfile -string "Creating the split lists of Azure Data."
 
         $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
@@ -162,8 +162,8 @@ function compare-recipientArrays
     #===========================================================================================
 
     #===========================================================================================
-    function createArrayLists
-    {
+    
+    $createArrayLists ={
         out-logfile -string "Preparing array to array list conversion for work in this function."
 
         $onPremDataList = New-Object -TypeName "System.Collections.ArrayList"
@@ -185,7 +185,7 @@ function compare-recipientArrays
         out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
         out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
 
-        createAzureLists
+        &$createAzureLists
     }
 
     #===========================================================================================
@@ -297,7 +297,7 @@ function compare-recipientArrays
     {
         out-logfile -string "Calling function to create the array lists."
 
-        createArrayLists
+        &$createArrayLists
 
         out-logfile -string ("On Prem Array Count: "+$onPremData.count)
         out-logfile -string ("On Prem List Count: "+$onPremDataList.count)
