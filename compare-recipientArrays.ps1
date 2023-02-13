@@ -516,12 +516,15 @@ function compare-recipientArrays
                 "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListF)}
             }
 
-            if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
+            #if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
+            if (($functionIndex = $functionAzureData.objectID.indexOf($member.externalDirectoryObjectID)) -ge 0)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
-                $functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
+                #$functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
+
+                $functionAzureObject = $functionAzureData.indexOf($functionIndex)
 
                 if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL)
                 {
@@ -573,7 +576,8 @@ function compare-recipientArrays
 
                 out-logfile -string "Removing object from azure data subset."
                 out-logfile -string ("Azure Data Count Pre-Remove: "+$functionAzureData.count)
-                $functionAzureData.remove($functionAzureObject)
+                #$functionAzureData.remove($functionAzureObject)
+                $functionAzureData.removeAt($functionIndex)
                 out-logfile -string ("Azure Data Count Post-Remove: "+$functionAzureData.count)
 
                 out-logfile -string "Being Office 365 -> On premises evaluation."
