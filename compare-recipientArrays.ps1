@@ -520,11 +520,14 @@ function compare-recipientArrays
             if (($functionIndex = $functionAzureData.objectID.indexOf($member.externalDirectoryObjectID)) -ge 0)
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
+                out-logfile -string ("Azure object located at array list position: "+$functionIndex)
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
                 #$functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
 
                 $functionAzureObject = $functionAzureData.indexOf($functionIndex)
+
+                out-logfile -string $functionAzureObject
 
                 if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL)
                 {
