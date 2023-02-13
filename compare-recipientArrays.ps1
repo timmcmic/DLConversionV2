@@ -612,6 +612,11 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
 
+                foreaech ($member in $functionOnPremDataListSID)
+                {
+                    out-logfile -string $member.objectSID.Value
+                }
+
                 #if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
                 if (($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
                 {
@@ -633,7 +638,7 @@ function compare-recipientArrays
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
                 }
                 #elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
-                elseif (($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID.toString())) -ge 0)
+                elseif (($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     out-logfile -string ("The object was located at index: "+$functionIndex.tostring())
