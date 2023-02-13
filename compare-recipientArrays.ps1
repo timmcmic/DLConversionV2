@@ -546,6 +546,8 @@ function compare-recipientArrays
                         ErrorMessage = "N/A"
                     }
 
+                    out-logfile -string $functionObject.objectSID
+
                     out-logfile -string "Determine if the security principal was a user with a upn."
 
                     if ($functionAzureObject.userPrincipalName -ne $NULL)
@@ -611,12 +613,6 @@ function compare-recipientArrays
                 }
 
                 #Use index of so that we do not need to query the data more than once.
-
-                foreach ($member in $functionOnPremDataListSID)
-                {
-                    out-logfile -string $member.objectSID.Value
-                }
-
                 #if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
                 if (($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
                 {
