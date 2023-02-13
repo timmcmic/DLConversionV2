@@ -729,7 +729,7 @@ function compare-recipientArrays
 
                 out-logfile -string "Determine which subset of Azure data we should be querying against."
 
-                $switchTest = $functionExternalDirectoryObjectID
+                $switchTest = $functionExternalDirectoryObjectID[0]
                 out-logfile -string ("Testing: "+$switchTest)
 
                 switch ($switchTest)
