@@ -612,9 +612,11 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
 
-                if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+                #if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+                if (($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
+                    out-logfile -string ("Found object at index: "+$functionIndex.tostring())
 
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
@@ -625,14 +627,16 @@ function compare-recipientArrays
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
 
-                    $functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
-                    out-logfile -string $functionIndex.toString()
+                    #$functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
+                    #out-logfile -string $functionIndex.toString()
                     $functionOnPremData.removeAt($functionIndex)                    
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
                 }
-                elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
+                #elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
+                elseif (($functionIndex = $functionOnPremDataListSID.objectSid.indexof($functionObject.objectSID)) -ge 0)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
+                    out-logfile -string ("The object was located at index: "+$functionIndex.tostring())
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
 
@@ -649,14 +653,16 @@ function compare-recipientArrays
                     out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
                     
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSID.count)
-                    $functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
-                    out-logfile -string $functionIndex.toString()
+                    #$functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
+                    #out-logfile -string $functionIndex.toString()
                     $functionOnPremDataListSID.remove($functionIndex)
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSID.count)
                 }
-                elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
+                #elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
+                elseif (($functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)) -ge 0)
                 {
                     out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
+                    out-logfile -string ("The object was located at array index: "+$functionIndex.tostring())
 
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
@@ -674,8 +680,8 @@ function compare-recipientArrays
                     out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSMTP.count)
-                    $functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
-                    out-logfile -string $functionIndex.toString()
+                    #$functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
+                    #out-logfile -string $functionIndex.toString()
                     $functionOnPremDataListSMTP.removeAt($functionIndex)                   
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSMTP.count)
                 }
