@@ -811,7 +811,7 @@ function compare-recipientArrays
                         $functionReturnArray += $functionObject
 
                         out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
-                        $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjecctID)
+                        $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
                         out-logfile -string $functionIndex.tostring()
                         $functionOffice365Data.removeAt($functionIndex)
                         out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
