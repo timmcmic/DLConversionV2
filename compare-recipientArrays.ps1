@@ -614,7 +614,7 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
                 #if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
-                if (($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
+                if (($functionOnPremData.count -gt 0) -and ($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
                     out-logfile -string ("Found object at index: "+$functionIndex.tostring())
@@ -634,7 +634,7 @@ function compare-recipientArrays
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
                 }
                 #elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
-                elseif (($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
+                elseif (($functionOnPremDataListSID.count -gt 0) -and ($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     out-logfile -string ("The object was located at index: "+$functionIndex.tostring())
@@ -660,7 +660,7 @@ function compare-recipientArrays
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSID.count)
                 }
                 #elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
-                elseif (($functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)) -ge 0)
+                elseif (($functionOnPremDataListSMTP.count -gt 0) -and ($functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)) -ge 0)
                 {
                     out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
                     out-logfile -string ("The object was located at array index: "+$functionIndex.tostring())
