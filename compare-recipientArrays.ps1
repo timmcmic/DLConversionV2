@@ -525,7 +525,7 @@ function compare-recipientArrays
 
                 #$functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
 
-                $functionAzureObject = $functionAzureData.indexOf($functionIndex)
+                $functionAzureObject = $functionAzureData[$functionIndex]
 
                 out-logfile -string $functionAzureObject
 
