@@ -772,7 +772,7 @@ function compare-recipientArrays
                     }
 
                     out-logfile -string ("Azure data count pre-remove: "+$functionAzureData.count)
-                    $functionIndex = $functionAzureData.objectID.indexOf($functionExternalDirectoryObjecctID)
+                    $functionIndex = $functionAzureData.objectID.indexOf($functionExternalDirectoryObjectID)
                     out-logfile -string $functionIndex.tostring()
                     $functionAzureData.removeAt($functionIndex)
                     out-logfile -string ("Azure data count post-remove: "+$functionAzureData.Count)
