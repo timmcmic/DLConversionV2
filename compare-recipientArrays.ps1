@@ -551,7 +551,7 @@ function compare-recipientArrays
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
 
-                    $functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjecctID)
+                    $functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
                     out-logfile -string $functionIndex.toString()
                     $functionOnPremData.removeAt($functionIndex)                    
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
