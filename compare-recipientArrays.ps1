@@ -335,6 +335,8 @@ function compare-recipientArrays
         .$createAzureLists
 
         .$createOnPremLists
+
+        .$createOffice365Lists
     }
 
     #===========================================================================================
