@@ -2695,7 +2695,7 @@ Function get-DLHealthReport
     {
         out-logfile -string "Exporting on premises member evaluation."
 
-        $onPremMembersEval = $onPremMembersEval | sort-object -property "isvalidMember"
+        $onPremMembersEval = $onPremMembersEval | sort-object -property isvalidMember
         out-xmlFile -itemToExport $onPremMemberEval -itemNameToExport $xmlFiles.onPremMemberEvalXML.value
     }
     else
@@ -2707,7 +2707,7 @@ Function get-DLHealthReport
     {
         out-logfile -string "Exporting Office 365 member evaluation."
 
-        $office365MemberEval = $office365MemberEval | sort-object -property "isValidMember"
+        $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
         out-xmlFile -itemToExport $office365MemberEval -itemNameToExport $xmlFiles.office365MemberEvalXML.value
     }
     else {
