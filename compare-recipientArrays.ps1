@@ -575,9 +575,9 @@ function compare-recipientArrays
                     out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
                     
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSID.count)
-                    $functionIndex = $functionOnPremDataListSID.objectSid.indexOf($functionObject.objectSID)
+                    $functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
                     out-logfile -string $functionIndex.toString()
-                    $functionOnPremDataListSID.removeAt($functionIndex)
+                    $functionOnPremDataListSID.remove($functionIndex)
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSID.count)
                 }
                 elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
