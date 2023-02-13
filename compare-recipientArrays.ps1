@@ -612,7 +612,7 @@ function compare-recipientArrays
 
                 #Use index of so that we do not need to query the data more than once.
 
-                foreaech ($member in $functionOnPremDataListSID)
+                foreach ($member in $functionOnPremDataListSID)
                 {
                     out-logfile -string $member.objectSID.Value
                 }
