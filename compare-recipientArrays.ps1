@@ -626,6 +626,25 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
+                    out-logfile -string "Valid member in all three directories.  Set the on premises data and remove it."
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremData[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremData[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremData[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremData[$functionIndex].objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "True"
+                        ErrorMessage = "N/A"
+                    }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
 
                     #$functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
@@ -645,14 +664,27 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
+                    out-logfile -string "The object has been verified across all directories - update on prem data and remove."
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    out-logfile -string "Valid member in all three directories.  Set the on premises data and remove it."
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremData[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremData[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremData[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremData[$functionIndex].objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "True"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
-                    
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSID.count)
                     #$functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
                     #out-logfile -string $functionIndex.toString()
@@ -672,13 +704,24 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
+                    out-logfile -string "Valid member in all three directories.  Set the on premises data and remove it."
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremData[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremData[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremData[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremData[$functionIndex].objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "True"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    out-logfile -string $functionObject
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
+                    $functionReturnArray += $functionObject
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSMTP.count)
                     #$functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
@@ -722,7 +765,7 @@ function compare-recipientArrays
 
         out-logfile -string "Start by comparing the on premises data to Azure data to Exchange Online data - the first place membership lands."
 
-        foreach ($member in $onPremData)
+        foreach ($member in $onPremDataList)
         {
             #First - determine if we are tracking the on premsies user by external directory object id.
 
