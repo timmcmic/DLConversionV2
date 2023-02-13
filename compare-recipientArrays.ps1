@@ -572,13 +572,13 @@ function compare-recipientArrays
 
                     out-logfile -string "Updating on premises external directory object ID value with matching azure values."
 
-                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
+                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
                     
-                    out-logfile -string "On Prem Data List Pre-Remove: "+$functonOnPremDataListSid.count
+                    out-logfile -string ("On Prem Data List Pre-Remove: "+$functonOnPremDataListSid.count)
                     $functionIndex = $functonOnPremDataListSID.objectSID.indexOf($functionObject.ObjectSID)
                     out-logfile -string $functionIndex.toString()
                     $functionOnPremDataListSid.removeAt($functionIndex)
-                    out-logfile -string "On Prem Data List Post-Remove: "+$functonOnPremDataListSid.count
+                    out-logfile -string ("On Prem Data List Post-Remove: "+$functonOnPremDataListSid.count)
                 }
                 elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
                 {
@@ -597,13 +597,13 @@ function compare-recipientArrays
 
                     out-logfile -string "Updating on premises external directory object ID value with matching azure values."
 
-                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
+                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
 
-                    out-logfile -string "On Prem Data List Pre-Remove: "+$functonOnPremDataListSMTP.count
+                    out-logfile -string ("On Prem Data List Pre-Remove: "+$functonOnPremDataListSMTP.count)
                     $functionIndex = $functonOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
                     out-logfile -string $functionIndex.toString()
                     $functionOnPremDataListSMTP.removeAt($functionIndex)                   
-                    out-logfile -string "On Prem Data List Post-Remove: "+$functonOnPremDataListSMTP.count
+                    out-logfile -string ("On Prem Data List Post-Remove: "+$functonOnPremDataListSMTP.count)
                 }
                 else 
                 {
