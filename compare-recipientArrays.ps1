@@ -633,8 +633,8 @@ function compare-recipientArrays
                     $functionOnPremData.removeAt($functionIndex)                    
                     out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
                 }
-                elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
-                #elseif (($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
+                #elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
+                elseif (($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     out-logfile -string ("The object was located at index: "+$functionIndex.tostring())
