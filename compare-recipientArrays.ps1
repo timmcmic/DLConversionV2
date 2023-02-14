@@ -55,7 +55,7 @@ function compare-recipientArrays
 
         out-logfile -string "Prepare the on premises split array list data."
 
-        $functionOnPremDataList0 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList0.add($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID)
         $functionOnPremDataList1 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID
         $functionOnPremDataList2 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID
         $functionOnPremDataList3 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID
