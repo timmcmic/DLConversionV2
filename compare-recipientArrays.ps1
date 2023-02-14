@@ -60,92 +60,92 @@ function compare-recipientArrays
             if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_0")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList0.clone($member)
+                $functionOnPremDataList0.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_1")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList1.clone($member)
+                $functionOnPremDataList1.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_2")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList2.clone($member)
+                $functionOnPremDataList2.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_3")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList3.clone($member)
+                $functionOnPremDataList3.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_4")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList4.clone($member)
+                $functionOnPremDataList4.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_5")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList5.clone($member)
+                $functionOnPremDataList5.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_6")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList6.clone($member)
+                $functionOnPremDataList6.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_7")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList7.clone($member)
+                $functionOnPremDataList7.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_8")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList8.clone($member)
+                $functionOnPremDataList8.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_9")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataList9.clone($member)
+                $functionOnPremDataList9.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_A")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListA.clone($member)
+                $functionOnPremDataListA.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_B")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListB.clone($member)
+                $functionOnPremDataListB.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_C")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListC.clone($member)
+                $functionOnPremDataListC.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_D")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListD.clone($member)
+                $functionOnPremDataListD.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_E")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListE.clone($member)
+                $functionOnPremDataListE.add($member)
             }
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_F")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
-                $functionOnPremDataListF.clone($member)
+                $functionOnPremDataListF.add($member)
             }
             elseif (($member.externalDirectoryObjectID -eq $NULL) -and ($member.objectSID -ne $NULL))
             {
                 out-logfile -string $member.objectSID
-                $functionOnPremDataListSID.clone($member)
+                $functionOnPremDataListSID.add($member)
             }
             elseif (($member.externalDirectoryObjectID -eq $NULL) -and ($member.objectSID -eq $NULL) -and ($member.primarySMTPAddress -ne $NULL))
             {
                 out-logfile -string $member.primarySMTPAddress
-                $functionOnPremDataListSMTP.clone($member)
+                $functionOnPremDataListSMTP.add($member)
             }
         }
         
