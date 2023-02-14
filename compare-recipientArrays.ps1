@@ -629,11 +629,11 @@ function compare-recipientArrays
                     out-logfile -string "Object is valid in all directories - capture on premises object and add to return."
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $functionOnPremData[$functionIndex]
-                        PrimarySMTPAddress = $functionOnPremData[$functionIndex]
-                        UserPrincipalName = $functionOnPremData[$functionIndex]
-                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex]
-                        ObjectSID =$functionOnPremData[$functionIndex]
+                        Name = $functionOnPremData[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremData[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremData[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremData[$functionIndex].objectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "True"
@@ -664,13 +664,32 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
+                    out-logfile -string "Object is valid in all directories - capture on premises object and add to return."
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremDataListSID[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremDataListSID[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremDataListSID[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremDataListSID[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremDataListSID[$functionIndex].objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    out-logfile -string $functionObject
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
+                    $functionReturnArray += $functionObject
+
+                    #$functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
+
+                    #$onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+
+                    #out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+
+                    #out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
                     
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSID.count)
                     #$functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
