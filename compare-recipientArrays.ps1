@@ -62,6 +62,7 @@ function compare-recipientArrays
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList0.add($member)
             }
+        }<#
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
@@ -148,6 +149,8 @@ function compare-recipientArrays
                 $functionOnPremDataListSMTP.add($member)
             }
         }
+
+        #>
         
         out-logfile -string "Record counts of objects for debugging."
 
