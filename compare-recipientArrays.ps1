@@ -31,73 +31,30 @@ function compare-recipientArrays
     #===========================================================================================
 
     $createOnPremLists={
-        out-logfile -string "Creating the split lists of On Premises Data."
+        $onPremDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $onPremDataByPrimarySMTPAddress = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $onPremDataByExternalDirectoryObjectID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
 
-        $functonOnPremDataList0 = New-Object -TypeName "System.Collections.ArrayList"
-        $functonOnPremDataList1 = New-Object -TypeName "System.Collections.ArrayList"
-        $functonOnPremDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList4 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList5 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList6 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList7 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList8 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataList9 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataListA = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataListC = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataListD = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataListE = New-Object -TypeName "System.Collections.ArrayList" 
-        $functonOnPremDataListF = New-Object -TypeName "System.Collections.ArrayList"  
-        $functonOnPremDataListSID = New-Object -TypeName "System.Collections.ArrayList"  
-        $functonOnPremDataListSMTP = New-Object -TypeName "System.Collections.ArrayList" 
+        foreach ($onPremObject in $onPremData)
+        {
+            if ($onPremObject.externalDirectoryObjectID -ne $NULL)
+            {
+                out-logfile -string ("On Prem External Directory Object ID: "+$onPremObject.externalDirectoryObjectID)
+                $onPremDataByExternalDirectoryObjectID.Add($onPremObject.externalDirectoryObjectID, $onPremObject)
+            }
+            
+            if ($onPremObject.objectSID -ne $NULL)
+            {
+                out-logfile -string ("On Prem Object SID: "+$onPremObject.SID)
+                $onPremDataBySID.Add($onPremObject.ObjectSID, $onPremObject)
+            }
 
-        $functionOnPremData = New-Object -TypeName "System.Collections.ArrayList"
-
-        out-logfile -string "Prepare the on premises split array list data."
-
-        $functionOnPremDataList0 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList1 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList2 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList3 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList4 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList5 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList6 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList7 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList8 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList9 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListA = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_a"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListB = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_b"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListC = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_c"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListD = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_d"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListE = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_e"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListF = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_f"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListSID = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL)} | sort-object -property objectSID)
-        $functionOnPremDataListSMTP = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL)} | sort-object -property objectSID)
-
-
-        out-logfile -string "Record counts of objects for debugging."
-
-        out-logfile -string ("OnPrem Function Data List 1: "+$functionOnPremDataList0.count)
-        out-logfile -string ("OnPrem Function Data List 1: "+$functionOnPremDataList1.count)
-        out-logfile -string ("OnPrem Function Data List 2: "+$functionOnPremDataList2.count)
-        out-logfile -string ("OnPrem Function Data List 3: "+$functionOnPremDataList3.count)
-        out-logfile -string ("OnPrem Function Data List 4: "+$functionOnPremDataList4.count)
-        out-logfile -string ("OnPrem Function Data List 5: "+$functionOnPremDataList5.count)
-        out-logfile -string ("OnPrem Function Data List 6: "+$functionOnPremDataList6.count)
-        out-logfile -string ("OnPrem Function Data List 7: "+$functionOnPremDataList7.count)
-        out-logfile -string ("OnPrem Function Data List 8: "+$functionOnPremDataList8.count)
-        out-logfile -string ("OnPrem Function Data List 9: "+$functionOnPremDataList9.count)
-        out-logfile -string ("OnPrem Function Data List A: "+$functionOnPremDataListA.count)
-        out-logfile -string ("OnPrem Function Data List B: "+$functionOnPremDataListB.count)
-        out-logfile -string ("OnPrem Function Data List C: "+$functionOnPremDataListC.count)
-        out-logfile -string ("OnPrem Function Data List D: "+$functionOnPremDataListD.count)
-        out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
-        out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSID.count)
-        out-logfile -string ("On Prem Function Data List SMTP: "+$functionOnPremDataListSMTP.count)
-        
-        $functionOnPremDataListCount = $functionOnPremDataList0.count+$functionOnPremDataList1.count+$functionOnPremDataList2.count+$functionOnPremDataList3.count+$functionOnPremDataList4.count+$functionOnPremDataList5.count+$functionOnPremDataList6.count+$functionOnPremDataList7.count+$functionOnPremDataList8.count+$functionOnPremDataList9.count+$functionOnPremDataListA.count+$functionOnPremDataListB.count+$functionOnPremDataListC.count+$functionOnPremDataListD.count+$functionOnPremDataListE.count+$functionOnPremDataListSID.count+$functionOnPremDataListSMTP.count
-
-        out-logfile -string ("Total array data count validation: "+$functionOnPremDataListCount.tostring())
+            if ($onPremObject.primarySMTPAddress -ne $NULL)
+            {
+                out-logfile -string ("On Prem Primary SMTP Address: "+$onPremObject.primarySMTPAddress)
+                $onPremDataByPrimarySMTPAddress.add($onPremObject.primarySMTPAddress,$onPremObject)
+            }
+        }
     }
 
     #===========================================================================================
@@ -105,134 +62,16 @@ function compare-recipientArrays
     #===========================================================================================
 
     $createAzureLists={
-        out-logfile -string "Creating the split lists of Azure Data."
-
-        $functionAzureDataList0 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionAzureDataList1 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionAzureDataList2 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList3 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList4 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList5 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList6 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList7 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList8 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataList9 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListA = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListC = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListD = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListE = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListF = New-Object -TypeName "System.Collections.ArrayList"  
-        $functionAzureDataListOrig0 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionAzureDataListOrig1 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionAzureDataListOrig2 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig3 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig4 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig5 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig6 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig7 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig8 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrig9 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrigA = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrigC = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrigD = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrigE = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionAzureDataListOrigF = New-Object -TypeName "System.Collections.ArrayList"
-
-        $functionAzureData = New-Object -TypeName "System.Collections.ArrayList"
-
-        out-logfile -string "Initialize the azure data lists with values."
-
-        $functionAzureDataList0 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("0")} | sort-object -property objectID)
-        $functionAzureDataList1 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("1")} | sort-object -property objectID)
-        $functionAzureDataList2 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("2")} | sort-object -property objectID)
-        $functionAzureDataList3 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("3")} | sort-object -property objectID)
-        $functionAzureDataList4 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("4")} | sort-object -property objectID)
-        $functionAzureDataList5 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("5")} | sort-object -property objectID)
-        $functionAzureDataList6 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("6")} | sort-object -property objectID)
-        $functionAzureDataList7 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("7")} | sort-object -property objectID)
-        $functionAzureDataList8 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("8")} | sort-object -property objectID)
-        $functionAzureDataList9 = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("9")} | sort-object -property objectID)
-        $functionAzureDataListA = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("a")} | sort-object -property objectID)
-        $functionAzureDataListB = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("b")} | sort-object -property objectID)
-        $functionAzureDataListC = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("c")} | sort-object -property objectID)
-        $functionAzureDataListD = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("d")} | sort-object -property objectID)
-        $functionAzureDataListE = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("e")} | sort-object -property objectID)
-        $functionAzureDataListF = [System.Collections.ArrayList]@($azureDataList | where-object {$_.objectID.startsWith("f")} | sort-object -property objectID)
-
         
-        out-logfile -string "Serialize the data into new array lists since this data set is evaluated twice in the all evaluation."
+        $azureDataByObjectId = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
 
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList0)
-        $functionAzureDataList0Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList1)
-        $functionAzureDataList1Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList2)
-        $functionAzureDataList2Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList3)
-        $functionAzureDataList3Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList4)
-        $functionAzureDataList4Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList5)
-        $functionAzureDataList5Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList6)
-        $functionAzureDataList6Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList7)
-        $functionAzureDataList7Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList8)
-        $functionAzureDataList8Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataList9)
-        $functionAzureDataList9Orig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListA)
-        $functionAzureDataListAOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListB)
-        $functionAzureDataListBOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListC)
-        $functionAzureDataListCOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListD)
-        $functionAzureDataListDOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListE)
-        $functionAzureDataListEOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($functionAzureDataListF)
-        $functionAzureDataListFOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
-        $serialData = [System.Management.Automation.PSSerializer]::Serialize($azureDataList)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@(([System.Management.Automation.PSSerializer]::Deserialize($serialData)) | sort-object -property objectID)
+        foreach ($azureObject in $azureData)
+        {
+            out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
+            $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
+        }
 
-        out-logfile -string "Output azure array list counts for debugging."
-
-        out-logfile -string ("Azure Function Data List 0: "+$functionAzureDataList0.count)
-        out-logfile -string ("Azure Function Data List Original 0: "+$functionAzureDataList0Orig.count)
-        out-logfile -string ("Azure Function Data List 1: "+$functionAzureDataList1.count)
-        out-logfile -string ("Azure Function Data List Original 1: "+$functionAzureDataList1Orig.count)
-        out-logfile -string ("Azure Function Data List 2: "+$functionAzureDataList2.count)
-        out-logfile -string ("Azure Function Data List Original 2: "+$functionAzureDataList2Orig.count)
-        out-logfile -string ("Azure Function Data List 3: "+$functionAzureDataList3.count)
-        out-logfile -string ("Azure Function Data List Original 3: "+$functionAzureDataList3Orig.count)
-        out-logfile -string ("Azure Function Data List 4: "+$functionAzureDataList4.count)
-        out-logfile -string ("Azure Function Data List Original 4: "+$functionAzureDataList4Orig.count)
-        out-logfile -string ("Azure Function Data List 5: "+$functionAzureDataList5.count)
-        out-logfile -string ("Azure Function Data List Original 5: "+$functionAzureDataList5Orig.count)
-        out-logfile -string ("Azure Function Data List 6: "+$functionAzureDataList6.count)
-        out-logfile -string ("Azure Function Data List Original 6: "+$functionAzureDataList6Orig.count)
-        out-logfile -string ("Azure Function Data List 7: "+$functionAzureDataList7.count)
-        out-logfile -string ("Azure Function Data List Original 7: "+$functionAzureDataList7Orig.count)
-        out-logfile -string ("Azure Function Data List 8: "+$functionAzureDataList8.count)
-        out-logfile -string ("Azure Function Data List Original 8: "+$functionAzureDataList8Orig.count)
-        out-logfile -string ("Azure Function Data List 9: "+$functionAzureDataList9.count)
-        out-logfile -string ("Azure Function Data List Original 9: "+$functionAzureDataList9Orig.count)
-        out-logfile -string ("Azure Function Data List A: "+$functionAzureDataListA.count)
-        out-logfile -string ("Azure Function Data List Original A: "+$functionAzureDataListAOrig.count)
-        out-logfile -string ("Azure Function Data List B: "+$functionAzureDataListB.count)
-        out-logfile -string ("Azure Function Data List Original B: "+$functionAzureDataListBOrig.count)
-        out-logfile -string ("Azure Function Data List C: "+$functionAzureDataListC.count)
-        out-logfile -string ("Azure Function Data List Original C: "+$functionAzureDataListCOrig.count)
-        out-logfile -string ("Azure Function Data List D: "+$functionAzureDataListD.count)
-        out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
-        out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
-        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
-
-        $functionAzureDataListCount=$functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+$functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count
-
-        out-logfile -string ("Total array data count validation: "+$functionAzureDataListCount.tostring())
+        $azureDataByObjectId = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
     }
 
     #===========================================================================================
