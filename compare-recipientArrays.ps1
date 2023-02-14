@@ -361,7 +361,9 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $onPremDataByExternalDirectoryObjectID.remove($functionExternalDirectoryObjecctID)
+                    out-logfile -string $functionObject
+
+                    $onPremDataByExternalDirectoryObjectID.remove($functionExternalDirectoryObjectID)
                 }
                 elseif ($onPremDataBySID.ContainsKey($functionObject.objectSID))
                 {
@@ -389,6 +391,8 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    out-logfile -string $functionObject
 
                     $onPremDataBySID.remove($functionObject.objectSID)
                 }
@@ -420,6 +424,8 @@ function compare-recipientArrays
                     }
 
                     $functionReturnArray += $functionObject
+
+                    out-logfile -string $functionObject
 
                     $onPremDataByPrimarySMTPAddress.remove($functionPrimarySMTPAddress)
                 }
