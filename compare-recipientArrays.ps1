@@ -484,11 +484,11 @@ function compare-recipientArrays
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
                 else 
                 {
