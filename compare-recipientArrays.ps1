@@ -45,7 +45,7 @@ function compare-recipientArrays
             
             if ($onPremObject.objectSID -ne $NULL)
             {
-                out-logfile -string ("On Prem Object SID: "+$onPremObject.SID)
+                out-logfile -string ("On Prem Object SID: "+$onPremObject.objectSID)
                 $onPremDataBySID.Add($onPremObject.ObjectSID, $onPremObject)
             }
 
