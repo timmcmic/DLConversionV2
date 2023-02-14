@@ -311,27 +311,7 @@ function compare-recipientArrays
     #===========================================================================================
     
     $createArrayLists ={
-        out-logfile -string "Preparing array to array list conversion for work in this function."
-
-        $onPremDataList = New-Object -TypeName "System.Collections.ArrayList"
-        $azureDataList = New-Object -TypeName "System.Collections.ArrayList"
-        $office365DataList = New-Object -TypeName "System.Collections.ArrayList"
         
-        out-logfile -string "Moving the array information into array lists for manipulation."
-
-        $onPremDataList = [System.Collections.ArrayList]@($onPremData)
-        $azureDataList = [System.Collections.ArrayList]@($azureData)
-        $office365DataList = [System.Collections.ArrayList]@($office365Data)
-
-        out-logfile -string "Record count comparisons for evaluation / debugging"
-
-        out-logfile -string ("On Prem Array Count: "+$onPremData.count)
-        out-logfile -string ("On Prem List Count: "+$onPremDataList.count)
-        out-logfile -string ("Azure Data Array Count: "+$azureData.count)
-        out-logfile -string ("Azure Data List Count: "+$azureDataList.count)
-        out-logfile -string ("Office 365 Data Array Count: "+$office365Data.count)
-        out-logfile -string ("Office 365 Data List Count: "+$office365DataList.count)
-
         .$createAzureLists
 
         .$createOnPremLists
