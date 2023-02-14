@@ -781,7 +781,12 @@ function compare-recipientArrays
 
         if ($onPremDataList.count -gt 0)
         {
-            foreach ($member in $onPremData)
+            foreach ($member in $onPremDataList)
+            {
+                out-logfile -string $member
+            }
+            exit
+            foreach ($member in $onPremDataList)
             {
                 #First - determine if we are tracking the on premsies user by external directory object id.
 
