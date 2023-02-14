@@ -607,21 +607,48 @@ function compare-recipientArrays
                 }
                 else 
                 {
-                    out-logfile -string "The object was not found in Azure AD -> BAD"
+                    out-logfile -string "The object was not discovered by primary SMTP address - this may not necessarily be incorret since contacts may not have a primary SMTP in Azure."
+                    out-logfile -string "Search the Office 365 data for the primary SMTP address assume the objects are the same."
 
-                    $functionObject = New-Object PSObject -Property @{
+                    if ($office365DataByPrimarySMTPAddress.ContainsKey($member.primarySMTPAddress)
+                    {
+                        out-logfile -string "The object is most likely a contact with an external mail address not represented in azure with a primary proxy address."
+
+                        $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                         ObjectSID =$member.ObjectSID
                         isPresentOnPremises = "Source"
-                        isPresentInAzure = "False"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
-                    }
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                        }
 
+                        out-logfile -string $functionObject
+
+                        $functionReturnArray += $functionObject
+                    }
+                    else 
+                    {
+                        out-logfile -string "The object was not found in Azure AD -> BAD"
+
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.ObjectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "False"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                        }
+                    }
+                    
                     out-logfile -string $functionObject
 
                     $functionReturnArray += $functionObject
