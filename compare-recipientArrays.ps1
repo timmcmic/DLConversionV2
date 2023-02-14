@@ -43,13 +43,13 @@ function compare-recipientArrays
                 $onPremDataByExternalDirectoryObjectID.Add($onPremObject.externalDirectoryObjectID, $onPremObject)
             }
             
-            if ($onPremObject.objectSID -ne $NULL)
+            elseif ($onPremObject.objectSID -ne $NULL)
             {
                 out-logfile -string ("On Prem Object SID: "+$onPremObject.objectSID)
                 $onPremDataBySID.Add($onPremObject.ObjectSID, $onPremObject)
             }
 
-            if ($onPremObject.primarySMTPAddress -ne $NULL)
+            elseif ($onPremObject.primarySMTPAddress -ne $NULL)
             {
                 out-logfile -string ("On Prem Primary SMTP Address: "+$onPremObject.primarySMTPAddress)
                 $onPremDataByPrimarySMTPAddress.add($onPremObject.primarySMTPAddress,$onPremObject)
@@ -254,41 +254,12 @@ function compare-recipientArrays
                 $functionPrimarySMTPAddress = "N/A"
             }
 
-            out-logfile -string "Determine which subset of Azure data we should be querying against."
-
-            $switchTest = $member.externalDirectoryObjectID[0]
-            out-logfile -string ("Testing: "+$switchTest)
-
-            switch ($switchTest)
-            {
-                "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList0)}
-                "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1)}
-                "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2)}
-                "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3)}
-                "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList4)}
-                "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList5)}
-                "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList6)}
-                "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList7)}
-                "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList8)}
-                "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList9)}
-                "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListA)}
-                "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListB)}
-                "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListC)}
-                "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListD)}
-                "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
-                "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListF)}
-            }
-
-            #if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
-            if (($functionIndex = $functionAzureData.objectID.indexOf($member.externalDirectoryObjectID)) -ge 0)
+            if ($azureDataByObjectID.ContainsKey($member.externalDirectoryObjectID))
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
-                out-logfile -string ("Azure object located at array list position: "+$functionIndex)
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
-                #$functionAzureObject = $functionAzureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
-
-                $functionAzureObject = $functionAzureData[$functionIndex]
+                $functionAzureObject = $azureDataByObjectID[$member.externalDirectoryObjectID]
 
                 out-logfile -string $functionAzureObject
 
@@ -342,12 +313,6 @@ function compare-recipientArrays
                     }
                 }
 
-                out-logfile -string "Removing object from azure data subset."
-                out-logfile -string ("Azure Data Count Pre-Remove: "+$functionAzureData.count)
-                #$functionAzureData.remove($functionAzureObject)
-                $functionAzureData.removeAt($functionIndex)
-                out-logfile -string ("Azure Data Count Post-Remove: "+$functionAzureData.count)
-
                 out-logfile -string "Being Office 365 -> On premises evaluation."
                 out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
 
@@ -355,32 +320,9 @@ function compare-recipientArrays
 
                 out-logfile -string $functionExternalDirectoryObjectID
 
-                switch ($switchTest)
-                {
-                    "0" {out-logfile -string "Matched OnPrem Data Set 0" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList0)}
-                    "1" {out-logfile -string "Matched OnPrem Data Set 1" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList1)}
-                    "2" {out-logfile -string "Matched OnPrem Data Set 2" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList2)}
-                    "3" {out-logfile -string "Matched OnPrem Data Set 3" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList3)}
-                    "4" {out-logfile -string "Matched OnPrem Data Set 4" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList4)}
-                    "5" {out-logfile -string "Matched OnPrem Data Set 5" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList5)}
-                    "6" {out-logfile -string "Matched OnPrem Data Set 6" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList6)}
-                    "7" {out-logfile -string "Matched OnPrem Data Set 7" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList7)}
-                    "8" {out-logfile -string "Matched OnPrem Data Set 8" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList8)}
-                    "9" {out-logfile -string "Matched OnPrem Data Set 9" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataList9)}
-                    "a" {out-logfile -string "Matched OnPrem Data Set A" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListA)}
-                    "b" {out-logfile -string "Matched OnPrem Data Set B" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListB)}
-                    "c" {out-logfile -string "Matched OnPrem Data Set C" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListC)}
-                    "d" {out-logfile -string "Matched OnPrem Data Set D" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListD)}
-                    "e" {out-logfile -string "Matched OnPrem Data Set E" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListE)}
-                    "f" {out-logfile -string "Matched OnPrem Data Set F" ; $functionOnPremData = [System.Collections.ArrayList]@($functionOnPremDataListF)}
-                }
-
-                #Use index of so that we do not need to query the data more than once.
-                #if ($functionOnPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
-                if (($functionOnPremData.count -gt 0) -and ($functionIndex = $functionOnPremData.externalDirectoryObjectId.indexOf($functionExternalDirectoryObjectID)) -ge 0)
+                if ($onPremDataByExternalDirectoryObjectID.ContainsKey($functionExternalDirectoryObjectID))
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
-                    out-logfile -string ("Found object at index: "+$functionIndex.tostring())
 
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
@@ -389,18 +331,28 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
+                    $functionOnPremObject = $onPremDataByExternalDirectoryObjectID[$functionExternalDirectoryObjectID]
 
-                    #$functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
-                    #out-logfile -string $functionIndex.toString()
-                    $functionOnPremData.removeAt($functionIndex)                    
-                    out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremData.count)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $functionReturnArray += $functionObject
+
+                    $onPremDataByExternalDirectoryObjectID.remove($functionExternalDirectoryObjecctID)
                 }
-                #elseif ($functionOnPremDataListSID.objectSid -contains $functionObject.objectSID)
-                elseif (($functionOnPremDataListSID.count -gt 0) -and ($functionIndex = $functionOnPremDataListSID.objectSid.value.indexof($functionObject.objectSID)) -ge 0)
+                elseif ($onPremDataBySID.ContainsKey($functionObject.objectSID))
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
-                    out-logfile -string ("The object was located at index: "+$functionIndex.tostring())
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
 
@@ -408,25 +360,29 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
+                    $functionOnPremObject = $onPremDataBySID[$functionObject.objectSID]
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    $functionReturnArray += $functionObject
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
-                    
-                    out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSID.count)
-                    #$functionIndex = $functionOnPremDataListSID | where {$_.objectSid -eq $functionObject.objectSid}
-                    #out-logfile -string $functionIndex.toString()
-                    $functionOnPremDataListSID.remove($functionIndex)
-                    out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSID.count)
+                    $onPremDataBySID.remove($functionObject.objectSID)
                 }
-                #elseif ($functionOnPremDataListSMTP.primarySMTPAddress -contains $functionPrimarySMTPAddress)
-                elseif (($functionOnPremDataListSMTP.count -gt 0) -and ($functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)) -ge 0)
+                
+                elseif ($onPremDataByPrimarySMTPAddress.ContainsKey($functionPrimarySMTPAddress))
                 {
                     out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
-                    out-logfile -string ("The object was located at array index: "+$functionIndex.tostring())
 
                     $functionObject.isPresentOnPremises = "True"
                     $functionObject.isValidMember = "TRUE"
@@ -435,19 +391,24 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
+                    $functionOnPremObject = $onPremDataByPrimarySMTPAddress[$functionPrimarySMTPAddress]
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    $functionReturnArray += $functionObject
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
-
-                    out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSMTP.count)
-                    #$functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
-                    #out-logfile -string $functionIndex.toString()
-                    $functionOnPremDataListSMTP.removeAt($functionIndex)                   
-                    out-logfile -string ("On Prem Data List Post-Remove: "+$functionOnPremDataListSMTP.count)
+                    $onPremDataByPrimarySMTPAddress.remove($functionPrimarySMTPAddress)
                 }
                 else 
                 {
@@ -484,6 +445,12 @@ function compare-recipientArrays
         }
 
         out-logfile -string "Start by comparing the on premises data to Azure data to Exchange Online data - the first place membership lands."
+
+        if ($onPremDataByExternalDirectoryObjectID.count -gt 0)
+        {
+            out-logfile -string "On premises users remain for processing - process those users."
+        }
+
 
         foreach ($member in $onPremData)
         {
