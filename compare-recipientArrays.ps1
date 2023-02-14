@@ -779,349 +779,352 @@ function compare-recipientArrays
 
         out-logfile -string "Start by comparing the on premises data to Azure data to Exchange Online data - the first place membership lands."
 
-        foreach ($member in $onPremData)
+        if ($onPremDataList.count -gt 0)
         {
-            #First - determine if we are tracking the on premsies user by external directory object id.
-
-            if ($member.externalDirectoryObjectID -ne $NULL)
+            foreach ($member in $onPremData)
             {
-                out-logfile -string ("Processing external directory object ID: "+$member.externalDirectoryObjectID)
+                #First - determine if we are tracking the on premsies user by external directory object id.
 
-                $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
-
-                foreach ($functionExternalDirectoryObjectIDMember in $functionExternalDirectoryObjecctID)
+                if ($member.externalDirectoryObjectID -ne $NULL)
                 {
-                    out-logfile -string $functionExternalDirectoryObjectIDMember
-                }
+                    out-logfile -string ("Processing external directory object ID: "+$member.externalDirectoryObjectID)
 
-                $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
+                    $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
 
-                out-logfile -string $functionExternalDirectoryObjectID
-
-                out-logfile -string "Determine which subset of Azure data we should be querying against."
-
-                $switchTest = $functionExternalDirectoryObjectID[0]
-                out-logfile -string ("Testing: "+$switchTest)
-
-                switch ($switchTest)
-                {
-                    "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList0Orig)}
-                    "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1Orig)}
-                    "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2Orig)}
-                    "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3Orig)}
-                    "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList4Orig)}
-                    "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList5Orig)}
-                    "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList6Orig)}
-                    "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList7Orig)}
-                    "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList8Orig)}
-                    "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList9Orig)}
-                    "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListAOrig)}
-                    "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListBOrig)}
-                    "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListCOrig)}
-                    "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListDOrig)}
-                    "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListEOrig)}
-                    "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListFOrig)}
-                }
-
-                out-logfile -string "Search Azure Member data for external directory object ID."
-
-                if ($functionAzureData.objectID -contains $functionExternalDirectoryObjectID)
-                {
-                    out-logfile -string "Member found in Azure."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
+                    foreach ($functionExternalDirectoryObjectIDMember in $functionExternalDirectoryObjecctID)
+                    {
+                        out-logfile -string $functionExternalDirectoryObjectIDMember
                     }
 
-                    out-logfile -string ("Azure data count pre-remove: "+$functionAzureData.count)
-                    $functionIndex = $functionAzureData.objectID.indexOf($functionExternalDirectoryObjectID)
-                    out-logfile -string $functionIndex.tostring()
-                    $functionAzureData.removeAt($functionIndex)
-                    out-logfile -string ("Azure data count post-remove: "+$functionAzureData.Count)
+                    $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
 
-                    out-logfile -string "Member found in Azure evaluate Exchange Online."
+                    out-logfile -string $functionExternalDirectoryObjectID
+
+                    out-logfile -string "Determine which subset of Azure data we should be querying against."
+
+                    $switchTest = $functionExternalDirectoryObjectID[0]
+                    out-logfile -string ("Testing: "+$switchTest)
 
                     switch ($switchTest)
                     {
-                        "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
-                        "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
-                        "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
-                        "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
-                        "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
-                        "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
-                        "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
-                        "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
-                        "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
-                        "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
-                        "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
-                        "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
-                        "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
-                        "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
-                        "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
-                        "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
+                        "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList0Orig)}
+                        "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1Orig)}
+                        "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2Orig)}
+                        "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3Orig)}
+                        "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList4Orig)}
+                        "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList5Orig)}
+                        "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList6Orig)}
+                        "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList7Orig)}
+                        "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList8Orig)}
+                        "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList9Orig)}
+                        "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListAOrig)}
+                        "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListBOrig)}
+                        "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListCOrig)}
+                        "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListDOrig)}
+                        "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListEOrig)}
+                        "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListFOrig)}
                     }
 
-                    if ($functionOffice365Data.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+                    out-logfile -string "Search Azure Member data for external directory object ID."
+
+                    if ($functionAzureData.objectID -contains $functionExternalDirectoryObjectID)
                     {
-                        out-logfile -string "Member found in Exchange Online - GOOD"
+                        out-logfile -string "Member found in Azure."
 
-                        $functionObject.isPresentInExchangeOnline="True"
-                        $functionObject.isValidMember = "TRUE"
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "True"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "N/A"
+                        }
 
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
-
-                        out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
-                        $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
+                        out-logfile -string ("Azure data count pre-remove: "+$functionAzureData.count)
+                        $functionIndex = $functionAzureData.objectID.indexOf($functionExternalDirectoryObjectID)
                         out-logfile -string $functionIndex.tostring()
-                        $functionOffice365Data.removeAt($functionIndex)
-                        out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                        $functionAzureData.removeAt($functionIndex)
+                        out-logfile -string ("Azure data count post-remove: "+$functionAzureData.Count)
+
+                        out-logfile -string "Member found in Azure evaluate Exchange Online."
+
+                        switch ($switchTest)
+                        {
+                            "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
+                            "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
+                            "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
+                            "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
+                            "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
+                            "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
+                            "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
+                            "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
+                            "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
+                            "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
+                            "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
+                            "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
+                            "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
+                            "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
+                            "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
+                            "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
+                        }
+
+                        if ($functionOffice365Data.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+                        {
+                            out-logfile -string "Member found in Exchange Online - GOOD"
+
+                            $functionObject.isPresentInExchangeOnline="True"
+                            $functionObject.isValidMember = "TRUE"
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+
+                            out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
+                            $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
+                            out-logfile -string $functionIndex.tostring()
+                            $functionOffice365Data.removeAt($functionIndex)
+                            out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Member not found in Exchange Online - NOT GOOD"
+
+                            $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+                        }
                     }
                     else 
                     {
-                        out-logfile -string "Member not found in Exchange Online - NOT GOOD"
+                        out-logfile -string "Member not found in Azure - NOT GOOD"
 
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "False"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                        }
 
                         out-logfile -string $functionObject
 
                         $functionReturnArray += $functionObject
                     }
                 }
-                else 
+                elseif ($member.objectSID -ne $NULL)
                 {
-                    out-logfile -string "Member not found in Azure - NOT GOOD"
+                    out-logfile -string ("Processing objectSID: "+$member.ObjectSID)
 
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "False"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
-                    }
+                    out-logfile -string "Search Azure AD data for object sid."
 
-                    out-logfile -string $functionObject
-
-                    $functionReturnArray += $functionObject
-                }
-            }
-            elseif ($member.objectSID -ne $NULL)
-            {
-                out-logfile -string ("Processing objectSID: "+$member.ObjectSID)
-
-                out-logfile -string "Search Azure AD data for object sid."
-
-                if ($functionAzureDataListOrig.OnPremisesSecurityIdentifier -contains $member.objectSID.value)
-                {
-                    out-logfile -string "Azure AD object located by object SID - GOOD."
-
-                    $functionExternalDirectoryObjectID = $azureData | where {$_.OnPremisesSecurityIdentifier -eq $member.objectSID.value}
-
-                    out-logfile -string ("Calculated object id for Exchange Online search: "+$functionExternalDirectoryObjectID.objectID)
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $functionExternalDirectoryObjectID.objectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string ("Azure data count pre-remove: "+$functionAzureDataListOrig.count)
-                    $functionIndex = $functionAzureDataListOrig.OnPremisesSecurityIdentifier.indexOf($member.objectSID.value)
-                    out-logfile -string $functionIndex.tostring()
-                    $functionAzureDataListOrig.removeAt($functionIndex)
-                    out-logfile -string ("Azure data count post-remove: "+$functionAzureDataListOrig.count)
-
-                    $switchTest = $functionObject.externalDirectoryObjectID[0]
-                    out-logfile -string $switchTest
-
-                    switch ($switchTest)
+                    if ($functionAzureDataListOrig.OnPremisesSecurityIdentifier -contains $member.objectSID.value)
                     {
-                        "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
-                        "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
-                        "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
-                        "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
-                        "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
-                        "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
-                        "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
-                        "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
-                        "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
-                        "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
-                        "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
-                        "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
-                        "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
-                        "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
-                        "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
-                        "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
-                    }
+                        out-logfile -string "Azure AD object located by object SID - GOOD."
 
+                        $functionExternalDirectoryObjectID = $azureData | where {$_.OnPremisesSecurityIdentifier -eq $member.objectSID.value}
 
-                    out-logfile -string "Search for Azure AD Object in Exchange Online."
+                        out-logfile -string ("Calculated object id for Exchange Online search: "+$functionExternalDirectoryObjectID.objectID)
 
-                    if ($functionOffice365Data.externalDirectoryObjectID -contains $functionObject.externalDirectoryObjectID)
-                    {
-                        out-logfile -string "Azure AD object located in Exchange Online - GOOD."
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $functionExternalDirectoryObjectID.objectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "True"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "N/A"
+                        }
 
-                        $functionObject.isPresentInExchangeOnline = "True"
-                        $functionObject.isValidMember = "TRUE"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
-
-                        out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
-                        $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionObject.externalDirectoryObjectID)
+                        out-logfile -string ("Azure data count pre-remove: "+$functionAzureDataListOrig.count)
+                        $functionIndex = $functionAzureDataListOrig.OnPremisesSecurityIdentifier.indexOf($member.objectSID.value)
                         out-logfile -string $functionIndex.tostring()
-                        $functionOffice365Data.removeAt($functionIndex)
-                        out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                        $functionAzureDataListOrig.removeAt($functionIndex)
+                        out-logfile -string ("Azure data count post-remove: "+$functionAzureDataListOrig.count)
+
+                        $switchTest = $functionObject.externalDirectoryObjectID[0]
+                        out-logfile -string $switchTest
+
+                        switch ($switchTest)
+                        {
+                            "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
+                            "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
+                            "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
+                            "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
+                            "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
+                            "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
+                            "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
+                            "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
+                            "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
+                            "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
+                            "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
+                            "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
+                            "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
+                            "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
+                            "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
+                            "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
+                        }
+
+
+                        out-logfile -string "Search for Azure AD Object in Exchange Online."
+
+                        if ($functionOffice365Data.externalDirectoryObjectID -contains $functionObject.externalDirectoryObjectID)
+                        {
+                            out-logfile -string "Azure AD object located in Exchange Online - GOOD."
+
+                            $functionObject.isPresentInExchangeOnline = "True"
+                            $functionObject.isValidMember = "TRUE"
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+
+                            out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
+                            $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionObject.externalDirectoryObjectID)
+                            out-logfile -string $functionIndex.tostring()
+                            $functionOffice365Data.removeAt($functionIndex)
+                            out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Azure AD object not located in Exchange Online - NOT GOOD."
+
+                            $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        }
                     }
                     else 
                     {
-                        out-logfile -string "Azure AD object not located in Exchange Online - NOT GOOD."
+                        out-logfile -string "Azure AD object no located by object SID - NOT GOOD."
 
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Azure AD object no located by object SID - NOT GOOD."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "False"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
-                    }
-
-                    out-logfile -string $functionObject
-
-                    $functionReturnArray +=$functionObject
-                }
-            }
-            elseif ($member.primarySMTPAddress -ne $NULL)
-            {
-                out-logfile ("Testing via primary SMTP address: "+$member.primarySMTPAddress)
-
-                if ($functionAzureDataListOrig.mail -contains $member.primarySMTPAddress)
-                {
-                    out-logfile -string "Member found in Azure AD via proxy address."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    $switchTest = $functionObject.externalDirectoryObjectID[0]
-                    out-logfile -string $switchTest
-
-                    switch ($switchTest)
-                    {
-                        "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
-                        "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
-                        "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
-                        "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
-                        "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
-                        "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
-                        "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
-                        "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
-                        "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
-                        "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
-                        "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
-                        "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
-                        "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
-                        "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
-                        "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
-                        "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
-                    }
-
-
-                    out-logfile -string "Member found in Azure AD now evaluate Exchange Online"
-
-                    if ($functionOffice365Data.externalDirectoryObjectID -contains $functionObject.externalDirectoryObjectID)
-                    {
-                        out-logfile -string "Member found in Exchange Online - GOOD."
-
-                        $functionObject.isPresentInExchangeOnline = "True"
-                        $functionObject.isValidMember = "TRUE"
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "False"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                        }
 
                         out-logfile -string $functionObject
 
-                        $functionReturnArray += $functionObject
+                        $functionReturnArray +=$functionObject
+                    }
+                }
+                elseif ($member.primarySMTPAddress -ne $NULL)
+                {
+                    out-logfile ("Testing via primary SMTP address: "+$member.primarySMTPAddress)
 
-                        out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
-                        $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionObject.externalDirectoryObjectID)
-                        out-logfile -string $functionIndex.tostring()
-                        $functionOffice365Data.removeAt($functionIndex)
-                        out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                    if ($functionAzureDataListOrig.mail -contains $member.primarySMTPAddress)
+                    {
+                        out-logfile -string "Member found in Azure AD via proxy address."
+
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "True"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "N/A"
+                        }
+
+                        $switchTest = $functionObject.externalDirectoryObjectID[0]
+                        out-logfile -string $switchTest
+
+                        switch ($switchTest)
+                        {
+                            "0" {out-logfile -string "Matched Office365 Data Set 0" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList0)}
+                            "1" {out-logfile -string "Matched Office365 Data Set 1" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList1)}
+                            "2" {out-logfile -string "Matched Office365 Data Set 2" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList2)}
+                            "3" {out-logfile -string "Matched Office365 Data Set 3" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList3)}
+                            "4" {out-logfile -string "Matched Office365 Data Set 4" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList4)}
+                            "5" {out-logfile -string "Matched Office365 Data Set 5" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList5)}
+                            "6" {out-logfile -string "Matched Office365 Data Set 6" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList6)}
+                            "7" {out-logfile -string "Matched Office365 Data Set 7" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList7)}
+                            "8" {out-logfile -string "Matched Office365 Data Set 8" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList8)}
+                            "9" {out-logfile -string "Matched Office365 Data Set 9" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataList9)}
+                            "a" {out-logfile -string "Matched Office365 Data Set A" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListA)}
+                            "b" {out-logfile -string "Matched Office365 Data Set B" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListB)}
+                            "c" {out-logfile -string "Matched Office365 Data Set C" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListC)}
+                            "d" {out-logfile -string "Matched Office365 Data Set D" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListD)}
+                            "e" {out-logfile -string "Matched Office365 Data Set E" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListE)}
+                            "f" {out-logfile -string "Matched Office365 Data Set F" ; $functionOffice365Data = [System.Collections.ArrayList]@($functionOffice365DataListF)}
+                        }
+
+
+                        out-logfile -string "Member found in Azure AD now evaluate Exchange Online"
+
+                        if ($functionOffice365Data.externalDirectoryObjectID -contains $functionObject.externalDirectoryObjectID)
+                        {
+                            out-logfile -string "Member found in Exchange Online - GOOD."
+
+                            $functionObject.isPresentInExchangeOnline = "True"
+                            $functionObject.isValidMember = "TRUE"
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+
+                            out-logfile -string ("Office 365 Data Count pre-remove: "+$functionOffice365Data.count)
+                            $functionIndex = $functionOffice365Data.externalDirectoryObjectID.indexOf($functionObject.externalDirectoryObjectID)
+                            out-logfile -string $functionIndex.tostring()
+                            $functionOffice365Data.removeAt($functionIndex)
+                            out-logfile -string ("Office 365 Data Count post-remove: "+$functionOffice365Data.count)
+                        }
+                        else 
+                        {
+                            out-logfile -string "Member not found in Exchange Online - NOT GOOD."
+
+                            $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+
+                            out-logfile -string $functionObject
+
+                            $functionReturnArray += $functionObject
+                        }
                     }
                     else 
                     {
-                        out-logfile -string "Member not found in Exchange Online - NOT GOOD."
+                        out-logfile -string "Azure AD object no located by proxy address - NOT GOOD."
 
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.objectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "False"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                        }
 
                         out-logfile -string $functionObject
 
-                        $functionReturnArray += $functionObject
+                        $functionReturnArray +=$functionObject
                     }
                 }
-                else 
-                {
-                    out-logfile -string "Azure AD object no located by proxy address - NOT GOOD."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "False"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
-                    }
-
-                    out-logfile -string $functionObject
-
-                    $functionReturnArray +=$functionObject
-                }
-            }
+            }    
         }
     }
     <#
