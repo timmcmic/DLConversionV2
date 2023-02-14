@@ -70,8 +70,6 @@ function compare-recipientArrays
             out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
             $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
         }
-
-        $azureDataByObjectId = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
     }
 
     #===========================================================================================
