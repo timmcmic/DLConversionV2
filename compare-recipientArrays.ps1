@@ -505,13 +505,91 @@ function compare-recipientArrays
                 }
             }
         }
-        elseif ($onPremDataBySID.count -gt 0)
+
+        if ($onPremDataBySID.count -gt 0)
         {
             out-logfile -string "On premises by SID remain for processing - process those users."
+
+            foreach ($member in $onPremDataBySID.Values)
+            {
+                if($azureDataBySID.ContainsKey($member.objectSID))
+                {
+                    out-logfile -string "The object was not found in Exchange Online -> BAD"
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "False"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                    }
+                }
+                else 
+                {
+                    out-logfile -string "The object was not found in Azure AD -> BAD"
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "False"
+                        isPresentInExchangeOnline = "False"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                    }
+                }
+            }
         }
-        elseif ($onPremDataByPrimarySMTPAddress)
+
+        if ($onPremDataByPrimarySMTPAddress.count -gt 0)
         {
             out-logfile -string "On premises by primary SMTP remain for processing - process those users."
+
+            foreach ($member in $onPremDataByPrimarySMTPAddress.Values)
+            {
+                if($azureDataByMail.ContainsKey($member.primarySMTPAddress))
+                {
+                    out-logfile -string "The object was not found in Exchange Online -> BAD"
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "False"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                    }
+                }
+                else 
+                {
+                    out-logfile -string "The object was not found in Azure AD -> BAD"
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "False"
+                        isPresentInExchangeOnline = "False"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                    }
+                }
+            }
         }    
     }
     elseif ($isAttributeTest -eq $TRUE)
