@@ -80,69 +80,13 @@ function compare-recipientArrays
     
     $createOffice365Lists=
     {
-        out-logfile -string "Creating the split lists of On Premises Data."
+        $office365DataByExternalDirectoryObjectID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
 
-        $functionOffice365DataList0 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionOffice365DataList1 = New-Object -TypeName "System.Collections.ArrayList"
-        $functionOffice365DataList2 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList3 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList4 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList5 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList6 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList7 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList8 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataList9 = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataListA = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataListC = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataListD = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataListE = New-Object -TypeName "System.Collections.ArrayList" 
-        $functionOffice365DataListF = New-Object -TypeName "System.Collections.ArrayList"  
-
-        $functionOffice365Data = New-Object -TypeName "System.Collections.ArrayList"
-
-        out-logfile -string "Prepare the on premises split array list data."
-
-        $functionOffice365DataList0 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("0"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList1 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("1"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList2 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("2"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList3 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("3"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList4 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("4"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList5 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("5"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList6 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("6"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList7 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("7"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList8 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("8"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataList9 = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("9"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListA = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("a"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListB = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("b"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListC = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("c"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListD = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("d"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListE = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("e"))} | sort-object -property externalDirectoryObjectID)
-        $functionOffice365DataListF = [System.Collections.ArrayList]@($office365DataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("f"))} | sort-object -property externalDirectoryObjectID)
-       
-
-        out-logfile -string "Record counts of objects for debugging."
-
-        out-logfile -string ("Office 365 Function Data List 1: "+$functionOffice365DataList0.count)
-        out-logfile -string ("Office 365 Function Data List 1: "+$functionOffice365DataList1.count)
-        out-logfile -string ("Office 365 Function Data List 2: "+$functionOffice365DataList2.count)
-        out-logfile -string ("Office 365 Function Data List 3: "+$functionOffice365DataList3.count)
-        out-logfile -string ("Office 365 Function Data List 4: "+$functionOffice365DataList4.count)
-        out-logfile -string ("Office 365 Function Data List 5: "+$functionOffice365DataList5.count)
-        out-logfile -string ("Office 365 Function Data List 6: "+$functionOffice365DataList6.count)
-        out-logfile -string ("Office 365 Function Data List 7: "+$functionOffice365DataList7.count)
-        out-logfile -string ("Office 365 Function Data List 8: "+$functionOffice365DataList8.count)
-        out-logfile -string ("Office 365 Function Data List 9: "+$functionOffice365DataList9.count)
-        out-logfile -string ("Office 365 Function Data List A: "+$functionOffice365DataListA.count)
-        out-logfile -string ("Office 365 Function Data List B: "+$functionOffice365DataListB.count)
-        out-logfile -string ("Office 365 Function Data List C: "+$functionOffice365DataListC.count)
-        out-logfile -string ("Office 365 Function Data List D: "+$functionOffice365DataListD.count)
-        out-logfile -string ("Office 365 Function Data List E: "+$functionOffice365DataListE.count)
-        out-logfile -string ("On Prem Function Data List SID: "+$functionOffice365DataListSID.count)
-        out-logfile -string ("On Prem Function Data List SMTP: "+$functionOffice365DataListSMTP.count)
-        
-        $functionOffice365DataListCount = $functionOffice365DataList0.count+$functionOffice365DataList1.count+$functionOffice365DataList2.count+$functionOffice365DataList3.count+$functionOffice365DataList4.count+$functionOffice365DataList5.count+$functionOffice365DataList6.count+$functionOffice365DataList7.count+$functionOffice365DataList8.count+$functionOffice365DataList9.count+$functionOffice365DataListA.count+$functionOffice365DataListB.count+$functionOffice365DataListC.count+$functionOffice365DataListD.count+$functionOffice365DataListE.count+$functionOffice365DataListSID.count+$functionOffice365DataListSMTP.count
-
-        out-logfile -string ("Total array data count validation: "+$functionOffice365DataListCount.tostring())
+        foreach ($office365Object in $office365Data)
+        {
+            out-logfile -string ("Office 365 Data External Directory Object ID: "+$office365Object.externalDirectoryObjectID)
+            $office365DataByExternalDirectoryObjectID.Add($office365Object.externalDirectoryObjectID, $office365Object)
+        }
     }
 
     #===========================================================================================
