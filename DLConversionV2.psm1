@@ -3926,7 +3926,7 @@ Function Start-DistributionListMigration
         try {
             out-logfile -string "Invoking test-cloudDLPresent with no ADConnect information (single threaded)."
 
-            test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -errorAction SilentlyContinue
+            test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction SilentlyContinue
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
