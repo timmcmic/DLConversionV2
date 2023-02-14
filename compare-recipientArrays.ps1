@@ -55,24 +55,24 @@ function compare-recipientArrays
 
         out-logfile -string "Prepare the on premises split array list data."
 
-        $functionOnPremDataList0 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList1 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList2 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList3 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList4 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList5 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList6 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList7 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList8 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataList9 = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListA = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_a"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListB = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_b"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListC = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_c"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListD = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_d"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListE = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_e"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListF = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_f"))} | sort-object -property externalDirectoryObjectID)
-        $functionOnPremDataListSID = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL)} | sort-object -property objectSID)
-        $functionOnPremDataListSMTP = [System.Collections.ArrayList]@($onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL)} | sort-object -property objectSID)
+        $functionOnPremDataList0 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList1 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList2 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList3 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList4 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList5 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList6 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList7 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList8 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataList9 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListA = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_a"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListB = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_b"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListC = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_c"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListD = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_d"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListE = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_e"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListF = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_f"))} | sort-object -property externalDirectoryObjectID
+        $functionOnPremDataListSID = $onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL)} | sort-object -property objectSID
+        $functionOnPremDataListSMTP = $onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL)} | sort-object -property objectSID
 
 
         out-logfile -string "Record counts of objects for debugging."
@@ -92,10 +92,11 @@ function compare-recipientArrays
         out-logfile -string ("OnPrem Function Data List C: "+$functionOnPremDataListC.count)
         out-logfile -string ("OnPrem Function Data List D: "+$functionOnPremDataListD.count)
         out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListE.count)
+        out-logfile -string ("OnPrem Function Data List E: "+$functionOnPremDataListF.count)
         out-logfile -string ("On Prem Function Data List SID: "+$functionOnPremDataListSID.count)
         out-logfile -string ("On Prem Function Data List SMTP: "+$functionOnPremDataListSMTP.count)
         
-        $functionOnPremDataListCount = $functionOnPremDataList0.count+$functionOnPremDataList1.count+$functionOnPremDataList2.count+$functionOnPremDataList3.count+$functionOnPremDataList4.count+$functionOnPremDataList5.count+$functionOnPremDataList6.count+$functionOnPremDataList7.count+$functionOnPremDataList8.count+$functionOnPremDataList9.count+$functionOnPremDataListA.count+$functionOnPremDataListB.count+$functionOnPremDataListC.count+$functionOnPremDataListD.count+$functionOnPremDataListE.count+$functionOnPremDataListSID.count+$functionOnPremDataListSMTP.count
+        $functionOnPremDataListCount = $functionOnPremDataList0.count+$functionOnPremDataList1.count+$functionOnPremDataList2.count+$functionOnPremDataList3.count+$functionOnPremDataList4.count+$functionOnPremDataList5.count+$functionOnPremDataList6.count+$functionOnPremDataList7.count+$functionOnPremDataList8.count+$functionOnPremDataList9.count+$functionOnPremDataListA.count+$functionOnPremDataListB.count+$functionOnPremDataListC.count+$functionOnPremDataListD.count+$functionOnPremDataListE.count+$functionOnPremDataListF.count+$functionOnPremDataListSID.count+$functionOnPremDataListSMTP.count
 
         out-logfile -string ("Total array data count validation: "+$functionOnPremDataListCount.tostring())
     }
@@ -161,23 +162,23 @@ function compare-recipientArrays
         
         out-logfile -string "Serialize the data into new array lists since this data set is evaluated twice in the all evaluation."
 
-        $functionAzureDataList0Orig = [System.Collections.ArrayList]@($functionAzureDataList0)
-        $functionAzureDataList1Orig = [System.Collections.ArrayList]@($functionAzureDataList1)
-        $functionAzureDataList2Orig = [System.Collections.ArrayList]@($functionAzureDataList2)
-        $functionAzureDataList3Orig = [System.Collections.ArrayList]@($functionAzureDataList3)
-        $functionAzureDataList4Orig = [System.Collections.ArrayList]@($functionAzureDataList4)
-        $functionAzureDataList5Orig = [System.Collections.ArrayList]@($functionAzureDataList5)
-        $functionAzureDataList6Orig = [System.Collections.ArrayList]@($functionAzureDataList6)
-        $functionAzureDataList7Orig = [System.Collections.ArrayList]@($functionAzureDataList7)
-        $functionAzureDataList8Orig = [System.Collections.ArrayList]@($functionAzureDataList8)
-        $functionAzureDataList9Orig = [System.Collections.ArrayList]@($functionAzureDataList9)
-        $functionAzureDataListAOrig = [System.Collections.ArrayList]@($functionAzureDataListA)
-        $functionAzureDataListBOrig = [System.Collections.ArrayList]@($functionAzureDataListB)
-        $functionAzureDataListCOrig = [System.Collections.ArrayList]@($functionAzureDataListC)
-        $functionAzureDataListDOrig = [System.Collections.ArrayList]@($functionAzureDataListD)
-        $functionAzureDataListEOrig = [System.Collections.ArrayList]@($functionAzureDataListE)
-        $functionAzureDataListFOrig = [System.Collections.ArrayList]@($functionAzureDataListF)
-        $functionAzureDataListOrig = [System.Collections.ArrayList]@($functionAzureDataList)
+        $functionAzureDataList0Orig = [System.Collections.ArrayList]@($functionAzureDataList0) | sort-object -property objectSID
+        $functionAzureDataList1Orig = [System.Collections.ArrayList]@($functionAzureDataList1) | sort-object -property objectSID
+        $functionAzureDataList2Orig = [System.Collections.ArrayList]@($functionAzureDataList2) | sort-object -property objectSID
+        $functionAzureDataList3Orig = [System.Collections.ArrayList]@($functionAzureDataList3) | sort-object -property objectSID
+        $functionAzureDataList4Orig = [System.Collections.ArrayList]@($functionAzureDataList4) | sort-object -property objectSID
+        $functionAzureDataList5Orig = [System.Collections.ArrayList]@($functionAzureDataList5) | sort-object -property objectSID
+        $functionAzureDataList6Orig = [System.Collections.ArrayList]@($functionAzureDataList6) | sort-object -property objectSID
+        $functionAzureDataList7Orig = [System.Collections.ArrayList]@($functionAzureDataList7) | sort-object -property objectSID
+        $functionAzureDataList8Orig = [System.Collections.ArrayList]@($functionAzureDataList8) | sort-object -property objectSID
+        $functionAzureDataList9Orig = [System.Collections.ArrayList]@($functionAzureDataList9) | sort-object -property objectSID
+        $functionAzureDataListAOrig = [System.Collections.ArrayList]@($functionAzureDataListA) | sort-object -property objectSID
+        $functionAzureDataListBOrig = [System.Collections.ArrayList]@($functionAzureDataListB) | sort-object -property objectSID
+        $functionAzureDataListCOrig = [System.Collections.ArrayList]@($functionAzureDataListC) | sort-object -property objectSID
+        $functionAzureDataListDOrig = [System.Collections.ArrayList]@($functionAzureDataListD) | sort-object -property objectSID
+        $functionAzureDataListEOrig = [System.Collections.ArrayList]@($functionAzureDataListE) | sort-object -property objectSID
+        $functionAzureDataListFOrig = [System.Collections.ArrayList]@($functionAzureDataListF) | sort-object -property objectSID
+        $functionAzureDataListOrig = [System.Collections.ArrayList]@($functionAzureDataList) | sort-object -property objectSID
 
         out-logfile -string "Output azure array list counts for debugging."
 
@@ -211,8 +212,10 @@ function compare-recipientArrays
         out-logfile -string ("Azure Function Data List Original D: "+$functionAzureDataListDOrig.count)
         out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListE.count)
         out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListEOrig.count)
+        out-logfile -string ("Azure Function Data List E: "+$functionAzureDataListF.count)
+        out-logfile -string ("Azure Function Data List Original E: "+$functionAzureDataListFOrig.count)
 
-        $functionAzureDataListCount=$functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+$functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count
+        $functionAzureDataListCount=$functionAzureDataList0.count+$functionAzureDataList1.count+$functionAzureDataList2.count+$functionAzureDataList3.count+$functionAzureDataList4.count+$functionAzureDataList5.count+$functionAzureDataList6.count+$functionAzureDataList7.count+$functionAzureDataList8.count+$functionAzureDataList9.count+$functionAzureDataListA.count+$functionAzureDataListB.count+$functionAzureDataListC.count+$functionAzureDataListD.count+$functionAzureDataListE.count+$functionAzureDataListE.count
 
         out-logfile -string ("Total array data count validation: "+$functionAzureDataListCount.tostring())
     }
