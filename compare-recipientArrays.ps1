@@ -43,7 +43,7 @@ function compare-recipientArrays
                 $onPremDataByExternalDirectoryObjectID.Add($onPremObject.externalDirectoryObjectID, $onPremObject)
             }
             
-            if ($onPremObject.objectSID.value -ne $NULL)
+            if ($onPremObject.objectSID.value -ne "")
             {
                 out-logfile -string ("On Prem Object SID: "+$onPremObject.SID)
                 $onPremDataBySID.Add($onPremObject.ObjectSID.Value, $onPremObject)
