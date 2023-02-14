@@ -139,12 +139,12 @@ function compare-recipientArrays
             }
             elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL))
             {
-                out-logfile -string $member.externalDirectoryObjectID
+                out-logfile -string $member.objectSID
                 $functionOnPremDataListSID.add($member)
             }
             elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL))
             {
-                out-logfile -string $member.externalDirectoryObjectID
+                out-logfile -string $member.primarySMTPAddress
                 $functionOnPremDataListSMTP.add($member)
             }
         }
