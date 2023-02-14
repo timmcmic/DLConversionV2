@@ -101,12 +101,12 @@ function compare-recipientArrays
         {
             out-logfile -string ("Office 365 Data External Directory Object ID: "+$office365Object.externalDirectoryObjectID)
             $office365DataByExternalDirectoryObjectID.Add($office365Object.externalDirectoryObjectID, $office365Object)
-        }
 
-        foreach ($office365Object in $office365Data)
-        {
-            out-logfile -string ("Office 365 Data Primary SMTP Address: "+$office365Object.primarySMTPAddress)
-            $office365DataByPrimarySMTPAddress.add($office365Object.primarySMTPAddress,$office365Object)
+            if ($office365Object.externalEmailAddress -ne $NULL)
+            {
+                out-logfile -string ("Office 365 Data Primary SMTP Address: "+$office365Object.primarySMTPAddress)
+                $office365DataByExternalSMTPAddress.add($office365Object.externalEmailAddress,$office365Object)
+            }
         }
     }
 
@@ -610,7 +610,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not discovered by primary SMTP address - this may not necessarily be incorret since contacts may not have a primary SMTP in Azure."
                     out-logfile -string "Search the Office 365 data for the primary SMTP address assume the objects are the same."
 
-                    if ($office365DataByPrimarySMTPAddress.ContainsKey($member.primarySMTPAddress))
+                    if ($office365DataByExternalSMTPAddress.ContainsKey($member.primarySMTPAddress))
                     {
                         out-logfile -string "The object is most likely a contact with an external mail address not represented in azure with a primary proxy address."
 
