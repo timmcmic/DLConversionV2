@@ -710,13 +710,32 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
+                    out-logfile -string "Object is valid in all directories - capture on premises object and add to return."
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremDataListSMTP[$functionIndex].name
+                        PrimarySMTPAddress = $functionOnPremDataListSMTP[$functionIndex].primarySMTPAddress
+                        UserPrincipalName = $functionOnPremDataListSMTP[$functionIndex].userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremDataListSMTP[$functionIndex].externalDirectoryObjectID
+                        ObjectSID =$functionOnPremDataListSMTP[$functionIndex].objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    out-logfile -string $functionObject
 
-                    out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
+                    $functionReturnArray += $functionObject
+
+                    #$functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
+
+                    #$onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+
+                    #out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+
+                    #out-logfile -string ($onPremData[$functionIndexValue].externalDirectoryObjectID)
 
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremDataListSMTP.count)
                     #$functionIndex = $functionOnPremDataListSMTP.primarySMTPAddress.indexOf($functionPrimarySMTPAddress)
