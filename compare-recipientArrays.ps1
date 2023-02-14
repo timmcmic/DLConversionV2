@@ -483,22 +483,22 @@ function compare-recipientArrays
 
             switch ($switchTest)
             {
-                "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList0)}
-                "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList1)}
-                "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList2)}
-                "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList3)}
-                "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList4)}
-                "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList5)}
-                "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList6)}
-                "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList7)}
-                "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList8)}
-                "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataList9)}
-                "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListA)}
-                "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListB)}
-                "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListC)}
-                "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListD)}
-                "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListE)}
-                "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = [System.Collections.ArrayList]@($functionAzureDataListF)}
+                "0" {out-logfile -string "Matched Azure Data Set 0" ; $functionAzureData = $functionAzureDataList0}
+                "1" {out-logfile -string "Matched Azure Data Set 1" ; $functionAzureData = $functionAzureDataList1}
+                "2" {out-logfile -string "Matched Azure Data Set 2" ; $functionAzureData = $functionAzureDataList2}
+                "3" {out-logfile -string "Matched Azure Data Set 3" ; $functionAzureData = $functionAzureDataList3}
+                "4" {out-logfile -string "Matched Azure Data Set 4" ; $functionAzureData = $functionAzureDataList4}
+                "5" {out-logfile -string "Matched Azure Data Set 5" ; $functionAzureData = $functionAzureDataList5}
+                "6" {out-logfile -string "Matched Azure Data Set 6" ; $functionAzureData = $functionAzureDataList6}
+                "7" {out-logfile -string "Matched Azure Data Set 7" ; $functionAzureData = $functionAzureDataList7}
+                "8" {out-logfile -string "Matched Azure Data Set 8" ; $functionAzureData = $functionAzureDataList8}
+                "9" {out-logfile -string "Matched Azure Data Set 9" ; $functionAzureData = $functionAzureDataList9}
+                "a" {out-logfile -string "Matched Azure Data Set A" ; $functionAzureData = $functionAzureDataListA}
+                "b" {out-logfile -string "Matched Azure Data Set B" ; $functionAzureData = $functionAzureDataListB}
+                "c" {out-logfile -string "Matched Azure Data Set C" ; $functionAzureData = $functionAzureDataListC}
+                "d" {out-logfile -string "Matched Azure Data Set D" ; $functionAzureData = $functionAzureDataListD}
+                "e" {out-logfile -string "Matched Azure Data Set E" ; $functionAzureData = $functionAzureDataListE}
+                "f" {out-logfile -string "Matched Azure Data Set F" ; $functionAzureData = $functionAzureDataListF}
             }
 
             #if ($functionAzureData.objectID -contains $member.externalDirectoryObjectID)
