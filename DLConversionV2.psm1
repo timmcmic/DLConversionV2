@@ -3915,7 +3915,7 @@ Function Start-DistributionListMigration
         try {
             out-logfile -string "Invoking test-cloudDLPresent using AD Connect information since multi-threaded."
 
-            test-CloudDLPresent -groupSMTPAddress $groupSMTPAddress -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
+            test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
