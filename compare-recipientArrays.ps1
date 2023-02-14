@@ -105,7 +105,7 @@ function compare-recipientArrays
             if ($office365Object.externalEmailAddress -ne $NULL)
             {
                 out-logfile -string ("Office 365 Data Primary SMTP Address: "+$office365Object.primarySMTPAddress)
-                $office365DataByExternalSMTPAddress.add($office365Object.externalEmailAddress,$office365Object)
+                $office365DataByExternalSMTPAddress.add($office365Object.externalEmailAddress.split(":")[1],$office365Object)
             }
         }
     }
