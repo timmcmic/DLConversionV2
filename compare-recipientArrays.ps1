@@ -626,6 +626,25 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
+                    out-logfile -string "Object is valid in all directories - capture on premises object and add to return."
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremData[$functionIndex]
+                        PrimarySMTPAddress = $functionOnPremData[$functionIndex]
+                        UserPrincipalName = $functionOnPremData[$functionIndex]
+                        ExternalDirectoryObjectID = $functionOnPremData[$functionIndex]
+                        ObjectSID =$functionOnPremData[$functionIndex]
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+
                     out-logfile -string ("On Prem Data List Pre-Remove: "+$functionOnPremData.count)
 
                     #$functionIndex = $functionOnPremData.externalDirectoryObjectID.indexOf($functionExternalDirectoryObjectID)
