@@ -49,7 +49,7 @@ function compare-recipientArrays
         $functonOnPremDataListE = New-Object -TypeName "System.Collections.ArrayList" 
         $functonOnPremDataListF = New-Object -TypeName "System.Collections.ArrayList"  
         $functonOnPremDataListSID = New-Object -TypeName "System.Collections.ArrayList"  
-        $functonOnPremDataListSMTP = New-Object -TypeName "System.Collections.ArrayList" 
+        $functionOnPremDataListSMTP = New-Object -TypeName "System.Collections.ArrayList" 
 
         $functionOnPremData = New-Object -TypeName "System.Collections.ArrayList"
 
