@@ -94,11 +94,19 @@ function compare-recipientArrays
     $createOffice365Lists=
     {
         $office365DataByExternalDirectoryObjectID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $office365DataByPrimarySMTPAddress = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
 
         foreach ($office365Object in $office365Data)
         {
             out-logfile -string ("Office 365 Data External Directory Object ID: "+$office365Object.externalDirectoryObjectID)
             $office365DataByExternalDirectoryObjectID.Add($office365Object.externalDirectoryObjectID, $office365Object)
+        }
+
+        foreach ($office365Object in $office365Data)
+        {
+            out-logfile -string ("Office 365 Data Primary SMTP Address: "+$office365Object.primarySMTPAddress)
+            $office365DataByPrimarySMTPAddress.add($office365Object.primarySMTPAddress,$office365Object)
         }
     }
 
