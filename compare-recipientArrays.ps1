@@ -62,7 +62,6 @@ function compare-recipientArrays
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList0.add($member)
             }
-        }<##>
             elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_1")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
