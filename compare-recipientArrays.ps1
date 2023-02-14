@@ -57,100 +57,98 @@ function compare-recipientArrays
 
         foreach ($member in $onPremDataList)
         {
-            if (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0")))
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_0")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList0.add($member)
             }
-        }<#
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1")))
+        }<##>
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_1")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList1.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_2")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList2.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_3")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList3.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_4")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList4.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_5")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList5.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_6")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList6.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_7")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList7.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_8")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList8.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_9")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataList9.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_A")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_A")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListA.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_B")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_B")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListB.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_C")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_C")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListC.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_D")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_D")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListD.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_E")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_E")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListE.add($member)
             }
-            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_F")))
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($member.externalDirectoryObjectID.startsWith("User_F")))
             {
                 out-logfile -string $member.externalDirectoryObjectID
                 $functionOnPremDataListF.add($member)
             }
-            elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL))
+            elseif (($member.externalDirectoryObjectID -eq $NULL) -and ($member.objectSID -ne $NULL))
             {
                 out-logfile -string $member.objectSID
                 $functionOnPremDataListSID.add($member)
             }
-            elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL))
+            elseif (($member.externalDirectoryObjectID -eq $NULL) -and ($member.objectSID -eq $NULL) -and ($member.primarySMTPAddress -ne $NULL))
             {
                 out-logfile -string $member.primarySMTPAddress
                 $functionOnPremDataListSMTP.add($member)
             }
         }
-
-        #>
         
         out-logfile -string "Record counts of objects for debugging."
 
