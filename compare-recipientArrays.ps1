@@ -454,7 +454,7 @@ function compare-recipientArrays
 
         out-logfile -string "Starting the comparison in the reverse order - compare Exchange Online -> Azure -> On Premises."
 
-        foreach ($member in $office365Data)
+        foreach ($member in $office365DataList)
         {
             out-logfile -string ("Evaluating member: "+$member.externalDirectoryObjectID)
 
