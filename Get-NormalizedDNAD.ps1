@@ -183,7 +183,7 @@
             RecipientType = $functionTest.objectClass
             GroupType = $functionTest.groupType
             ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-            ObjectSID = $functionTest.ObjectSID
+            ObjectSID = $functionTest.ObjectSID.value
             OnPremADAttribute = $activeDirectoryAttribute
             OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
             DN = $DN
