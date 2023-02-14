@@ -64,27 +64,26 @@ function compare-recipientArrays
     $createAzureLists={
         
         $azureDataByObjectId = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $azureDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $azureDataByMail = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
 
         foreach ($azureObject in $azureData)
         {
             out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
             $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
-        }
 
-        $azureDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+            if ($azureObject.onPremisesSecurityIdentifier -ne $NULL)
+            {
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.onPremisesSecurityIdentifier)
+                $azureDataBySID.Add($azureObject.onPremisesSecurityIdentifier, $azureObject)
+            }
 
-        foreach ($azureObject in $azureData)
-        {
-            out-logfile -string ("Azure Data Object SID: "+$azureObject.onPremisesSecurityIdentifier)
-            $azureDataBySID.Add($azureObject.onPremisesSecurityIdentifier, $azureObject)
-        }
-
-        $azureDataByMail = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
-
-        foreach ($azureObject in $azureData)
-        {
-            out-logfile -string ("Azure Data Object SID: "+$azureObject.Mail)
-            $azureDataByMail.Add($azureObject.mail, $azureObject)
+            if ($azureObject.Mail -ne $NULL)
+            {
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.Mail)
+                $azureDataByMail.Add($azureObject.mail, $azureObject)
+            }
         }
     }
 
