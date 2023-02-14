@@ -70,6 +70,22 @@ function compare-recipientArrays
             out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
             $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
         }
+
+        $azureDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
+        foreach ($azureObject in $azureData)
+        {
+            out-logfile -string ("Azure Data Object SID: "+$azureObject.onPremisesSecurityIdentifier)
+            $azureDataBySID.Add($azureObject.onPremisesSecurityIdentifier, $azureObject)
+        }
+
+        $azureDataByMail = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
+        foreach ($azureObject in $azureData)
+        {
+            out-logfile -string ("Azure Data Object SID: "+$azureObject.Mail)
+            $azureDataByMail.Add($azureObject.mail, $azureObject)
+        }
     }
 
     #===========================================================================================
