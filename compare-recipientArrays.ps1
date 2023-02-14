@@ -55,25 +55,100 @@ function compare-recipientArrays
 
         out-logfile -string "Prepare the on premises split array list data."
 
-        @($onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0"))} | sort-object -property externalDirectoryObjectID).forEach({$functionOnPremDataList0.add($_)})
-        $functionOnPremDataList1 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList2 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList3 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList4 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList5 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList6 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList7 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList8 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataList9 = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListA = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_a"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListB = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_b"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListC = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_c"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListD = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_d"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListE = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_e"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListF = $onPremDataList | where-object {($_.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_f"))} | sort-object -property externalDirectoryObjectID
-        $functionOnPremDataListSID = $onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL)} | sort-object -property objectSID
-        $functionOnPremDataListSMTP = $onPremDataList | where-object {($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL)} | sort-object -property objectSID
-
+        foreach ($member in $onPremDataList)
+        {
+            if (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_0")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_1")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_2")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_3")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_4")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_5")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_6")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_7")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_8")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_9")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_A")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_B")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_C")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_D")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_E")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($member.externalDirectoryObjectID -ne $NULL) -and ($_.externalDirectoryObjectID.startsWith("User_F")))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataList0.add($member)
+            }
+            elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -ne $NULL))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataListSID.add($member)
+            }
+            elseif (($_.externalDirectoryObjectID -eq $NULL) -and ($_.objectSID -eq $NULL) -and ($_.primarySMTPAddress -ne $NULL))
+            {
+                out-logfile -string $member.externalDirectoryObjectID
+                $functionOnPremDataListSMTP.add($member)
+            }
+        }
+        
         out-logfile -string "Record counts of objects for debugging."
 
         out-logfile -string ("OnPrem Function Data List 1: "+$functionOnPremDataList0.count)
