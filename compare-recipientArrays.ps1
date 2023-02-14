@@ -484,6 +484,10 @@ function compare-recipientArrays
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+
+                        out-logfile -string $functionObject
+
+                        $functionReturnArray += $functionObject
                     }
                 }
                 else 
@@ -502,6 +506,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
             }
         }
@@ -528,6 +536,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
                 else 
                 {
@@ -545,6 +557,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
             }
         }
@@ -571,6 +587,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
                 else 
                 {
@@ -588,6 +608,10 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
                     }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
                 }
             }
         }    

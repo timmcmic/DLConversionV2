@@ -3762,7 +3762,7 @@ th {
     {
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+                    'PreContent'='<h2>&diams;Distribution List Stats Count</h2>'}
 
         $html_members_counts = ConvertTo-EnhancedHTMLFragment -InputObject $functionObject @params
 
