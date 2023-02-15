@@ -1216,7 +1216,6 @@ Function get-DLHealthReport
 
     if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
     {
-        <#
         foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
         {
             #Resetting error variable.
@@ -1246,9 +1245,7 @@ Function get-DLHealthReport
             {
                 out-logfile -string $_ -isError:$TRUE
             }
-        }#>
-
-        $exchangeDLMembershipSMTP = $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) | ForEach-Object -Parallel {get-normalizedDNAD -globalCatalogServer $using:corevariables.globalCatalogWithPort.value -DN $_ -adCredential $using:activeDirectoryCredential -originalGroupDN $using:originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $using:onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $using:onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $using:groupSMTPAddress -errorAction STOP -cn "None"} -throttleLimit 10
+        }
     }
 
     if ($exchangeDLMembershipSMTP -ne $NULL)
