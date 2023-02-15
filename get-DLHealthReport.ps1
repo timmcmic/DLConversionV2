@@ -1248,7 +1248,7 @@ Function get-DLHealthReport
             }
         }#>
 
-        $exchangeDLMembershipSMTP = $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) | ForEach-Object -Parallel {get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $_ -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"} -throttleLimit 10
+        $exchangeDLMembershipSMTP = $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) | ForEach-Object -Parallel {get-normalizedDNAD -globalCatalogServer $using:corevariables.globalCatalogWithPort.value -DN $_ -adCredential $using:activeDirectoryCredential -originalGroupDN $using:originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $using:onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $using:onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $using:groupSMTPAddress -errorAction STOP -cn "None"} -throttleLimit 10
     }
 
     if ($exchangeDLMembershipSMTP -ne $NULL)
