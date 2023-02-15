@@ -2931,6 +2931,8 @@ th {
     {
         out-logfile -string $office365MemberEval
 
+        $office365MemberEvalErrors = $office365MemberEval | where {$_.errorMessage -ne "N/A"}
+
         $params = @{'As'='Table';
         'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
         'EvenRowCssClass'='even';
@@ -2953,11 +2955,39 @@ th {
         $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
 
         $htmlSections += $html_members_office365
+
+        if ($office365MemberEvalErrors.count -gt 0)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+            }
+
+            $html_members_office365_errors = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEvalErrors @params
+
+            $htmlSections += $html_members_office365_errors
+        }
     }
 
     if ($onPremMemberEval.count -gt 0)
     {
         out-logfile -string $onPremMemberEval
+
+        $onPremMemberEvalErrors = $onPremMemberEval | where {$_.errorMessage -ne "N/A"}
 
         $params = @{'As'='Table';
         'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
@@ -2981,6 +3011,32 @@ th {
         $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
 
         $htmlSections += $html_members_onPrem
+
+        if ($onPremMemberEvalErrors.count -gt 0)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+            }
+
+            $html_members_onPrem_errors = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEvalErrors @params
+
+            $htmlSections += $html_members_onPrem_errors
+        }
     }
 
     out-logfile -string "Generate report for proxy address verification."
