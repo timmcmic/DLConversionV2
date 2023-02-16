@@ -1184,7 +1184,7 @@ Function get-DLHealthReport
     out-logfile -string "Recording Azure AD DL membership."
 
     try {
-        $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -isHealthReport:$TRUE -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to obtain Azure AD DL Membership."
