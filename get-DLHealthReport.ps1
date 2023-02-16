@@ -1129,7 +1129,7 @@ Function get-DLHealthReport
     out-logfile -string "Capture the Office 365 DL membership."
 
     try {
-        $office365DLMembership = get-o365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+        $office365DLMembership = get-o365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isHealthReport:$TRUE -errorAction STOP
     }
     catch {
         out-logfile $_ -isError:$TRUE
