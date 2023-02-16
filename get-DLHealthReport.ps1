@@ -321,6 +321,11 @@ Function get-DLHealthReport
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
+        #Define other optional parameters.
+        [Parameter(Mandatory = $false)]
+        [boolean]$errorMembersOnly = $false,
+        [Parameter(Mandatory = $false)]
+        [boolean]$includeVerboseOutput = $false,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -2580,31 +2585,7 @@ Function get-DLHealthReport
     $telemetryEndTime = get-universalDateTime
     $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
 
-    #At this time we need to start building the comparison arrays.
-
-    <#
-
-    out-logfile -string "Comparing on premises membership to azure ad membership."
-
-    try {
-        $onPremMemberEval = @(compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    out-logfile -string "Comparing azure ad membership to Office 365 membership."
-
-    try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    #>
-
-    out-logfile -string "Beginning list membership comparison."
+        out-logfile -string "Beginning list membership comparison."
 
     try {
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
@@ -2915,13 +2896,13 @@ th {
     
     out-logfile -string "Split the on premises data from the Office 365 data."
 
-    $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
+    [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
 
     $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
 
     out-logfile -string "Split the cloud data from the on premises data."
 
-    $office365MemberEval = $office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+    [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
 
     $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
 
@@ -2931,31 +2912,35 @@ th {
     {
         out-logfile -string $office365MemberEval
 
-        $office365MemberEvalErrors = $office365MemberEval | where {$_.errorMessage -ne "N/A"}
+        [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
 
-        $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
-        'EvenRowCssClass'='even';
-        'OddRowCssClass'='odd';
-        'MakeTableDynamic'=$true;
-        'TableCssClass'='grid';
-        'MakeHiddenSection'=$true;
-        'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
-                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
-                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
-                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        if ($errorMemberOnly -eq $FALSE)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+            }
+
+            $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
+
+            $htmlSections += $html_members_office365
         }
 
-        $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
-
-        $htmlSections += $html_members_office365
-
+        
         if ($office365MemberEvalErrors.count -gt 0)
         {
             $params = @{'As'='Table';
@@ -2987,30 +2972,33 @@ th {
     {
         out-logfile -string $onPremMemberEval
 
-        $onPremMemberEvalErrors = $onPremMemberEval | where {$_.errorMessage -ne "N/A"}
+        [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
 
-        $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
-        'EvenRowCssClass'='even';
-        'OddRowCssClass'='odd';
-        'MakeTableDynamic'=$true;
-        'TableCssClass'='grid';
-        'MakeHiddenSection'=$true;
-        'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
-                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
-                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
-                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        if ($errorMemberOnly -eq $FALSE)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+            }
+
+            $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
+
+            $htmlSections += $html_members_onPrem
         }
-
-        $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
-
-        $htmlSections += $html_members_onPrem
 
         if ($onPremMemberEvalErrors.count -gt 0)
         {
@@ -3043,11 +3031,11 @@ th {
 
     out-logfile -string "Split the on premises data from the Office 365 data."
 
-    $onPremProxyAddressEval = $office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"}
+    [array]$onPremProxyAddressEval = @($office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"})
 
     out-logfile -string "Split the cloud data from the on premises data."
 
-    $office365ProxyAddressesEval = $office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+    [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
 
     if ($office365ProxyAddressesEval.count -gt 0)
     {
