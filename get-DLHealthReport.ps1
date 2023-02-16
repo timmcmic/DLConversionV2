@@ -326,6 +326,10 @@ Function get-DLHealthReport
         [boolean]$errorMembersOnly = $false,
         [Parameter(Mandatory = $false)]
         [boolean]$includeVerboseOutput = $true,
+        [Parameter(Mandatory = $false)]
+        [boolean]$performMembershipOnlyTests = $false,
+        [Parameter(Mandatory = $false)]
+        [boolean]$performProxyAddressOnlyTests = $false,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -952,144 +956,147 @@ Function get-DLHealthReport
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
 
-    Out-LogFile -string "Determine if administrator desires to audit send as."
-
-    if ($retainSendAsOnPrem -eq $TRUE)
+    if (($performMembershipOnlyTests -ne $FALSE) -or ($performProxyAddressOnlyTests -ne $FALSE))
     {
-        out-logfile -string "Administrator has choosen to audit on premsies send as."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+        Out-LogFile -string "Determine if administrator desires to audit send as."
 
-        if ($useCollectedSendAsOnPrem -eq $TRUE)
+        if ($retainSendAsOnPrem -eq $TRUE)
         {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
-            
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
+            out-logfile -string "Administrator has choosen to audit on premsies send as."
+            out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
 
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
+            if ($useCollectedSendAsOnPrem -eq $TRUE)
+            {
+                out-logfile -string "Administrator has selected to import previously gathered permissions."
+                
+                $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientSendAsXML.value
 
-            try {
-                $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+                try {
+                    $importData = import-CLIXML -path $importFilePath
+                }
+                catch {
+                    out-logfile -string "Error importing the send as permissions from collect function."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                try {
+                    $allObjectSendAsAccess = get-onPremSendAs -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+                }
+                catch {
+                    out-logfile -string "Unable to process send as rights on premises."
+                    out-logfile -string $_ -isError:$TRUE
+                }  
             }
-            catch {
-                out-logfile -string "Unable to process send as rights on premises."
-                out-logfile -string $_ -isError:$TRUE
-            }  
+            else 
+            {
+                try {
+                    $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
+                }
+                catch {
+                    out-logfile -string "Unable to process send as rights on premsies."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
         }
-        else 
+        else
         {
-            try {
-                $allObjectSendAsAccess = Get-onPremSendAs -originalDLConfiguration $originalDLConfiguration
-            }
-            catch {
-                out-logfile -string "Unable to process send as rights on premsies."
-                out-logfile -string $_ -isError:$TRUE
-            }
+            out-logfile -string "Administrator has choosen to not audit on premises send as."
         }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises send as."
-    }
 
-    #Record what was returned.
+        #Record what was returned.
 
-    if ($allObjectSendAsAccess.count -ne 0)
-    {
-        out-logfile -string $allObjectSendAsAccess
-
-        out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $xmlFiles.allGroupsSendAsXML.value
-    }
-
-    Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
-
-    if ($retainFullMailboxAccessOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
+        if ($allObjectSendAsAccess.count -ne 0)
         {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
+            out-logfile -string $allObjectSendAsAccess
 
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientFullMailboxAccessXML.value
-
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+            out-xmlFile -itemToExport $allObjectSendAsAccess -itemNameToExport $xmlFiles.allGroupsSendAsXML.value
         }
-        else 
+
+        Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
+
+        if ($retainFullMailboxAccessOnPrem -eq $TRUE)
         {
-            $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
+            out-logfile -string "Administrator has choosen to audit on premsies full mailbox access."
+            out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+
+            if ($useCollectedFullMailboxAccessOnPrem -eq $TRUE)
+            {
+                out-logfile -string "Administrator has selected to import previously gathered permissions."
+
+                $importFilePath=Join-path $importFile $xmlFiles.retainOnPremRecipientFullMailboxAccessXML.value
+
+                try {
+                    $importData = import-CLIXML -path $importFilePath
+                }
+                catch {
+                    out-logfile -string "Error importing the send as permissions from collect function."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+            }
+            else 
+            {
+                $allObjectsFullMailboxAccess = Get-onPremFullMailboxAccess -originalDLConfiguration $originalDLConfiguration
+            }
         }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises full mailbox access."
-    }
-
-    #Record what was returned.
-
-    if ($allObjectsFullMailboxAccess.count -ne 0)
-    {
-        out-logfile -string $allObjectsFullMailboxAccess
-
-        out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $xmlFiles.allGroupsFullMailboxAccessXML.value
-    }
-
-    out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
-
-    if ($retainMailboxFolderPermsOnPrem -eq $TRUE)
-    {
-        out-logfile -string "Administrator has choosen to retain mailbox folder permissions.."
-        out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
-
-        if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
+        else
         {
-            out-logfile -string "Administrator has selected to import previously gathered permissions."
-
-            $importFilePath=Join-path $importFile $xmlFiles.retainOnPremMailboxFolderPermissionsXML.value
-
-            try {
-                $importData = import-CLIXML -path $importFilePath
-            }
-            catch {
-                out-logfile -string "Error importing the send as permissions from collect function."
-                out-logfile -string $_ -isError:$TRUE
-            }
-
-            try {
-                $allMailboxesFolderPermissions = get-onPremFolderPermissions -originalDLConfiguration $originalDLConfiguration -collectedData $importData
-            }
-            catch {
-                out-logfile -string "Unable to process on prem folder permissions."
-                out-logfile -string $_ -isError:$TRUE
-            }  
+            out-logfile -string "Administrator has choosen to not audit on premises full mailbox access."
         }
-    }
-    else
-    {
-        out-logfile -string "Administrator has choosen to not audit on premises send as."
-    }
 
-    #Record what was returned.
+        #Record what was returned.
 
-    if ($allMailboxesFolderPermissions.count -ne 0)
-    {
-        out-logfile -string $allMailboxesFolderPermissions
+        if ($allObjectsFullMailboxAccess.count -ne 0)
+        {
+            out-logfile -string $allObjectsFullMailboxAccess
 
-        out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $xmlFiles.allMailboxesFolderPermissionsXML.value
+            out-xmlFile -itemToExport $allObjectsFullMailboxAccess -itemNameToExport $xmlFiles.allGroupsFullMailboxAccessXML.value
+        }
+
+        out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
+
+        if ($retainMailboxFolderPermsOnPrem -eq $TRUE)
+        {
+            out-logfile -string "Administrator has choosen to retain mailbox folder permissions.."
+            out-logfile -string "NOTE:  THIS IS A LONG RUNNING OPERATION."
+
+            if ($useCollectedFolderPermissionsOnPrem -eq $TRUE)
+            {
+                out-logfile -string "Administrator has selected to import previously gathered permissions."
+
+                $importFilePath=Join-path $importFile $xmlFiles.retainOnPremMailboxFolderPermissionsXML.value
+
+                try {
+                    $importData = import-CLIXML -path $importFilePath
+                }
+                catch {
+                    out-logfile -string "Error importing the send as permissions from collect function."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                try {
+                    $allMailboxesFolderPermissions = get-onPremFolderPermissions -originalDLConfiguration $originalDLConfiguration -collectedData $importData
+                }
+                catch {
+                    out-logfile -string "Unable to process on prem folder permissions."
+                    out-logfile -string $_ -isError:$TRUE
+                }  
+            }
+        }
+        else
+        {
+            out-logfile -string "Administrator has choosen to not audit on premises send as."
+        }
+
+        #Record what was returned.
+
+        if ($allMailboxesFolderPermissions.count -ne 0)
+        {
+            out-logfile -string $allMailboxesFolderPermissions
+
+            out-xmlFile -itemToExport $allMailboxesFolderPermissions -itemNameToExport $xmlFiles.allMailboxesFolderPermissionsXML.value
+        }
     }
 
     #exit #Debug Exit
@@ -1217,503 +1224,546 @@ Function get-DLHealthReport
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the members DN to Office 365 identifier."
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
+    if ($performMembershipOnlyTests -eq $TRUE)
     {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the members DN to Office 365 identifier."
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
         {
-            #Resetting error variable.
-
-            $isTestError="No"
-
-            if ($forLoopCounter -eq $forLoopTrigger)
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+                #Resetting error variable.
 
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
+                $isTestError="No"
 
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
-                out-logfile -string $normalizedTest
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
 
-                $exchangeDLMembershipSMTP+=$normalizedTest                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeDLMembershipSMTP+=$normalizedTest                
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
     }
-
-    if ($exchangeDLMembershipSMTP -ne $NULL)
+    elseif ($performProxyAddressOnlyTests -eq $FALSE)
     {
-        Out-LogFile -string "The following objects are members of the group:"
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the members DN to Office 365 identifier."
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
+            {
+                #Resetting error variable.
+
+                $isTestError="No"
+
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeDLMembershipSMTP+=$normalizedTest                
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeDLMembershipSMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the group:"
+            
+            out-logfile -string $exchangeDLMembershipSMTP
+        }
+        else 
+        {
+            out-logFile -string "The distribution group has no members."    
+        }
+
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the reject members DN to Office 365 identifier."
+
+        Out-LogFile -string "REJECT USERS"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        Out-LogFile -string "REJECT GROUPS"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeRejectMessagesSMTP -ne $NULL)
+        {
+            out-logfile -string "The group has reject messages members."
+            Out-logFile -string $exchangeRejectMessagesSMTP
+        }
+        else 
+        {
+            out-logfile "The group to be migrated has no reject messages from members."    
+        }
         
-        out-logfile -string $exchangeDLMembershipSMTP
-    }
-    else 
-    {
-        out-logFile -string "The distribution group has no members."    
-    }
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the accept members DN to Office 365 identifier."
 
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the reject members DN to Office 365 identifier."
+        Out-LogFile -string "ACCEPT USERS"
 
-    Out-LogFile -string "REJECT USERS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
+        if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
         {
-            if ($forLoopCounter -eq $forLoopTrigger)
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
 
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
-                out-logfile -string $normalizedTest
+                    out-logfile -string $normalizedTest
 
-                $exchangeRejectMessagesSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    Out-LogFile -string "REJECT GROUPS"
+        Out-LogFile -string "ACCEPT GROUPS"
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value))
+        if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value) -ne $NULL)
         {
-            if ($forLoopCounter -eq $forLoopTrigger)
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value))
             {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
 
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
 
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
 
-                out-logfile -string $normalizedTest
+                    out-logfile -string $normalizedTest
 
-                $exchangeRejectMessagesSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($exchangeRejectMessagesSMTP -ne $NULL)
-    {
-        out-logfile -string "The group has reject messages members."
-        Out-logFile -string $exchangeRejectMessagesSMTP
-    }
-    else 
-    {
-        out-logfile "The group to be migrated has no reject messages from members."    
+        if ($exchangeAcceptMessagesSMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the accept messages from senders:"
+            
+            out-logfile -string $exchangeAcceptMessagesSMTP
+        }
+        else
+        {
+            out-logFile -string "This group has no accept message from restrictions."    
+        }
+        
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the managedBy members DN to Office 365 identifier."
+
+        Out-LogFile -string "Process MANAGEDBY"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        Out-LogFile -string "Process CoMANAGERS"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeManagedBySMTP+=$normalizedTest                
+                }
+                catch 
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeManagedBySMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the managedBY:"
+            
+            out-logfile -string $exchangeManagedBySMTP
+        }
+        else 
+        {
+            out-logfile -string "The group has no managers."    
+        }
+
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the moderatedBy members DN to Office 365 identifier."
+
+        Out-LogFile -string "Process MODERATEDBY"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeModeratedBySMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeModeratedBySMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the moderatedBY:"
+            
+            out-logfile -string $exchangeModeratedBySMTP    
+        }
+        else 
+        {
+            out-logfile "The group has no moderators."    
+        }
+
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation users members DN to Office 365 identifier."
+
+        Out-LogFile -string "Process BYPASS USERS"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation groups members DN to Office 365 identifier."
+
+        Out-LogFile -string "Process BYPASS GROUPS"
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value) -ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeBypassModerationSMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the bypass moderation:"
+            
+            out-logfile -string $exchangeBypassModerationSMTP 
+        }
+        else 
+        {
+            out-logfile "The group has no bypass moderation."    
+        }
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value)-ne $NULL)
+        {
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value))
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+
+                    out-logfile -string $normalizedTest
+
+                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest                
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+        if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects are members of the grant send on behalf to:"
+            
+            out-logfile -string $exchangeGrantSendOnBehalfToSMTP
+        }
+        else 
+        {
+            out-logfile "The group has no grant send on behalf to."    
+        }
+
+        Out-LogFile -string "Invoke get-normalizedDNAD for any on premises object that the migrated group has send as permissions."
+
+        Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
+
+        if ($allObjectSendAsAccess -ne $NULL)
+        {
+            foreach ($permission in $allObjectSendAsAccess)
+            {
+                if ($forLoopCounter -eq $forLoopTrigger)
+                {
+                    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
+                    $forLoopCounter = 0
+                }
+                else 
+                {
+                    $forLoopCounter++    
+                }
+
+                try 
+                {
+                    $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
+
+                    out-logfile -string $normalizedTest
+
+                    $allObjectsSendAsAccessNormalized+=$normalizedTest
+                }
+                catch 
+                {
+                    out-logFile -string $_ -isError:$TRUE
+                }
+            }
+        }
+
+    #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
+
+        out-logfile -string "Obtaining send as permissions."
+
+        try 
+        {
+            $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $corevariables.globalCatalogWithPort.value -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -groupSMTPAddress $groupSMTPAddress
+        }
+        catch 
+        {
+            out-logfile -string "Unable to normalize the send as DNs."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        if ($exchangeSendAsSMTP -ne $NULL)
+        {
+            Out-LogFile -string "The following objects have send as rights on the DL."
+            
+            out-logfile -string $exchangeSendAsSMTP
+        }
     }
     
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the accept members DN to Office 365 identifier."
-
-    Out-LogFile -string "ACCEPT USERS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeAcceptMessagesSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    Out-LogFile -string "ACCEPT GROUPS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeAcceptMessagesSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeAcceptMessagesSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the accept messages from senders:"
-        
-        out-logfile -string $exchangeAcceptMessagesSMTP
-    }
-    else
-    {
-        out-logFile -string "This group has no accept message from restrictions."    
-    }
     
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the managedBy members DN to Office 365 identifier."
-
-    Out-LogFile -string "Process MANAGEDBY"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeManagedBySMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    Out-LogFile -string "Process CoMANAGERS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeManagedBySMTP+=$normalizedTest                
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeManagedBySMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the managedBY:"
-        
-        out-logfile -string $exchangeManagedBySMTP
-    }
-    else 
-    {
-        out-logfile -string "The group has no managers."    
-    }
-
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the moderatedBy members DN to Office 365 identifier."
-
-    Out-LogFile -string "Process MODERATEDBY"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeModeratedBySMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeModeratedBySMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the moderatedBY:"
-        
-        out-logfile -string $exchangeModeratedBySMTP    
-    }
-    else 
-    {
-        out-logfile "The group has no moderators."    
-    }
-
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation users members DN to Office 365 identifier."
-
-    Out-LogFile -string "Process BYPASS USERS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeBypassModerationSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    Out-LogFile -string "Invoke get-normalizedDNAD to normalize the bypass moderation groups members DN to Office 365 identifier."
-
-    Out-LogFile -string "Process BYPASS GROUPS"
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value) -ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeBypassModerationSMTP+=$normalizedTest
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeBypassModerationSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the bypass moderation:"
-        
-        out-logfile -string $exchangeBypassModerationSMTP 
-    }
-    else 
-    {
-        out-logfile "The group has no bypass moderation."    
-    }
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value)-ne $NULL)
-    {
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value))
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
-
-                out-logfile -string $normalizedTest
-
-                $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest                
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects are members of the grant send on behalf to:"
-        
-        out-logfile -string $exchangeGrantSendOnBehalfToSMTP
-    }
-    else 
-    {
-        out-logfile "The group has no grant send on behalf to."    
-    }
-
-    Out-LogFile -string "Invoke get-normalizedDNAD for any on premises object that the migrated group has send as permissions."
-
-    Out-LogFile -string "GROUPS WITH SEND AS PERMISSIONS"
-
-    if ($allObjectSendAsAccess -ne $NULL)
-    {
-        foreach ($permission in $allObjectSendAsAccess)
-        {
-            if ($forLoopCounter -eq $forLoopTrigger)
-            {
-                start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
-
-                $forLoopCounter = 0
-            }
-            else 
-            {
-                $forLoopCounter++    
-            }
-
-            try 
-            {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
-
-                out-logfile -string $normalizedTest
-
-                $allObjectsSendAsAccessNormalized+=$normalizedTest
-            }
-            catch 
-            {
-                out-logFile -string $_ -isError:$TRUE
-            }
-        }
-    }
-
-   #At this time we have discovered all permissions based off the LDAP properties of the users.  The one remaining is what objects have SENDAS rights on this DL.
-
-    out-logfile -string "Obtaining send as permissions."
-
-    try 
-    {
-        $exchangeSendAsSMTP=get-GroupSendAsPermissions -globalCatalog $corevariables.globalCatalogWithPort.value -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -adGlobalCatalogPowershellSessionName $coreVariables.ADGlobalCatalogPowershellSessionName.value -groupSMTPAddress $groupSMTPAddress
-    }
-    catch 
-    {
-        out-logfile -string "Unable to normalize the send as DNs."
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    if ($exchangeSendAsSMTP -ne $NULL)
-    {
-        Out-LogFile -string "The following objects have send as rights on the DL."
-        
-        out-logfile -string $exchangeSendAsSMTP
-    }
-
     #exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
@@ -1753,236 +1803,239 @@ Function get-DLHealthReport
 
     #Start with groups this DL is a member of remaining on premises.
 
-    if ($originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value) -ne $NULL)
+    if (($performMembershipOnlyTests -ne $FALSE) -or ($performProxyAddressOnlyTests -ne $FALSE))
     {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value))
+        if ($originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value) -ne $NULL)
         {
-            try 
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value))
             {
-                $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsMemberOf -ne $NULL)
-    {
-        out-logFile -string "The group to be migrated is a member of the following groups."
-        out-logfile -string $allGroupsMemberOf
-    }
-    else 
-    {
-        out-logfile -string "The group is not a member of any other groups on premises."
-    }
-
-    #Handle all recipients that have forwarding to this group based on forwarding address.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value))
+        if ($allGroupsMemberOf -ne $NULL)
         {
-            try 
+            out-logFile -string "The group to be migrated is a member of the following groups."
+            out-logfile -string $allGroupsMemberOf
+        }
+        else 
+        {
+            out-logfile -string "The group is not a member of any other groups on premises."
+        }
+
+        #Handle all recipients that have forwarding to this group based on forwarding address.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value))
             {
-                $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allUsersForwardingAddress -ne $NULL)
-    {
-        out-logFile -string "The group has forwarding address set on the following users.."
-        out-logfile -string $allUsersForwardingAddress
-    }
-    else 
-    {
-        out-logfile -string "The group does not have forwarding set on any other users."
-    }
-
-    #Handle all groups this object has reject permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value))
+        if ($allUsersForwardingAddress -ne $NULL)
         {
-            try 
+            out-logFile -string "The group has forwarding address set on the following users.."
+            out-logfile -string $allUsersForwardingAddress
+        }
+        else 
+        {
+            out-logfile -string "The group does not have forwarding set on any other users."
+        }
+
+        #Handle all groups this object has reject permissions on.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value))
             {
-                $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsReject -ne $NULL)
-    {
-        out-logFile -string "The group has reject permissions on the following groups:"
-        out-logfile -string $allGroupsReject
-    }
-    else 
-    {
-        out-logfile -string "The group does not have any reject permissions on other groups."
-    }
-
-    #Handle all groups this object has accept permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value))
+        if ($allGroupsReject -ne $NULL)
         {
-            try 
+            out-logFile -string "The group has reject permissions on the following groups:"
+            out-logfile -string $allGroupsReject
+        }
+        else 
+        {
+            out-logfile -string "The group does not have any reject permissions on other groups."
+        }
+
+        #Handle all groups this object has accept permissions on.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value))
             {
-                $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsAccept -ne $NULL)
-    {
-        out-logFile -string "The group has accept messages from on the following groups:"
-        out-logfile -string $allGroupsAccept
-    }
-    else 
-    {
-        out-logfile -string "The group does not have accept permissions on any groups."
-    }
-
-    if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling ge canonical name."
-
-        foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
+        if ($allGroupsAccept -ne $NULL)
         {
-            try 
-            {
-                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+            out-logFile -string "The group has accept messages from on the following groups:"
+            out-logfile -string $allGroupsAccept
+        }
+        else 
+        {
+            out-logfile -string "The group does not have accept permissions on any groups."
+        }
 
-            }
-            catch {
-                out-logfile -string $_ -isError:$TRUE
+        if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling ge canonical name."
+
+            foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
+            {
+                try 
+                {
+                    $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+
+                }
+                catch {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
-    else 
-    {
-        out-logfile -string "The group is not a co manager on any other groups."    
-    }
-
-    if ($allGroupsCoManagedByBL -ne $NULL)
-    {
-        out-logFile -string "The group is a co-manager on the following objects:"
-        out-logfile -string $allGroupsCoManagedByBL
-    }
-    else 
-    {
-        out-logfile -string "The group is not a co manager on any other objects."
-    }
-
-    #Handle all groups this object has bypass moderation permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value))
+        else 
         {
-            try 
+            out-logfile -string "The group is not a co manager on any other groups."    
+        }
+
+        if ($allGroupsCoManagedByBL -ne $NULL)
+        {
+            out-logFile -string "The group is a co-manager on the following objects:"
+            out-logfile -string $allGroupsCoManagedByBL
+        }
+        else 
+        {
+            out-logfile -string "The group is not a co manager on any other objects."
+        }
+
+        #Handle all groups this object has bypass moderation permissions on.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value))
             {
-                $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsBypassModeration -ne $NULL)
-    {
-        out-logFile -string "This group has bypass moderation on the following groups:"
-        out-logfile -string $allGroupsBypassModeration
-    }
-    else 
-    {
-        out-logfile -string "This group does not have any bypass moderation on any groups."
-    }
-
-    #Handle all groups this object has accept permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value))
+        if ($allGroupsBypassModeration -ne $NULL)
         {
-            try 
+            out-logFile -string "This group has bypass moderation on the following groups:"
+            out-logfile -string $allGroupsBypassModeration
+        }
+        else 
+        {
+            out-logfile -string "This group does not have any bypass moderation on any groups."
+        }
+
+        #Handle all groups this object has accept permissions on.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value))
             {
-                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
-    {
-        out-logFile -string "This group has grant send on behalf to to the following groups:"
-        out-logfile -string $allGroupsGrantSendOnBehalfTo
-    }
-    else 
-    {
-        out-logfile -string "The group does ont have any send on behalf of rights to other groups."
-    }
-
-    #Handle all groups this object has manager permissions on.
-
-    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
-    {
-        out-logfile -string "Calling get-CanonicalName."
-
-        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
+        if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
         {
-            try 
+            out-logFile -string "This group has grant send on behalf to to the following groups:"
+            out-logfile -string $allGroupsGrantSendOnBehalfTo
+        }
+        else 
+        {
+            out-logfile -string "The group does ont have any send on behalf of rights to other groups."
+        }
+
+        #Handle all groups this object has manager permissions on.
+
+        if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
+        {
+            out-logfile -string "Calling get-CanonicalName."
+
+            foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
             {
-                $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
-            }
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE
+                try 
+                {
+                    $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                }
+                catch 
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
             }
         }
-    }
 
-    if ($allGroupsManagedBy -ne $NULL)
-    {
-        out-logFile -string "This group has managedBY rights on the following groups."
-        out-logfile -string $allGroupsManagedBy
-    }
-    else 
-    {
-        out-logfile -string "The group is not a manager on any other groups."
+        if ($allGroupsManagedBy -ne $NULL)
+        {
+            out-logFile -string "This group has managedBY rights on the following groups."
+            out-logfile -string $allGroupsManagedBy
+        }
+        else 
+        {
+            out-logfile -string "The group is not a manager on any other groups."
+        }
     }
 
     $telemetryFunctionEndTime = get-universalDateTime
@@ -1990,7 +2043,6 @@ Function get-DLHealthReport
     $telemetryDependencyOnPrem = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
-
     
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
