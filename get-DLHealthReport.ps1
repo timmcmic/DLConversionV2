@@ -2914,7 +2914,7 @@ th {
 
         [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
 
-        if ($errorMemberOnly -eq $FALSE)
+        if ($errorMembersOnly -eq $FALSE)
         {
             $params = @{'As'='Table';
             'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
@@ -2974,7 +2974,7 @@ th {
 
         [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
 
-        if ($errorMemberOnly -eq $FALSE)
+        if ($errorMembersOnly -eq $FALSE)
         {
             $params = @{'As'='Table';
             'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
