@@ -537,6 +537,8 @@ Function get-DLHealthReport
         office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         onPremMemberEvalXML= @{"value" = "onPremMemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365MemberEvalXML = @{"value" = "office365MemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        onPremMemberEvalErrorsXML= @{"value" = "onPremMemberEvalErrorsXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365MemberEvalErrorsXML = @{"value" = "office365MemberEvalErrorsXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365AcceptMessagesFromSendersOrMembersEvalXML = @{"value" = "office365AcceptMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365RejectMessagesFromSendersOrMembersEvalXML = @{"value" = "office365RejectMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ModeratedByEvalXML = @{"value" = "office365ModeratedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
@@ -2965,6 +2967,10 @@ th {
             $html_members_office365_errors = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEvalErrors @params
 
             $htmlSections += $html_members_office365_errors
+
+            out-logfile -string "Exporting Office 365 member evaluation."
+
+            out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
         }
     }
 
@@ -3024,6 +3030,8 @@ th {
             $html_members_onPrem_errors = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEvalErrors @params
 
             $htmlSections += $html_members_onPrem_errors
+
+            out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
         }
     }
 
