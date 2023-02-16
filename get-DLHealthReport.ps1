@@ -325,7 +325,7 @@ Function get-DLHealthReport
         [Parameter(Mandatory = $false)]
         [boolean]$errorMembersOnly = $false,
         [Parameter(Mandatory = $false)]
-        [boolean]$includeVerboseOutput = $false,
+        [boolean]$includeVerboseOutput = $true,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -3607,199 +3607,202 @@ th {
         $htmlSections += $html_members_Office365FullAccess
     }
 
-    out-logfile -string "Creating HTML output for normalized membership."
-
-    if ($exchangeDLMembershipSMTP.count)
+    if ($includeVerboseOutput -eq $TRUE)
     {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Distribution List Membership Expanded</h2>'}
+        out-logfile -string "Creating HTML output for normalized membership."
 
-        $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
-
-        $htmlSections += $html_exchangeMembers
-    }
+        if ($exchangeDLMembershipSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Distribution List Membership Expanded</h2>'}
     
-    out-logfile -string "Creating HTML output for Azure AD Membership."
-
-    if ($azureADDlMembership.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Azure Active Directory Distribution List Membership Expanded</h2>'}
-
-        $html_azureADMembers = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDlMembership @params
-
-        $htmlSections += $html_azureADMembers
-    }
-
-    out-logfile -string "Creating HTML output for Office 365 Membership."
-
-    if ($office365DLMembership.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Distribution List Membership Expanded</h2>'}
-
-        $html_office365Members = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLMembership @params
-
-        $htmlSections += $html_office365Members
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises accept messages from."
-
-    if ($exchangeAcceptMessagesSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Accept Messages From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedAccept = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeAcceptMessagesSMTP @params
-
-        $htmlSections += $html_onPremExpandedAccept
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises reject messages from."
-
-    if ($exchangeRejectMessagesSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Reject Messages From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedReject = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeRejectMessagesSMTP @params
-
-        $htmlSections += $html_onPremExpandedReject
-    }
+            $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
     
-    out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
-
-    if ($exchangeModeratedBySMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory ModeratedBy Expanded</h2>'}
-
-        $html_onPremExpandedModeratedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeModeratedBySMTP @params
-
-        $htmlSections += $html_onPremExpandedModeratedBy
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
-
-    if ($exchangeManagedBySMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory ManagedBy Expanded</h2>'}
-
-        $html_onPremExpandedManagedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeManagedBySMTP @params
-
-        $htmlSections += $html_onPremExpandedManagedBy
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
-
-    if ($exchangeBypassModerationSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Bypass Moderation From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedBypassModeration = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeBypassModerationSMTP @params
-
-        $htmlSections += $html_onPremExpandedBypassModeration
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
-
-    if ($exchangeGrantSendOnBehalfToSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
-
-        $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
-
-        $htmlSections += $html_onPremExpandedGrantSend
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
-
-    if ($office365AcceptMessagesFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-
-        $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
-
-        $htmlSections += $html_officeAcceptExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
-
-    if ($office365RejectMessagesFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-
-        $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
-
-        $htmlSections += $html_officeRejectExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
-
-    if ($office365ModeratedBy.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
-
-        $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
-
-        $htmlSections += $html_officeModeratedExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
-
-    if ($office365ManagedBy.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
-
-        $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
-
-        $htmlSections += $html_officeManagedByExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
-
-    if ($office365BypassModerationFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
-
-        $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
-
-        $htmlSections += $html_officeBypassExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
-
-    if ($office365GrantSendOnBehalfTo.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
-
-        $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
-
-        $htmlSections += $html_officeGrantExpanded 
+            $htmlSections += $html_exchangeMembers
+        }
+        
+        out-logfile -string "Creating HTML output for Azure AD Membership."
+    
+        if ($azureADDlMembership.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Azure Active Directory Distribution List Membership Expanded</h2>'}
+    
+            $html_azureADMembers = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDlMembership @params
+    
+            $htmlSections += $html_azureADMembers
+        }
+    
+        out-logfile -string "Creating HTML output for Office 365 Membership."
+    
+        if ($office365DLMembership.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Distribution List Membership Expanded</h2>'}
+    
+            $html_office365Members = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLMembership @params
+    
+            $htmlSections += $html_office365Members
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises accept messages from."
+    
+        if ($exchangeAcceptMessagesSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Accept Messages From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedAccept = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeAcceptMessagesSMTP @params
+    
+            $htmlSections += $html_onPremExpandedAccept
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises reject messages from."
+    
+        if ($exchangeRejectMessagesSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Reject Messages From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedReject = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeRejectMessagesSMTP @params
+    
+            $htmlSections += $html_onPremExpandedReject
+        }
+        
+        out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
+    
+        if ($exchangeModeratedBySMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory ModeratedBy Expanded</h2>'}
+    
+            $html_onPremExpandedModeratedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeModeratedBySMTP @params
+    
+            $htmlSections += $html_onPremExpandedModeratedBy
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
+    
+        if ($exchangeManagedBySMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory ManagedBy Expanded</h2>'}
+    
+            $html_onPremExpandedManagedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeManagedBySMTP @params
+    
+            $htmlSections += $html_onPremExpandedManagedBy
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+    
+        if ($exchangeBypassModerationSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Bypass Moderation From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedBypassModeration = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeBypassModerationSMTP @params
+    
+            $htmlSections += $html_onPremExpandedBypassModeration
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+    
+        if ($exchangeGrantSendOnBehalfToSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
+    
+            $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
+    
+            $htmlSections += $html_onPremExpandedGrantSend
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
+    
+        if ($office365AcceptMessagesFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+    
+            $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeAcceptExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
+    
+        if ($office365RejectMessagesFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+    
+            $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeRejectExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
+    
+        if ($office365ModeratedBy.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+    
+            $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
+    
+            $htmlSections += $html_officeModeratedExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
+    
+        if ($office365ManagedBy.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
+    
+            $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
+    
+            $htmlSections += $html_officeManagedByExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
+    
+        if ($office365BypassModerationFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
+    
+            $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeBypassExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+    
+        if ($office365GrantSendOnBehalfTo.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+    
+            $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
+    
+            $htmlSections += $html_officeGrantExpanded 
+        }    
     }
 
     if ($functionObject -ne $NULL)
