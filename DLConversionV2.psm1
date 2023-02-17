@@ -354,7 +354,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE,
         [Parameter(Mandatory=$false)]
-        [boolean]$customRoutingDomain=$NULL,
+        [string]$customRoutingDomain=$NULL,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
