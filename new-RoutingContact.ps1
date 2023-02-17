@@ -150,7 +150,6 @@
         }
 
         
-        
         if ($functionTargetAddress -eq $NULL)
         {
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com"
