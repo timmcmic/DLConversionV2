@@ -154,10 +154,6 @@
                     out-logfile -string $address
                     $functionEmailAddresses+=$address.tostring()
                 }
-
-                $functionEmailAddresses = $functionEmailAddresses | select-object -unique
-
-                out-logfile -string $functionEmailAddresses
             }
             else
             {
@@ -175,6 +171,10 @@
                 
                 $routingAddressIsPresent = $FALSE
             }
+
+            $functionEmailAddresses = $functionEmailAddresses | select-object -unique
+
+            out-logfile -string $functionEmailAddresses
 
             $functionEmailAddressToRemove = $office365DLConfigurationPostMigration.primarySMTPAddress
 
