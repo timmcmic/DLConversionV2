@@ -135,6 +135,7 @@
         }
         else 
         {
+            out-logfile -string "Testing based on the custom remote routing address."
             foreach ($address in $office365DLConfiguration.emailAddresses)
             {
                 out-logfile -string ("Testing address for remote routing address = "+$address)
@@ -152,7 +153,7 @@
         
         if ($functionTargetAddress -eq $NULL)
         {
-            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com"
+            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
             out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
             out-logfile -string "Error enabling hybrid mail flow." -isError:$TRUE
         }
