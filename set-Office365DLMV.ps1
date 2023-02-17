@@ -161,6 +161,18 @@
             }
             else
             {
+                foreach ($address in $originalDLConfiguration.proxyAddresses)
+                {
+                    out-logfile -string $address
+                    $functionEmailAddresses+=$address.tostring()
+                }
+
+                foreach ($address in $office365DLConfiguration.emailAddresses)
+                {
+                    out-logfile -string $address
+                    $functionEmailAddresses+=$address.tostring()
+                }
+                
                 $routingAddressIsPresent = $FALSE
             }
 
