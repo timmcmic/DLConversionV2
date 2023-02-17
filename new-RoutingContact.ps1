@@ -57,7 +57,9 @@
             [Parameter(Mandatory = $false)]
             [boolean]$isRetry = $false,
             [Parameter(Mandatory = $false)]
-            [string]$isRetryOU = $false
+            [string]$isRetryOU = $false,
+            [Parameter(Mandatory = $false)]
+            [string]$customRoutingDomain = $NULL
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -116,18 +118,38 @@
 
         out-logfile -string ("Function OU = "+$functionOU)
 
-        foreach ($address in $office365DLConfiguration.emailAddresses)
+        if ($customRoutingDomain -eq $NULL)
         {
-            out-logfile -string ("Testing address for remote routing address = "+$address)
-
-            if ($address.contains("mail.onmicrosoft.com"))
+            foreach ($address in $office365DLConfiguration.emailAddresses)
             {
-                out-logfile -string ("The remote routing address was found = "+$address)
-
-                $functionTargetAddress=$address
-                $functionTargetAddress=$functionTargetAddress.toUpper()
+                out-logfile -string ("Testing address for remote routing address = "+$address)
+    
+                if ($address.contains("mail.onmicrosoft.com"))
+                {
+                    out-logfile -string ("The remote routing address was found = "+$address)
+    
+                    $functionTargetAddress=$address
+                    $functionTargetAddress=$functionTargetAddress.toUpper()
+                }
             }
         }
+        else 
+        {
+            foreach ($address in $office365DLConfiguration.emailAddresses)
+            {
+                out-logfile -string ("Testing address for remote routing address = "+$address)
+    
+                if ($address.contains($customRoutingDomain))
+                {
+                    out-logfile -string ("The remote routing address was found = "+$address)
+    
+                    $functionTargetAddress=$address
+                    $functionTargetAddress=$functionTargetAddress.toUpper()
+                }
+            }
+        }
+
+        
         
         if ($functionTargetAddress -eq $NULL)
         {
