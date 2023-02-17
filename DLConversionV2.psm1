@@ -2236,7 +2236,7 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfiile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+        out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
 
         $mailOnMicrosoftComDomain = $customRoutingDomain
     }
