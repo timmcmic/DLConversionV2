@@ -2961,7 +2961,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+                            @{n='ErrorMessage';e={'<a href="https://timmcmic.wordpress.com">'+$_.errorMessage+'</a>'}}
             }
 
             $html_members_office365_errors = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEvalErrors @params
@@ -3824,12 +3824,6 @@ th {
         $htmlSections += $html_members_counts
     }
 
-    $params = @{
-                    'PreContent'='<h2>&diams;<a href="https://timmcmic.wordpress.com">Blog Information</a></h2>'}
-
-                    $html_blog = ConvertTo-EnhancedHTMLFragment -inputObject "<a href='https://timmcmic.wordpress.com'>Blog Information</a>" @params
-
-    $htmlSections += $html_blog
 
     if ($htmlSections.count -gt 0)
     {
