@@ -321,6 +321,11 @@ Function get-DLHealthReport
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
+        #Define other optional parameters.
+        [Parameter(Mandatory = $false)]
+        [boolean]$errorMembersOnly = $false,
+        [Parameter(Mandatory = $false)]
+        [boolean]$includeVerboseOutput = $true,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -532,6 +537,8 @@ Function get-DLHealthReport
         office365GrantSendOnBehalfToXML= @{"value" = "office365GrantSendOnBehalfToXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         onPremMemberEvalXML= @{"value" = "onPremMemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365MemberEvalXML = @{"value" = "office365MemberEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        onPremMemberEvalErrorsXML= @{"value" = "onPremMemberEvalErrorsXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
+        office365MemberEvalErrorsXML = @{"value" = "office365MemberEvalErrorsXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365AcceptMessagesFromSendersOrMembersEvalXML = @{"value" = "office365AcceptMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365RejectMessagesFromSendersOrMembersEvalXML = @{"value" = "office365RejectMessagesFromSendersOrMembersEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
         office365ModeratedByEvalXML = @{"value" = "office365ModeratedByEvalXML" ; "Description" = "Export XML of all Office 365 grant send on behalf to normalized."}
@@ -628,6 +635,8 @@ Function get-DLHealthReport
     $commandStartTime = get-date
     $commandEndTime = $NULL
     [int]$kerberosRunTime = 4
+
+    $blogURL = "https://timmcmic.wordpress.com"
 
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
@@ -1122,7 +1131,7 @@ Function get-DLHealthReport
     out-logfile -string "Capture the Office 365 DL membership."
 
     try {
-        $office365DLMembership = get-o365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+        $office365DLMembership = get-o365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isHealthReport:$TRUE -errorAction STOP
     }
     catch {
         out-logfile $_ -isError:$TRUE
@@ -1177,7 +1186,7 @@ Function get-DLHealthReport
     out-logfile -string "Recording Azure AD DL membership."
 
     try {
-        $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -isHealthReport:$TRUE -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to obtain Azure AD DL Membership."
@@ -2580,31 +2589,7 @@ Function get-DLHealthReport
     $telemetryEndTime = get-universalDateTime
     $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
 
-    #At this time we need to start building the comparison arrays.
-
-    <#
-
-    out-logfile -string "Comparing on premises membership to azure ad membership."
-
-    try {
-        $onPremMemberEval = @(compare-recipientArrays -onPremData $exchangeDLMembershipSMTP -azureData $azureADDlMembership -errorAction STOP)
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    out-logfile -string "Comparing azure ad membership to Office 365 membership."
-
-    try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -errorAction STOP)
-    }
-    catch {
-        out-logfile -string $_ -isError:$TRUE
-    }
-
-    #>
-
-    out-logfile -string "Beginning list membership comparison."
+        out-logfile -string "Beginning list membership comparison."
 
     try {
         $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
@@ -2695,7 +2680,7 @@ Function get-DLHealthReport
     {
         out-logfile -string "Exporting on premises member evaluation."
 
-        $onPremMembersEval = $onPremMembersEval | sort-object -property "isvalidMember"
+        $onPremMembersEval = $onPremMembersEval | sort-object -property isvalidMember
         out-xmlFile -itemToExport $onPremMemberEval -itemNameToExport $xmlFiles.onPremMemberEvalXML.value
     }
     else
@@ -2707,7 +2692,7 @@ Function get-DLHealthReport
     {
         out-logfile -string "Exporting Office 365 member evaluation."
 
-        $office365MemberEval = $office365MemberEval | sort-object -property "isValidMember"
+        $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
         out-xmlFile -itemToExport $office365MemberEval -itemNameToExport $xmlFiles.office365MemberEvalXML.value
     }
     else {
@@ -2915,13 +2900,13 @@ th {
     
     out-logfile -string "Split the on premises data from the Office 365 data."
 
-    $onPremMemberEval = $office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"}
+    [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
 
     $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
 
     out-logfile -string "Split the cloud data from the on premises data."
 
-    $office365MemberEval = $office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+    [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
 
     $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
 
@@ -2931,67 +2916,136 @@ th {
     {
         out-logfile -string $office365MemberEval
 
-        $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
-        'EvenRowCssClass'='even';
-        'OddRowCssClass'='odd';
-        'MakeTableDynamic'=$true;
-        'TableCssClass'='grid';
-        'MakeHiddenSection'=$true;
-        'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
-                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
-                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
-                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
+
+        if ($errorMembersOnly -eq $FALSE)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
+            }
+
+            $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
+
+            $htmlSections += $html_members_office365
         }
 
-        $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
+        
+        if ($office365MemberEvalErrors.count -gt 0)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'+$_.errorMessage+'</a>'}}
+            }
 
-        $htmlSections += $html_members_office365
+            $html_members_office365_errors = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEvalErrors @params
+
+            $htmlSections += $html_members_office365_errors
+
+            out-logfile -string "Exporting Office 365 member evaluation."
+
+            out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
+        }
     }
 
     if ($onPremMemberEval.count -gt 0)
     {
         out-logfile -string $onPremMemberEval
 
-        $params = @{'As'='Table';
-        'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
-        'EvenRowCssClass'='even';
-        'OddRowCssClass'='odd';
-        'MakeTableDynamic'=$true;
-        'TableCssClass'='grid';
-        'MakeHiddenSection'=$true;
-        'Properties'=   @{n='Member';e={$_.name}},
-                        @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
-                        @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
-                        @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
-                        @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
-                        @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
-                        @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
-                        @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
-                        @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+        [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
+
+        if ($errorMembersOnly -eq $FALSE)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
+            }
+
+            $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
+
+            $htmlSections += $html_members_onPrem
         }
 
-        $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
+        if ($onPremMemberEvalErrors.count -gt 0)
+        {
+            $params = @{'As'='Table';
+            'PreContent'='<h2>&diams; Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365</h2>';
+            'EvenRowCssClass'='even';
+            'OddRowCssClass'='odd';
+            'MakeTableDynamic'=$true;
+            'TableCssClass'='grid';
+            'MakeHiddenSection'=$true;
+            'Properties'=   @{n='Member';e={$_.name}},
+                            @{n='ExternalDirectoryObjectID';e={if ($_.externalDirectoryObjectID -ne $NULL){$_.externalDirectoryObjectID}else{""}}},
+                            @{n='PrimarySMTPAddress';e={if ($_.primarySMTPAddress -ne $NULL){$_.primarySMTPAddress}else{""}}},
+                            @{n='UserPrincipalName';e={if ($_.userPrincipalName -ne $NULL){$_.UserPrincipalName}else{""}}},
+                            @{n='ObjectSID';e={if ($_.objectSID -ne $NULL){$_.objectSid}else{""}}},
+                            @{n='PresentActiveDirectory';e={$_.isPresentOnPremises};css={if ($_.isPresentOnPremsies -eq "False") { 'red' }}},
+                            @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
+                            @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
+                            @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
+                            @{n='ErrorMessage';e={'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}}
+            }
 
-        $htmlSections += $html_members_onPrem
+            $html_members_onPrem_errors = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEvalErrors @params
+
+            $htmlSections += $html_members_onPrem_errors
+
+            out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
+        }
     }
 
     out-logfile -string "Generate report for proxy address verification."
 
     out-logfile -string "Split the on premises data from the Office 365 data."
 
-    $onPremProxyAddressEval = $office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"}
+    [array]$onPremProxyAddressEval = @($office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"})
 
     out-logfile -string "Split the cloud data from the on premises data."
 
-    $office365ProxyAddressesEval = $office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"}
+    [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
 
     if ($office365ProxyAddressesEval.count -gt 0)
     {
@@ -3007,7 +3061,7 @@ th {
                         @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                         @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+                        @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
         }
 
         $html_proxyAddresses = ConvertTo-EnhancedHTMLFragment -InputObject $office365ProxyAddressesEval @params
@@ -3029,7 +3083,7 @@ th {
                         @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                         @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                         @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                        @{n='ErrorMessage';e={$_.ErrorMessage}}
+                        @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
         }
 
         $html_proxyAddresses2 = ConvertTo-EnhancedHTMLFragment -InputObject $onPremProxyAddressEval @params
@@ -3563,211 +3617,215 @@ th {
         $htmlSections += $html_members_Office365FullAccess
     }
 
-    out-logfile -string "Creating HTML output for normalized membership."
-
-    if ($exchangeDLMembershipSMTP.count)
+    if ($includeVerboseOutput -eq $TRUE)
     {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Distribution List Membership Expanded</h2>'}
+        out-logfile -string "Creating HTML output for normalized membership."
 
-        $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
-
-        $htmlSections += $html_exchangeMembers
-    }
+        if ($exchangeDLMembershipSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Distribution List Membership Expanded</h2>'}
     
-    out-logfile -string "Creating HTML output for Azure AD Membership."
-
-    if ($azureADDlMembership.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Azure Active Directory Distribution List Membership Expanded</h2>'}
-
-        $html_azureADMembers = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDlMembership @params
-
-        $htmlSections += $html_azureADMembers
-    }
-
-    out-logfile -string "Creating HTML output for Office 365 Membership."
-
-    if ($office365DLMembership.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Distribution List Membership Expanded</h2>'}
-
-        $html_office365Members = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLMembership @params
-
-        $htmlSections += $html_office365Members
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises accept messages from."
-
-    if ($exchangeAcceptMessagesSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Accept Messages From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedAccept = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeAcceptMessagesSMTP @params
-
-        $htmlSections += $html_onPremExpandedAccept
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises reject messages from."
-
-    if ($exchangeRejectMessagesSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Reject Messages From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedReject = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeRejectMessagesSMTP @params
-
-        $htmlSections += $html_onPremExpandedReject
-    }
+            $html_exchangeMembers = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeDLMembershipSMTP @params
     
-    out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
-
-    if ($exchangeModeratedBySMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory ModeratedBy Expanded</h2>'}
-
-        $html_onPremExpandedModeratedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeModeratedBySMTP @params
-
-        $htmlSections += $html_onPremExpandedModeratedBy
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
-
-    if ($exchangeManagedBySMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory ManagedBy Expanded</h2>'}
-
-        $html_onPremExpandedManagedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeManagedBySMTP @params
-
-        $htmlSections += $html_onPremExpandedManagedBy
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
-
-    if ($exchangeBypassModerationSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Bypass Moderation From Senders Or Members Expanded</h2>'}
-
-        $html_onPremExpandedBypassModeration = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeBypassModerationSMTP @params
-
-        $htmlSections += $html_onPremExpandedBypassModeration
-    }
-
-    out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
-
-    if ($exchangeGrantSendOnBehalfToSMTP.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
-
-        $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
-
-        $htmlSections += $html_onPremExpandedGrantSend
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
-
-    if ($office365AcceptMessagesFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-
-        $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
-
-        $htmlSections += $html_officeAcceptExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
-
-    if ($office365RejectMessagesFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-
-        $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
-
-        $htmlSections += $html_officeRejectExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
-
-    if ($office365ModeratedBy.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
-
-        $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
-
-        $htmlSections += $html_officeModeratedExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
-
-    if ($office365ManagedBy.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
-
-        $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
-
-        $htmlSections += $html_officeManagedByExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
-
-    if ($office365BypassModerationFromSendersOrMembers.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
-
-        $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
-
-        $htmlSections += $html_officeBypassExpanded
-    }
-
-    out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
-
-    if ($office365GrantSendOnBehalfTo.count)
-    {
-        $params = @{'As'='List';
-                    'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
-
-        $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
-
-        $htmlSections += $html_officeGrantExpanded 
+            $htmlSections += $html_exchangeMembers
+        }
+        
+        out-logfile -string "Creating HTML output for Azure AD Membership."
+    
+        if ($azureADDlMembership.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Azure Active Directory Distribution List Membership Expanded</h2>'}
+    
+            $html_azureADMembers = ConvertTo-EnhancedHTMLFragment -inputObject $azureADDlMembership @params
+    
+            $htmlSections += $html_azureADMembers
+        }
+    
+        out-logfile -string "Creating HTML output for Office 365 Membership."
+    
+        if ($office365DLMembership.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Distribution List Membership Expanded</h2>'}
+    
+            $html_office365Members = ConvertTo-EnhancedHTMLFragment -inputObject $office365DLMembership @params
+    
+            $htmlSections += $html_office365Members
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises accept messages from."
+    
+        if ($exchangeAcceptMessagesSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Accept Messages From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedAccept = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeAcceptMessagesSMTP @params
+    
+            $htmlSections += $html_onPremExpandedAccept
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises reject messages from."
+    
+        if ($exchangeRejectMessagesSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Reject Messages From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedReject = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeRejectMessagesSMTP @params
+    
+            $htmlSections += $html_onPremExpandedReject
+        }
+        
+        out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
+    
+        if ($exchangeModeratedBySMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory ModeratedBy Expanded</h2>'}
+    
+            $html_onPremExpandedModeratedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeModeratedBySMTP @params
+    
+            $htmlSections += $html_onPremExpandedModeratedBy
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
+    
+        if ($exchangeManagedBySMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory ManagedBy Expanded</h2>'}
+    
+            $html_onPremExpandedManagedBy = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeManagedBySMTP @params
+    
+            $htmlSections += $html_onPremExpandedManagedBy
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+    
+        if ($exchangeBypassModerationSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Bypass Moderation From Senders Or Members Expanded</h2>'}
+    
+            $html_onPremExpandedBypassModeration = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeBypassModerationSMTP @params
+    
+            $htmlSections += $html_onPremExpandedBypassModeration
+        }
+    
+        out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+    
+        if ($exchangeGrantSendOnBehalfToSMTP.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
+    
+            $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
+    
+            $htmlSections += $html_onPremExpandedGrantSend
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
+    
+        if ($office365AcceptMessagesFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+    
+            $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeAcceptExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
+    
+        if ($office365RejectMessagesFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+    
+            $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeRejectExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
+    
+        if ($office365ModeratedBy.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+    
+            $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
+    
+            $htmlSections += $html_officeModeratedExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
+    
+        if ($office365ManagedBy.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
+    
+            $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
+    
+            $htmlSections += $html_officeManagedByExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
+    
+        if ($office365BypassModerationFromSendersOrMembers.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
+    
+            $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
+    
+            $htmlSections += $html_officeBypassExpanded
+        }
+    
+        out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+    
+        if ($office365GrantSendOnBehalfTo.count)
+        {
+            $params = @{'As'='List';
+                        'MakeHiddenSection'=$true;
+                        'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+    
+            $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
+    
+            $htmlSections += $html_officeGrantExpanded 
+        }    
     }
 
     if ($functionObject -ne $NULL)
     {
         $params = @{'As'='List';
                     'MakeHiddenSection'=$true;
-                    'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+                    'PreContent'='<h2>&diams;Distribution List Stats Count</h2>'}
 
         $html_members_counts = ConvertTo-EnhancedHTMLFragment -InputObject $functionObject @params
 
         $htmlSections += $html_members_counts
     }
+
 
     if ($htmlSections.count -gt 0)
     {

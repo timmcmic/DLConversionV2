@@ -21,12 +21,109 @@ function compare-recipientArrays
     )
 
     [array]$functionReturnArray = @()
-    $functionExternalDirectoryObjectID = @()
-    $functionAzureIndex = 0
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN compare-recipientArrays"
     Out-LogFile -string "********************************************************************************"
+ 
+
+    #===========================================================================================
+
+    $createOnPremLists={
+        $onPremDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $onPremDataByPrimarySMTPAddress = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $onPremDataByExternalDirectoryObjectID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
+        foreach ($onPremObject in $onPremData)
+        {
+            if ($onPremObject.externalDirectoryObjectID -ne $NULL)
+            {
+                out-logfile -string ("On Prem External Directory Object ID: "+$onPremObject.externalDirectoryObjectID)
+                $onPremDataByExternalDirectoryObjectID.Add($onPremObject.externalDirectoryObjectID, $onPremObject)
+            }
+            
+            elseif ($onPremObject.objectSID -ne $NULL)
+            {
+                out-logfile -string ("On Prem Object SID: "+$onPremObject.objectSID)
+                $onPremDataBySID.Add($onPremObject.ObjectSID, $onPremObject)
+            }
+
+            elseif ($onPremObject.primarySMTPAddress -ne $NULL)
+            {
+                out-logfile -string ("On Prem Primary SMTP Address: "+$onPremObject.primarySMTPAddress)
+                $onPremDataByPrimarySMTPAddress.add($onPremObject.primarySMTPAddress,$onPremObject)
+            }
+        }
+    }
+
+    #===========================================================================================
+
+    #===========================================================================================
+
+    $createAzureLists={
+        
+        $azureDataByObjectId = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $azureDataBySID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $azureDataByMail = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
+
+        foreach ($azureObject in $azureData)
+        {
+            out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
+            $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
+
+            if ($azureObject.onPremisesSecurityIdentifier -ne $NULL)
+            {
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.onPremisesSecurityIdentifier)
+                $azureDataBySID.Add($azureObject.onPremisesSecurityIdentifier, $azureObject)
+            }
+
+            if ($azureObject.Mail -ne $NULL)
+            {
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.Mail)
+                $azureDataByMail.Add($azureObject.mail, $azureObject)
+            }
+        }
+    }
+
+    #===========================================================================================
+
+    #===========================================================================================
+    
+    $createOffice365Lists=
+    {
+        $office365DataByExternalDirectoryObjectID = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+        $office365DataByExternalSMTPAddress = New-Object "System.Collections.Generic.Dictionary``2[System.String, System.Object]"
+
+
+        foreach ($office365Object in $office365Data)
+        {
+            out-logfile -string ("Office 365 Data External Directory Object ID: "+$office365Object.externalDirectoryObjectID)
+            $office365DataByExternalDirectoryObjectID.Add($office365Object.externalDirectoryObjectID, $office365Object)
+
+            if ($office365Object.externalEmailAddress -ne $NULL)
+            {
+                out-logfile -string ("Office 365 Data Primary SMTP Address: "+$office365Object.externalEmailAddress)
+                $office365DataByExternalSMTPAddress.add($office365Object.externalEmailAddress.split(":")[1],$office365Object)
+            }
+        }
+    }
+
+    #===========================================================================================
+
+    #===========================================================================================
+    
+    $createArrayLists ={
+        
+        .$createAzureLists
+
+        .$createOnPremLists
+
+        .$createOffice365Lists
+    }
+
+    #===========================================================================================
 
     if($isProxyTest -eq $TRUE)
     {
@@ -133,6 +230,10 @@ function compare-recipientArrays
     }
     elseif ($isAllTest -eq $TRUE)
     {
+        out-logfile -string "Calling function to create the array lists."
+
+        .$createArrayLists
+
         out-logfile -string "Comparing data from all three directories - this has to be membership."
 
         out-logfile -string "Starting the comparison in the reverse order - compare Exchange Online -> Azure -> On Premises."
@@ -146,7 +247,7 @@ function compare-recipientArrays
 
             out-logfile -string "Determining if the object has a primary SMTP address or only an external address.  Guest users <or> mail contacts may have external addresses."
 
-            if ($member.primarySMTPAddress -ne $null)
+            if ($member.primarySMTPAddress.length -ne "")
             {
                 out-logfile -string "Primary SMTP Address is present."
 
@@ -154,10 +255,12 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
-            elseif ($member.externalEmailAddress -ne $null) 
+            elseif ($member.externalEmailAddress -ne $NULL) 
             {
                 out-logfile -string "External email address is present."
                 out-logfile -string $member.externalEmailAddress
+
+                out-logfile -string $member
 
                 $functionPrimarySMTPAddress = $member.externalEmailAddress.split(":")
 
@@ -172,12 +275,14 @@ function compare-recipientArrays
                 $functionPrimarySMTPAddress = "N/A"
             }
 
-            if ($azureData.objectID -contains $member.externalDirectoryObjectID)
+            if ($azureDataByObjectID.ContainsKey($member.externalDirectoryObjectID))
             {
                 out-logfile -string "The object was found in Azure AD. -> GOOD"
                 out-logfile -string "Capture the azure object so that we can build the output object with it's attributes."
 
-                $functionAzureObject = $azureData | where {$_.objectID -eq $member.externalDirectoryObjectID}
+                $functionAzureObject = $azureDataByObjectID[$member.externalDirectoryObjectID]
+
+                out-logfile -string $functionAzureObject
 
                 if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL)
                 {
@@ -195,6 +300,8 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "N/A"
                     }
+
+                    out-logfile -string $functionObject.objectSID
 
                     out-logfile -string "Determine if the security principal was a user with a upn."
 
@@ -233,8 +340,8 @@ function compare-recipientArrays
                 $functionExternalDirectoryObjectID = ("User_"+$member.externalDirectoryObjectID)
 
                 out-logfile -string $functionExternalDirectoryObjectID
-                
-                if ($onPremData.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
+
+                if ($onPremDataByExternalDirectoryObjectID.ContainsKey($functionExternalDirectoryObjectID))
                 {
                     out-logfile -string ("Found object on premises by external directory object id. "+$functionExternalDirectoryObjectID)
 
@@ -244,8 +351,29 @@ function compare-recipientArrays
                     out-logfile -string $functionObject
 
                     $functionReturnArray += $functionObject
+
+                    $functionOnPremObject = $onPremDataByExternalDirectoryObjectID[$functionExternalDirectoryObjectID]
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    $functionReturnArray += $functionObject
+
+                    out-logfile -string $functionObject
+
+                    $onPremDataByExternalDirectoryObjectID.remove($functionExternalDirectoryObjectID)
                 }
-                elseif ($onPremData.objectSID -contains $functionObject.objectSID)
+                elseif ($onPremDataBySID.ContainsKey($functionObject.objectSID))
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     $functionObject.isPresentOnPremises = "True"
@@ -255,15 +383,29 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexValue = $onPremData.objectSid.indexof($functionObject.objectSID)
+                    $functionOnPremObject = $onPremDataBySID[$functionObject.objectSID]
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    $functionReturnArray += $functionObject
 
-                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
+                    out-logfile -string $functionObject
+
+                    $onPremDataBySID.remove($functionObject.objectSID)
                 }
-                elseif ($onPremData.primarySMTPAddress -contains $functionPrimarySMTPAddress)
+                
+                elseif ($onPremDataByPrimarySMTPAddress.ContainsKey($functionPrimarySMTPAddress))
                 {
                     out-logfile -string ("The object was located by primary SMTP Address: "+$functionPrimarySMTPAddress)
 
@@ -274,13 +416,26 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionIndexvalue = $onPremData.primarySMTPAddress.indexof($functionPrimarySMTPAddress)
+                    $functionOnPremObject = $onPremDataByPrimarySMTPAddress[$functionPrimarySMTPAddress]
 
-                    $onPremData[$functionIndexValue].externalDirectoryObjectID = ("User_"+$functionObject.externalDirectoryObjectID)
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $functionOnPremObject.name
+                        PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
+                        UserPrincipalName = $functionOnPremObject.userPrincipalName
+                        ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
+                        ObjectSID =$functionOnPremObject.objectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                    }
 
-                    out-logfile -string "Updating on premises external directory object ID value with matching azure values."
+                    $functionReturnArray += $functionObject
 
-                    out-logfile -string $onPremData[$functionIndexValue].externalDirectoryObjectID
+                    out-logfile -string $functionObject
+
+                    $onPremDataByPrimarySMTPAddress.remove($functionPrimarySMTPAddress)
                 }
                 else 
                 {
@@ -316,80 +471,48 @@ function compare-recipientArrays
             }
         }
 
-        out-logfile -string "Start by comparing the on premises data to Azure data to Exchange Online data - the first place membership lands."
+        out-logfile -string "If the on premises data dictionaries contain any more users - these users were not also present in Office 365."
+        out-logfile -string "Test only to see if the users are in Azure.  If they are not in Azure that's the issue - if not it's between Azure and Exchange Online."
 
-        foreach ($member in $onPremData)
+        if ($onPremDataByExternalDirectoryObjectID.count -gt 0)
         {
-            #First - determine if we are tracking the on premsies user by external directory object id.
+            out-logfile -string "On premises by external directory object id remain for processing - process those users."
 
-            if ($member.externalDirectoryObjectID -ne $NULL)
+            foreach ($member in $onPremDataByExternalDirectoryObjectID.Values)
             {
-                out-logfile -string ("Processing external directory object ID: "+$member.externalDirectoryObjectID)
+                $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")[1]
 
-                $functionExternalDirectoryObjectID = $member.externalDirectoryObjectID.split("_")
-
-                foreach ($functionExternalDirectoryObjectIDMember in $functionExternalDirectoryObjecctID)
+                if ($azureDataByObjectID.ContainsKey($functionExternalDirectoryObjectID))
                 {
-                    out-logfile -string $functionExternalDirectoryObjectIDMember
-                }
-
-                $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
-
-                out-logfile -string $functionExternalDirectoryObjectID
-
-                out-logfile -string "Search Azure Member data for external directory object ID."
-
-                if ($azureData.objectID -contains $functionExternalDirectoryObjectID)
-                {
-                    out-logfile -string "Member found in Azure."
+                    out-logfile -string "The object was not found in Azure AD -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
+                        ObjectSID =$member.ObjectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
                     }
 
-                    out-logfile -string "Member found in Azure evaluate Exchange Online."
+                    out-logfile -string $functionObject
 
-                    if ($office365Data.externalDirectoryObjectID -contains $functionExternalDirectoryObjectID)
-                    {
-                        out-logfile -string "Member found in Exchange Online - GOOD"
-
-                        $functionObject.isPresentInExchangeOnline="True"
-                        $functionObject.isValidMember = "TRUE"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
-                    }
-                    else 
-                    {
-                        out-logfile -string "Member not found in Exchange Online - NOT GOOD"
-
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
-                    }
+                    $functionReturnArray += $functionObject
                 }
                 else 
                 {
-                    out-logfile -string "Member not found in Azure - NOT GOOD"
+                    out-logfile -string "The object was not found in Azure AD -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
+                        ObjectSID =$member.ObjectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "False"
                         isPresentInExchangeOnline = "False"
@@ -402,63 +525,45 @@ function compare-recipientArrays
                     $functionReturnArray += $functionObject
                 }
             }
-            elseif ($member.objectSID -ne $NULL)
+        }
+
+        if ($onPremDataBySID.count -gt 0)
+        {
+            out-logfile -string "On premises by SID remain for processing - process those users."
+
+            foreach ($member in $onPremDataBySID.Values)
             {
-                out-logfile -string ("Processing objectSID: "+$member.ObjectSID)
-
-                out-logfile -string "Search Azure AD data for object sid."
-
-                if ($azureData.OnPremisesSecurityIdentifier -contains $member.objectSID.value)
+                if($azureDataBySID.ContainsKey($member.objectSID))
                 {
-                    out-logfile -string "Azure AD object located by object SID - GOOD."
-
-                    $functionExternalDirectoryObjectID = $azureData | where {$_.OnPremisesSecurityIdentifier -eq $member.objectSID.value}
-
-                    out-logfile -string ("Calculated object id for Exchange Online search: "+$functionExternalDirectoryObjectID.objectID)
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $functionExternalDirectoryObjectID.objectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string "Search for Azure AD Object in Exchange Online."
-
-                    if ($office365Data.externalDirectoryObjectID -contains $functionObject.externalDirectoryObjectID)
-                    {
-                        out-logfile -string "Azure AD object located in Exchange Online - GOOD."
-
-                        $functionObject.isPresentInExchangeOnline = "True"
-                        $functionObject.isValidMember = "TRUE"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
-                    }
-                    else 
-                    {
-                        out-logfile -string "Azure AD object not located in Exchange Online - NOT GOOD."
-
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Azure AD object no located by object SID - NOT GOOD."
+                    out-logfile -string "The object was not found in Exchange Online -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "False"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                    }
+
+                    out-logfile -string $functionObject
+
+                    $functionReturnArray += $functionObject
+                }
+                else 
+                {
+                    out-logfile -string "The object was not found in Azure AD -> BAD"
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "False"
                         isPresentInExchangeOnline = "False"
@@ -468,38 +573,59 @@ function compare-recipientArrays
 
                     out-logfile -string $functionObject
 
-                    $functionReturnArray +=$functionObject
+                    $functionReturnArray += $functionObject
                 }
             }
-            elseif ($member.primarySMTPAddress -ne $NULL)
-            {
-                out-logfile ("Testing via primary SMTP address: "+$member.primarySMTPAddress)
+        }
 
-                if ($azureData.mail -contains $member.primarySMTPAddress)
+        if ($onPremDataByPrimarySMTPAddress.count -gt 0)
+        {
+            out-logfile -string "On premises by primary SMTP remain for processing - process those users."
+
+            foreach ($member in $onPremDataByPrimarySMTPAddress.Values)
+            {
+                if($azureDataByMail.ContainsKey($member.primarySMTPAddress))
                 {
-                    out-logfile -string "Member found in Azure AD via proxy address."
+                    out-logfile -string "The object was not found in Exchange Online -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
+                        ObjectSID =$member.ObjectSID
                         isPresentOnPremises = "Source"
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
+                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
                     }
 
-                    out-logfile -string "Member found in Azure AD now evaluate Exchange Online"
+                    out-logfile -string $functionObject
 
-                    if ($office365Data.primarySMTPAddress -contains $member.primarySMTPAddress)
+                    $functionReturnArray += $functionObject
+                }
+                else 
+                {
+                    out-logfile -string "The object was not discovered by primary SMTP address - this may not necessarily be incorret since contacts may not have a primary SMTP in Azure."
+                    out-logfile -string "Search the Office 365 data for the primary SMTP address assume the objects are the same."
+
+                    if ($office365DataByExternalSMTPAddress.ContainsKey($member.primarySMTPAddress))
                     {
-                        out-logfile -string "Member found in Exchange Online - GOOD."
+                        out-logfile -string "The object is most likely a contact with an external mail address not represented in azure with a primary proxy address."
 
-                        $functionObject.isPresentInExchangeOnline = "True"
-                        $functionObject.isValidMember = "TRUE"
+                        $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        PrimarySMTPAddress = $member.primarySMTPAddress
+                        UserPrincipalName = $member.userPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$member.ObjectSID
+                        isPresentOnPremises = "Source"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "True"
+                        IsValidMember = "TRUE"
+                        ErrorMessage = "N/A"
+                        }
 
                         out-logfile -string $functionObject
 
@@ -507,320 +633,29 @@ function compare-recipientArrays
                     }
                     else 
                     {
-                        out-logfile -string "Member not found in Exchange Online - NOT GOOD."
+                        out-logfile -string "The object was not found in Azure AD -> BAD"
 
-                        $functionObject.errorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
-
-                        out-logfile -string $functionObject
-
-                        $functionReturnArray += $functionObject
+                        $functionObject = New-Object PSObject -Property @{
+                            Name = $member.name
+                            PrimarySMTPAddress = $member.primarySMTPAddress
+                            UserPrincipalName = $member.userPrincipalName
+                            ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                            ObjectSID =$member.ObjectSID
+                            isPresentOnPremises = "Source"
+                            isPresentInAzure = "False"
+                            isPresentInExchangeOnline = "False"
+                            IsValidMember = "FALSE"
+                            ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
+                        }
                     }
-                }
-                else 
-                {
-                    out-logfile -string "Azure AD object no located by proxy address - NOT GOOD."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        PrimarySMTPAddress = $member.primarySMTPAddress
-                        UserPrincipalName = $member.userPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$member.objectSID
-                        isPresentOnPremises = "Source"
-                        isPresentInAzure = "False"
-                        isPresentInExchangeOnline = "False"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_AZURE_EXCEPTION"
-                    }
-
+                    
                     out-logfile -string $functionObject
 
-                    $functionReturnArray +=$functionObject
-                }
-            }
-        }
-    }
-    <#
-    elseif (($onPremData -ne $NULL) -and ($azureData -ne $NULL))
-    {
-        out-logfile -string "This is a comparison of on premises and Azure AD data."
-
-        for ($i = ($onPremData.count-1) ; $i -ge 0 ; $i--)
-        {
-            out-logfile -string ("On Prem Data Count: "+$onPremData.count)
-            out-logfile -string ("Azure Data Count: "+$azureData.count)
-            out-logfile -string ("Evaluating on prem array id: "+$i)
-            #Group members come in different flavors.
-            #The first is a user type that is either mail enabled or not.  Any user object has this attribute - we search that first.
-            #The second is a group type.  Regardless of group type the group SID is replicated into the original group sid in azure.  We search there next.
-            #Lastly are objects that have neither a SID or external directory object ID then we search for mail.
-
-            if ($onPremData[$i].externalDirectoryObjectID -ne $NULL)
-            {
-                out-logfile -string "The object has an external directory object id - test based on this."
-                out-logfile -string $onPremData[$i].externalDirectoryObjectID
-
-                $functionExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID.split("_")
-
-                if ($azureData.objectID -contains $functionExternalDirectoryObjectID[1])
-                {
-                    out-logfile -string "Member found in Azure."
-
-                    out-logfile -string "Removing object from azure array..."
-
-                    $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID[1]}
-
-                    $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $onPremData[$i].name
-                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                        UserPrincipalName = $onPremData[$i].userPrincipalName
-                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                        ObjectSID = $onPremData[$i].objectSID
-                        IsValidMember = "TRUE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string "Removing object from on premises array..."
-
-                    $onPremData = @($onPremData | where-object {$_.externalDirectoryObjectID -ne $onPremData[$i].externalDirectoryObjectID})
-
                     $functionReturnArray += $functionObject
                 }
-                else 
-                {
-                    out-logfile -string "Member not found in Azure"
-                }
             }
-            elseif ($onPremData[$i].objectSID -ne $NULL)
-            {
-                out-logfile -string "The object has an objectSID - if we reached here it is not a user - assume group."
-
-                out-logfile -string $onPremData[$i].objectSID.value
-                
-                if ($azureData.OnPremisesSecurityIdentifier -contains $onPremData[$i].objectSID.value)
-                {
-                    out-logfile -string "Member found in Azure."
-
-                    out-logfile -string "Removing object from azure array..."
-
-                    $functionAzureObject = $azureData | where-object {$_.OnPremisesSecurityIdentifier -eq $onPremData[$i].objectSID.value}
-
-                    $azureData = @($azureData | where-object {$_.OnPremisesSecurityIdentifier -ne $functionAzureObject.OnPremisesSecurityIdentifier})
-    
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $onPremData[$i].name
-                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                        UserPrincipalName = $onPremData[$i].userPrincipalName
-                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                        ObjectSID = $onPremData[$i].objectSID
-                        IsValidMember = "TRUE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string "Removing object from on premises array..."
-
-                    $onPremData = @($onPremData | where-object {$_.objectSid.Value -ne $onPremData[$i].objectSID.value})
-
-                    $functionReturnArray += $functionObject
-                }
-                else {
-                    out-logfile -string "Object not found in Azure."
-                }
-            }
-            elseif ($onPremData[$i].primarySMTPAddress -ne $null)
-            {
-                out-logfile -string "The object has a mail address - if we reached here it is not a user and does not have a SID - assume contact."
-                out-logfile -string $onPremData[$i].primarySMTPAddress
-
-                if ($azureData.mail -contains $onPremData[$i].primarySMTPAddress)
-                {
-                    out-logfile -string "Member found in Azure."
-
-                    out-logfile -string "Removing object from azure array..."
-
-                    $azureData = @($azureData | where-object {$_.mail -ne $onPremData[$i].primarySMTPAddress})
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $onPremData[$i].name
-                        PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
-                        UserPrincipalName = $onPremData[$i].userPrincipalName
-                        ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
-                        ObjectSID = $onPremData[$i].objectSID
-                        IsValidMember = "TRUE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string "Removing object from on premises array..."
-
-                    $onPremData = @($onPremData | where-object {$_.primarySMTPAddress -ne $onPremData[$i].primarySMTPAddress})
-
-                    $functionReturnArray += $functionObject
-                }
-                else {
-                    out-logfile -string "Object not found in Azure."
-                }
-            }
-        }
-
-        if ($OnPremData.count -lt 1)
-        {
-            out-logfile -string "No on prem users left for evaluation - all found."
-            $onPremData = @()
-        }
-        else {
-            out-logfile -string "On prem array contains data - suspect missing member."
-
-            foreach ($member in $onPremData)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $member.name
-                    PrimarySMTPAddress = $member.primarySMTPAddress
-                    UserPrincipalName = $member.userPrincipalName
-                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                    ObjectSID = $member.objectSID
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "MEMBER_ONPREM_NOT_IN_AZURE_EXCEPTION"
-                }
-
-                $functionReturnArray += $functionObject
-            }
-        }
-        
-        if ($azureData.count -lt 1)
-        {
-            out-logfile -string "No azure users left for evaluation - all found."
-            $azureData = @()
-        }
-        else
-        {
-            out-logfile -string "Azure array contains data - suspect missing member."
-
-            foreach ($member in $onPremData)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $member.displayName
-                    PrimarySMTPAddress = $member.mail
-                    UserPrincipalName = $member.userPrincipalName
-                    ExternalDirectoryObjectID = $member.objectID
-                    ObjectSID = $member.OnPremisesSecurityIdentifier
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "MEMBER_IN_AZURE_NOT_ONPREM_EXCEPTION"
-                }
-
-                $functionReturnArray += $functionObject
-            }
-        }
+        }    
     }
-    elseif (($azureData -ne $NULL) -and ($office365Data -ne $NULL))
-    {
-        out-logfile -string "This is an Office 365 to Azure evaluation."
-
-        for ($i = ($office365Data.count - 1) ; $i -ge 0 ; $i--)
-        {
-            out-logfile -string ("Office 365 Data Count: "+$office365Data.count)
-            out-logfile -string ("Azure Data Count: "+$azureData.count)
-            out-logfile -string ("Evaluating on prem array id: "+$i)
-
-            if ($office365Data[$i].externalDirectoryObjectID -notcontains "_")
-            {
-                out-logfile -string "ExternalDirectoryObjectID provided by Office 365."
-
-                $functionExternalDirectoryObjectID = $office365Data[$i].externalDirectoryObjectID
-            }
-            else
-            {
-                out-logfile -string "ExternalDirectoryObjectID calculated by normalized Office 365 object."
-
-                $functionExternalDirectoryObjectID = $office365Data[$i].split["_"]
-                $functionExternalDirectoryObjectID = $functionExternalDirectoryObjectID[1]
-            }
-
-            out-logfile -string ("ExternalDirectoryObjectID: "+$functionExternalDirectoryObjectID)
-
-            if ($azureData.objectID -contains $functionExternalDirectoryObjectID)
-            {
-                out-logfile -string "Member found in Azure."
-
-                out-logfile -string "Removing object from azure array..."
-
-                $functionAzureObject = $azureData | where-object {$_.objectID -eq $functionExternalDirectoryObjectID}
-
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $functionAzureObject.displayName
-                    PrimarySMTPAddress = $functionAzureObject.mail
-                    UserPrincipalName = $functionAzureObject.userprincipalname
-                    ExternalDirectoryObjectID = $functionAzureObject.objectID
-                    ObjectSID = $functionAzureObject.OnPremisesSecurityIdentifier
-                    IsValidMember = "TRUE"
-                    ErrorMessage = "N/A"
-                }
-
-                $azureData = @($azureData | where-object {$_.objectID -ne $functionAzureObject.objectID})
-
-                out-logfile -string "Removing object from on premises array..."
-
-                $office365Data = @($office365Data | where-object {$_.externalDirectoryObjectID -ne $functionExternalDirectoryObjectID})
-
-                $functionReturnArray += $functionObject
-            }
-            else 
-            {
-                out-logfile -string "Member not found in Azure"
-            }
-        }
-
-        if ($office365Data.count -lt 1)
-        {
-            out-logfile -string "No on prem users left for evaluation - all found."
-            $onPremData = @()
-        }
-        else {
-            out-logfile -string "On prem array contains data - suspect missing member."
-
-            foreach ($member in $onPremData)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $member.DisplayName
-                    PrimarySMTPAddress = $member.primarySMTPAddress
-                    UserPrincipalName = $null
-                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                    ObjectSID = $null
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "MEMBER_IN_OFFICE365_NOT_IN_AZURE_EXCEPTION"
-                }
-
-                $functionReturnArray += $functionObject
-            }
-        }
-        
-        if ($azureData.count -lt 1)
-        {
-            out-logfile -string "No azure users left for evaluation - all found."
-            $azureData = @()
-        }
-        else
-        {
-            out-logfile -string "Azure array contains data - suspect missing member."
-
-            foreach ($member in $onPremData)
-            {
-                $functionObject = New-Object PSObject -Property @{
-                    Name = $member.displayName
-                    PrimarySMTPAddress = $member.mail
-                    UserPrincipalName = $member.userPrincipalName
-                    ExternalDirectoryObjectID = $member.objectID
-                    ObjectSID = $member.OnPremisesSecurityIdentifier
-                    IsValidMember = "FALSE"
-                    ErrorMessage = "MEMBER_IN_AZURE_NOT_IN_OFFICE365_EXCEPTION"
-                }
-
-                $functionReturnArray += $functionObject
-            }
-        }
-    }
-    #>
     elseif ($isAttributeTest -eq $TRUE)
     {
         out-logfile -string "Comparing on premises to Office 365 values."

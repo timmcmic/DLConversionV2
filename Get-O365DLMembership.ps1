@@ -35,7 +35,9 @@
             [Parameter(Mandatory = $false)]
             [boolean]$getUnifiedOwners=$false,
             [Parameter(Mandatory = $false)]
-            [boolean]$getUnifiedSubscribers=$false
+            [boolean]$getUnifiedSubscribers=$false,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isHealthReport=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -59,11 +61,22 @@
 
         if ($isUnifiedGroup -eq $FALSE)
         {
-            Out-LogFile -string "Using Exchange Online to obtain the group membership."
+            if ($isHealthReport -eq $FALSE)
+            {
+                Out-LogFile -string "Using Exchange Online to obtain the group membership."
 
-            $functionDLMembership=@(get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP)
-            
-            Out-LogFile -string "Distribution group membership recorded."
+                $functionDLMembership=@(get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP)
+                
+                Out-LogFile -string "Distribution group membership recorded."
+            }
+            else 
+            {
+                Out-LogFile -string "Using Exchange Online to obtain the group membership."
+
+                $functionDLMembership=@(get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP | select-object Identity,Name,Alias,ExternalDirectoryObjectId,EmailAddresses,ExternalEmailAddress,DisplayName,RecipientType,RecipientTypeDetails,ExchangeGuid)
+                
+                Out-LogFile -string "Distribution group membership recorded."
+            }
         }
         else 
         {
@@ -73,7 +86,7 @@
             {
                 Out-LogFile -string "Using Exchange Online to obtain the unified group membership membership."
 
-                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionMembersLinkType -resultsize unlimited -errorAction STOP
+                $functionDLMembership=@(get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionMembersLinkType -resultsize unlimited -errorAction STOP)
                 
                 Out-LogFile -string "Distribution group membership recorded."
             }
@@ -86,7 +99,7 @@
             {
                 Out-LogFile -string "Using Exchange Online to obtain the unified group owners membership."
 
-                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionOwnersLinkType -resultsize unlimited -errorAction STOP
+                $functionDLMembership=@(get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionOwnersLinkType -resultsize unlimited -errorAction STOP)
                 
                 Out-LogFile -string "Distribution group owners recorded."
             }
@@ -99,7 +112,7 @@
             {
                 Out-LogFile -string "Using Exchange Online to obtain the unified group subscribers membership."
 
-                $functionDLMembership=get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionSubscribersLinkType -resultsize unlimited -errorAction STOP
+                $functionDLMembership=@(get-O365UnifiedGroupLinks -identity $groupSMTPAddress -linkType $functionSubscribersLinkType -resultsize unlimited -errorAction STOP)
                 
                 Out-LogFile -string "Distribution group subscribers recorded."
             }

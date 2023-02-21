@@ -83,8 +83,14 @@
                     try {
                         out-logfile -string "Testing for recipient type."
 
-                        $functionRecipient = get-o365Recipient -filter {name -eq $member} -errorAction STOP
+                        $functionCommand = "get-o365Recipient -filter {name -eq `"$member`"} -errorAction STOP"
 
+                        out-logfile -string ("Command to execute: "+$functionCommand)
+
+                        $scriptBlock=[scriptBlock]::create($functionCommand)
+
+                        $functionRecipient = invoke-command -scriptBlock $scriptBlock
+                        
                         if ($functionRecipient.count -gt 0)
                         {
                             out-logfile -string "The attribute to be normalized only contains names.  The name resulted in more than one object being returned via get-recipient."

@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupObjectID
+            [string]$groupObjectID,
+            [Parameter(Mandatory = $false)]
+            [boolean]$isHealthReport=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -48,13 +50,28 @@
 
         out-logfile -string "Attempting to obtain the Azure AD Group membersip."
 
-        try {
-            $functionDLMembership = get-azureADGroupMember -objectID $groupobjectID -all:$TRUE -errorAction STOP
+        if ($isHealthReport -eq $FALSE)
+        {
+            try {
+                $functionDLMembership = get-azureADGroupMember -objectID $groupobjectID -all:$TRUE -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to obtain the azure group membership."
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
-        catch {
-            out-logfile -string "Unable to obtain the azure group membership."
-            out-logfile -string $_ -isError:$TRUE
+        else 
+        {
+            try {
+                $functionDLMembership = get-azureADGroupMember -objectID $groupobjectID -all:$TRUE -errorAction STOP | select-object objectID,objectType,mail,mailnickname,onPremisesSecurityIdentifier,proxyAddresses,userPrincipalName,userType,provisioningErrors
+            }
+            catch {
+                out-logfile -string "Unable to obtain the azure group membership."
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
+
+
 
         if ($functionDLMembership.count -gt 0)
         {
