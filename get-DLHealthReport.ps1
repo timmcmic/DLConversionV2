@@ -636,7 +636,7 @@ Function get-DLHealthReport
     $commandEndTime = $NULL
     [int]$kerberosRunTime = 4
 
-    $blogInformation = "https://timmcmic.wordpress.com"
+    $blogInformation = "https://test.url"
 
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
