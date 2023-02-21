@@ -3827,7 +3827,7 @@ th {
     $params = @{
                     'PreContent'='<h2>&diams;<a href="https://timmcmic.wordpress.com">Blog Information</a></h2>'}
 
-    $html_blog = ConvertTo-EnhancedHTMLFragment @params
+    $html_blog = ConvertTo-EnhancedHTMLFragment -inputObject $NULL @params
 
     $htmlSections += $html_blog
 
