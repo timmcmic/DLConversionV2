@@ -636,6 +636,8 @@ Function get-DLHealthReport
     $commandEndTime = $NULL
     [int]$kerberosRunTime = 4
 
+    $blogInformation = "https://timmcmic.wordpress.com"
+
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
@@ -2934,7 +2936,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="https://timmcmic.wordpress.com" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
+                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogPost+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
             }
 
             $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
