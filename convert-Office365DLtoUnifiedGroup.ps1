@@ -1167,7 +1167,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "********************************************************************************"
 
     try {
-        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized @() -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -errorAction STOP
+        start-testo365UnifiedGroupDependency -exchangeDLMembershipSMTP $exchangeDLMembershipSMTP -exchangeBypassModerationSMTP $exchangeBypassModerationSMTP -exchangeManagedBySMTP $exchangeManagedBySMTP -allObjectsSendAsAccessNormalized @() -addManagersAsMembers $addManagersAsMembers -originalDLConfiguration $originalDLConfiguration -overrideSecurityGroupCheck $overrideSecurityGroupCheck -errorAction STOP
     }
     catch {
         out-logfile -string "Unable to test for Office 365 Unified group dependencies."
