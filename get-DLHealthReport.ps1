@@ -636,6 +636,8 @@ Function get-DLHealthReport
     $commandEndTime = $NULL
     [int]$kerberosRunTime = 4
 
+    $blogURL = "https://timmcmic.wordpress.com"
+
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
@@ -2934,7 +2936,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="https://timmcmic.wordpress.com" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
+                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
             }
 
             $html_members_office365 = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEval @params
@@ -2961,7 +2963,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={'<a href="https://timmcmic.wordpress.com">'+$_.errorMessage+'</a>'}}
+                            @{n='ErrorMessage';e={'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'+$_.errorMessage+'</a>'}}
             }
 
             $html_members_office365_errors = ConvertTo-EnhancedHTMLFragment -InputObject $office365MemberEvalErrors @params
@@ -2998,7 +3000,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="https://timmcmic.wordpress.com" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
+                            @{n='ErrorMessage';e={ if ($_.ErrorMessage -ne "N/A") {'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}else {$_.errorMessage}}}
             }
 
             $html_members_onPrem = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEval @params
@@ -3024,7 +3026,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={'<a href="https://timmcmic.wordpress.com" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}}
+                            @{n='ErrorMessage';e={'<a href="'+$blogURL+'" target="_blank" rel="noopener noreferrer">'+$_.errorMessage+'</a>'}}
             }
 
             $html_members_onPrem_errors = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEvalErrors @params
