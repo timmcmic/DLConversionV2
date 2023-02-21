@@ -57,7 +57,9 @@
             [Parameter(Mandatory = $false)]
             [boolean]$isRetry = $false,
             [Parameter(Mandatory = $false)]
-            [string]$isRetryOU = $false
+            [string]$isRetryOU = $false,
+            [Parameter(Mandatory = $false)]
+            [string]$customRoutingDomain = $NULL
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -116,22 +118,42 @@
 
         out-logfile -string ("Function OU = "+$functionOU)
 
-        foreach ($address in $office365DLConfiguration.emailAddresses)
+        if ($customRoutingDomain -eq $NULL)
         {
-            out-logfile -string ("Testing address for remote routing address = "+$address)
-
-            if ($address.contains("mail.onmicrosoft.com"))
+            foreach ($address in $office365DLConfiguration.emailAddresses)
             {
-                out-logfile -string ("The remote routing address was found = "+$address)
-
-                $functionTargetAddress=$address
-                $functionTargetAddress=$functionTargetAddress.toUpper()
+                out-logfile -string ("Testing address for remote routing address = "+$address)
+    
+                if ($address.contains("mail.onmicrosoft.com"))
+                {
+                    out-logfile -string ("The remote routing address was found = "+$address)
+    
+                    $functionTargetAddress=$address
+                    $functionTargetAddress=$functionTargetAddress.toUpper()
+                }
             }
         }
+        else 
+        {
+            out-logfile -string "Testing based on the custom remote routing address."
+            foreach ($address in $office365DLConfiguration.emailAddresses)
+            {
+                out-logfile -string ("Testing address for remote routing address = "+$address)
+    
+                if ($address.contains($customRoutingDomain))
+                {
+                    out-logfile -string ("The remote routing address was found = "+$address)
+    
+                    $functionTargetAddress=$address
+                    $functionTargetAddress=$functionTargetAddress.toUpper()
+                }
+            }
+        }
+
         
         if ($functionTargetAddress -eq $NULL)
         {
-            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com"
+            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
             out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
             out-logfile -string "Error enabling hybrid mail flow." -isError:$TRUE
         }

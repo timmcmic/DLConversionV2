@@ -353,6 +353,8 @@ Function Start-DistributionListMigration
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [string]$customRoutingDomain=$NULL,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -2221,13 +2223,25 @@ Function Start-DistributionListMigration
         out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
     }
 
-    try {
-        $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+    if ($customRoutingDomain -eq $NULL)
+    {
+        out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
+        try {
+            $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+        }
     }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+    else 
+    {
+        out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+
+        $mailOnMicrosoftComDomain = $customRoutingDomain
     }
+
+
 
     out-logfile -string "Being validating all distribution list members."
     
@@ -4298,25 +4312,51 @@ Function Start-DistributionListMigration
 
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
+
+    if ($customRoutingDomain -eq $NULL)
+    {
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
     
-    do {
-        try {
-            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
-
-            $stopLoop = $TRUE
-        }
-        catch {
-            if ($loopCounter -gt 4)
-            {
-                out-logfile -string $_ -isError:$TRUE
+                $stopLoop = $TRUE
             }
-            else {
-                start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
-
-                $loopCounter = $loopCounter +1
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
             }
-        }
-    } while ($stopLoop -eq $FALSE)
+        } while ($stopLoop -eq $FALSE)
+    }
+    else
+    {
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain
+    
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+    }
+    
+    
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0

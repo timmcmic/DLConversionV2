@@ -3844,26 +3844,6 @@ th {
     #=============================================================================================================================================
     #=============================================================================================================================================
     #=============================================================================================================================================
-
-    <#
-    $functionObject = New-Object PSObject -Property @{
-
-
-        Office365ManagedByCount = 
-        OnPremisesBypassModerationFromSendersOrMembers = 
-        Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
-        OnPremisesGrantSendOnBehalfTo = 
-        Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
-
- 
-
-    
-
-
-
-
-
-        }#>
     
 
     # build the properties and metrics #
