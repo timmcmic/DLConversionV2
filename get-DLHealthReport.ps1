@@ -3769,9 +3769,6 @@ th {
         $htmlSections += $html_members_counts
     }
 
-    $params = @{
-        'PreContent'='<h2>&diams;<a href="https://timmcmic.wordpress.com">link Blog Info</a></h2>'}
-
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
