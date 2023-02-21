@@ -1101,9 +1101,10 @@ Function Convert-Office365DLtoUnifiedGroup
 
     if ($office365DLMembership.count -gt 0)
     {
-
         foreach ($member in $office365DLMembership)
         {
+            out-logfile -string ("Testing Member: "+$member.externalDirectoryObjectID)
+
             if ($member.recipientType -ne "UserMailbox")
             {
                 $errorObject = New-Object PSObject -Property @{
@@ -1126,6 +1127,8 @@ Function Convert-Office365DLtoUnifiedGroup
                     isError=$true
                     isErrorMessage="UNIFIED_GROUP_MIGRATION_MEMBER_NOT_USERMAILBOX:  To convert a distribution list to an Office 365 Unified Group all members must be of userMailbox type.."
                 }
+
+                out-logfile -string $errorObject
 
                 $global:preCreateErrors+=$errorObject
             }
