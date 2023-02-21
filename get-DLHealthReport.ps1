@@ -3824,6 +3824,13 @@ th {
         $htmlSections += $html_members_counts
     }
 
+    $params = @{
+                    'PreContent'='<h2>&diams;<a href="https://timmcmic.wordpress.com">Blog Information</a></h2>'}
+
+    $html_blog = ConvertTo-EnhancedHTMLFragment -InputObject $functionObject @params
+
+    $htmlSections += $html_blog
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
