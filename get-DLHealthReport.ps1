@@ -3769,6 +3769,9 @@ th {
         $htmlSections += $html_members_counts
     }
 
+    $params = @{
+        'PreContent'='<h2>&diams;<a href="https://timmcmic.wordpress.com">link Blog Info</a></h2>'}
+
     if ($htmlSections.count -gt 0)
     {
         $params = @{'CssStyleSheet'=$style;
@@ -3786,26 +3789,6 @@ th {
     #=============================================================================================================================================
     #=============================================================================================================================================
     #=============================================================================================================================================
-
-    <#
-    $functionObject = New-Object PSObject -Property @{
-
-
-        Office365ManagedByCount = 
-        OnPremisesBypassModerationFromSendersOrMembers = 
-        Office365BypassModerationFromSendersOrMembers = $office365BypassModerationFromSendersOrMembers.count
-        OnPremisesGrantSendOnBehalfTo = 
-        Office365GrantSendOnBehalfTo = $office365GrantSendOnBehalfTo.count
-
- 
-
-    
-
-
-
-
-
-        }#>
     
 
     # build the properties and metrics #
