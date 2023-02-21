@@ -3024,7 +3024,7 @@ th {
                             @{n='PresentAzureActiveDirectory';e={$_.isPresentInAzure};css={if ($_.isPresentInAzure -eq "False") { 'red' }}},
                             @{n='PresentExchangeOnline';e={$_.isPresentInExchangeOnline};css={if ($_.isPresentInExchangeOnline -eq "False"){ 'red' }}},
                             @{n='ValidMember';e={$_.isValidMember};css={if ($_.isvalidMember -ne "True") { 'red' }}},
-                            @{n='ErrorMessage';e={$_.ErrorMessage}}
+                            @{n='ErrorMessage';e={'<a href="https://timmcmic.wordpress.com">'+$_.errorMessage+'</a>'}}
             }
 
             $html_members_onPrem_errors = ConvertTo-EnhancedHTMLFragment -InputObject $onPremMemberEvalErrors @params
