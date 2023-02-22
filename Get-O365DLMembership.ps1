@@ -73,7 +73,7 @@
             {
                 Out-LogFile -string "Using Exchange Online to obtain the group membership."
 
-                $functionDLMembership=@(get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP | select-object Identity,Name,Alias,ExternalDirectoryObjectId,EmailAddresses,ExternalEmailAddress,DisplayName,RecipientType,RecipientTypeDetails,ExchangeGuid)
+                $functionDLMembership=@(get-O365DistributionGroupMember -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP | select-object Identity,Name,Alias,ExternalDirectoryObjectId,EmailAddresses,PrimarySMTPAddress,ExternalEmailAddress,DisplayName,RecipientType,RecipientTypeDetails,ExchangeGuid)
                 
                 Out-LogFile -string "Distribution group membership recorded."
             }
