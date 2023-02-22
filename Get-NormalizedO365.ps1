@@ -90,31 +90,16 @@
                         $scriptBlock=[scriptBlock]::create($functionCommand)
 
                         $functionRecipient = invoke-command -scriptBlock $scriptBlock
-                        
-                        if ($functionRecipient.count -gt 0)
+
+                        if ($functionRecipient.count -eq 0)
                         {
-                            out-logfile -string "The attribute to be normalized only contains names.  The name resulted in more than one object being returned via get-recipient."
+                            out-logfile -string "No recipient was found - assume this is a user."
 
-                            foreach ($object in $functionRecipient)
-                            {
-                                $functionObject = New-Object PSObject -Property @{
-                                    DisplayName = $object.displayName
-                                    PrimarySMTPAddressOrUPN = $object.primarySMTPAddress
-                                    ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
-                                    RecipientType = $functionRecipient.recipientType
-                                    RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
-                                    isError=$NULL
-                                    isErrorMessage=$null
-                                    isAmbiguous=$TRUE 
-                                }
-
-                                out-logfile -string $functionObject  
-
-                                $functionReturnArray += $functionObject
-                            }
+                            throw
                         }
-                        else {
-                            out-logfile -string "Only a single object was found - not ambiguous."
+                        else 
+                        {
+                            out-logfile -string "Valid recipient found."
 
                             $functionObject = New-Object PSObject -Property @{
                                 DisplayName = $functionRecipient.displayName
@@ -131,11 +116,12 @@
 
                             $functionReturnArray += $functionObject
                         }
+                        
                     }
                     catch {
 
                         out-logfile -string $_
-                        out-logfile -string "Testing for recipient type failed."
+                        out-logfile -string "Testing for recipient type failed - assume USER."
 
                         try {
 
@@ -143,40 +129,25 @@
 
                             $functionRecipient = get-o365user -identity $member -errorAction STOP
 
-                            if ($functionRecipient.count -gt 0)
+                            if ($functionRecipient.count -eq 0)
                             {
-                                out-logfile -string "Multiple users were found on ambiguous query."
+                                out-logfile -string "Not good - the user could not be located."
 
-                                foreach ($object in $functionRecipient)
-                                {
-                                    $functionObject = New-Object PSObject -Property @{
-                                        DisplayName = $object.DisplayName
-                                        PrimarySMTPAddressOrUPN = $object.UserPrincipalName
-                                        ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
-                                        RecipientType = $functionRecipient.recipientType
-                                        RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
-                                        isError=$NULL
-                                        isErrorMessage=$null
-                                        isAmbiguous=$true
-                                    }
-
-                                    out-logfile -string $functionObject  
-
-                                    $functionReturnArray += $functionObject
-                                }
+                                throw
                             }
-                            else {
-                                out-logfile -string "Only single user was returned / not ambiguous."
-                                
+                            else
+                            {
+                                out-logfile -string "The user was located successfully capturing information."
+
                                 $functionObject = New-Object PSObject -Property @{
-                                    DisplayName = $functionRecipient.DisplayName
-                                    PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
-                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    DisplayName = $object.DisplayName
+                                    PrimarySMTPAddressOrUPN = $object.UserPrincipalName
+                                    ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
                                     RecipientType = $functionRecipient.recipientType
                                     RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
                                     isError=$NULL
                                     isErrorMessage=$null
-                                    isAmbiguous=$false
+                                    isAmbiguous=$true
                                 }
 
                                 out-logfile -string $functionObject  
