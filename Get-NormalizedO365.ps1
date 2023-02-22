@@ -101,6 +101,8 @@
                                     DisplayName = $object.displayName
                                     PrimarySMTPAddressOrUPN = $object.primarySMTPAddress
                                     ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
+                                    RecipientType = $functionRecipient.recipientType
+                                    RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
                                     isError=$NULL
                                     isErrorMessage=$null
                                     isAmbiguous=$TRUE 
@@ -118,6 +120,8 @@
                                 DisplayName = $functionRecipient.displayName
                                 PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
                                 ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                RecipientType = $functionRecipient.recipientType
+                                RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
                                 isError=$NULL
                                 isErrorMessage=$null
                                 isAmbiguous=$false
@@ -149,6 +153,8 @@
                                         DisplayName = $object.DisplayName
                                         PrimarySMTPAddressOrUPN = $object.UserPrincipalName
                                         ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
+                                        RecipientType = $functionRecipient.recipientType
+                                        RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
                                         isError=$NULL
                                         isErrorMessage=$null
                                         isAmbiguous=$true
@@ -166,6 +172,8 @@
                                     DisplayName = $functionRecipient.DisplayName
                                     PrimarySMTPAddressOrUPN = $functionRecipient.UserPrincipalName
                                     ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    RecipientType = $functionRecipient.recipientType
+                                    RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
                                     isError=$NULL
                                     isErrorMessage=$null
                                     isAmbiguous=$false
