@@ -95,6 +95,8 @@
         $functionObjectClassContact = "Contact"
         $functionObjectClassContactOffice365 = "MailContact"
         $functionObjectClassGroup = "Group"
+        $functionObjectClassGroupOffice365Security = "MailUniversalSecurity"
+        $functionObjectClassGroupOffice365Distribution = "MailUniversalDistribution"
         $functionObjectClassDynamic = "msExchDynamicDistributionList"
         $functionCoManagers = "msExchCoManagedByLink"
         $functionManagers = "managedBy"
@@ -350,7 +352,7 @@
                         $global:preCreateErrors+=$member
                     }
                 }
-                elseif ($member.recipientType -eq $functionObjectClassGroup)
+                elseif (($member.recipientType -eq $functionObjectClassGroup) -or ($member.RecipientTYpe -eq $functionObjectClassGroupOffice365Security) -or ($member.RecipientType -eq $functionObjectClassGroupOffice365Distribution))
                 {
                     if (($member.OnPremADAttribute -eq $functionCoManagers) -or ($member.OnPremADAttribute -eq $functionManagers))
                     {
