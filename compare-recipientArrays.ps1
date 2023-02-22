@@ -255,6 +255,22 @@ function compare-recipientArrays
 
                 out-logfile -string $functionPrimarySMTPAddress
             }
+            if ($member.primarySMTPAddress.length -gt 0)
+            {
+                out-logfile -string "Primary SMTP Address is present."
+
+                $functionPrimarySMTPAddress = $member.primarySMTPAddress
+
+                out-logfile -string $functionPrimarySMTPAddress
+            }
+            elseif ($member.primarySMTPAddress -ne $NULL)
+            {
+                out-logfile -string "Primary SMTP Address is present."
+
+                $functionPrimarySMTPAddress = $member.primarySMTPAddress
+
+                out-logfile -string $functionPrimarySMTPAddress
+            }
             elseif ($member.externalEmailAddress -ne $NULL) 
             {
                 out-logfile -string "External email address is present."
