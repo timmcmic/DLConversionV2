@@ -1101,39 +1101,6 @@ Function Convert-Office365DLtoUnifiedGroup
 
     if ($office365DLMembership.count -gt 0)
     {
-        foreach ($member in $office365DLMembership)
-        {
-            out-logfile -string ("Testing Member: "+$member.externalDirectoryObjectID)
-
-            if ($member.recipientType -ne "UserMailbox")
-            {
-                $errorObject = New-Object PSObject -Property @{
-                    Alias = $member.alias
-                    Name = $member.name
-                    PrimarySMTPAddressOrUPN = $member.primarySMTPAddress
-                    GUID = $member.exchangeGUID
-                    RecipientType = $member.RecipientType
-                    ExchangeRecipientTypeDetails = $member.recipientTypeDetails
-                    ExchangeRecipientDisplayType = "N/A"
-                    ExchangeRemoteRecipientType = "N/A"
-                    GroupType = "N/A"
-                    RecipientOrUser = "Recipient"
-                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                    OnPremADAttribute = "N/A"
-                    OnPremADAttributeCommonName = "N/A"
-                    DN = $member.distinguishedName
-                    ParentGroupSMTPAddress = $groupSMTPAddress
-                    isAlreadyMigrated = "N/A"
-                    isError=$true
-                    isErrorMessage="UNIFIED_GROUP_MIGRATION_MEMBER_NOT_USERMAILBOX:  To convert a distribution list to an Office 365 Unified Group all members must be of userMailbox type.."
-                }
-
-                out-logfile -string $errorObject
-
-                $global:preCreateErrors+=$errorObject
-            }
-        }
-
         out-logfile -string "Office 365 DL has membership - begin normalizing..."
         try {
             $exchangeDLMembershipSMTP = get-normalizedO365 -attributeToNormalize $office365DLMembership -errorAction STOP
