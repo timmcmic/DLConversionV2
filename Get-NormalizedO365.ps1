@@ -80,7 +80,8 @@
                 {
                     out-logfile -string ("Testing member: "+$member)
 
-                    try {
+                    try 
+                    {
                         out-logfile -string "Testing for recipient type."
 
                         $functionCommand = "get-o365Recipient -filter {name -eq `"$member`"} -errorAction STOP"
@@ -95,7 +96,37 @@
                         {
                             out-logfile -string "No recipient was found - assume this is a user."
 
-                            throw
+                            try {
+                                $functionRecipient = get-o365user -identity $member -errorAction STOP
+                            }
+                            catch {
+                                out-logfile -string $_
+                                out-logfile -string "Object was not located as either a recipient or a user." -isError:$TRUE
+                            }
+
+                            if ($functionRecipient.count -eq 0)
+                            {
+                                out-logfile -string "Not good - the user could not be located." -isError:$TRUE
+                            }
+                            else
+                            {
+                                out-logfile -string "The user was located successfully capturing information."
+
+                                $functionObject = New-Object PSObject -Property @{
+                                    DisplayName = $functionRecipient.displayName
+                                    PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
+                                    ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)
+                                    RecipientType = $functionRecipient.recipientType
+                                    RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
+                                    isError=$NULL
+                                    isErrorMessage=$null
+                                    isAmbiguous=$false
+                                }
+
+                                out-logfile -string $functionObject  
+
+                                $functionReturnArray += $functionObject
+                            }
                         }
                         else 
                         {
@@ -118,50 +149,15 @@
                         }
                         
                     }
-                    catch {
+                    catch 
+                    {
 
                         out-logfile -string $_
-                        out-logfile -string "Testing for recipient type failed - assume USER."
-
-                        try {
-
-                            out-logfile -string "Testing object for user type."
-
-                            $functionRecipient = get-o365user -identity $member -errorAction STOP
-
-                            if ($functionRecipient.count -eq 0)
-                            {
-                                out-logfile -string "Not good - the user could not be located."
-
-                                throw
-                            }
-                            else
-                            {
-                                out-logfile -string "The user was located successfully capturing information."
-
-                                $functionObject = New-Object PSObject -Property @{
-                                    DisplayName = $object.DisplayName
-                                    PrimarySMTPAddressOrUPN = $object.UserPrincipalName
-                                    ExternalDirectoryObjectID = ("User_"+$object.externalDirectoryObjectID)
-                                    RecipientType = $functionRecipient.recipientType
-                                    RecipientTypeDetails = $functionRecipient.RecipientTypeDetails
-                                    isError=$NULL
-                                    isErrorMessage=$null
-                                    isAmbiguous=$true
-                                }
-
-                                out-logfile -string $functionObject  
-
-                                $functionReturnArray += $functionObject
-                            }
-                        }
-                        catch {
-                            out-logfile -string $_
-                            out-logfile -string "A user or recipient in the group cannot be located." -isError:$TRUE
-                        }
+                        out-logfile -string "Attempting to call get-recipient with filter failed - at minimum should have returned nothing." -isError:$TRUE
                     }
                 }
-                else {
+                else 
+                {
                     out-logfile -string "Member is the organization management built in role group - skip."
                 }
             }
