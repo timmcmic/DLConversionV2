@@ -93,6 +93,7 @@
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
         $functionObjectClassContact = "Contact"
+        $functionObjectClassContactOffice365 = "MailContact"
         $functionObjectClassGroup = "Group"
         $functionObjectClassDynamic = "msExchDynamicDistributionList"
         $functionCoManagers = "msExchCoManagedByLink"
@@ -328,7 +329,7 @@
                         $global:preCreateErrors+=$member
                     }
                 }
-                elseif ($member.recipientType -eq $functionObjectClassContact)
+                elseif (($member.recipientType -eq $functionObjectClassContact) -or ($member.RecipientType -eq $functionObjectClassContactOffice365))
                 {
                     if (($member.OnPremADAttribute -eq $functionCoManagers) -or ($member.OnPremADAttribute -eq $functionManagers))
                     {
