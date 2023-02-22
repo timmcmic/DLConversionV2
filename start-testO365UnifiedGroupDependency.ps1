@@ -98,6 +98,7 @@
         $functionObjectClassGroupOffice365Security = "MailUniversalSecurityGroup"
         $functionObjectClassGroupOffice365Distribution = "MailUniversalDistributionGroup"
         $functionObjectClassDynamic = "msExchDynamicDistributionList"
+        $functionObjectClassDynamicOffice365 = "DynamicDistributionGroup"
         $functionCoManagers = "msExchCoManagedByLink"
         $functionManagers = "managedBy"
         $functionFirstPassParameterSetName = "FirstPass"
@@ -373,7 +374,7 @@
                         $global:preCreateErrors+=$member
                     }
                 }
-                elseif ($member.recipientType -eq $functionObjectClassDynamic)
+                elseif (($member.recipientType -eq $functionObjectClassDynamic) -or ($member.recipientType -eq $functionObjectClassDynamicOffice365))
                 {
                     out-logfile -string "Member is a dynamic group group - record as error."
 
