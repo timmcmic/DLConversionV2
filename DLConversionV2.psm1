@@ -4400,6 +4400,162 @@ Function Start-DistributionListMigration
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
+    #Moving the creation of hybrid mail flow here to ensure that mail routing happens at the next ad replication cycle.
+
+    if ($enableHybridMailflow -eq $TRUE)
+    {
+        $commandEndTime = get-date
+
+        if (($commandEndTime - $commandStartTime).totalHours -gt $kerberosRunTime)
+        {
+            out-logfile -string "Re-importing the exchange on premises powershell session due to kerberos timeout."
+
+            session-toImport
+        }
+
+        #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
+
+        $isTestError="No"
+
+        out-logfile -string "The administrator has enabled hybrid mail flow."
+
+        if ($global:threadNumber -eq 1)
+        {
+            out-logfile -string "Enable mail contact:  Thread 1."
+
+            try{
+                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
+            }
+            catch{
+                out-logfile -string $_
+                $isTestError="Yes"
+                $errorMessageDetail=$_
+            }
+        }
+        elseif($global:threadNumber -gt 1)
+        {
+            out-logfile -string "Enable mail contact:  Not thread 1 delay"
+
+            start-sleepProgress -sleepstring "Sleep before attempting enable mail contact." -sleepSeconds ($global:threadNumber * $createMailContactDelay)
+
+            try{
+                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
+            }
+            catch{
+                out-logfile -string $_
+                $isTestError="Yes"
+                $errorMessageDetail=$_
+            }
+        }
+
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
+                errorMessaegDetail = $errorMessageDetail
+            }
+
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
+
+        #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
+
+        try{
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+        }
+        catch{
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+        out-logfile -string $routingContactConfiguration
+        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport (($xmlFiles.routingContactXML.value)+"-PostMailEnabledContact")
+
+        #The routing contact configuration has been updated and retained.
+        #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
+
+        out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
+
+        try{
+            $isTestError="No"
+
+            #It is possible that we may need to support a distribution list that is missing attributes.
+            #The enable mail dynamic has a retry flag - which is designed to create the DL post migration if necessary.
+            #We're going to overload this here - if any of the attributes necessary are set to NULL - then pass in the O365 config and the retry flag.
+            #This is what the enable post migration does - bases this off the O365 object.
+
+            if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.mail -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
+            {
+                out-logfile -string "Using Office 365 attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE
+            }
+            else
+            {
+                out-logfile -string "Using on premises attributes for the mail dynamic group."
+                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+            }
+        }
+        catch{
+            out-logfile -string $_
+            $isTestErrorDetail = $_
+            $isTestError="Yes"
+        }
+
+        if ($isTestError -eq "Yes")
+        {
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
+                erroMessageDetail = $isTestErrorDetail
+            }
+
+            out-logfile -string $isErrorObject
+
+            $generalErrors+=$isErrorObject
+        }
+
+        [boolean]$stopLoop=$FALSE
+        [int]$loopCounter=0
+
+        do {
+            try{
+                $routingDynamicGroupConfig = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+
+                $stopLoop = $TRUE
+            }
+            catch{
+                if($loopCounter -gt 10)
+                {
+                    out-logfile -string "Unable to obtain the routing group after multiple tries."
+
+                    $isTestErrorDetail = $_
+
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "Unable to obtain the routing group after multiple tries."
+                        erroMessageDetail = $isTestErrorDetail
+                    }
+        
+                    out-logfile -string $isErrorObject
+        
+                    $generalErrors+=$isErrorObject
+
+                    $stopLoop=$TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Unable to obtain the dynamic group - retrying..."
+                    start-sleepProgress -sleepstring "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
+
+                    $loopCounter = $loopCounter+1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+
+        out-logfile -string $routingDynamicGroupConfig
+        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
+    }
+
+
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
 
@@ -5348,159 +5504,6 @@ Function Start-DistributionListMigration
     $telemetryReplaceOffice365Dependency = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time elapsed replacing Office 365 dependencies: "+$telemetryReplaceOffice365Dependency.toString())
-
-    if ($enableHybridMailflow -eq $TRUE)
-    {
-        $commandEndTime = get-date
-
-        if (($commandEndTime - $commandStartTime).totalHours -gt $kerberosRunTime)
-        {
-            out-logfile -string "Re-importing the exchange on premises powershell session due to kerberos timeout."
-
-            session-toImport
-        }
-
-        #The first step is to upgrade the contact to a full mail contact and remove the target address from proxy addresses.
-
-        $isTestError="No"
-
-        out-logfile -string "The administrator has enabled hybrid mail flow."
-
-        if ($global:threadNumber -eq 1)
-        {
-            out-logfile -string "Enable mail contact:  Thread 1."
-
-            try{
-                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
-            }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
-                $errorMessageDetail=$_
-            }
-        }
-        elseif($global:threadNumber -gt 1)
-        {
-            out-logfile -string "Enable mail contact:  Not thread 1 delay"
-
-            start-sleepProgress -sleepstring "Sleep before attempting enable mail contact." -sleepSeconds ($global:threadNumber * $createMailContactDelay)
-
-            try{
-                $isTestError=Enable-MailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingContactXML.value
-            }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
-                $errorMessageDetail=$_
-            }
-        }
-
-        if ($isTestError -eq "Yes")
-        {
-            $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
-                errorMessaegDetail = $errorMessageDetail
-            }
-
-            out-logfile -string $isErrorObject
-
-            $generalErrors+=$isErrorObject
-        }
-
-        #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
-
-        try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch{
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        out-logfile -string $routingContactConfiguration
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport (($xmlFiles.routingContactXML.value)+"-PostMailEnabledContact")
-
-        #The routing contact configuration has been updated and retained.
-        #Now create the dynamic distribution group.  This gives us our address book object and our proxy addressed object that cannot collide with the previous object migrated.
-
-        out-logfile -string "Enabling the dynamic distribution group to complete the mail routing scenario."
-
-        try{
-            $isTestError="No"
-
-            #It is possible that we may need to support a distribution list that is missing attributes.
-            #The enable mail dynamic has a retry flag - which is designed to create the DL post migration if necessary.
-            #We're going to overload this here - if any of the attributes necessary are set to NULL - then pass in the O365 config and the retry flag.
-            #This is what the enable post migration does - bases this off the O365 object.
-
-            if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.mail -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
-            {
-                out-logfile -string "Using Office 365 attributes for the mail dynamic group."
-                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE
-            }
-            else
-            {
-                out-logfile -string "Using on premises attributes for the mail dynamic group."
-                $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
-            }
-        }
-        catch{
-            out-logfile -string $_
-            $isTestErrorDetail = $_
-            $isTestError="Yes"
-        }
-
-        if ($isTestError -eq "Yes")
-        {
-            $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to create the mail dynamic distribution group to service hybrid mail routing.  Manually create the dynamic distribution group."
-                erroMessageDetail = $isTestErrorDetail
-            }
-
-            out-logfile -string $isErrorObject
-
-            $generalErrors+=$isErrorObject
-        }
-
-        [boolean]$stopLoop=$FALSE
-        [int]$loopCounter=0
-
-        do {
-            try{
-                $routingDynamicGroupConfig = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
-
-                $stopLoop = $TRUE
-            }
-            catch{
-                if($loopCounter -gt 10)
-                {
-                    out-logfile -string "Unable to obtain the routing group after multiple tries."
-
-                    $isTestErrorDetail = $_
-
-                    $isErrorObject = new-Object psObject -property @{
-                        errorMessage = "Unable to obtain the routing group after multiple tries."
-                        erroMessageDetail = $isTestErrorDetail
-                    }
-        
-                    out-logfile -string $isErrorObject
-        
-                    $generalErrors+=$isErrorObject
-
-                    $stopLoop=$TRUE
-                }
-                else 
-                {
-                    out-logfile -string "Unable to obtain the dynamic group - retrying..."
-                    start-sleepProgress -sleepstring "Unable to obtain the dynamic group - retrying..." -sleepSeconds 10
-
-                    $loopCounter = $loopCounter+1
-                }
-            }
-        } while ($stopLoop -eq $FALSE)
-
-        out-logfile -string $routingDynamicGroupConfig
-        out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
-    }
 
     #At this time the group has been migrated.
     #All on premises settings have been reconciled.
