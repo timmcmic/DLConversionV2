@@ -3853,7 +3853,7 @@ Function Start-DistributionListMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.()
     
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
         start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
@@ -4419,7 +4419,7 @@ Function Start-DistributionListMigration
 
         out-logfile -string "The administrator has enabled hybrid mail flow."
 
-        if ($global:threadNumber -eq 1)
+        if (($global:threadNumber -eq 1) -or ($global:threadNumber -eq 0))
         {
             out-logfile -string "Enable mail contact:  Thread 1."
 
@@ -5641,7 +5641,7 @@ Function Start-DistributionListMigration
 
    #Replicate domain controllers so that the change is received as soon as possible.()
    
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
        start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
