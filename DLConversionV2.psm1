@@ -2223,7 +2223,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
     }
 
-    if ($customRoutingDomain -eq $NULL)
+    if ($customRoutingDomain -eq "")
     {
         out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
         try {
