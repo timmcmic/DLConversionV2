@@ -126,7 +126,10 @@
             [Parameter(Mandatory = $true)]
             [string]$logFolderPath,
             [Parameter(Mandatory = $true)]
-            [string]$OU = "NotSet"
+            [string]$OU = "NotSet",
+            #Define other optional paramters
+            [Parameter(Mandatory = $true)]
+            [string]$customRoutingDomain = "",
         )
 
         #Declare function variables.
@@ -503,7 +506,7 @@
             try{
                 out-logfile -string "Creating the routing contact that is missing."
 
-                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -errorAction STOP
+                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -errorAction STOP
 
                 out-logfile -string "The routing contact was created successfully."
             }
