@@ -112,6 +112,8 @@
 
         if ($isRetry -eq $FALSE)
         {
+            out-logfile -string ("Address used for target address verification: "+$routingContactConfig.targetAddress)
+
             foreach ($address in $originalDLConfiguration.proxyAddresses)
             {
                 out-logfile -string ("Adding proxy address = "+$address)
@@ -119,9 +121,10 @@
                 #If the address is not a mail.onmicrosoft.com address - stamp it.
                 #Otherwise skip it - this is because the address is stamped on the mail contact already.
 
-                if (!$address.contains($routingContactConfig.targetAddress))
+                if ($address -ne $routingContactConfig.targetAddress)
                 {
                     out-logfile -string "Address is not a mail.onmicrosoft.com address."
+                    out-logfile -string $address
 
                     try{
                         set-dynamicdistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$address} -domainController $globalCatalogServer
