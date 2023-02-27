@@ -118,7 +118,7 @@
 
         out-logfile -string ("Function OU = "+$functionOU)
 
-        if ($customRoutingDomain -ne "")
+        if ($customRoutingDomain -eq "")
         {
             foreach ($address in $office365DLConfiguration.emailAddresses)
             {
