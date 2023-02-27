@@ -4313,7 +4313,7 @@ Function Start-DistributionListMigration
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
 
-    if ($customRoutingDomain -ne "")
+    if ($customRoutingDomain -eq "")
     {
         out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
