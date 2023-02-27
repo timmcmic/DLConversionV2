@@ -4465,7 +4465,7 @@ Function Start-DistributionListMigration
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $routingContactConfiguration.distinguishedName -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
