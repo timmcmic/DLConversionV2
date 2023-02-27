@@ -4313,8 +4313,9 @@ Function Start-DistributionListMigration
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
 
-    if ($customRoutingDomain -eq $NULL)
+    if ($customRoutingDomain -ne "")
     {
+        out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
             try {
                 new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
@@ -4336,6 +4337,7 @@ Function Start-DistributionListMigration
     }
     else
     {
+        out-logfile -string "Calling new-routingContact with custom domain."
         do {
             try {
                 new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain
