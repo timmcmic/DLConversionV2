@@ -119,7 +119,7 @@
                 #If the address is not a mail.onmicrosoft.com address - stamp it.
                 #Otherwise skip it - this is because the address is stamped on the mail contact already.
 
-                if (!$address.contains("mail.onmicrosoft.com"))
+                if (!$address.contains($routingContactConfig.targetAddress))
                 {
                     out-logfile -string "Address is not a mail.onmicrosoft.com address."
 
