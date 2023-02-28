@@ -2137,12 +2137,22 @@ Function Start-Office365GroupMigration
         out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
     }
 
-    try {
-        $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+    if ($customRoutingDomain -eq "")
+    {
+        out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
+        try {
+            $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+        }
     }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+    else 
+    {
+        out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+
+        $mailOnMicrosoftComDomain = $customRoutingDomain
     }
 
     out-logfile -string "Being validating all distribution list members."
