@@ -313,6 +313,8 @@ Function Start-Office365GroupMigration
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [string]$customRoutingDomain="",
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -2135,12 +2137,22 @@ Function Start-Office365GroupMigration
         out-logfile -string "Unable to test outbound connectors for centralized mail flow" -isError:$TRUE
     }
 
-    try {
-        $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+    if ($customRoutingDomain -eq "")
+    {
+        out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
+        try {
+            $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+        }
     }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+    else 
+    {
+        out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+
+        $mailOnMicrosoftComDomain = $customRoutingDomain
     }
 
     out-logfile -string "Being validating all distribution list members."
@@ -4278,24 +4290,50 @@ Function Start-Office365GroupMigration
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
     
-    do {
-        try {
-            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
-
-            $stopLoop = $TRUE
-        }
-        catch {
-            if ($loopCounter -gt 4)
-            {
-                out-logfile -string $_ -isError:$TRUE
+    if ($customRoutingDomain -eq "")
+    {
+        out-logfile -string "Calling new-routing contact without custom routing domain."
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
+    
+                $stopLoop = $TRUE
             }
-            else {
-                start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
-
-                $loopCounter = $loopCounter +1
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
             }
-        }
-    } while ($stopLoop -eq $FALSE)
+        } while ($stopLoop -eq $FALSE)
+    }
+    else
+    {
+        out-logfile -string "Calling new-routingContact with custom domain."
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain
+    
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+    }
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0
@@ -4336,6 +4374,7 @@ Function Start-Office365GroupMigration
         }
     } while ($stopLoop -eq $FALSE)
 
+    
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
@@ -5349,7 +5388,7 @@ Function Start-Office365GroupMigration
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $routingContactConfiguration.distinguishedName -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_ -isError:$TRUE

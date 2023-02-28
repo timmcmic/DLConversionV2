@@ -127,49 +127,30 @@
 
             out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 
-            if ($mailOnMicrosoftComDomain -contains "mail.onmicrosoft.com")
+            foreach ($address in $originalDLConfiguration.proxyAddresses)
             {
-                foreach ($address in $originalDLConfiguration.proxyAddresses)
+                if ($address.contains($mailOnMicrosoftComDomain))
                 {
-                    if ($address.contains("mail.onmicrosoft.com"))
-                    {
-                        out-logfile -string ("Hybrid remote routing address found.")
-                        out-logfile -string $address
-                        $routingAddressIsPresent=$TRUE
-                    }
-
+                    out-logfile -string ("Hybrid remote routing address found.")
                     out-logfile -string $address
-                    $functionEmailAddresses+=$address.tostring()
+                    $routingAddressIsPresent=$TRUE
                 }
 
-                foreach ($address in $office365DLConfiguration.emailAddresses)
-                {
-                    if ($address.contains("mail.onmicrosoft.com"))
-                    {
-                        out-logfile -string ("Hybrid remote routing address found.")
-                        out-logfile -string $address
-                        $routingAddressIsPresent=$TRUE
-                    }
-
-                    out-logfile -string $address
-                    $functionEmailAddresses+=$address.tostring()
-                }
+                out-logfile -string $address
+                $functionEmailAddresses+=$address.tostring()
             }
-            else
+
+            foreach ($address in $office365DLConfiguration.emailAddresses)
             {
-                foreach ($address in $originalDLConfiguration.proxyAddresses)
+                if ($address.contains($mailOnMicrosoftComDomain))
                 {
+                    out-logfile -string ("Hybrid remote routing address found.")
                     out-logfile -string $address
-                    $functionEmailAddresses+=$address.tostring()
+                    $routingAddressIsPresent=$TRUE
                 }
 
-                foreach ($address in $office365DLConfiguration.emailAddresses)
-                {
-                    out-logfile -string $address
-                    $functionEmailAddresses+=$address.tostring()
-                }
-                
-                $routingAddressIsPresent = $FALSE
+                out-logfile -string $address
+                $functionEmailAddresses+=$address.tostring()
             }
 
             $functionEmailAddresses = $functionEmailAddresses | select-object -unique

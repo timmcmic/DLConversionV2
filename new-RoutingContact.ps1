@@ -59,7 +59,7 @@
             [Parameter(Mandatory = $false)]
             [string]$isRetryOU = $false,
             [Parameter(Mandatory = $false)]
-            [string]$customRoutingDomain = $NULL
+            [string]$customRoutingDomain = ""
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -118,7 +118,7 @@
 
         out-logfile -string ("Function OU = "+$functionOU)
 
-        if ($customRoutingDomain -eq $NULL)
+        if ($customRoutingDomain -eq "")
         {
             foreach ($address in $office365DLConfiguration.emailAddresses)
             {

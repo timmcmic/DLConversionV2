@@ -4313,8 +4313,9 @@ Function Start-DistributionListMigration
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
 
-    if ($customRoutingDomain -eq $NULL)
+    if ($customRoutingDomain -eq "")
     {
+        out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
             try {
                 new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential
@@ -4336,6 +4337,7 @@ Function Start-DistributionListMigration
     }
     else
     {
+        out-logfile -string "Calling new-routingContact with custom domain."
         do {
             try {
                 new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain
@@ -4463,7 +4465,7 @@ Function Start-DistributionListMigration
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
 
         try{
-            $routingContactConfiguration = Get-ADObjectConfiguration -dn $tempDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+            $routingContactConfiguration = Get-ADObjectConfiguration -dn $routingContactConfiguration.distinguishedName -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
         }
         catch{
             out-logfile -string $_ -isError:$TRUE
