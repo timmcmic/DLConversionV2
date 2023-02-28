@@ -128,7 +128,7 @@
             [Parameter(Mandatory = $true)]
             [string]$OU = "NotSet",
             #Define other optional paramters
-            [Parameter(Mandatory = $true)]
+            [Parameter(Mandatory = $false)]
             [string]$customRoutingDomain = ""
         )
 
