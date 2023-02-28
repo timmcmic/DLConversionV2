@@ -313,6 +313,8 @@ Function Start-Office365GroupMigration
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
         [boolean]$allowNonSyncedGroup=$FALSE,
+        [Parameter(Mandatory=$false)]
+        [string]$customRoutingDomain="",
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
