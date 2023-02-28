@@ -4334,6 +4334,46 @@ Function Start-Office365GroupMigration
             }
         } while ($stopLoop -eq $FALSE)
     }
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        try {
+            $tempMailArray = $originalDLConfiguration.mail.split("@")
+
+            foreach ($member in $tempMailArray)
+            {
+                out-logfile -string ("Temp Mail Address Member: "+$member)
+            }
+
+            $tempMailAddress = $tempMailArray[0]+"-MigratedByScript"
+
+            out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+            $tempMailAddress = $tempMailAddress+"@"+$tempMailArray[1]
+
+            out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+            $stopLoop=$TRUE
+        }
+        catch 
+        {
+            if ($loopCounter -gt 5)
+            {
+                out-logfile -string "Unable to obtain routing contact information post creation."
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to obtain routing contact after creation - sleep try again." -sleepSeconds 10
+                $loopCounter = $loopCounter + 1                
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
     
     out-logfile -string $routingContactConfiguration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
