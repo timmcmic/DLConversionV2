@@ -127,9 +127,11 @@
 
             out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
 
+            out-logfile -string "Resetting all SMTP addresses on the object to match on premises."
+
             foreach ($address in $originalDLConfiguration.proxyAddresses)
             {
-                if ($address.contains("mail.onmicrosoft.com"))
+                if ($address.contains($mailOnMicrosoftComDomain))
                 {
                     out-logfile -string ("Hybrid remote routing address found.")
                     out-logfile -string $address
@@ -142,7 +144,7 @@
 
             foreach ($address in $office365DLConfiguration.emailAddresses)
             {
-                if ($address.contains("mail.onmicrosoft.com"))
+                if ($address.contains($mailOnMicrosoftComDomain))
                 {
                     out-logfile -string ("Hybrid remote routing address found.")
                     out-logfile -string $address
