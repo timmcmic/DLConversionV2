@@ -460,6 +460,24 @@
             out-logfile -string "The distribution list is directory synchronized - this function may only run on cloud only groups." -isError:$TRUE    
         }
 
+        if ($customRoutingDomain -eq "")
+        {
+            out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
+            try {
+                $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+            }
+            catch {
+                out-logfile -string $_
+                out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+            }
+        }
+        else 
+        {
+            out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+
+            $mailOnMicrosoftComDomain = $customRoutingDomain
+        }
+
         #At this time test to ensure the routing contact is present.
 
         if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
