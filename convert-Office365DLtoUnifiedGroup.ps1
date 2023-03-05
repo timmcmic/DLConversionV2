@@ -765,6 +765,18 @@ Function Convert-Office365DLtoUnifiedGroup
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
 
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
+
+   $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
    #Create the azure ad connection
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
