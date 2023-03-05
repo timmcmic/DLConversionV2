@@ -423,6 +423,9 @@ Function Convert-Office365DLtoUnifiedGroup
     $coreVariables = @{ 
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
         azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
+        msGraphAuthenticationModuleName = @{ "Value" = "Microsoft.Graph.Authentication" ; "Description" = "Static ms graph powershell name authentication" }
+        msGraphUsersModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
+        msGraphGroupsModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
     }
 
