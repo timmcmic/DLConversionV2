@@ -353,6 +353,10 @@ Function get-DLHealthReport
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"

@@ -200,6 +200,10 @@ Function start-MultipleTestPreMigrations
 
     #Initialize telemetry collection.
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversion"
 

@@ -180,6 +180,10 @@ Function Test-PreMigrationO365Group
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
@@ -191,11 +195,6 @@ Function Test-PreMigrationO365Group
     {
         start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
     }
-
-    #Initialize telemetry collection.
-
-    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
-    $traceModuleName = "DLConversion"
 
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
