@@ -718,6 +718,10 @@ Function Convert-Office365DLtoUnifiedGroup
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+
     #exit #Debug exit.
 
     #Evaluate if administrators have selected to retain Office 365 permissions from files.

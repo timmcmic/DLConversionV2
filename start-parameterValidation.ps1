@@ -93,7 +93,17 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
             [AllowNull()]
-            $threadCount=0
+            $threadCount=0,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphCertificateThumbprint,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphTenantID,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphApplicationID
+            
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -111,6 +121,7 @@
         $azureADParameterSetName = "AzureAD"
         $azureADParameterSetNameMulti = "AzureADMulti"
         $azureADParameterSetNameCertAuth = "AzureCertAuth"
+        $msGraphParameterSetNameCertAuth = "MSGraphCertAuth"
         $doNoSyncOUParameterSetName = "NoSyncOU"
         $hybridMailFlowParameterSetName = "HybridMailFlow"
         $activeDirectoryParameterSetName = "ActiveDirectory"

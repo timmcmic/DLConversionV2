@@ -446,6 +446,10 @@ Function Start-MultipleMachineDistributionListMigration
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+
     #Validate that an OU was specified <if> retain group is not set to true.
 
     Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."

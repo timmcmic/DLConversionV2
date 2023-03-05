@@ -903,7 +903,6 @@ Function Start-Office365GroupMigration
     {
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
-
     
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -1016,6 +1015,10 @@ Function Start-Office365GroupMigration
     out-logfile -string "Validation all components available for AzureAD Cert Authentication"
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
 
     #exit #Debug exit.
 
