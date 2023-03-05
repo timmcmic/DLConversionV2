@@ -629,6 +629,8 @@ Function get-DLHealthReport
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
+    $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDlMembership = $NULL
 
     #Create arrays to track the health objects that will be converted in the reprot.
 

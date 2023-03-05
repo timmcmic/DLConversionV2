@@ -522,6 +522,8 @@ Function Convert-Office365DLtoUnifiedGroup
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
+    $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembership = @()
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
