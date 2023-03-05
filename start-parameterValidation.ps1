@@ -225,7 +225,7 @@
             }
         }
 
-        if ($functionParamterSetName -eq $msGraphParameterSetNameCertAuth)
+        if ($functionParameterSetName -eq $msGraphParameterSetNameCertAuth)
         {
             if (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -eq ""))
             {
