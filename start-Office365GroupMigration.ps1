@@ -376,6 +376,9 @@ Function Start-Office365GroupMigration
     $telemetryDLConversionV2Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
     $telemetryAzureADVersion = $NULL
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
     $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
     $telemetryStartTime = get-universalDateTime
@@ -5832,6 +5835,9 @@ Function Start-Office365GroupMigration
         DLConversionV2Command = $telemetryEventName
         DLConversionV2Version = $telemetryDLConversionV2Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        MSGraphAuthentication = $telemetryMSGraphAuthentication
+        MSGraphUsers = $telemetryMSGraphUsers
+        MSGraphGroups = $telemetryMSGraphGroups
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime
