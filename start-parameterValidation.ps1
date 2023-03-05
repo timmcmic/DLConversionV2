@@ -225,6 +225,30 @@
             }
         }
 
+        if ($functionParamterSetName -eq $msGraphParameterSetNameCertAuth)
+        {
+            if (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -eq ""))
+            {
+                out-logfile -string "The msGraph tenant ID and msGraph App ID are required when using certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -ne "") -and ($msGraphApplicationID -eq ""))
+            {
+                out-logfile -string "The msGraph app id is required to use certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -ne ""))
+            {
+                out-logfile -string "The msGraph tenant ID is required to use certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -eq "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -ne ""))
+            {
+                out-logfile -string "No componets of msGraph Cert Authentication were provided - this is not necessarily an issue."
+            }
+            else 
+            {
+                out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+            }
+        }
+
         if ($functionParameterSetName -eq $azureADParameterSetName)
         {
             if (($azureADCredential -ne $NULL) -and ($azureCertificateThumbprint -ne ""))
