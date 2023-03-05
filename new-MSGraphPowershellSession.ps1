@@ -115,7 +115,7 @@
             {
                 out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
 
-                connect-msGraphAD -certificateThumbPrint $msGraphCertificateThumbPrint -applicationID $msGraphApplicationID -tenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName
+                connect-mgGraph -certificateThumbprint $msGraphCertificateThumbPrint -ClientId $msGraphApplicationID -tenantID $msGraphTenantID -environment $msGraphEnvironmentName
             } 
             catch 
             {
