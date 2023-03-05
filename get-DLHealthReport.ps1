@@ -742,6 +742,11 @@ Function get-DLHealthReport
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
+
     if ($exchangeOnlineCredential -ne $null)
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())

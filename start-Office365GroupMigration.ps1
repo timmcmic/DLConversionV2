@@ -904,6 +904,11 @@ Function Start-Office365GroupMigration
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
+
     if ($aadConnectCredential -ne $null)
     {
         Out-LogFile -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())

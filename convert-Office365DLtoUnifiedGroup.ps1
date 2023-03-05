@@ -650,6 +650,10 @@ Function Convert-Office365DLtoUnifiedGroup
     {
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
+    
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
 
     if ($exchangeOnlineCredential -ne $null)
     {
