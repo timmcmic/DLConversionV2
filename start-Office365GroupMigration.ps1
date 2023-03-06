@@ -1527,7 +1527,7 @@ Function Start-Office365GroupMigration
     if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
     {
         try {
-            $msGraphDLMembership = get-msGraphDLMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
@@ -1541,7 +1541,6 @@ Function Start-Office365GroupMigration
 
         out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
     }
-
 
 
     Out-LogFile -string "********************************************************************************"
