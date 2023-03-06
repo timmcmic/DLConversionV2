@@ -51,7 +51,7 @@
         out-logfile -string "Attempting to obtain the MSgraph Group membersip."
 
         try {
-            $functionDLMembership = get-mgGroupMember -groupID $groupobjectID -all -errorAction STOP
+            $functionDLMembership = get-mgGroupMember -groupID $groupObjectID -all -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain the azure group membership."
