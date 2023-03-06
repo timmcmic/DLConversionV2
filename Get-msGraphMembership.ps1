@@ -43,7 +43,7 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-AZUREADMEMBERSHIP"
+        Out-LogFile -string "BEGIN GET-msGraphMembership"
         Out-LogFile -string "********************************************************************************"
 
         #Get the recipient using the exchange online powershell session.
@@ -67,7 +67,7 @@
             out-logfile -string "No Azure AD Group members in the specified group."
         }
         
-        Out-LogFile -string "END GET-AZUREADMEMBERSHIP"
+        Out-LogFile -string "END GET-MSGRAPHMEMBERSHIP"
         Out-LogFile -string "********************************************************************************"
         
         #Return the membership to the caller.
