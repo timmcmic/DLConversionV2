@@ -285,7 +285,7 @@ function compare-recipientArrays
                 out-logfile -string $functionAzureObject
                 out-logfile -string $functionAzureObject.AdditionalProperties
 
-                if ($functionAzureObject.AdditionalProperties.OnPremisesSecurityIdentifier -ne $NULL)
+                if ($functionAzureObject.AdditionalProperties.'@odata.type' -eq "#Microsoft.Graph.Group")
                 {
                     out-logfile -string "Determined that the azure object was on premises security principal."
 
@@ -294,7 +294,7 @@ function compare-recipientArrays
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$functionAzureObject.OnPremisesSecurityIdentifier
+                        ObjectSID =$functionAzureObject.additionalProperties.OnPremisesSecurityIdentifier
                         isPresentOnPremises = "False"
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "Source"
