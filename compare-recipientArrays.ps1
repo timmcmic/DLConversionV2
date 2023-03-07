@@ -283,6 +283,7 @@ function compare-recipientArrays
                 $functionAzureObject = $azureDataByObjectID[$member.externalDirectoryObjectID]
 
                 out-logfile -string $functionAzureObject
+                out-logfile -string $functionAzureObject.AdditionalProperties
 
                 if ($functionAzureObject.AdditionalProperties.OnPremisesSecurityIdentifier -ne $NULL)
                 {
