@@ -2701,7 +2701,7 @@ Function get-DLHealthReport
         out-logfile -string "Beginning list membership comparison."
 
     try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
+        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $msgraphDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
