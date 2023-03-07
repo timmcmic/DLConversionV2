@@ -70,19 +70,19 @@ function compare-recipientArrays
 
         foreach ($azureObject in $azureData)
         {
-            out-logfile -string ("Azure Data Object ID: "+$azureObject.objectID)
-            $azureDataByObjectId.Add($azureObject.ObjectID, $azureObject)
+            out-logfile -string ("Azure Data Object ID: "+$azureObject.ID)
+            $azureDataByObjectId.Add($azureObject.ID, $azureObject)
 
-            if ($azureObject.onPremisesSecurityIdentifier -ne $NULL)
+            if ($azureObject.AdditionalProperties.onPremisesSecurityIdentifier -ne $NULL)
             {
-                out-logfile -string ("Azure Data Object SID: "+$azureObject.onPremisesSecurityIdentifier)
-                $azureDataBySID.Add($azureObject.onPremisesSecurityIdentifier, $azureObject)
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.AdditionalProperties.onPremisesSecurityIdentifier)
+                $azureDataBySID.Add($azureObject.AdditionalProperties.onPremisesSecurityIdentifier, $azureObject)
             }
 
-            if ($azureObject.Mail -ne $NULL)
+            if ($azureObject.AdditionalProperties.Mail -ne $NULL)
             {
-                out-logfile -string ("Azure Data Object SID: "+$azureObject.Mail)
-                $azureDataByMail.Add($azureObject.mail, $azureObject)
+                out-logfile -string ("Azure Data Object SID: "+$azureObject.AdditionalProperties.Mail)
+                $azureDataByMail.Add($azureObject.AdditionalProperties.mail, $azureObject)
             }
         }
     }
