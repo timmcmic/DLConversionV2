@@ -1269,6 +1269,8 @@ Function get-DLHealthReport
         $azureADDLMembership = @()
     }
 
+    
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"

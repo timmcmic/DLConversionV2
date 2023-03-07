@@ -1573,6 +1573,9 @@ Function Start-DistributionListMigration
 
         out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
     }
+    else {
+        $msGraphDLMembership=@()
+    }
 
     out-logfile -string "Recording Azure AD DL membership."
 
