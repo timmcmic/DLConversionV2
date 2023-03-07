@@ -294,7 +294,7 @@ function compare-recipientArrays
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$functionAzureObject.additionalProperties.OnPremisesSecurityIdentifier
+                        ObjectSID =$functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier
                         isPresentOnPremises = "False"
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "Source"
