@@ -1269,7 +1269,51 @@ Function get-DLHealthReport
         $azureADDLMembership = @()
     }
 
-    
+    out-logfile -string "Capture the original Graph AD distribution list informaiton"
+
+    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbpring -ne ""))
+    {
+        try{
+            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+        }
+    }
+
+    if ($msGraphDLConfiguration -ne $NULL)
+    {
+        out-logfile -string $msGraphDlConfiguration
+
+        out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
+    }
+
+    out-logfile -string "Recording Graph DL membership."
+
+    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
+    {
+        try {
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to obtain Azure AD DL Membership."
+            out-logfile -string $_
+        }
+    }
+
+    if ($msGraphDLMembership -ne $NULL)
+    {
+        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+    }
+    else {
+        $msGraphDLMembership = @()
+    }
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
