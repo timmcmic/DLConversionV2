@@ -284,7 +284,7 @@ function compare-recipientArrays
 
                 out-logfile -string $functionAzureObject
 
-                if ($functionAzureObject.OnPremisesSecurityIdentifier -ne $NULL)
+                if ($functionAzureObject.AdditionalProperties.OnPremisesSecurityIdentifier -ne $NULL)
                 {
                     out-logfile -string "Determined that the azure object was on premises security principal."
 
