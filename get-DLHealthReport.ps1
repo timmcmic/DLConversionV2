@@ -1271,7 +1271,7 @@ Function get-DLHealthReport
 
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
 
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbpring -ne ""))
+    if ($msGraphCertificateThumbpring -ne "")
     {
         try{
             $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
@@ -1293,7 +1293,7 @@ Function get-DLHealthReport
 
     out-logfile -string "Recording Graph DL membership."
 
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
+    if ($msGraphCertificateThumbprint -ne "")
     {
         try {
             $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
