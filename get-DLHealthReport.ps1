@@ -2711,7 +2711,7 @@ Function get-DLHealthReport
 
     try
     {
-        $office365ProxyAddressesEval = @(compare-recipientArrays -onPremData $originalDLConfiguration.proxyAddresses -azureData $azureADDlConfiguration.proxyAddresses -Office365Data $office365DLConfiguration.emailAddresses -isProxyTest:$TRUE -errorAction STOP)
+        $office365ProxyAddressesEval = @(compare-recipientArrays -onPremData $originalDLConfiguration.proxyAddresses -azureData $msGraphDlConfiguration.proxyAddresses -Office365Data $office365DLConfiguration.emailAddresses -isProxyTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
