@@ -147,6 +147,16 @@ Function Test-PreMigration
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$azureApplicationID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -163,6 +173,10 @@ Function Test-PreMigration
         [int]$totalThreadCount=0
     )
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
@@ -172,11 +186,6 @@ Function Test-PreMigration
     {
         start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
     }
-
-    #Initialize telemetry collection.
-
-    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
-    $traceModuleName = "DLConversion"
 
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL

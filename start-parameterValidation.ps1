@@ -93,7 +93,17 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineMulti')]
             [Parameter(Mandatory = $true,ParameterSetName = 'AzureAD')]
             [AllowNull()]
-            $threadCount=0
+            $threadCount=0,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphCertificateThumbprint,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphTenantID,
+            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
+            [AllowNull()]
+            $msGraphApplicationID
+            
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -111,6 +121,7 @@
         $azureADParameterSetName = "AzureAD"
         $azureADParameterSetNameMulti = "AzureADMulti"
         $azureADParameterSetNameCertAuth = "AzureCertAuth"
+        $msGraphParameterSetNameCertAuth = "MSGraphCertAuth"
         $doNoSyncOUParameterSetName = "NoSyncOU"
         $hybridMailFlowParameterSetName = "HybridMailFlow"
         $activeDirectoryParameterSetName = "ActiveDirectory"
@@ -207,6 +218,30 @@
             elseif (($azureCertificateThumbprint -eq "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
             {
                 out-logfile -string "No componets of Azure AD Cert Authentication were provided - this is not necessarily an issue."
+            }
+            else 
+            {
+                out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+            }
+        }
+
+        if ($functionParameterSetName -eq $msGraphParameterSetNameCertAuth)
+        {
+            if (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -eq ""))
+            {
+                out-logfile -string "The msGraph tenant ID and msGraph App ID are required when using certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -ne "") -and ($msGraphApplicationID -eq ""))
+            {
+                out-logfile -string "The msGraph app id is required to use certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -ne "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -ne ""))
+            {
+                out-logfile -string "The msGraph tenant ID is required to use certificate authentication to msGraph." -isError:$TRUE
+            }
+            elseif (($msGraphCertificateThumbprint -eq "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -ne ""))
+            {
+                out-logfile -string "No componets of msGraph Cert Authentication were provided - this is not necessarily an issue."
             }
             else 
             {

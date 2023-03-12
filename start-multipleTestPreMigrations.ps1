@@ -178,6 +178,16 @@ Function start-MultipleTestPreMigrations
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$azureApplicationID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -189,6 +199,10 @@ Function start-MultipleTestPreMigrations
     )
 
     #Initialize telemetry collection.
+
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
     $traceModuleName = "DLConversion"
@@ -287,6 +301,10 @@ Function start-MultipleTestPreMigrations
     #Validate that all information for the certificate connection has been provieed.
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
 
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"

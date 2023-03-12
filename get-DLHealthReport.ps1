@@ -318,6 +318,16 @@ Function get-DLHealthReport
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$azureApplicationID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -343,6 +353,10 @@ Function get-DLHealthReport
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
@@ -358,6 +372,9 @@ Function get-DLHealthReport
     $telemetryDLConversionV2Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
     $telemetryAzureADVersion = $NULL
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
     $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
     $telemetryStartTime = get-universalDateTime
@@ -419,6 +436,9 @@ Function get-DLHealthReport
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
         activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
         azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
+        msGraphAuthenticationPowershellModuleName = @{ "Value" = "Microsoft.Graph.Authentication" ; "Description" = "Static ms graph powershell name authentication" }
+        msGraphUsersPowershellModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
+        msGraphGroupsPowershellModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
         globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
         globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
@@ -527,6 +547,8 @@ Function get-DLHealthReport
         retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
+        msGraphDLConfigurationXML = @{"Value" = "msGraphADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        msGraphDLMembershipXML = @{"Value" = "msGraphADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
         office365AcceptMessagesFromSendersOrMembersXML= @{"value" = "office365AcceptMessagesFromSendersOrMembers" ; "Description" = "Export XML of all Office 365 accept messages from senders or member normalized."}
@@ -610,6 +632,8 @@ Function get-DLHealthReport
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
+    $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDlMembership = $NULL
 
     #Create arrays to track the health objects that will be converted in the reprot.
 
@@ -721,6 +745,11 @@ Function get-DLHealthReport
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
+
     if ($exchangeOnlineCredential -ne $null)
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
@@ -777,6 +806,10 @@ Function get-DLHealthReport
     out-logfile -string "Validation all components available for AzureAD Cert Authentication"
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
 
     #exit #Debug exit.
 
@@ -837,6 +870,18 @@ Function get-DLHealthReport
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
 
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
+
+   $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
    #Create the azure ad connection
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
@@ -865,6 +910,24 @@ Function get-DLHealthReport
             out-logfile -string $_ -isError:$TRUE
         }
    }
+
+   #As of now this is optional.
+
+   Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
+
+   if ($msGraphCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+
 
    #exit #Debug Exit
 
@@ -1205,6 +1268,52 @@ Function get-DLHealthReport
     {
         $azureADDLMembership = @()
     }
+
+    out-logfile -string "Capture the original Graph AD distribution list informaiton"
+
+    if ($msGraphCertificateThumbpring -ne "")
+    {
+        try{
+            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+        }
+    }
+
+    if ($msGraphDLConfiguration -ne $NULL)
+    {
+        out-logfile -string $msGraphDlConfiguration
+
+        out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
+    }
+
+    out-logfile -string "Recording Graph DL membership."
+
+    if ($msGraphCertificateThumbprint -ne "")
+    {
+        try {
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to obtain Azure AD DL Membership."
+            out-logfile -string $_
+        }
+    }
+
+    if ($msGraphDLMembership -ne $NULL)
+    {
+        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+    }
+    else {
+        $msGraphDLMembership = @()
+    }
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
@@ -2592,7 +2701,7 @@ Function get-DLHealthReport
         out-logfile -string "Beginning list membership comparison."
 
     try {
-        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $azureADDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
+        $office365MemberEval = @(compare-recipientArrays -office365Data $office365DLMembership -azureData $msgraphDlMembership -onPremData $exchangeDLMembershipSMTP -isAllTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -2602,7 +2711,7 @@ Function get-DLHealthReport
 
     try
     {
-        $office365ProxyAddressesEval = @(compare-recipientArrays -onPremData $originalDLConfiguration.proxyAddresses -azureData $azureADDlConfiguration.proxyAddresses -Office365Data $office365DLConfiguration.emailAddresses -isProxyTest:$TRUE -errorAction STOP)
+        $office365ProxyAddressesEval = @(compare-recipientArrays -onPremData $originalDLConfiguration.proxyAddresses -azureData $msGraphDlConfiguration.proxyAddresses -Office365Data $office365DLConfiguration.emailAddresses -isProxyTest:$TRUE -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
@@ -3851,6 +3960,9 @@ th {
         DLConversionV2Command = $telemetryEventName
         DLConversionV2Version = $telemetryDLConversionV2Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        MSGraphAuthentication = $telemetryMSGraphAuthentication
+        MSGraphUsers = $telemetryMSGraphUsers
+        MSGraphGroups = $telemetryMSGraphGroups
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime

@@ -334,6 +334,16 @@ Function Start-DistributionListMigration
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$azureApplicationID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -383,6 +393,10 @@ Function Start-DistributionListMigration
         [boolean]$isHealthCheck=$FALSE
     )
 
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
@@ -398,6 +412,9 @@ Function Start-DistributionListMigration
     $telemetryDLConversionV2Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
     $telemetryAzureADVersion = $NULL
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
     $telemetryActiveDirectoryVersion = $NULL
     $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
     $telemetryStartTime = get-universalDateTime
@@ -506,6 +523,9 @@ Function Start-DistributionListMigration
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
         activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
         azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
+        msGraphAuthenticationPowershellModuleName = @{ "Value" = "Microsoft.Graph.Authentication" ; "Description" = "Static ms graph powershell name authentication" }
+        msGraphUsersPowershellModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
+        msGraphGroupsPowershellModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
         globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
         globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
@@ -623,6 +643,8 @@ Function Start-DistributionListMigration
         retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
+        msGraphDLConfigurationXML = @{"Value" = "msGraphADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        msGraphDLMembershipXML = @{"Value" = "msGraphADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
     }
@@ -684,6 +706,8 @@ Function Start-DistributionListMigration
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
+    $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
@@ -913,6 +937,10 @@ Function Start-DistributionListMigration
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
+
     if ($aadConnectCredential -ne $null)
     {
         Out-LogFile -string ("AADConnectUserName = "+$aadConnectCredential.UserName.tostring())
@@ -1032,6 +1060,10 @@ Function Start-DistributionListMigration
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+
     #exit #Debug exit.
 
     #Validate that an OU was specified <if> retain group is not set to true.
@@ -1128,6 +1160,18 @@ Function Start-DistributionListMigration
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
 
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
+
+   $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+   $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
    #Create the azure ad connection
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
@@ -1150,6 +1194,23 @@ Function Start-DistributionListMigration
 
         try {
             new-AzureADPowershellSession -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+
+   #As of now this is optional.
+
+   Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
+
+   if ($msGraphCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using certificate."
@@ -1469,6 +1530,51 @@ Function Start-DistributionListMigration
         out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
 
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
+    }
+
+    out-logfile -string "Capture the original Graph AD distribution list informaiton"
+
+    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbpring -ne ""))
+    {
+        try{
+            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
+        }
+        catch{
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+        }
+    }
+
+    if ($msGraphDLConfiguration -ne $NULL)
+    {
+        out-logfile -string $msGraphDlConfiguration
+
+        out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
+    }
+
+    out-logfile -string "Recording Graph DL membership."
+
+    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
+    {
+        try {
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to obtain Azure AD DL Membership."
+            out-logfile -string $_
+        }
+    }
+
+    if ($msGraphDLMembership -ne $NULL)
+    {
+        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
+
+        out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+    }
+    else {
+        $msGraphDLMembership=@()
     }
 
     out-logfile -string "Recording Azure AD DL membership."
@@ -5837,6 +5943,9 @@ Function Start-DistributionListMigration
         DLConversionV2Command = $telemetryEventName
         DLConversionV2Version = $telemetryDLConversionV2Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        MSGraphAuthentication = $telemetryMSGraphAuthentication
+        MSGraphUsers = $telemetryMSGraphUsers
+        MSGraphGroups = $telemetryMSGraphGroups
         AzureADVersion = $telemetryAzureADVersion
         OSVersion = $telemetryOSVersion
         MigrationStartTimeUTC = $telemetryStartTime

@@ -197,6 +197,16 @@ Function Start-MultipleMachineDistributionListMigration
         [string]$azureCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$azureApplicationID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -238,6 +248,10 @@ Function Start-MultipleMachineDistributionListMigration
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
+
+    #Establish required MS Graph Scopes
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
 
     #Initialize telemetry collection.
 
@@ -431,6 +445,10 @@ Function Start-MultipleMachineDistributionListMigration
     #Validate that all information for the certificate connection has been provieed.
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
 
     #Validate that an OU was specified <if> retain group is not set to true.
 
