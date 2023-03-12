@@ -278,15 +278,6 @@ Function Start-Office365GroupMigration
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineCertificateThumbPrint="",
-        [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineOrganizationName="",
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
-        [string]$exchangeOnlineEnvironmentName="O365Default",
-        [Parameter(Mandatory = $false)]
-        [string]$exchangeOnlineAppID="",
         #Azure Active Directory Parameters
         [Parameter(Mandatory=$false)]
         [pscredential]$azureADCredential=$NULL,
@@ -356,6 +347,13 @@ Function Start-Office365GroupMigration
         [Parameter(Mandatory =$FALSE)]
         [boolean]$isHealthCheck=$FALSE
     )
+
+    #Null out parameters that cannot be utilized with this function.
+
+    [string]$exchangeOnlineCertificateThumbPrint=""
+    [string]$exchangeOnlineOrganizationName=""
+    [string]$exchangeOnlineEnvironmentName="O365Default"
+    [string]$exchangeOnlineAppID=""
 
     #Establish required MS Graph Scopes
 
