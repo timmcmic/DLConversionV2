@@ -43,7 +43,7 @@
         [string]$functionConnectionString = "InstrumentationKey=63d673af-33f4-401c-931e-f0b64a218d89;IngestionEndpoint=https://eastus2-3.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2.livediagnostics.monitor.azure.com/"
 
         Set-PSFConfig -Module $functionModuleName -Name $functionInstrumentationKey -Value $appInsightAPIKey -Initialize -Validation string -Description 'Your ApplicationInsights instrumentation key' -Hidden
-        Set-PSFConfig -Module $functionModuleName -Name $functionConnectionStringKey -value  -Initialize -validation string -Description "Connection string for api workspace." -Hidden
+        Set-PSFConfig -Module $functionModuleName -Name $functionConnectionStringKey -value $functionConnectionString -Initialize -validation string -Description "Connection string for api workspace." -Hidden
         #Set-PSFConfig -Module 'TelemetryHelper' -Name 'TelemetryHelper.OptInVariable' -Value 'TelemetryHelperTelemetryOptIn' -Initialize -Validation string -Description 'The name of the environment variable used to indicate that telemetry should be sent'
         Set-PSFConfig -Module $functionModuleName -Name $functionOptIn -Value $allowTelemetryCollection -Initialize -Validation bool -Description 'Whether user opts into telemetry or not'
         Set-PSFConfig -Module $functionModuleName -Name $functionIgnoreGDPR -Value $false -Initialize -Validation bool -Description 'Whether telemetry client should ignore user settings, e.g. if you are not bound by GDPR or other regulations'
