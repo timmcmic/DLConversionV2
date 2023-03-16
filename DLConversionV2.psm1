@@ -6025,6 +6025,10 @@ Function Start-DistributionListMigration
 
     if ($allowTelemetryCollection -eq $TRUE)
     {
+        out-logfile -string $traceModuleName
+        out-logfile -string $telemetryEventName
+        out-logfile -string $telemetryEventMetrics
+        out-logfile -string $telemetryEventProperties
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
