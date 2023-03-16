@@ -36,5 +36,6 @@
             $eventName
         )
 
+
         Send-THEvent -EventName $eventName -PropertiesHash $eventProperties -MetricsHash $eventMetrics -ModuleName $traceModuleName -Verbose
      }
