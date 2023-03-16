@@ -4042,7 +4042,7 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Invoking test-cloudDLPresent using AD Connect information since multi-threaded."
+                out-logfile -string "Invoking test-cloudDLPresent without using AD Connect information since not specified with multi-threaded migration."
 
                 test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction SilentlyContinue            
             }
