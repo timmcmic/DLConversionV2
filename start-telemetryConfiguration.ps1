@@ -34,8 +34,8 @@
             [string]$traceModuleName
         )
 
-        $functionInstrumentationKey = $traceModuleName+".ApplicationInsights.ConnectionString"
-        $functionConnectionStringKey = $traceModuleName+".ApplicationInsights.InstrumentationKey"
+        $functionInstrumentationKey = $traceModuleName+".ApplicationInsights.InstrumentationKey"
+        $functionConnectionStringKey = $traceModuleName+".ApplicationInsights.ConnectionString"
         $functionOptIn = $traceModuleName+".OptIn"
         $functionIgnoreGDPR = $traceModuleName+".IgnoreGDPR"
         $functionRemovePII = $traceModuleName+".RemovePII"
