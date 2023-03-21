@@ -429,6 +429,8 @@ function compare-recipientProperties
 
     out-logfile -string "Evaluating mail nickname / alias."
 
+    out-logfile -string "Mail Nick Name On Prem"
+
     if ($onPremData.MailNickName -eq $NULL)
     {
         $onPremData.mailNickName = "!*NotSet*!"
@@ -438,6 +440,8 @@ function compare-recipientProperties
         $onPremData.mailNickName = "!*NotSet*!"
     }
 
+    out-logfile -string 'Mail Nick Name Azure'
+
     if ($azureData.mailNickName -eq $NULL)
     {
         $azureData.mailNickName = "!*NotSet*!"
@@ -446,6 +450,8 @@ function compare-recipientProperties
     {
         $azureData.mailNickName = "!*NotSet*!"
     }
+
+    out-logfile -string "Mail nick name Office 365."
 
     if ($office365Data.alias -eq $NULL)
     {
