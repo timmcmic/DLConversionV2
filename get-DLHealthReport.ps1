@@ -327,6 +327,8 @@ Function get-DLHealthReport
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
+        [Parameter(Mandatory = $false)]
+        [int]$totalThreadCount=0,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
