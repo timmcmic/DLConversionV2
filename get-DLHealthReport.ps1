@@ -397,8 +397,6 @@ Function get-DLHealthReport
     [string]$global:importFile=$logFolderPath+$global:staticAuditFolderName
     [string]$htmlFileName = "DLHealth.html"
 
-    [string]$htmlFile = $logFolderPath+$global:staticFolderName+$htmlFileName
-
 
     [array]$global:testOffice365Errors=@()
 
@@ -668,6 +666,8 @@ Function get-DLHealthReport
     {
         $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
     }
+
+    [string]$htmlFile = $logFolderPath+$global:staticFolderName+$htmlFileName
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
