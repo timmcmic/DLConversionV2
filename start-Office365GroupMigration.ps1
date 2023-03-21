@@ -345,12 +345,15 @@ Function Start-Office365GroupMigration
         [boolean]$isHealthCheck=$FALSE
     )
 
+    <#
     #Null out parameters that cannot be utilized with this function.
 
     [string]$exchangeOnlineCertificateThumbPrint=""
     [string]$exchangeOnlineOrganizationName=""
     [string]$exchangeOnlineEnvironmentName="O365Default"
     [string]$exchangeOnlineAppID=""
+
+    #>
 
     #Establish required MS Graph Scopes
 
