@@ -1533,6 +1533,8 @@ Function Start-DistributionListMigration
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    <#
+
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -1555,9 +1557,11 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
 
+    #>
+
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
 
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbpring -ne ""))
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         try{
             $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
@@ -1579,10 +1583,10 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Recording Graph DL membership."
 
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         try {
-            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $msGraphDLConfiguration.id -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
@@ -1600,6 +1604,7 @@ Function Start-DistributionListMigration
         $msGraphDLMembership=@()
     }
 
+    <#
     out-logfile -string "Recording Azure AD DL membership."
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -1620,6 +1625,8 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.value
     }
 
+    #>
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
@@ -1631,7 +1638,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $msGraphDLConfiguration -errorAction STOP
         }
         catch 
         {

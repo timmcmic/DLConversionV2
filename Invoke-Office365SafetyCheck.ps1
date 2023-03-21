@@ -57,9 +57,9 @@
                     out-logfile -string $o365DLConfiguration.isDirSynced
                     out-logfile -string "Exchange Online is reporting that the distribution list is not directory synced.  Testing azure..."
 
-                    if ($azureADDLConfiguration.dirSyncEnabled -eq $FALSE)
+                    if ($azureADDLConfiguration.OnPremisesSyncEnabled -eq $FALSE)
                     {
-                        out-logfile -string $azureADDLConfiguration.dirSyncEnabled
+                        out-logfile -string $azureADDLConfiguration.OnPremisesSyncEnabled
                         Out-LogFile -string "The distribution list requested is not directory synced and cannot be migrated." -isError:$TRUE
                     }
                     elseif ($azureADDLConfiguration.dirSyncEnabled -eq $null)
@@ -69,14 +69,14 @@
                     }
                     else 
                     {
-                        out-logfile -string $azureADDLConfiguration.dirSyncEnabled
+                        out-logfile -string $azureADDLConfiguration.OnPremisesSyncEnabled
                         out-logfile -string "Azure is reporting the list is directory syncrhonized.  Allow the migration to proceed."
                     }
                 }
                 else 
                 {
                     out-logfile -string ("Exchange: "+$o365dlconfiguration.isDirSynced)
-                    out-logfile -string ("Azure: "+$azureADDLConfiguration.dirSyncEnabled)
+                    out-logfile -string ("Azure: "+$azureADDLConfiguration.OnPremisesSyncEnabled)
                     Out-LogFile -string "The distribution list requested is directory synced."
                 }
             }
@@ -98,16 +98,16 @@
                     out-logfile -string $o365DLConfiguration.isDirSynced
                     out-logfile -string "Exchange Online is reporting that the distribution list is directory synced.  Testing azure..."
 
-                    if ($azureADDLConfiguration.dirSyncEnabled -eq $TRUE)
+                    if ($azureADDLConfiguration.OnPremisesSyncEnabled -eq $TRUE)
                     {
-                        out-logfile -string $azureADDLConfiguration.dirSyncEnabled
+                        out-logfile -string $azureADDLConfiguration.OnPremisesSyncEnabled
                         Out-LogFile -string "The distribution list requested is directory synced and cannot be converted." -isError:$TRUE
                     }
                 }
                 else 
                 {
                     out-logfile -string ("Exchange: "+$o365dlconfiguration.isDirSynced)
-                    out-logfile -string ("Azure: "+$azureADDLConfiguration.dirSyncEnabled)
+                    out-logfile -string ("Azure: "+$azureADDLConfiguration.OnPremisesSyncEnabled)
                     Out-LogFile -string "The distribution list requested is directory synced."
                 }
             }
