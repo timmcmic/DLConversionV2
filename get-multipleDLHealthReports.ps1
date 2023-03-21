@@ -187,6 +187,9 @@ Function get-multipleDLHealthReports
         [boolean]$errorMembersOnly = $false,
         [Parameter(Mandatory = $false)]
         [boolean]$includeVerboseOutput = $true,
+        #Define parameters for multi-threaded operations
+        [Parameter(Mandatory = $false)]
+        [int]$threadNumberAssigned=0,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
@@ -204,7 +207,9 @@ Function get-multipleDLHealthReports
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
-    #Initialize telemetry collection.
+    #Define global variables.
+
+    $global:threadNumber=$threadNumberAssigned
 
     #Establish required MS Graph Scopes
 
