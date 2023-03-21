@@ -1232,6 +1232,7 @@ Function Start-Office365GroupMigration
         }
    }
 
+
    #exit #debug exit
 
    session-toImport
