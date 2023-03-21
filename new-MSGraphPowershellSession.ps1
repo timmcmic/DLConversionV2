@@ -106,7 +106,9 @@
             }
         }
                
-        Out-LogFile -string "The exchange online powershell session was created successfully."
+        Out-LogFile -string "The MS Graph powershell session was created successfully."
+
+        out-logfile -string (Get-MgContext)
 
         Out-LogFile -string "END NEW-msGraphADPOWERSHELL SESSION"
         Out-LogFile -string "********************************************************************************"
