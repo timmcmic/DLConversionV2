@@ -149,10 +149,6 @@ Function Test-PreMigrationO365Group
         [boolean]$useCollectedSendAsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$overrideSecurityGroupCheck=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$addManagersAsMembers = $false,
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
