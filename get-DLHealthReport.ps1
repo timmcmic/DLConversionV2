@@ -1336,7 +1336,7 @@ Function get-DLHealthReport
     if ($msGraphCertificateThumbprint -ne "")
     {
         try {
-            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $msGraphDLConfiguration.ID -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
