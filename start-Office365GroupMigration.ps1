@@ -278,6 +278,15 @@ Function Start-Office365GroupMigration
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineCertificateThumbPrint="",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineOrganizationName="",
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
+        [string]$exchangeOnlineEnvironmentName="O365Default",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineAppID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
