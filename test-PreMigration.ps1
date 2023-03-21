@@ -135,23 +135,11 @@ Function Test-PreMigration
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
         [string]$msGraphEnvironmentName="Global",
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$msGraphTenantID="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphCertificateThumbprint="",
@@ -242,7 +230,7 @@ Function Test-PreMigration
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-    start-distributionlistmigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName -azureCertificateThumbprint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount
+    start-distributionlistmigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection:$FALSE -isHealthCheck $TRUE -threadNumberAssigned $threadNumberAssigned -totalThreadCount $totalThreadCount -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID
 
     Out-LogFile -string "================================================================================"
     Out-LogFile -string "BEGIN test-PreMigration"
