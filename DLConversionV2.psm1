@@ -1213,8 +1213,6 @@ Function Start-DistributionListMigration
 
    #>
 
-   #As of now this is optional.
-
    Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
 
    if ($msGraphCertificateThumbprint -ne "")

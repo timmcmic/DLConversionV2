@@ -278,18 +278,6 @@ Function Start-Office365GroupMigration
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
@@ -884,6 +872,8 @@ Function Start-Office365GroupMigration
     $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
     
     $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
+
+    <#
     
     if ($azureTenantID -ne $NULL)
     {
@@ -904,6 +894,8 @@ Function Start-Office365GroupMigration
     {
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
+
+    #>
     
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -924,10 +916,14 @@ Function Start-Office365GroupMigration
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
+    <#
+
     if ($azureADCredential -ne $NULL)
     {
         out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
+
+    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1005,6 +1001,8 @@ Function Start-Office365GroupMigration
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
+    <#
+
     #Validate that only one method of engaging exchange online was specified.
 
     Out-LogFile -string "Validating Azure AD Credentials."
@@ -1016,6 +1014,8 @@ Function Start-Office365GroupMigration
     out-logfile -string "Validation all components available for AzureAD Cert Authentication"
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    #>
 
     out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
@@ -1113,9 +1113,13 @@ Function Start-Office365GroupMigration
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
+   <#
+
    out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #>
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
@@ -1128,6 +1132,8 @@ Function Start-Office365GroupMigration
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   <#
 
    #Create the azure ad connection
 
@@ -1158,7 +1164,7 @@ Function Start-Office365GroupMigration
         }
    }
 
-   #As of now this is optional.
+   #>
 
    Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
 
@@ -1170,11 +1176,21 @@ Function Start-Office365GroupMigration
             new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
         }
         catch {
-            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string "Unable to create the msgraph connection using certificate."
             out-logfile -string $_ -isError:$TRUE
         }
    }
-
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
+        }
+   }
 
    #exit #Debug Exit
 
@@ -1456,6 +1472,8 @@ Function Start-Office365GroupMigration
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    <#
+
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -1477,6 +1495,8 @@ Function Start-Office365GroupMigration
 
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
+
+    #>
 
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
@@ -1500,6 +1520,8 @@ Function Start-Office365GroupMigration
         out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
     }
 
+    <#
+
     out-logfile -string "Recording Azure AD DL membership."
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -1519,6 +1541,8 @@ Function Start-Office365GroupMigration
 
         out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.value
     }
+
+    #>
 
     out-logfile -string "Recording Graph DL membership."
 
@@ -1551,7 +1575,7 @@ Function Start-Office365GroupMigration
 
         try 
         {
-            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -errorAction STOP
+            Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $msGraphDLConfiguration -errorAction STOP
         }
         catch 
         {
