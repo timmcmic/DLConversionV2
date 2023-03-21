@@ -306,18 +306,6 @@ Function get-DLHealthReport
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
@@ -724,6 +712,8 @@ Function get-DLHealthReport
     {
         $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
     }
+
+    <#
     
     if ($azureTenantID -ne $NULL)
     {
@@ -745,6 +735,7 @@ Function get-DLHealthReport
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    #>
     
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -755,10 +746,14 @@ Function get-DLHealthReport
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
+    <#
+
     if ($azureADCreential -ne $NULL)
     {
         out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
+
+    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -797,6 +792,8 @@ Function get-DLHealthReport
 
     #Validate that only one method of engaging exchange online was specified.
 
+    <#
+
     Out-LogFile -string "Validating Azure AD Credentials."
 
     start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 0
@@ -806,6 +803,8 @@ Function get-DLHealthReport
     out-logfile -string "Validation all components available for AzureAD Cert Authentication"
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    #>
 
     out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
@@ -866,9 +865,13 @@ Function get-DLHealthReport
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
+   <#
+
    out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #>
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
@@ -881,6 +884,8 @@ Function get-DLHealthReport
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   <#
 
    #Create the azure ad connection
 
@@ -911,6 +916,8 @@ Function get-DLHealthReport
         }
    }
 
+   #>
+
    #As of now this is optional.
 
    Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
@@ -924,6 +931,18 @@ Function get-DLHealthReport
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -string "Unable to establish MSGraph session with interactive auth."
             out-logfile -string $_ -isError:$TRUE
         }
    }
@@ -1213,6 +1232,7 @@ Function get-DLHealthReport
         $office365DLMembership=@()
     }
 
+    <#
     
     out-logfile -string "Capture the original Azure AD distribution list informaiton"
 
@@ -1268,6 +1288,8 @@ Function get-DLHealthReport
     {
         $azureADDLMembership = @()
     }
+
+    #>
 
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
 
