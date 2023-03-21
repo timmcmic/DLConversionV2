@@ -166,18 +166,6 @@ Function start-MultipleTestPreMigrations
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
@@ -292,6 +280,8 @@ Function start-MultipleTestPreMigrations
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
+    <#
+
     #Validate that only one method of engaging azure was specified.
 
     Out-LogFile -string "Valdating azure credentials."
@@ -301,6 +291,8 @@ Function start-MultipleTestPreMigrations
     #Validate that all information for the certificate connection has been provieed.
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    #>
 
     out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
@@ -372,7 +364,9 @@ Function start-MultipleTestPreMigrations
 
                 $forThread = $forCounter+1
 
-                Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -azureADCredential $args[12] -azureEnvironmentName $args[13] -azureTenantID $args[14] -azureApplicationID $args[15] -azureCertificateThumbprint $args[16] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+                #Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -msGraphEnvironmentName $args[12] -msGraphTenantID $args[13] -msGraphCertificateThumbprint $args[14] -msGraphApplicationID $args[15] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$msGraphEnvironmentName,$msGraphTenantID,$msGraphCertificateThumbprint,$msGraphApplicationID,$NULL,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+                Start-Job -Name $jobName -InitializationScript {import-module c:\repository\DLConversionV2\dlconversionv2.psd1} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -msGraphEnvironmentName $args[12] -msGraphTenantID $args[13] -msGraphCertificateThumbprint $args[14] -msGraphApplicationID $args[15] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$msGraphEnvironmentName,$msGraphTenantID,$msGraphCertificateThumbprint,$msGraphApplicationID,$NULL,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+
 
                 if ($forCounter -eq 0)
                 {
@@ -437,7 +431,9 @@ Function start-MultipleTestPreMigrations
 
                 $forThread=$forCounter+1
 
-                Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { test-Premigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -azureADCredential $args[12] -azureEnvironmentName $args[13] -azureTenantID $args[14] -azureApplicationID $args[15] -azureCertificateThumbprint $args[16] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$azureADCredential,$azureEnvironmentName,$azureTenantID,$azureApplicationID,$azureCertificateThumbprint,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+                #Start-Job -Name $jobName -InitializationScript {import-module DLConversionV2} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -msGraphEnvironmentName $args[12] -msGraphTenantID $args[13] -msGraphCertificateThumbprint $args[14] -msGraphApplicationID $args[15] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$msGraphEnvironmentName,$msGraphTenantID,$msGraphCertificateThumbprint,$msGraphApplicationID,$NULL,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+                Start-Job -Name $jobName -InitializationScript {import-module c:\repository\DLConversionV2\dlconversionv2.psd1} -ScriptBlock { Test-PreMigration -groupSMTPAddress $args[0] -globalCatalogServer $args[1] -activeDirectoryCredential $args[2] -logFolderPath $args[3] -exchangeOnlineCredential $args[4] -exchangeOnlineCertificateThumbPrint $args[5] -exchangeOnlineOrganizationName $args[6] -exchangeOnlineEnvironmentName $args[7] -exchangeOnlineAppID $args[8] -useCollectedSendAsOnPrem $args[9] -threadNumberAssigned $args[10] -totalThreadCount $args[11] -msGraphEnvironmentName $args[12] -msGraphTenantID $args[13] -msGraphCertificateThumbprint $args[14] -msGraphApplicationID $args[15] -allowTelemetryCollection $args[17] -allowDetailedTelemetryCollection $args[18] } -ArgumentList $groupSMTPAddresses[$arrayLocation + $forCounter],$globalCatalogServer,$activeDirectoryCredential,$originalLogFolderPath,$exchangeOnlineCredential,$exchangeOnlineCertificateThumbPrint,$exchangeOnlineOrganizationName,$exchangeOnlineEnvironmentName,$exchangeOnlineAppID,$useCollectedSendAsOnPrem,$forThread,$loopThreadCount,$msGraphEnvironmentName,$msGraphTenantID,$msGraphCertificateThumbprint,$msGraphApplicationID,$NULL,$allowTelemetryCollection,$allowDetailedTelemetryCollection
+
 
                 if ($forCounter -eq 0)
                 {
