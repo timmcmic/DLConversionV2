@@ -338,7 +338,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
         [string]$msGraphEnvironmentName="Global",
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$msGraphTenantID="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphCertificateThumbprint="",
@@ -917,6 +917,7 @@ Function Start-DistributionListMigration
     
     $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
     
+    <#
     if ($azureTenantID -ne $NULL)
     {
         $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
@@ -937,6 +938,8 @@ Function Start-DistributionListMigration
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
 
+    #>
+
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
     $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
@@ -956,10 +959,12 @@ Function Start-DistributionListMigration
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
+    <#
     if ($azureADCreential -ne $NULL)
     {
         out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
+    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1048,6 +1053,8 @@ Function Start-DistributionListMigration
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
+    <#
+
     #Validate that only one method of engaging exchange online was specified.
 
     Out-LogFile -string "Validating Azure AD Credentials."
@@ -1060,9 +1067,18 @@ Function Start-DistributionListMigration
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
-    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+    #>
 
-    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    if ($msGraphCertificateThumbprint -eq "")
+    {
+        out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    }
+    else
+    {
+        out-logfile -string "MS graph cert auth is not being utilized - assume interactive auth."
+    }
 
     #exit #Debug exit.
 
@@ -1156,9 +1172,13 @@ Function Start-DistributionListMigration
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
+   <#
+
    out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #>
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
@@ -1173,6 +1193,8 @@ Function Start-DistributionListMigration
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
 
    #Create the azure ad connection
+
+   <#
 
    Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
 
@@ -1201,6 +1223,8 @@ Function Start-DistributionListMigration
         }
    }
 
+   #>
+
    #As of now this is optional.
 
    Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
@@ -1213,8 +1237,19 @@ Function Start-DistributionListMigration
             new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
         }
         catch {
-            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string "Unable to create the msgraph connection using certificate."
             out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
         }
    }
 

@@ -42,11 +42,10 @@
 
         Param
         (
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
-            [pscredential]$msGraphADCredential=$NULL,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
-            [string]$msGraphCertificateThumbPrint,
+            [string]$msGraphCertificateThumbPrint="",
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [string]$msGraphTenantID,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
             [string]$msGraphApplicationID,
@@ -57,6 +56,7 @@
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $false)]
             [boolean]$isAudit=$FALSE,
             [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
             [array]$msGraphScopesRequired=@()
         )
 
@@ -82,33 +82,16 @@
 
         if ($isCertAuth -eq $False)
         {
-            if ($msGraphADCredential -ne $NULL)
-            {
-                try 
-                {
-                    Out-LogFile -string "Creating the msGraph active directory powershell session."
+            out-logfile -string "Making MS Graph connection using interactive credentials."
 
-                    Connect-msGraphAD -Credential $msGraphADCredential -msGraphEnvironmentName $msGraphEnvironmentName
-                }
-                catch 
-                {
-                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
-                }
+            try {
+                connect-msGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -scopes $msGraphScopesRequired -errorAction STOP
             }
-            else
-            {
-                try 
-                {
-                    Out-LogFile -string "Creating the msGraph active directory powershell session."
-
-                    Connect-msGraphAD -msGraphEnvironmentName $msGraphEnvironmentName
-                }
-                catch 
-                {
-                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
-                }
+            catch {
+                out-logfile -string "Unable to make ms grpah connection using interactive authentication."
+                out-logfile $_ -isError:$TRUE
             }
-        }
+        }   
         elseif ($isCertAuth -eq $TRUE) 
         {
             try 
