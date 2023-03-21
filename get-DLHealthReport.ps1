@@ -954,7 +954,7 @@ Function get-DLHealthReport
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-   if ($exchangeOnlineThumbprint -eq $NULL)
+   if ($exchangeOnlineCertificateThumbPrint -eq "")
    {
       #User specified non-certifate authentication credentials.
 
