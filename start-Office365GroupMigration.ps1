@@ -345,15 +345,14 @@ Function Start-Office365GroupMigration
         [boolean]$isHealthCheck=$FALSE
     )
 
-    <#
-    #Null out parameters that cannot be utilized with this function.
 
-    [string]$exchangeOnlineCertificateThumbPrint=""
-    [string]$exchangeOnlineOrganizationName=""
-    [string]$exchangeOnlineEnvironmentName="O365Default"
-    [string]$exchangeOnlineAppID=""
-
-    #>
+    if (($isHealthCheck -eq $FALSE) -and ($exchangeOnlineCertificateThumbprint -ne ""))
+    {
+        out-logfile -string "Unable to perform this migration using certificate authentication to Exchange Online."
+        out-logfile -string "Certificate authentication is only supported when running test pre-migration functions."
+        out-logfile -string "Certificate authentication does not support the new-unifiedGroup and set-unifiedGroup commands necessary to create a Office 365 group."
+        out-logfile -string "FAILURE:  Certificate authentication not supported" -isError:$TRUE
+    }
 
     #Establish required MS Graph Scopes
 
