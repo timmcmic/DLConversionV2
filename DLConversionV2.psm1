@@ -322,18 +322,6 @@ Function Start-DistributionListMigration
         [string]$exchangeOnlineEnvironmentName="O365Default",
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineAppID="",
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
