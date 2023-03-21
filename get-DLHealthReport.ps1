@@ -659,6 +659,15 @@ Function get-DLHealthReport
 
     $blogURL = "https://timmcmic.wordpress.com"
 
+    [array]$threadFolder="\Thread0","\Thread1","\Thread2","\Thread3","\Thread4","\Thread5","\Thread6","\Thread7","\Thread8","\Thread9","\Thread10"
+
+    #If multi threaded - the log directory needs to be created for each thread.
+    #Create the log folder path for status before changing the log folder path.
+
+    if ($totalThreadCount -gt 0)
+    {
+        $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+    }
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
