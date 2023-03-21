@@ -2794,7 +2794,7 @@ Function get-DLHealthReport
     }
 
     try {
-        $office365AttributeEval = @(compare-recipientProperties -office365Data $office365DLConfiguration -onPremData $originalDLConfiguration -azureData $azureADDlConfiguration -errorAction STOP)
+        $office365AttributeEval = @(compare-recipientProperties -office365Data $office365DLConfiguration -onPremData $originalDLConfiguration -azureData $msGraphDLConfiguration -errorAction STOP)
     }
     catch {
         out-logfile -string $_ -isError:$TRUE
