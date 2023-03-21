@@ -85,7 +85,7 @@
             out-logfile -string "Making MS Graph connection using interactive credentials."
 
             try {
-                connect-msGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -scopes $msGraphScopesRequired -errorAction STOP
+                connect-mgGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -scopes $msGraphScopesRequired -errorAction STOP
             }
             catch {
                 out-logfile -string "Unable to make ms grpah connection using interactive authentication."
