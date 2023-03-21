@@ -1564,11 +1564,11 @@ Function Start-DistributionListMigration
     if ($allowNonSyncedGroup -eq $FALSE)
     {
         try{
-            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
+            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
         }
         catch{
             out-logfile -string $_
-            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration" -isError:$TRUE
         }
     }
 
@@ -1590,7 +1590,7 @@ Function Start-DistributionListMigration
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
-            out-logfile -string $_
+            out-logfile -string $_ -isError:$TRUE
         }
     }
 
