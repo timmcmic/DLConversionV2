@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function start-multipleTestProOffice365Group
+Function start-multipleTestPreOffice365Group
 {
     <#
     .SYNOPSIS
