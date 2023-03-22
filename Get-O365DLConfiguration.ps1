@@ -55,6 +55,20 @@
 
         #Get the recipient using the exchange online powershell session.
 
+        try
+        {
+            out-logfile -string "Obtaining Office 365 DL Configuration for evaluation."
+
+            $functionRecipient = get-o365Recipient -identity $groupSMTPAddress -errorAction STOP
+
+            out-logfile -string "Successfully obtained the Office 365 DL Configuration."
+        }
+        catch
+        {
+            out-logfile -string "Unable to obtain the Office 365 DL Configuration."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
         $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
 
         out-logfile -string $functionRecipient
