@@ -242,18 +242,6 @@ Function Convert-Office365DLtoUnifiedGroup
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
-        #Azure Active Directory Parameters
-        [Parameter(Mandatory=$false)]
-        [pscredential]$azureADCredential=$NULL,
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("AzureCloud","AzureChinaCloud","AzureGermanyCloud","AzureUSGovernment")]
-        [string]$azureEnvironmentName="AzureCloud",
-        [Parameter(Mandatory=$false)]
-        [string]$azureTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$azureApplicationID="",
         #Define Microsoft Graph Parameters
         [Parameter(Mandatory = $false)]
         [ValidateSet("China","Global","USGov","USGovDod")]
@@ -271,8 +259,6 @@ Function Convert-Office365DLtoUnifiedGroup
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOffice365=$FALSE,
-        [Parameter(Mandatory = $false)]
-        [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
         [Parameter(Mandatory = $false)]
@@ -302,6 +288,9 @@ Function Convert-Office365DLtoUnifiedGroup
     [string]$exchangeOnlineOrganizationName=""
     [string]$exchangeOnlineEnvironmentName="O365Default"
     [string]$exchangeOnlineAppID=""
+    [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE
+    [boolean]$useCollectedSendAsOnPrem=$FALSE
+    [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE
 
 
     #Establish required MS Graph Scopes
@@ -331,7 +320,7 @@ Function Convert-Office365DLtoUnifiedGroup
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
-    $telemetryEventName = "Start-Office365GroupMigration"
+    $telemetryEventName = "Convert-Office365DLtoUnifiedGroup"
     $telemetryFunctionStartTime=$NULL
     $telemetryFunctionEndTime=$NULL
     [double]$telemetryNormalizeDN=0
@@ -346,7 +335,7 @@ Function Convert-Office365DLtoUnifiedGroup
     [boolean]$telemetryError=$FALSE
 
 
-    $windowTitle = ("Start-Office365GroupMigration "+$groupSMTPAddress)
+    $windowTitle = ("Convert-Office365DLtoUnifiedGroup "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
      #Define the status directory.
@@ -591,7 +580,7 @@ Function Convert-Office365DLtoUnifiedGroup
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
     Out-LogFile -string "================================================================================"
-    Out-LogFile -string "BEGIN Start-Office365GroupMigration"
+    Out-LogFile -string "BEGIN Convert-Office365DLtoUnifiedGroup"
     Out-LogFile -string "================================================================================"
 
     out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
@@ -632,6 +621,8 @@ Function Convert-Office365DLtoUnifiedGroup
     {
         $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
     }
+
+    <#
     
     if ($azureTenantID -ne $NULL)
     {
@@ -652,6 +643,8 @@ Function Convert-Office365DLtoUnifiedGroup
     {
         $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
     }
+
+    #>
     
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -662,10 +655,14 @@ Function Convert-Office365DLtoUnifiedGroup
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
 
+    <#
+
     if ($azureADCredential -ne $NULL)
     {
         out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
     }
+
+    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -702,6 +699,8 @@ Function Convert-Office365DLtoUnifiedGroup
 
     start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -threadCount $totalThreadCount
 
+    <#
+
     #Validating that all portions for exchange certificate auth are present.
 
     out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
@@ -720,9 +719,18 @@ Function Convert-Office365DLtoUnifiedGroup
 
     start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
 
-    out-logfile -string "Validation all components available for MSGraph Cert Auth"
+    #>
 
-    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    if ($msGraphCertificateThumbprint -eq "")
+    {
+        out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    }
+    else
+    {
+        out-logfile -string "MS graph cert auth is not being utilized - assume interactive auth."
+    }
 
     #exit #Debug exit.
 
@@ -760,9 +768,13 @@ Function Convert-Office365DLtoUnifiedGroup
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
+   <#
+
    out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
 
    $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #>
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
@@ -775,6 +787,8 @@ Function Convert-Office365DLtoUnifiedGroup
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   <#
 
    #Create the azure ad connection
 
@@ -805,7 +819,7 @@ Function Convert-Office365DLtoUnifiedGroup
         }
    }
 
-   #As of now this is optional.
+   #>
 
    Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
 
@@ -817,8 +831,19 @@ Function Convert-Office365DLtoUnifiedGroup
             new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
         }
         catch {
-            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string "Unable to create the msgraph connection using certificate."
             out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
         }
    }
 
@@ -883,6 +908,8 @@ Function Convert-Office365DLtoUnifiedGroup
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
 
+    <#
+
     out-logfile -string "Capture the original Azure AD distribution list information"
 
     try{
@@ -902,16 +929,18 @@ Function Convert-Office365DLtoUnifiedGroup
         out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
     }
 
+    #>
+
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
 
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbpring -ne ""))
+    if ($allowNonSyncedGroup -eq $FALSE)
     {
         try{
-            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration
+            $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
         }
         catch{
             out-logfile -string $_
-            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
+            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration" -isError:$TRUE
         }
     }
 
@@ -924,37 +953,16 @@ Function Convert-Office365DLtoUnifiedGroup
         out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
     }
 
-
-    out-logfile -string "Recording Azure AD DL membership."
+    out-logfile -string "Recording Graph DL membership."
 
     if ($allowNonSyncedGroup -eq $FALSE)
     {
         try {
-            $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
+            $msGraphDLMembership = get-msGraphMembership -groupobjectID $msGraphDLConfiguration.id -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain Azure AD DL Membership."
-            out-logfile -string $_
-        }
-    }
-
-    if ($azureADDLMembership -ne $NULL)
-    {
-        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
-
-        out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.value
-    }
-
-    out-logfile -string "Recording Graph DL membership."
-
-    if (($allowNonSyncedGroup -eq $FALSE) -and ($msGraphCertificateThumbprint -ne ""))
-    {
-        try {
-            $msGraphDLMembership = get-msGraphMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
-        }
-        catch {
-            out-logfile -string "Unable to obtain Azure AD DL Membership."
-            out-logfile -string $_
+            out-logfile -string $_ -isError:$TRUE
         }
     }
 
@@ -964,8 +972,9 @@ Function Convert-Office365DLtoUnifiedGroup
 
         out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
     }
-
-
+    else {
+        $msGraphDLMembership=@()
+    }
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $azureADDLConfiguration -isCloudOnly $TRUE -errorAction STOP
 
