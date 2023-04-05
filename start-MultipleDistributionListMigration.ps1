@@ -513,7 +513,7 @@ Function Start-MultipleDistributionListMigration
 
         out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
-    start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
 
         #Validate that an OU was specified <if> retain group is not set to true.
 

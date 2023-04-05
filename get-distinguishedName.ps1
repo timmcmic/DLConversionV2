@@ -25,7 +25,7 @@ function  Get-DistinguishedName {
         $output = @()
         $output += $arr[0] -replace '^.*$', 'CN=$0'
         $output += ($arr | select -Skip 1 | select -SkipLast 1) -replace '^.*$', 'OU=$0'
-        $output += ($arr | ? { $_ -like '*.*' }) -split '\.' -replace '^.*$', 'DC=$0'
+        $output += ($arr[$arr.count-1] | ? { $_ -like '*.*' }) -split '\.' -replace '^.*$', 'DC=$0'
         $returnDN = $output -join ','
     }
 
