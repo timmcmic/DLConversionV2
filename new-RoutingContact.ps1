@@ -66,6 +66,8 @@
 
         [string]$functionMigratedByScript = "-MigratedByScript"
         [string]$functionMigratedByScriptShort = "MigratedByScript"
+        [int]$functionMaxLength = 64
+        [string]$functionNameTest = ""
 
         #Output all parameters bound or unbound and their associated values.
 
@@ -174,16 +176,31 @@
         if ($isRetry -eq $FALSE)
         {
             out-logfile -string "Operation is not retried - use on premsies value."
-            [string]$functionCN=$originalDLConfiguration.CN+$functionMigratedByScript
+            [string]$functionCN=$originalDLConfiguration.CN.replace(' ','')+$functionMigratedByScript
+
+            if ($functionCN.length -gt $functionMaxLength)
+            {
+                out-logfile -string "CalculatedCN is greater than 64 characters."
+
+                $functionCN = ($originalDLConfiguration.CN.substring(0,($originalDLConfiguration.cn.length - $functionMigratedByScript.Length))
+
+                out-logfile -string ("Updated function CN: "+$functionCN)
+            }
         }
         else 
         {
             out-logfile -string "Operation is retried - use Office 365 value."
-            [string]$functionCN=$originalDLConfiguration.alias+$functionMigratedByScript
+            [string]$functionCN=$originalDLConfiguration.alias.replace(' ','')+$functionMigratedByScript
+
+            if ($functionCN.length -gt $functionMaxLength)
+            {
+                out-logfile -string "CalculatedCN is greater than 64 characters."
+
+                $functionCN = ($originalDLConfiguration.alias.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length))
+
+                out-logfile -string ("Updated function CN: "+$functionCN)
+            }
         }
-        
-        $functionCN=$functionCN.replace(' ','')
-        out-logfile -string ("Function Common Name:"+$functionCN)
 
         if ($isRetry -eq $FALSE)
         {
