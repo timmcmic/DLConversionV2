@@ -60,6 +60,8 @@
 
         [string]$functionGroupName=$NULL #Holds the calculated name.
         [string]$functionGroupSAMAccountName=$NULL #Holds the calculated sam account name.
+        [string]$functionMaxLength = 64
+        [string]$functionGroupNameCharacter = "!"
 
         #Start function processing.
 
@@ -68,6 +70,17 @@
         Out-LogFile -string "********************************************************************************"
 
         #Establish new names
+
+        if ($dlName.length -eq $functionMaxLength)
+        {
+            out-logfile -string "Group name is 64 characters - truncate single character to support rename."
+
+            [string]$functionGroupName = $dlName.substring(0,63)+$functionGroupNameCharacter
+        }
+        else
+        {
+            out-logfile -string "Group name does not exceed 64 characters - rename as normal."
+        }
 
         [string]$functionGroupName = $dlName+"!"
         [string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
