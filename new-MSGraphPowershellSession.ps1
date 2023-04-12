@@ -88,7 +88,8 @@
                 connect-mgGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -scopes $msGraphScopesRequired -errorAction STOP
             }
             catch {
-                out-logfile -string "Unable to make ms grpah connection using interactive authentication."
+                out-logfile -string "Unable to make ms graph connection using interactive authentication."
+                out-logfile -string "https://timmcmic.wordpress.com/2023/04/11/office-365-distribution-list-migrations-version-2-0-part-33/"
                 out-logfile $_ -isError:$TRUE
             }
         }   
@@ -102,6 +103,8 @@
             } 
             catch 
             {
+                out-logfile -string "Unable to connect to graph using certificate authentication."
+                out-logfile -string "https://timmcmic.wordpress.com/2023/04/11/office-365-distribution-list-migrations-version-2-0-part-33/"
                 out-logfile -string $_ -isError:$TRUE -isAudit $isAudit
             }
         }
