@@ -62,6 +62,10 @@
             [string]$customRoutingDomain = ""
         )
 
+        #Define function variables.
+
+        [string]$functionMigratedByScript = "-MigratedByScript"
+
         #Output all parameters bound or unbound and their associated values.
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -169,12 +173,12 @@
         if ($isRetry -eq $FALSE)
         {
             out-logfile -string "Operation is not retried - use on premsies value."
-            [string]$functionCN=$originalDLConfiguration.CN+"-MigratedByScript"
+            [string]$functionCN=$originalDLConfiguration.CN+$functionMigratedByScript
         }
         else 
         {
             out-logfile -string "Operation is retried - use Office 365 value."
-            [string]$functionCN=$originalDLConfiguration.alias+"-MigratedByScript"
+            [string]$functionCN=$originalDLConfiguration.alias+$functionMigratedByScript
         }
         
         $functionCN=$functionCN.replace(' ','')
@@ -210,18 +214,28 @@
 
         if ($originalDLConfiguration.displayName -ne $NULL)
         {
-            [string]$functionDisplayName = $originalDLConfiguration.DisplayName+"-MigratedByScript"
+            [string]$functionDisplayName = $originalDLConfiguration.DisplayName+$functionMigratedByScript
             $functionDisplayName=$functionDisplayName.replace(' ','')
         }
         else 
         {
-            [string]$functionDisplayName = $office365DLConfiguration.DisplayName+"-MigratedByScript"
+            [string]$functionDisplayName = $office365DLConfiguration.DisplayName+$functionMigratedByScript
             $functionDisplayName=$functionDisplayName.replace(' ','')
         }
         
         [string]$functionName=$functionCN
 
-        [string]$functionFirstName = $functionDisplayName
+        if ($originalDLConfiguration.name -ne $NULL)
+        {
+            [string]$functionFirstName = $originalDLConfiguration.Name
+            out-logfile -string ("Function First Name: "+$functionFirstName)
+        }
+        else {
+            [string]$functionFirstName = $office365DLConfiguration.Name
+            out-logfile -string ("Function First Name: "+$functionFirstName)
+        }
+
+        
 
         [string]$functionLastName = "MigratedByScript"
 
@@ -233,7 +247,7 @@
 
         [string]$functionProxyAddress="SMTP:"+$functionMail
 
-        [string]$functionMailNickname=$functionProxyAddressArray[0]+"-MigratedByScript"
+        [string]$functionMailNickname=$functionProxyAddressArray[0]+$functionMigratedByScript
 
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
 
