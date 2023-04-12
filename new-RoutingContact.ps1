@@ -65,6 +65,7 @@
         #Define function variables.
 
         [string]$functionMigratedByScript = "-MigratedByScript"
+        [string]$functionMigratedByScriptShort = "MigratedByScript"
 
         #Output all parameters bound or unbound and their associated values.
 
@@ -235,15 +236,13 @@
             out-logfile -string ("Function First Name: "+$functionFirstName)
         }
 
-        
-
-        [string]$functionLastName = "MigratedByScript"
+        [string]$functionLastName = $functionMigratedByScriptShort
 
         [boolean]$functionHideFromAddressList=$true
 
         [string]$functionRecipientDisplayType="6"
 
-        [string]$functionMail=$functionProxyAddressArray[0]+"-MigratedByScript@"+$functionProxyAddressArray[1]
+        [string]$functionMail=$functionProxyAddressArray[0]+$functionMigratedByScript+$functionProxyAddressArray[1]
 
         [string]$functionProxyAddress="SMTP:"+$functionMail
 
