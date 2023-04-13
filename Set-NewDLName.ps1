@@ -75,7 +75,7 @@
         {
             out-logfile -string "Group name is 64 characters - truncate single character to support rename."
 
-            [string]$functionGroupName = $dlName.substring(0,63)+$functionGroupNameCharacter
+            [string]$functionGroupName = $dlName.substring(0,$functionMaxLength-1)+$functionGroupNameCharacter
         }
         else
         {
