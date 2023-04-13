@@ -269,7 +269,7 @@
             {
                 out-logfile -string "Calculated mail nickname greater than 64 characters.."
 
-                (($functionMailNickName.substring(0,($functionMailNickName.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+                $functionMailNickName = (($functionMailNickName.substring(0,($functionMailNickName.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
 
                 out-logfile -string ("UpdatedMailNickName: "+$functionMailNickname)
             }
