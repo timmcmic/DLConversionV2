@@ -263,16 +263,34 @@
 
         [string]$functionProxyAddress="SMTP:"+$functionMail
 
-        [string]$functionMailNickname=$functionProxyAddressArray[0]+$functionMigratedByScript
+        if ($isRetry -eq $FALSE)
+        {
+            out-logfile -string "Operation is not retried - use on premsies value."
+            [string]$functionMailNickName=$originalDLConfiguration.mailNickName.replace(' ','')+$functionMigratedByScript
 
-        if ($functionMailNickName.length -gt $functionMaxLength)
+            if ($functionMailNickName.length -gt $functionMaxLength)
             {
-                out-logfile -string "Calculated mail nickname greater than 64 characters.."
+                out-logfile -string "Calculated mail nickname is greater than 64 characters."
 
-                $functionMailNickName = (($functionMailNickName.substring(0,($functionMailNickName.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+                $functionMailNickName = (($originalDLConfiguration.mailNickName.substring(0,($originalDLConfiguration.mailNickName.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
 
-                out-logfile -string ("UpdatedMailNickName: "+$functionMailNickname)
+                out-logfile -string ("Updated function mail nickname: "+$functionMailNickName)
             }
+        }
+        else 
+        {
+            out-logfile -string "Operation is retried - use Office 365 value."
+            [string]$functionMailNickName=$originalDLConfiguration.alias.replace(' ','')+$functionMigratedByScript
+
+            if ($functionMailNickName.length -gt $functionMaxLength)
+            {
+                out-logfile -string "Calculated mail nick name is greater than 64 characters."
+
+                (($originalDLConfiguration.alias.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+
+                out-logfile -string ("Updated function mail nick name: "+$functionMailNickName)
+            }
+        }
 
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
 
