@@ -197,7 +197,7 @@
                 out-logfile -string "CalculatedCN is greater than 64 characters."
 
                 (($originalDLConfiguration.CN.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
-                
+
                 out-logfile -string ("Updated function CN: "+$functionCN)
             }
         }
@@ -264,6 +264,15 @@
         [string]$functionProxyAddress="SMTP:"+$functionMail
 
         [string]$functionMailNickname=$functionProxyAddressArray[0]+$functionMigratedByScript
+
+        if ($functionMailNickName.length -gt $functionMaxLength)
+            {
+                out-logfile -string "Calculated mail nickname greater than 64 characters.."
+
+                (($functionMailNickName.substring(0,($functionMailNickName.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+
+                out-logfile -string ("UpdatedMailNickName: "+$functionMailNickname)
+            }
 
         [string]$functionDescription="This is the mail contact created post migration to allow non-migrated DLs to retain memberships and permissions settings.  DO NOT DELETE"
 
