@@ -82,7 +82,6 @@
             out-logfile -string "Group name does not exceed 64 characters - rename as normal."
         }
 
-        [string]$functionGroupName = $dlName+"!"
         [string]$functionGroupSAMAccountName = $dlSAMAccountName+"!"
 
         out-logfile -string ("New group name = "+$functionGroupName)
