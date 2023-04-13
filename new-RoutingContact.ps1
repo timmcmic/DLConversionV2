@@ -182,7 +182,7 @@
             {
                 out-logfile -string "CalculatedCN is greater than 64 characters."
 
-                $functionCN = ($originalDLConfiguration.CN.substring(0,($originalDLConfiguration.cn.length - $functionMigratedByScript.Length))
+                $functionCN = ($originalDLConfiguration.CN.substring(0,($originalDLConfiguration.cn.length - $functionMigratedByScript.Length)))
 
                 out-logfile -string ("Updated function CN: "+$functionCN)
             }
@@ -196,7 +196,7 @@
             {
                 out-logfile -string "CalculatedCN is greater than 64 characters."
 
-                $functionCN = ($originalDLConfiguration.alias.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length))
+                $functionCN = ($originalDLConfiguration.alias.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length)))
 
                 out-logfile -string ("Updated function CN: "+$functionCN)
             }
