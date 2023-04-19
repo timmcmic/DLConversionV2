@@ -138,6 +138,13 @@
                     $functionTargetAddress=$address
                     $functionTargetAddress=$functionTargetAddress.toUpper()
                 }
+                elseif ($address.contains("microsoftonline.com"))
+                {
+                    out-logfile -string ("The remote routing domain based on legacy address was found = "+$address)
+
+                    $functionTargetAddress = $address
+                    $functionTargetAddress = $functionTargetAddress.toUpper()
+                }
             }
         }
         else 

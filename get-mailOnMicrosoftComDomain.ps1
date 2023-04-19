@@ -37,6 +37,14 @@
             out-logfile -string $_
             out-logfile -string "Error obtaining accepted domains." -isError:$TRUE
         }
+
+        <#
+        Commenting out the original code.
+
+        Encountered a customer issue where they have not online a mail.onmicrosoft.com domain but also the legacy microsoftonline.com domain encountered in other situations.
+
+        This causes a failure to occur 
+        #>
         
 
         foreach ($domain in $functionAcceptedDomains)
