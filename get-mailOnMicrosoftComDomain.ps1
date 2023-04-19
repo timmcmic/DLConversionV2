@@ -72,7 +72,7 @@
             out-logfile -string "Onmicrosoft.com routing domain identified."
             out-logfile -string $functionDomainName
         }
-        elseif ($functionDomainName = ($functionAcceptedDomains.where({$_.domainmname -like $functionDomainString0})).domainName) 
+        elseif ($functionDomainName = ($functionAcceptedDomains.where({$_.domainmname -like $functionDomainString1})).domainName) 
         {
             out-logfile -string "MicrosoftOnline routing domain identified."
             out-logfile -string $functionDomainName
