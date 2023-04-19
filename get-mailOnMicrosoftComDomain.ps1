@@ -21,8 +21,8 @@
 
         [string]$functionDomainName = ""
         [array]$functionAcceptedDomains = @()
-        [string]$functionDomainString0 = "mail.onmicrosoft.com"
-        [string]$functionDomainString1 = "microsoftonline.com"
+        [string]$functionDomainString0 = "*.mail.onmicrosoft.com"
+        [string]$functionDomainString1 = "*.microsoftonline.com"
         
         #Initiate the test.
         
@@ -43,10 +43,8 @@
 
         Encountered a customer issue where they have not online a mail.onmicrosoft.com domain but also the legacy microsoftonline.com domain encountered in other situations.
 
-        This causes a failure to occur 
-        #>
-        
-
+        If both are present we should always prefer the onmicrosoft.com domain as it is the modern routing domain.
+           
         foreach ($domain in $functionAcceptedDomains)
         {
             out-logfile -string ("Testing Domain: "+$domain.domainName)
@@ -67,7 +65,19 @@
             }
         }
 
-        if ($functionDomainName -eq "")
+        #>
+
+        if ($functionDomainName = ($functionAcceptedDomains.where({$_.domainmname -like $functionDomainString0})).domainName)
+        {
+            out-logfile -string "Onmicrosoft.com routing domain identified."
+            out-logfile -string $functionDomainName
+        }
+        elseif ($functionDomainName = ($functionAcceptedDomains.where({$_.domainmname -like $functionDomainString0})).domainName) 
+        {
+            out-logfile -string "MicrosoftOnline routing domain identified."
+            out-logfile -string $functionDomainName
+        }
+        else
         {
             out-logfile -string "No viable mail routing address was found."
             out-logfile -string "Contact support or post an issue on GITHUB." -isError:$true
