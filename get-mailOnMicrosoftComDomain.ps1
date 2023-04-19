@@ -67,7 +67,7 @@
 
         #>
 
-        if ($functionDomainName = ($functionAcceptedDomains.where({"$_.domainName -like $functionDomainString0"})).domainName)
+        if ($functionDomainName = ($functionAcceptedDomains.where({$_.domainName -like $functionDomainString0})).domainName)
         {
             out-logfile -string "Onmicrosoft.com routing domain identified."
             out-logfile -string $functionDomainName
