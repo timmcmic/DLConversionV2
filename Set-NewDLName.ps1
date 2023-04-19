@@ -79,6 +79,7 @@
         }
         else
         {
+            [string]$functionGroupName = $dlname+$functionGroupNameCharacter
             out-logfile -string "Group name does not exceed 64 characters - rename as normal."
         }
 
