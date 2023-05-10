@@ -285,6 +285,7 @@ Function Start-MultipleDistributionListMigration
 
     [array]$jobOutput=@()
     [array]$smtpNoSpace=@()
+    [array]$smtpGTZero=@()
 
     [int]$totalAddressCount = 0
     $telemetryGroupCount = 0
@@ -754,6 +755,26 @@ Function Start-MultipleDistributionListMigration
     #Execute the multi migration
 
     out-logfile -string "Starting multi-migration function."
+
+    out-logfile -string "Scanning each entry in the groups to ensure that none are a blank line."
+
+    foreach ($group in $groupsSMTPAddresses)
+    {
+        out-logfile -string ("Count of entry: "+$group.length)
+
+        if ($group.length -gt 0)
+        {
+            out-logfile -string "Group entry length is greater than 0."
+
+            $smtpGTZero += $group
+        }
+        else 
+        {
+            out-logfile -string "Entry is a blank line - discarding"
+        }
+    }
+
+    $groupSMTPAddresses = $smtpGTZero
 
     #Ensure no spaces in SMTP addresses.
 
