@@ -756,6 +756,15 @@ Function Start-MultipleDistributionListMigration
 
     out-logfile -string "Starting multi-migration function."
 
+    #Ensure no spaces in SMTP addresses.
+
+    foreach ($group in $groupSMTPAddresses)
+    {
+        $smtpNoSpace+=remove-stringSpace -stringToFix $group
+    }
+
+    $groupSMTPAddresses = $smtpNoSpace
+
     out-logfile -string "Scanning each entry in the groups to ensure that none are a blank line."
 
     foreach ($group in $groupsSMTPAddresses)
@@ -775,15 +784,6 @@ Function Start-MultipleDistributionListMigration
     }
 
     $groupSMTPAddresses = $smtpGTZero
-
-    #Ensure no spaces in SMTP addresses.
-
-    foreach ($group in $groupSMTPAddresses)
-    {
-        $smtpNoSpace+=remove-stringSpace -stringToFix $group
-    }
-
-    $groupSMTPAddresses = $smtpNoSpace
 
     startMultiMigration
 
