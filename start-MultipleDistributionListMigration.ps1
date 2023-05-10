@@ -767,7 +767,7 @@ Function Start-MultipleDistributionListMigration
 
     out-logfile -string "Scanning each entry in the groups to ensure that none are a blank line."
 
-    foreach ($group in $groupsSMTPAddresses)
+    foreach ($group in $groupSMTPAddresses)
     {
         out-logfile -string ("Count of entry: "+$group.length)
 
@@ -785,7 +785,16 @@ Function Start-MultipleDistributionListMigration
 
     $groupSMTPAddresses = $smtpGTZero
 
-    startMultiMigration
+    if ($groupSMTPAddresses.count -gt 0)
+    {
+        out-logfile -string "Commencing multiple migrations after email address analysis."
+        startMultiMigration
+    }
+    else 
+    {
+        out-logfile -string "After reomving spaces and blank lines there are no groups to be migrated." -isError:$true
+    }
+    
 
     #Now the we've made the first pass - we can work through any of the nested group exceptions.
 
