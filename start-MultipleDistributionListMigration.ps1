@@ -792,7 +792,7 @@ Function Start-MultipleDistributionListMigration
     }
     else 
     {
-        out-logfile -string "After reomving spaces and blank lines there are no groups to be migrated." -isError:$true
+        out-logfile -string "After removing spaces and blank lines there are no groups to be migrated." -isError:$true
     }
     
 
