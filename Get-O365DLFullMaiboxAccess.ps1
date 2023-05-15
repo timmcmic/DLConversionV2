@@ -109,7 +109,7 @@
                 out-logfile -string "Getting recipient..."
     
                 #$functionRecipient = get-ExoRecipient -identity $groupSMTPAddress
-                $functionRecipient = get-o365Recipient -identity $groupSMTPAddress
+                $functionRecipient = get-o365Group -identity $groupSMTPAddress
             }
             catch {
                 out-logfile -string $_ -isError:$TRUE

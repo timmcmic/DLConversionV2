@@ -3432,7 +3432,7 @@ Function Start-DistributionListMigration
             if ($useCollectedFullMailboxAccessOffice365 -eq $FALSE)
             {
                 try {
-                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $groupSMTPAddress
+                    $allOffice365FullMailboxAccess = Get-O365DLFullMaiboxAccess -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID
                 }
                 catch {
                     out-logfile -string $_ -isError:$TRUE

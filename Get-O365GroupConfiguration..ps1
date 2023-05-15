@@ -27,7 +27,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [string]$groupSMTPAddress,
+            [string]$groupSMTPAddress
         )
 
         #Output all parameters bound or unbound and their associated values.
