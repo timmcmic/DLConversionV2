@@ -3657,7 +3657,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
-    EXIT #Debug Exit
+    #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
     #This will make a first pass at creating a stub distribution list and perfomring long running transations like updating membership.
