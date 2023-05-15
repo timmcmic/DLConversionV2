@@ -2342,7 +2342,7 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    Exit #Debug Exit.
+    #Exit #Debug Exit.
 
     #At this point we have obtained all the information relevant to the individual group.
     #Validate that the discovered dependencies are valid in Office 365.
@@ -3156,7 +3156,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-
+    Exit #Debug exit
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
