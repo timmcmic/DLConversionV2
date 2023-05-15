@@ -3156,8 +3156,8 @@ Function Start-DistributionListMigration
     out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    Exit #Debug exit
-    
+    #Exit #Debug exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
@@ -3657,7 +3657,7 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
-    #EXIT #Debug Exit
+    EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
     #This will make a first pass at creating a stub distribution list and perfomring long running transations like updating membership.
