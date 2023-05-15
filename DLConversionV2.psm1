@@ -589,6 +589,7 @@ Function Start-DistributionListMigration
         originalDLConfigurationADXML = @{ "Value" =  "originalDLConfigurationADXML" ; "Description" = "XML file that exports the original DL configuration"}
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
         office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
+        office365GroupConfigurationXML = @{ "Value" = "office365GroupConfigurationXML" ; "Description" = "XML file that exports the Office 365 Group configuraiton"}
         office365DLConfigurationPostMigrationXML = @{ "Value" =  "office365DLConfigurationPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
         office365DLMembershipPostMigrationXML = @{ "Value" =  "office365DLMembershipPostMigrationXML" ; "Description" = "XML file that exports the Office 365 DL membership post migration"}
         exchangeDLMembershipSMTPXML = @{ "Value" =  "exchangeDLMemberShipSMTPXML" ; "Description" = "XML file that holds the SMTP addresses of the on premises DL membership"}
@@ -692,6 +693,7 @@ Function Start-DistributionListMigration
     #Cloud variables for the distribution list to be migrated.
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
+    $office365GroupConfiguration = $NULL #This holds the office 365 group configuration for the group to be migrated.
     $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
     $azureADDlMembership = $NULL
     $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
@@ -1517,10 +1519,18 @@ Function Start-DistributionListMigration
         {
             out-logFile -string $_ -isError:$TRUE
         }
+        try 
+        {
+            $office365GroupConfiguration = get-o365GroupConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     else 
     {
         $office365DLConfiguration="DistributionListIsNonSynced"
+        $office365GroupConfiguration="DistributionListIsNonSynced"
     }
 
     
@@ -1530,6 +1540,12 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
 
     Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
+
+    out-logfile -string $office365GroupConfiguration
+
+    out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
+
+    out-xmlfile -itemToExport $office365GroupConfiguration -itemNameToExport $xmlFiles.office365GroupConfigurationXML.value
 
     <#
 
