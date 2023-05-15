@@ -56,6 +56,7 @@
 
         if ($collectedData -eq $NULL)
         {
+            <# This is no longer utilized since live collection is not supported.  Retaining.
             try {
                 out-logfile -string "Getting recipient..."
     
@@ -102,6 +103,8 @@
             }
     
             write-progress -activity "Processing Recipient" -completed
+
+            #>
         }
         elseif ($collectedData -ne $NULL)
         {
@@ -117,7 +120,7 @@
 
             out-logfile "Obtaining all full mailbox access permissions in Office 365."
 
-            $functionFullMailboxAccess = $collectedData | where {$_.user.contains($functionRecipient.identity)}
+            $functionFullMailboxAccess = $collectedData | where {$_.usersid.contains($functionRecipient.sid)}
         }
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
