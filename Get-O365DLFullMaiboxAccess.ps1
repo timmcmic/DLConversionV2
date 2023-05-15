@@ -120,7 +120,7 @@
 
             out-logfile "Obtaining all full mailbox access permissions in Office 365."
 
-            $functionFullMailboxAccess = $collectedData | where {$_.usersid.contains($functionRecipient.sid)}
+            $functionFullMailboxAccess = $collectedData | where {$_.usersid -eq $functionRecipient.sid}
         }
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
