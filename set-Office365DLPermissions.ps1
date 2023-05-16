@@ -216,7 +216,7 @@
                 out-logfile -string $permission.UserSid
 
                 try {
-                    Remove-MailboxPermission -User $permission.UserSid -Identity $permission.identity -AccessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                    Remove-o365MailboxPermission -User $permission.UserSid -Identity $permission.identity -AccessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logFile -string "Unable to remove the full mailbox access permission in Office 365."
