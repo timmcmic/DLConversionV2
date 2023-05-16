@@ -134,6 +134,7 @@
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 out-logfile -string "Removing original permission to avoid orphaned SID"
+                out-logfile -string $permission.TrusteeSidString
 
                 try {
                     remove-o365RecipientPermission -identity $permission.identity -trustee $permission.TrusteeSidString -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
@@ -203,40 +204,75 @@
         {
             out-logfile -string "There are objects that have full mailbox access rights - processing."
 
-            try {
-                foreach ($permission in $allFullMailboxAccess)
-                {
-                    $isTestError="No" #Reset error tracking.
+            foreach ($permission in $allFullMailboxAccess)
+            {
+                $isTestError="No" #Reset error tracking.
 
-                    out-logfile -string ("Processing permission identity = "+$permission.identity)
-                    out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
-                    out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
+                out-logfile -string ("Processing permission identity = "+$permission.identity)
+                out-logfile -string ("Processing permission trustee = "+$originalGroupPrimarySMTPAddress)
+                out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
-                    add-o365MailboxPermission -identity $permission.identity -user $originalGroupPrimarySMTPAddress -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                out-logfile -string "Removing original permission to avoid orphaned sid."
+                out-logfile -string $permission.UserSid
+
+                try {
+                    Remove-MailboxPermission -User $permission.UserSid -Identity $permission.identity -AccessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
-            }
-            catch {
-                out-logFile -string "Unable to add the full mailbox access permission in Office 365."
-                out-logfile -string $_
-                $errorMessageDetail=$_
-                $isTestError="Yes"
-            }
+                catch {
+                    out-logFile -string "Unable to remove the full mailbox access permission in Office 365."
+                    out-logfile -string $_
+                    $errorMessageDetail=$_
+                    $isTestError="Yes"
+                }
 
-            if ($isTestError -eq "Yes")
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Unable to remove the full mailbox access permission in Office 365."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "FullMailboxAccess Permission"
+                        errorMessage = "Unable to remove the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                        errorMessageDetail = $errorMessageDetail
+                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
+                }
+
+                $isTestError="NO"
+
+                out-logfile -string "Attempting to add the full mailbox access right."
+
+                try 
+                {
+                        add-o365MailboxPermission -identity $permission.identity -user $originalGroupPrimarySMTPAddress -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                }
+                catch 
+                {
+                    out-logFile -string "Unable to add the full mailbox access permission in Office 365."
+                    out-logfile -string $_
+                    $errorMessageDetail=$_
+                    $isTestError="Yes"
+                }
+
+                if ($isTestError -eq "Yes")
                 {
                     out-logfile -string "Unable to add the full mailbox access permission in Office 365."
-    
+
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "FullMailboxAccess Permission"
                         errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
                         errorMessageDetail = $errorMessageDetail
                     }
-    
+
                     out-logfile -string $isErrorObject
-    
+
                     $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
+            }
         }
         else 
         {
