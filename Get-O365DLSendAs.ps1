@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             [string]$groupSMTPAddress,
             [Parameter(Mandatory = $false)]
-            [string]$isTrustee=$FALSE
+            [string]$isTrustee=$FALSE,
+            [Parameter(Mandatory = $false)]
+            $office365GroupConfiguration
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -64,6 +66,13 @@
             {
                 Out-LogFile -string $_ -isError:$TRUE
             }
+
+            out-logfile -string "Determining if the group has permissions to itself and excluding it from the array."
+            out-logfile -string ("PreCount: "+$functionSendAs.Count)
+
+            $functionSendAs = $functionSendAs | where {$_.TrusteeSidString -ne $office365GroupConfiguration.SID}
+
+            out-logfile -string ("PostCount: "+$functionSendAs.Count)
         }
         else
         {

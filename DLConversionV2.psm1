@@ -3407,7 +3407,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Group is type security on premises - therefore it may have send as rights."
 
                 try{
-                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -errorAction STOP
+                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
