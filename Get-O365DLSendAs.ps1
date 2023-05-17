@@ -81,6 +81,8 @@
                 out-logfile -string "Obtaining all send as permissions set directly in Office 365 on the group to be migrated."
 
                 $functionSendAs = get-O365RecipientPermission -identity $groupSMTPAddress -resultsize unlimited -errorAction STOP
+
+                out-logfile -string ("Number of send as located: "+$functionSendAs.Count)
             }
             catch
             {
