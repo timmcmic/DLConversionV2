@@ -1191,29 +1191,66 @@
                 {
                     out-logfile -string ("Processing trustee: "+$member.trustee)
 
-                    try
-                    {
-                        add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $member.trustee -accessRights $member.accessRights -confirm:$FALSE -errorAction STOP
-                    }
-                    catch
-                    {
-                        out-logfile -string "Unable to add member. "
+                    out-logfile -string "Test to see if the group had rights to itself."
 
-                        out-logfile -string $_
+                    if ($member.TrusteeSidString -eq $office365GroupConfiguration.sid)
+                    {
+                        out-logfile -string "The group had send as rights to itself."
 
-                        $isErrorObject = new-Object psObject -property @{
-                            PrimarySMTPAddressorUPN = $member.trustee
-                            ExternalDirectoryObjectID = $null
-                            Alias = $functionMailNickName
-                            Name = $originalDLConfiguration.name
-                            Attribute = "Send As On Migrated Group"
-                            ErrorMessage = ("Unable to add "+$member.trustee+" to migrated distribution group with send as rights.  Manual addition required.")
-                            ErrorMessageDetail = $_
+                        try
+                        {
+                            add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $functionExternalDirectoryObjectID -accessRights $member.accessRights -confirm:$FALSE -errorAction STOP
                         }
+                        catch
+                        {
+                            out-logfile -string "Unable to add member. "
 
-                        out-logfile -string $isErrorObject
+                            out-logfile -string $_
 
-                        $functionErrors+=$isErrorObject
+                            $isErrorObject = new-Object psObject -property @{
+                                PrimarySMTPAddressorUPN = $functionExternalDirectoryObjectID
+                                ExternalDirectoryObjectID = $null
+                                Alias = $functionMailNickName
+                                Name = $originalDLConfiguration.name
+                                Attribute = "Send As On Migrated Group"
+                                ErrorMessage = ("Unable to add "+$functionExternalDirectoryObjectID+" to migrated distribution group with send as rights.  Manual addition required.")
+                                ErrorMessageDetail = $_
+                            }
+
+                            out-logfile -string $isErrorObject
+
+                            $functionErrors+=$isErrorObject
+                        }
+                        
+                    }
+                    else 
+                    {
+                        out-logfile -string "Send as permissions is not for original group - updating."
+
+                        try
+                        {
+                            add-o365RecipientPermission -identity $functionExternalDirectoryObjectID -trustee $member.trustee -accessRights $member.accessRights -confirm:$FALSE -errorAction STOP
+                        }
+                        catch
+                        {
+                            out-logfile -string "Unable to add member. "
+
+                            out-logfile -string $_
+
+                            $isErrorObject = new-Object psObject -property @{
+                                PrimarySMTPAddressorUPN = $member.trustee
+                                ExternalDirectoryObjectID = $null
+                                Alias = $functionMailNickName
+                                Name = $originalDLConfiguration.name
+                                Attribute = "Send As On Migrated Group"
+                                ErrorMessage = ("Unable to add "+$member.trustee+" to migrated distribution group with send as rights.  Manual addition required.")
+                                ErrorMessageDetail = $_
+                            }
+
+                            out-logfile -string $isErrorObject
+
+                            $functionErrors+=$isErrorObject
+                        }
                     }
                 }
             }
