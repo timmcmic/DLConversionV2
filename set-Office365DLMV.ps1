@@ -29,6 +29,8 @@
             [Parameter(Mandatory = $true)]
             $office365DLConfiguration,
             [Parameter(Mandatory = $true)]
+            $office365GroupConfiguration,
+            [Parameter(Mandatory = $true)]
             [AllowEmptyCollection()]
             [array]$exchangeDLMembershipSMTP=$NULL,
             [Parameter(Mandatory = $true)]
