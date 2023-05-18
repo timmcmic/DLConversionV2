@@ -1104,18 +1104,17 @@
                 Out-LogFile -string "There were no members to process."    
             }
 
+            $functionRecipients=@() #Reset the test array.
+
             $isTestError=$FALSE
 
             out-logfile -string "It is possible that grant send on behalf to was set directly in the service."
             out-logfile -string "Grant send on behalf to is only stored as a recipient display name and not a unique id."
+            out-logfile -string "If the cloud value is > 0 then we will iterate through each one and attempt an add."
+            out-logfile -string "This can cause a false positive becuase names often cause ambiguous reference errors on adds."
 
-            if ($office365DLConfiguration.grantSendOnBehalfTo.count -ne $functionRecipients.count)
+            if ($office365DLConfiguration.grantSendOnBehalfTo.count -gt 0)
             {
-                out-logfile -string "The number of grant send on behalf to set on the Office 365 distribution list is more than what was calculated on premises."
-                out-logfile -string "We will now iterate through all of the members and attempt to add them."
-                out-logfile -string "This may result in false positive exceptions as the office 365 grant value only lists names and names can be ambiguous on set commands."
-                out-logfile -string "Each exception will require administrator review."
-
                 foreach ($member in $office365DLConfiguration.grantSendOnBehalfTo)
                 {
                     out-logfile -string ("Attempting to add recipient: "+$member)
@@ -1143,8 +1142,6 @@
                     }
                 }
             }
-
-            $functionRecipients=@() #Reset the test array.
 
             out-logFile -string "Evaluating exchangeSendAsSMTP"
 
