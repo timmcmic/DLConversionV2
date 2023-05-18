@@ -149,7 +149,7 @@
 
                 $functionTest = invoke-command -ScriptBlock $scriptBlock
 
-                $member.externalDirectoryObjectID = ("User_"+$functionTest.ObjectId)
+                $member.externalDirectoryObjectID = ("User_"+$functionTest.Id)
                 $member.alias = $functionTest.mailNickName
             }
             catch
