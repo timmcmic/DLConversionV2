@@ -149,6 +149,9 @@
 
                 $functionTest = invoke-command -ScriptBlock $scriptBlock
 
+                out-logfile -string $functionTest.id
+                out-logfile -string $functionTest.mailNickName
+
                 $member.externalDirectoryObjectID = ("User_"+$functionTest.Id)
                 $member.alias = $functionTest.mailNickName
             }
