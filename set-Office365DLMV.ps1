@@ -1215,7 +1215,6 @@
                 Out-LogFile -string "There were no members to process."    
             }
 
-            
             out-logfile -string "Resetting send as directly set on the group to be migrated."
 
             if ($allOffice365SendAsAccessOnGroup -ne $NULL)
