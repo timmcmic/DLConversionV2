@@ -1149,26 +1149,59 @@
                     {
                         out-LogFile -string ("Processing member = "+$member.PrimarySMTPAddressOrUPN)
 
-                        try {
-                            add-o365RecipientPermission -Identity $functionExternalDirectoryObjectID -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
-                        }
-                        catch {
-                            out-logfile -string "Unable to add member. "
-                            out-logfile -string $_
+                        out-logfile -string "Determine if the group had send as rights to itself on premises."
 
-                            $isErrorObject = new-Object psObject -property @{
-                                PrimarySMTPAddressorUPN = $member.primarySMTPAddressorUPN
-                                ExternalDirectoryObjectID = $NULL
-                                Alias = $NULL
-                                Name = $NULL
-                                Attribute = "Cloud Distribution Group SendAs"
-                                ErrorMessage = ("Unable to add migrated distribution group with send as to "+$member.primarySMTPAddressOrUPN+".  Manual addition required.")
-                                ErrorMessageDetail = $_
+                        if ($member.primarySMTPAddressOrUPN -eq $originalDLConfiguration.mail)
+                        {
+                            out-logfile -string "The group had send as rights to itself."
+
+                            try {
+                                add-o365RecipientPermission -Identity $functionExternalDirectoryObjectID -Trustee $functionExternalDirectoryObjectID -AccessRights "SendAs" -confirm:$FALSE
                             }
+                            catch {
+                                out-logfile -string "Unable to add member. "
+                                out-logfile -string $_
+    
+                                $isErrorObject = new-Object psObject -property @{
+                                    PrimarySMTPAddressorUPN = $member.primarySMTPAddressorUPN
+                                    ExternalDirectoryObjectID = $NULL
+                                    Alias = $NULL
+                                    Name = $NULL
+                                    Attribute = "Cloud Distribution Group SendAs"
+                                    ErrorMessage = ("Unable to add migrated distribution group with send as to "+$member.primarySMTPAddressOrUPN+".  Manual addition required.")
+                                    ErrorMessageDetail = $_
+                                }
+    
+                                out-logfile -string $isErrorObject
+    
+                                $functionErrors+=$isErrorObject
+                            }
+                        }
+                        else 
+                        {
+                            out-logfile -string "This is not the group to be migrated - set send as to match."
 
-                            out-logfile -string $isErrorObject
-
-                            $functionErrors+=$isErrorObject
+                            try {
+                                add-o365RecipientPermission -Identity $functionExternalDirectoryObjectID -Trustee $member.primarySMTPAddressOrUPN -AccessRights "SendAs" -confirm:$FALSE
+                            }
+                            catch {
+                                out-logfile -string "Unable to add member. "
+                                out-logfile -string $_
+    
+                                $isErrorObject = new-Object psObject -property @{
+                                    PrimarySMTPAddressorUPN = $member.primarySMTPAddressorUPN
+                                    ExternalDirectoryObjectID = $NULL
+                                    Alias = $NULL
+                                    Name = $NULL
+                                    Attribute = "Cloud Distribution Group SendAs"
+                                    ErrorMessage = ("Unable to add migrated distribution group with send as to "+$member.primarySMTPAddressOrUPN+".  Manual addition required.")
+                                    ErrorMessageDetail = $_
+                                }
+    
+                                out-logfile -string $isErrorObject
+    
+                                $functionErrors+=$isErrorObject
+                            }
                         }
                     }
                     else 
