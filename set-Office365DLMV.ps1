@@ -1106,6 +1106,44 @@
 
             $isTestError=$FALSE
 
+            out-logfile -string "It is possible that grant send on behalf to was set directly in the service."
+            out-logfile -string "Grant send on behalf to is only stored as a recipient display name and not a unique id."
+
+            if ($office365DLConfiguration.grantSendOnBehalfTo.count -ne $functionRecipients.count)
+            {
+                out-logfile -string "The number of grant send on behalf to set on the Office 365 distribution list is more than what was calculated on premises."
+                out-logfile -string "We will now iterate through all of the members and attempt to add them."
+                out-logfile -string "This may result in false positive exceptions as the office 365 grant value only lists names and names can be ambiguous on set commands."
+                out-logfile -string "Each exception will require administrator review."
+
+                foreach ($member in $office365DLConfiguration.grantSendOnBehalfTo)
+                {
+                    out-logfile -string ("Attempting to add recipient: "+$member)
+
+                    try {
+                        set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -GrantSendOnBehalfTo @{Add=$member} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
+                    catch {
+                        out-logfile -string ("Error procesing recipient: "+$member)
+
+                        out-logfile -string $_
+
+                        $isErrorObject = new-Object psObject -property @{
+                            PrimarySMTPAddressorUPN = $member
+                            ExternalDirectoryObjectID = $member
+                            Alias = $member
+                            Name = $originalDLConfiguration.name
+                            Attribute = "Cloud Distribution Group GrantSendOnBehalfTo Set In Cloud - this error may be ambiguous due to finding additional users in Office 356 Grant Send On Behalf To Not on premises.  Manual administrator review required."
+                            ErrorMessage = ("Member of GrantSendOnBehalfTo "+$member+" unable to add to cloud distribution group.  Manual addition required.")
+                            ErrorMessageDetail = $_
+                        }
+
+                        out-logfile -string $isErrorObject
+
+                        $functionErrors+=$isErrorObject
+                    }
+                }
+            }
+
             $functionRecipients=@() #Reset the test array.
 
             out-logFile -string "Evaluating exchangeSendAsSMTP"
