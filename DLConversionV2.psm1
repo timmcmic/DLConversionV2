@@ -765,6 +765,23 @@ Function Start-DistributionListMigration
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     }
 
+    $powershellVersion = $PSVersionTable.PSVersion
+
+    out-logfile -string "Determining powershell version."
+    out-logfile -string ("Major: "+$powershellVersion.major)
+    out-logfile -string ("Minor: "+$powershellVersion.minor)
+    out-logfile -string ("Patch: "+$powershellVersion.patch)
+
+    if ($powerShellVersion.Major -ge 7)
+    {
+        out-logfile -string "Powershell version is 7 or greater.  Load Exchange Online in own session"
+        import-module ExchangeOnlineManagement -UseWindowsPowerShell -Force
+    }
+    else
+    {
+        out-logfile -string "Do not load module in own windows powershell instance."
+    }
+
     function session-toImport
     {
         #Now we can determine if exchange on premises is utilized and if so establish the connection.
