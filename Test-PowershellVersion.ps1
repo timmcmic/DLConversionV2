@@ -12,7 +12,7 @@
     Test-PowershellVersion
 
     #>
-    Function Test-PowershellModule
+    Function Test-PowershellVersion
      {
         [cmdletbinding()]
 
