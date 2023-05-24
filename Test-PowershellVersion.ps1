@@ -34,11 +34,9 @@
 
         if ($functionPowerShellVersion.Major -ge 7)
         {
-            #out-logfile -string "Powershell 7 and higher is currently not supported due to module compatibility issues."
-            #out-logfile -string "Please run module from Powershell 5.x"
-            #out-logfile -string "" -isError:$true
-
-            import-module ExchangeOnlineManagement -MinimumVersion "3.0.0" -useWindowsPowershell
+            out-logfile -string "Powershell 7 and higher is currently not supported due to module compatibility issues."
+            out-logfile -string "Please run module from Powershell 5.x"
+            out-logfile -string "" -isError:$true
         }
         else
         {
