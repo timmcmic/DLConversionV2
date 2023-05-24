@@ -42,4 +42,9 @@
         {
             out-logfile -string "Powershell version is not powershell 7.1 proceed."
         }
+
+        Out-LogFile -string "********************************************************************************"
+        Out-LogFile -string "END TEST-POWERSHELLVERSION"
+        Out-LogFile -string "********************************************************************************"
+
     }
