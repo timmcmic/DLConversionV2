@@ -765,6 +765,10 @@ Function Start-DistributionListMigration
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     }
 
+    out-logfile -string "Testing for supported version of Powershell engine."
+
+    test-powershellVersion
+
     function session-toImport
     {
         #Now we can determine if exchange on premises is utilized and if so establish the connection.
