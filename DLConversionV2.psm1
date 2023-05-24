@@ -775,7 +775,7 @@ Function Start-DistributionListMigration
     if ($powerShellVersion.Major -ge 7)
     {
         out-logfile -string "Powershell version is 7 or greater.  Load Exchange Online in own session"
-        import-module ExchangeOnlineManagement -UseWindowsPowerShell -minimumVersion 3.0.0 -Force -skipEditionCheck
+        import-module ExchangeOnlineManagement -minimumVersion 3.0.0 -Force -skipEditionCheck
     }
     else
     {
