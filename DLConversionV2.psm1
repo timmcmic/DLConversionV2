@@ -1215,32 +1215,6 @@ Function Start-DistributionListMigration
 
    #>
 
-   Out-LogFile -string "Calling nea-msGraphADPowershellSession to create new connection to msGraph active directory."
-
-   if ($msGraphCertificateThumbprint -ne "")
-   {
-      #User specified thumbprint authentication.
-
-        try {
-            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
-        }
-        catch {
-            out-logfile -string "Unable to create the msgraph connection using certificate."
-            out-logfile -string $_ -isError:$TRUE
-        }
-   }
-   elseif ($msGraphTenantID -ne "")
-   {
-        try
-        {
-            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
-        }
-        catch
-        {
-            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
-        }
-   }
-
    #exit #Debug Exit
 
    #Create the connection to exchange online.
@@ -1308,6 +1282,33 @@ Function Start-DistributionListMigration
         out-logfile -string "Unable to create remote powershell session to the AD Global Catalog server."
         out-logfile -string $_ -isError:$TRUE
     }
+
+    Out-LogFile -string "Calling nea-msGraphPowershellSession to create new connection to msGraph active directory."
+
+   if ($msGraphCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch {
+            out-logfile -string "Unable to create the msgraph connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
+        }
+   }
+
     
 
     Out-LogFile -string "********************************************************************************"
