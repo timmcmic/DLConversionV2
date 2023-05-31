@@ -290,7 +290,6 @@ Function Start-MultipleMachineDistributionListMigration
     #If certificate authentication is being utilized - there is no reason to check for a server count for credential.
 
     [boolean]$isExchangeCertAuth = $FALSE
-    [boolean]$isAzureCertAuth = $false
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
@@ -422,7 +421,7 @@ Function Start-MultipleMachineDistributionListMigration
 
     out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
 
-    start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
+    $isExchangeCertAuth=start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
     out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
@@ -886,7 +885,7 @@ Function Start-MultipleMachineDistributionListMigration
     #This creates a bogus username and password and stuffs the array.
     #If bogus user name is found in the other ps1 - it sets it back to null.
 
-    if (($isExchangeCertAuth -eq $TRUE) -or ($isAzureCertAuth -eq $TRUE))
+    if ($isExchangeCertAuth -eq $TRUE)
     {
         # Define clear text string for username and password
         [string]$bogusUserName = 'BogusUserName'
@@ -897,19 +896,9 @@ Function Start-MultipleMachineDistributionListMigration
 
         [pscredential]$bogusCredObject = New-Object System.Management.Automation.PSCredential ($bogusUserName, $bogusSecStringPassword)
 
-        if ($isExchangeCertAuth -eq $TRUE)
-        {
-            out-logfile -string "Creating empty Exchange credentials array."
+        out-logfile -string "Creating empty Exchange credentials array."
 
-            $exchangeOnlineCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
-        }
-
-        if ($isAzureCertAuth -eq $TRUE)
-        {
-            out-logfile -string "Creating empty Azure credentials array"
-            
-            $azureADCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
-        }
+        $exchangeOnlineCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
     }
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
