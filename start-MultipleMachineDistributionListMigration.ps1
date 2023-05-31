@@ -562,7 +562,7 @@ Function Start-MultipleMachineDistributionListMigration
         else 
         {
             try
-            { The job is not the migration host.  Use remote
+            {
                 $ScriptBlock = [scriptblock]::Create("Get-installedModule '$dlConversionV2ModuleName'")
 
                 out-logfile -string $scriptBlock
