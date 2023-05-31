@@ -138,7 +138,7 @@
 
         if ($functionParameterSetName -eq $remoteDriveLetterParameterSetName)
         {
-            if ($remoteDriveLetter.count -ne 1)
+            if ($remoteDriveLetter.length -ne 1)
             {
                 out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
             }  
