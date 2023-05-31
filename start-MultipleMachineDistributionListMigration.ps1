@@ -898,7 +898,11 @@ Function Start-MultipleMachineDistributionListMigration
 
         out-logfile -string "Creating empty Exchange credentials array."
 
-        $exchangeOnlineCredential += $bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject,$bogusCredObject
+        $exchangeOnlineCredential += $bogusCredObject
+        $exchangeOnlineCredential += $bogusCredObject
+        $exchangeOnlineCredential += $bogusCredObject
+        $exchangeOnlineCredential += $bogusCredObject
+        $exchangeOnlineCredential += $bogusCredObject
     }
 
     for ($serverCounter = 0 ; $serverCounter -lt $forEnd ; $serverCounter++)
