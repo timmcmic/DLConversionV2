@@ -30,17 +30,14 @@
         Out-LogFile -string "BEGIN test-itemCount"
         Out-LogFile -string "********************************************************************************"
 
-        if ($greaterThan -eq $FALSE)
+
+        if ($itemsToCount.count -lt $itemsToCompareCount.count)
         {
-            if ($itemsToCount.count -lt $itemsToCompareCount.count)
-            {
-                out-logfile -string "ERROR:  Credentials arrays must have one credential for each server specified." -isError:$TRUE
-            }
-            else 
-            {
-                out-logfile -string "The number of credentials in the credentials array matches the number of servers provided."  
-            }
-             
+            out-logfile -string "ERROR:  Credentials arrays must have one credential for each server specified." -isError:$TRUE
+        }
+        else 
+        {
+            out-logfile -string "The number of credentials in the credentials array matches the number of servers provided."  
         }
 
         Out-LogFile -string "********************************************************************************"

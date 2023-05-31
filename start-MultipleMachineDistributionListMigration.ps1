@@ -336,7 +336,6 @@ Function Start-MultipleMachineDistributionListMigration
         Out-LogFile -string $server
     }
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
-    #Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
 
     if ($aadConnectServer -ne "")
