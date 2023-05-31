@@ -569,7 +569,7 @@ Function Start-MultipleMachineDistributionListMigration
 
                 $commands = invoke-command -scriptBlock {$scriptBlock} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
                 
-                if ($commands.count -eq 0)
+                if (!$commands)
                 {
                     out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.")
                     $invalidServers+=$server
