@@ -563,7 +563,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $ScriptBlock = [scriptblock]::Create("Get-installedModule '$dlConversionV2ModuleName' -errorAction STOP")
+                $ScriptBlock = [scriptblock]::Create("Get-installedModule '$dlConversionV2ModuleName' -errorAction silentlyContinue")
 
                 out-logfile -string $scriptBlock
 
