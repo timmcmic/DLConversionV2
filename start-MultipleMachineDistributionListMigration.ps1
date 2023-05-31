@@ -563,7 +563,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $commands = invoke-command -scriptBlock {get-command -module $dlConversionV2ModuleName -errorAction STOP} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
+                $commands = invoke-command -scriptBlock {get-command -module 'dlconversionv2' -errorAction STOP} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
 
                 out-logfile -string $commands.Count
                 out-logfile -string $commands
