@@ -424,16 +424,6 @@ Function Start-MultipleMachineDistributionListMigration
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    #Validate that only one method of engaging azure was specified.
-
-    Out-LogFile -string "Valdating azure credentials."
-
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -serverNames $serverNames -threadCount 5
-
-    #Validate that all information for the certificate connection has been provieed.
-
-    start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
-
     out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
     start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
