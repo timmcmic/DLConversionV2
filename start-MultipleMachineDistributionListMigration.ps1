@@ -569,8 +569,7 @@ Function Start-MultipleMachineDistributionListMigration
 
                 $commands = invoke-command -scriptBlock {$scriptBlock} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
 
-                out-logfile -string $commands.Count
-                out-logfile -string $commands
+                out-logfile -string ("The count of commands found: +"$commands.Count)
                 
                 if ($commands.count -eq 0)
                 {
