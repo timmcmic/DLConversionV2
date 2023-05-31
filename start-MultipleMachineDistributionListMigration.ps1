@@ -563,13 +563,13 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $ScriptBlock = [scriptblock]::Create("import-module ActiveDirectory ; get-command -module '$dlConversionV2ModuleName' -errorAction STOP")
+                $ScriptBlock = [scriptblock]::Create("Get-installedModule '$dlConversionV2ModuleName' -errorAction STOP")
 
                 out-logfile -string $scriptBlock
 
                 $commands = invoke-command -scriptBlock {$scriptBlock} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
 
-                out-logfile -string $commands.Count
+                out-logfile $commands
                 
                 if ($commands.count -eq 0)
                 {
