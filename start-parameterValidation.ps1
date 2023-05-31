@@ -296,6 +296,7 @@
             else 
             {
                 out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
+                $functionTrueFalse = $TRUE
             }
         }
 
