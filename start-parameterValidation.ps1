@@ -103,7 +103,6 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
             [AllowNull()]
             $msGraphApplicationID
-            
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -139,28 +138,21 @@
 
         if ($functionParameterSetName -eq $remoteDriveLetterParameterSetName)
         {
-            if ($remoteDriveLetter -eq $NULL)
+            if ($remoteDriveLetter.count -ne 1)
             {
-                out-logfile -string "A remote drive letter is required - specify S for example." -isError:$TRUE
-            }
+                out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
+            }  
             else 
             {
-                if ($remoteDriveLetter.count -gt 1)
+                out-logfile -string "Drive letter specified is a single character."
+                
+                if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
                 {
-                    out-logfile -string "Please specify a single drive letter - for example S" -isError:$TRUE
+                    out-logfile -string "Drive letter specified is single and is a valid drive character."
                 }
                 else 
                 {
-                    out-logfile -string "Drive letter specified is a single character."
-                    
-                    if ([regex]::Match($remoteDriveLetter,"[a-zA-Z]"))
-                    {
-                        out-logfile -string "Drive letter specified is single and is a valid drive character."
-                    }
-                    else 
-                    {
-                        out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
-                    }
+                    out-logfile -string "Please specify a valid character A-Z or a-z for the remote drive letter." -iserror:$TRUE
                 }
             }
         }
