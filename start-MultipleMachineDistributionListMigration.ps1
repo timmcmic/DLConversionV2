@@ -563,7 +563,7 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $ScriptBlock = [scriptblock]::Create("get-command -module '$dlConversionV2ModuleName' -errorAction STOP")
+                $ScriptBlock = [scriptblock]::Create("get-installedModule '$dlConversionV2ModuleName' -errorAction STOP")
 
                 out-logfile -string $scriptBlock
 
@@ -571,8 +571,9 @@ Function Start-MultipleMachineDistributionListMigration
 
                 out-logfile -string ("The count of commands found: "+$commands.Count)
                 
-                if ($commands.count -eq 0)
+                if ($commands)
                 {
+                    out-logfile $commands
                     out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.")
                     $invalidServers+=$server
                 }
