@@ -571,12 +571,12 @@ Function Start-MultipleMachineDistributionListMigration
                 
                 if ($commands.name -ne $dlConversionV2ModuleName)
                 {
-                    out-logfile -string $commands
                     out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.")
                     $invalidServers+=$server
                 }
                 else {
                     out-logfile -string ("Server "+$server+" is ready.")
+                    out-logfile -string $commands
                 }
             }    
             catch{
