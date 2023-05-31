@@ -567,7 +567,7 @@ Function Start-MultipleMachineDistributionListMigration
 
                 out-logfile -string $scriptBlock
 
-                $commands = invoke-command -scriptBlock $scriptBlock -computerName $server -credential $activeDirectoryCredential[0] -errorAction SilentlyContinue
+                $commands = invoke-command -scriptBlock $scriptBlock -computerName $server -credential $activeDirectoryCredential[0] -errorAction Continue
                 
                 if (!$commands)
                 {
