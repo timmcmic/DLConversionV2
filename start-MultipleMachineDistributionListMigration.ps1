@@ -563,15 +563,16 @@ Function Start-MultipleMachineDistributionListMigration
         {
             try
             {
-                $ScriptBlock = [scriptblock]::Create("get-installedModule '$dlConversionV2ModuleName' -errorAction STOP")
+                $ScriptBlock = [scriptblock]::Create("import-module ActiveDirectory ; get-command -module '$dlConversionV2ModuleName' -errorAction STOP")
 
                 out-logfile -string $scriptBlock
 
                 $commands = invoke-command -scriptBlock {$scriptBlock} -computerName $server -credential $activeDirectoryCredential[0] -errorAction STOP
+
+                out-logfile -string $commands.Count
                 
-                if ($commands)
+                if ($commands.count -eq 0)
                 {
-                    out-logfile $commands
                     out-logfile -string ("Server "+$server+" does not have the DLConversionV2 module installed.")
                     $invalidServers+=$server
                 }
