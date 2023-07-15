@@ -2836,7 +2836,7 @@ Function Start-DistributionListMigration
     out-logfile -string "Test DL name prefix and suffix name constraints."
 
     try{
-        test-dlNameLength -DLConfiguration $originalDLConfiguration -prerix $dlNamePrefix -suffix $dlNameSuffix -errorAction STOP
+        test-dlNameLength -DLConfiguration $originalDLConfiguration -prefix $dlNamePrefix -suffix $dlNameSuffix -errorAction STOP
     }
     catch {
         out-logfile -string $_
