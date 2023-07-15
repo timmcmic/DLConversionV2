@@ -397,6 +397,16 @@
                 $functionDisplayName = $office365DLConfiguration.displayName    
             }
 
+            out-logfile -string "Evaluting prefix and suffix for display name."
+
+            $functionDisplayname = $prefix + $functionDisplayName
+
+            out-logfile -string ("Display name with prefix: "+$functionDisplayName)
+
+            $functionDisplayName = $functionDisplayName +$suffix
+
+            out-logfile -string ("Display name with suffix: "+$functionDisplayName)
+
             if ($originalDLConfiguration.DisplayNamePrintable -ne $NULL)
             {
                 $functionSimpleDisplayName = $originalDLConfiguration.displayNamePrintable
