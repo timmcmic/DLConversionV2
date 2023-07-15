@@ -364,6 +364,11 @@ Function Start-DistributionListMigration
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        #Define paramters for naming conventions.
+        [Parameter(Mandatory = $false)]
+        [string]$dlNamePrefix="",
+        [Parameter(Mandatory = $false)]
+        [string]$dlNameSuffix="",
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
