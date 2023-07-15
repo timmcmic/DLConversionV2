@@ -2839,6 +2839,7 @@ Function Start-DistributionListMigration
         test-dlNameLength -DLConfiguration $originalDLConfiguration -prerix $dlNamePrefix -suffix $dlNameSuffix -errorAction STOP
     }
     catch {
+        out-logfile -string $_
         out-logfile -string "Unable to validate the DL name suffix prefix length constraints" -isError:$TRUE
     }
 
