@@ -191,7 +191,7 @@ Function start-MultipleTestPreMigrations
         [Parameter(Mandatory = $false)]
         [string]$dlNamePrefix="",
         [Parameter(Mandatory = $false)]
-        [string]$dlNameSuffix="",
+        [string]$dlNameSuffix=""
     )
 
     #Initialize telemetry collection.
