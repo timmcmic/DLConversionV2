@@ -39,7 +39,11 @@
             [Parameter(Mandatory = $true)]
             $office365DLConfigurationPostMigration,
             [Parameter(Mandatory=$FALSE)]
-            [boolean]$isFirstAttempt=$false
+            [boolean]$isFirstAttempt=$false,
+            [Parameter(Mandatory=$FALSE)]
+            [string]$prefix="",
+            [Parameter(Mandatory=$FALSE)]
+            [string]$suffix=""
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -64,6 +68,7 @@
         [string]$functionWindowsEmailAddress=""
         [boolean]$functionReportToOriginator=$FALSE
         [string]$functionExternalDirectoryObjectID = ""
+        [string]$functionDLName = ""
 
         [boolean]$isTestError=$FALSE
         [array]$functionErrors=@()
@@ -73,6 +78,12 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN SET-Office365DL"
         Out-LogFile -string "********************************************************************************"
+
+        out-logfile -string "Modifying name with prefix and suffix."
+
+        $functionDLName = $prefix + $originalDLConfiguration.name + $suffix
+
+        out-logfile -string ("Calculated DL Name including prefix and suffix: "+$functionDLName)
 
         if ($office365DLConfigurationPostMigration.externalDirectoryObjectID -eq "")
         {
@@ -95,7 +106,7 @@
             {
                 out-logfile -string "Setting distribution group name for the migrated group."
                 
-                Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -name $originalDLConfiguration.cn -errorAction STOP -BypassSecurityGroupManagerCheck
+                Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -name $functionDLName -errorAction STOP -BypassSecurityGroupManagerCheck
             }
             catch 
             {
@@ -107,7 +118,7 @@
                     PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
                     ExternalDirectoryObjectID = $originalDLConfiguration.'msDS-ExternalDirectoryObjectId'
                     Alias = $functionMailNickName
-                    Name = $originalDLConfiguration.name
+                    Name = $functionDLName+" ("+$originalDLConfiguration.name+")"
                     Attribute = "Cloud distribution list:  Name"
                     ErrorMessage = "Error setting name on the migrated distribution group.  Administrator action required."
                     ErrorMessageDetail = $_
@@ -385,6 +396,16 @@
             {
                 $functionDisplayName = $office365DLConfiguration.displayName    
             }
+
+            out-logfile -string "Evaluting prefix and suffix for display name."
+
+            $functionDisplayname = $prefix + $functionDisplayName
+
+            out-logfile -string ("Display name with prefix: "+$functionDisplayName)
+
+            $functionDisplayName = $functionDisplayName +$suffix
+
+            out-logfile -string ("Display name with suffix: "+$functionDisplayName)
 
             if ($originalDLConfiguration.DisplayNamePrintable -ne $NULL)
             {

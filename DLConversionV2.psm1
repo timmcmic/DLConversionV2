@@ -364,6 +364,11 @@ Function Start-DistributionListMigration
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        #Define paramters for naming conventions.
+        [Parameter(Mandatory = $false)]
+        [string]$dlNamePrefix="",
+        [Parameter(Mandatory = $false)]
+        [string]$dlNameSuffix="",
         #Define parameters for multi-threaded operations
         [Parameter(Mandatory = $false)]
         [int]$threadNumberAssigned=0,
@@ -2828,6 +2833,16 @@ Function Start-DistributionListMigration
         out-logfile -string "There were no members with send as rights."    
     }
 
+    out-logfile -string "Test DL name prefix and suffix name constraints."
+
+    try{
+        test-dlNameLength -DLConfiguration $originalDLConfiguration -prefix $dlNamePrefix -suffix $dlNameSuffix -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "Unable to validate the DL name suffix prefix length constraints" -isError:$TRUE
+    }
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
@@ -3814,7 +3829,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -isFirstAttempt:$TRUE -prefix $dlNamePrefix -suffix $dlNameSuffix
             $stopLoop=$TRUE
         }
         catch {
@@ -4202,7 +4217,7 @@ Function Start-DistributionListMigration
 
     do {
         try {
-            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration
+            set-Office365DL -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -groupTypeOverride $groupTypeOverride -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -prefix $dlNamePrefix -suffix $dlNameSuffix
             $stopLoop=$TRUE
         }
         catch {
