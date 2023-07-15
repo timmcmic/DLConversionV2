@@ -2833,6 +2833,15 @@ Function Start-DistributionListMigration
         out-logfile -string "There were no members with send as rights."    
     }
 
+    out-logfile -string "Test DL name prefix and suffix name constraints."
+
+    try{
+        test-dlNameLength -DLConfiguration $originalDLConfiguration -prerix $dlNamePrefix -suffix $dlNameSuffix -errorAction STOP
+    }
+    catch {
+        out-logfile -string "Unable to validate the DL name suffix prefix length constraints" -isError:$TRUE
+    }
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
