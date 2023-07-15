@@ -28,7 +28,7 @@
     test-CloudDLPresent -groupSMTPAddress SMTPAddress
 
     #>
-    Function test-CloudDLPresent
+    Function test-DLNameLength
      {
         [cmdletbinding()]
 
