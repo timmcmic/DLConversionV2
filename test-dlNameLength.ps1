@@ -37,8 +37,10 @@
             [Parameter(Mandatory = $true)]
             $dlConfiguration,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyString()]
             [string]$prefix,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyString()]
             [string]$suffix
         )
 
