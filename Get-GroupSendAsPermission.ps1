@@ -189,16 +189,11 @@
 
             foreach ($sendAsRight in $functionSendAsRight)
             {
-                if (($sendAsRight.identityReference.toString() -notlike "S-1-5*") -and ($sendAsRight.identityReference.toString() -notLike "NT AUTHORITY*"))
+                if ($sendAsRight.identityReference.toString() -notlike "S-1-5*")
                 {
-                    out-logfile -string "Processing ACL"
-                    out-logfile -string $sendAsRight
+                    out-logfile -string "ACL is not an orphaned ACL - check for supported built in."
 
-                    $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
-                }
-                else 
-                {
-                    if ($sendAsRight.identityReference.toString() -eq "NT Authority\Self")
+                    if ($sendAsRight.identityRference.toString() -eq "NT Authority\Self")
                     {
                         out-logfile -string "NT Authority Self is allowed - processing self right."
                         out-logfile -string "Processing ACL"
@@ -206,16 +201,22 @@
 
                         $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
                     }
-                    elseif ($sendAsRight.identityReference.toString() -like "S-1-5*")
+                    elseif ($sendAsRight.identityRference.toString() -like "NT Authority\*") 
                     {
-                        out-logfile -string "ACL skipped - SID found - orphaned ACL."    
+                        out-logfile -string "Unsupported NT Authority found - skipping."
                         out-logfile -string $sendAsRight
                     }
-                    elseif ($sendAsRight.identityReference.toString() -Like "NT AUTHORITY*")
+                    else 
                     {
-                        out-logfile -string "ACL skipped - NT Authority Built In Group Found - automatically skipping."    
+                        out-logfile -string "Supported ACL found - processing."
+                        out-logfile -string "Processing ACL"
                         out-logfile -string $sendAsRight
                     }
+                }
+                else 
+                {   
+                    out-logfile -string "ACL skipped - SID found - orphaned ACL."    
+                    out-logfile -string $sendAsRight
                 }
             }
         }
