@@ -211,6 +211,8 @@
                         out-logfile -string "Supported ACL found - processing."
                         out-logfile -string "Processing ACL"
                         out-logfile -string $sendAsRight
+
+                        $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
                     }
                 }
                 else 
