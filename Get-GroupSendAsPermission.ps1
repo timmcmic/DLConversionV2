@@ -213,7 +213,7 @@
                     }
                     elseif ($sendAsRight.identityReference.toString() -Like "NT AUTHORITY*")
                     {
-                        out-logfile -string "ACL skipped - NT Authority Built In Group Found - orphaned ACL."    
+                        out-logfile -string "ACL skipped - NT Authority Built In Group Found - automatically skipping."    
                         out-logfile -string $sendAsRight
                     }
                 }
