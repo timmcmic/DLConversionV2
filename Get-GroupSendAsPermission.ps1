@@ -189,7 +189,7 @@
 
             foreach ($sendAsRight in $functionSendAsRight)
             {
-                if (($sendAsRight.identityReference.toString() -notlike "S-1-5*") -or ($sendAsRight.identityReference.toString() -notLike "NT Authority*"))
+                if (($sendAsRight.identityReference.toString() -notlike "S-1-5*") -or ($sendAsRight.identityReference.toString() -notLike "NT AUTHORITY*"))
                 {
                     out-logfile -string "Processing ACL"
                     out-logfile -string $sendAsRight
