@@ -198,8 +198,16 @@
                 }
                 else 
                 {
-                    out-logfile -string "ACL skipped - SID found - orphaned ACL."    
-                    out-logfile -string $sendAsRight
+                    if ($sendAsRight.identityReference.toString() -like "S-1-5*")
+                    {
+                        out-logfile -string "ACL skipped - SID found - orphaned ACL."    
+                        out-logfile -string $sendAsRight
+                    }
+                    elseif ($sendAsRight.identityReference.toString() -Like "NT AUTHORITY*")
+                    {
+                        out-logfile -string "ACL skipped - NT Authority Built In Group Found - orphaned ACL."    
+                        out-logfile -string $sendAsRight
+                    }
                 }
             }
         }
