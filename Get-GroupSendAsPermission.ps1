@@ -189,7 +189,7 @@
 
             foreach ($sendAsRight in $functionSendAsRight)
             {
-                if (($sendAsRight.identityReference.toString() -notlike "S-1-5*") -or ($sendAsRight.identityReference.toString() -notLike "NT AUTHORITY*"))
+                if (($sendAsRight.identityReference.toString() -notlike "S-1-5*") -and ($sendAsRight.identityReference.toString() -notLike "NT AUTHORITY*"))
                 {
                     out-logfile -string "Processing ACL"
                     out-logfile -string $sendAsRight
@@ -198,12 +198,20 @@
                 }
                 else 
                 {
-                    if ($sendAsRight.identityReference.toString() -like "S-1-5*")
+                    if ($sendAsRight.identityReference.toString() -eq "NT Authority\Self")
+                    {
+                        out-logfile -string "NT Authority Self is allowed - processing self right."
+                        out-logfile -string "Processing ACL"
+                        out-logfile -string $sendAsRight
+
+                        $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                    }
+                    elseif ($sendAsRight.identityReference.toString() -like "S-1-5*")
                     {
                         out-logfile -string "ACL skipped - SID found - orphaned ACL."    
                         out-logfile -string $sendAsRight
                     }
-                    elseif ($sendAsRight.identityReference.toString() -Like "NTAUTHORITY*")
+                    elseif ($sendAsRight.identityReference.toString() -Like "NT AUTHORITY*")
                     {
                         out-logfile -string "ACL skipped - NT Authority Built In Group Found - orphaned ACL."    
                         out-logfile -string $sendAsRight
