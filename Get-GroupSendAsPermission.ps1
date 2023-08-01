@@ -203,7 +203,7 @@
                         out-logfile -string "ACL skipped - SID found - orphaned ACL."    
                         out-logfile -string $sendAsRight
                     }
-                    elseif ($sendAsRight.identityReference.toString() -Like "NT AUTHORITY*")
+                    elseif ($sendAsRight.identityReference.toString() -Like "NTAUTHORITY*")
                     {
                         out-logfile -string "ACL skipped - NT Authority Built In Group Found - orphaned ACL."    
                         out-logfile -string $sendAsRight
