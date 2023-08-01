@@ -193,7 +193,7 @@
                 {
                     out-logfile -string "ACL is not an orphaned ACL - check for supported built in."
 
-                    if ($sendAsRight.identityRference.toString() -eq "NT Authority\Self")
+                    if ($sendAsRight.identityReference.toString() -eq "NT Authority\Self")
                     {
                         out-logfile -string "NT Authority Self is allowed - processing self right."
                         out-logfile -string "Processing ACL"
@@ -201,7 +201,7 @@
 
                         $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
                     }
-                    elseif ($sendAsRight.identityRference.toString() -like "NT Authority\*") 
+                    elseif ($sendAsRight.identityReference.toString() -like "NT Authority\*") 
                     {
                         out-logfile -string "Unsupported NT Authority found - skipping."
                         out-logfile -string $sendAsRight
