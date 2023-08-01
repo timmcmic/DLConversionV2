@@ -191,7 +191,7 @@
             {
                 if ($sendAsRight.identityReference.toString() -notlike "S-1-5*")
                 {
-                    out-logfile -string "ACL is not an orphaned ACL - check for supported built in."
+                    out-logfile -string "Filter out unsupported BUILT IN ACL / Add valid ACL"
 
                     if ($sendAsRight.identityReference.toString() -eq "NT Authority\Self")
                     {
