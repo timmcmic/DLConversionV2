@@ -131,7 +131,7 @@
 
             foreach ($address in $originalDLConfiguration.proxyAddresses)
             {
-                if (($address.tolower()).contains($mailOnMicrosoftComDomain.toLower())
+                if (($address.tolower()).contains($mailOnMicrosoftComDomain.toLower()))
                 {
                     out-logfile -string ("Hybrid remote routing address found.")
                     out-logfile -string $address
