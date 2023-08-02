@@ -105,7 +105,7 @@
         {
             out-logfile -string "Testing for full mailbo access rights.."
 
-            $functionPermissions = $collectedData | where {$_.user.contains($originalDLConfiguration.samAccountName)}
+            $functionPermissions = $collectedData | where {($_.user.tolower()).contains($originalDLConfiguration.samAccountName.toLower())}
         }
 
         Out-LogFile -string "********************************************************************************"

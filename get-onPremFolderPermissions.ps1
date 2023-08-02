@@ -57,7 +57,7 @@
 
         out-logfile -string ("Post collected data count: "+$collecteddata.count)
 
-        $functionFolderRightsUsers = $collectedData | where {$_.user.ADRecipient.primarySMTpAddress.contains($originalDLConfiguration.mail)}
+        $functionFolderRightsUsers = $collectedData | where {(($_.user.ADRecipient.primarySMTpAddress).tolower()).contains($originalDLConfiguration.mail.toLower())}
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END get-onPremFolderPermissions"
