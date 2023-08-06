@@ -189,15 +189,44 @@
 
             foreach ($sendAsRight in $functionSendAsRight)
             {
+                out-logfile -string ("Processing: "+$sendAsRight.identityReference.toString())
+
                 if ($sendAsRight.identityReference.toString() -notlike "S-1-5*")
                 {
-                    out-logfile -string "Processing ACL"
-                    out-logfile -string $sendAsRight
+                    out-logfile -string "Filter out unsupported BUILT IN ACL / Add valid ACL"
 
-                    $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                    if ($sendAsRight.identityReference.toString() -eq "NT Authority\Self")
+                    {
+                        out-logfile -string ("Processing: "+$sendAsRight.identityReference.toString())
+
+                        out-logfile -string "NT Authority Self is allowed - processing self right."
+                        out-logfile -string "Processing ACL"
+                        out-logfile -string $sendAsRight
+
+                        $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                    }
+                    elseif ($sendAsRight.identityReference.toString() -like "NT Authority\*") 
+                    {
+                        out-logfile -string ("Processing: "+$sendAsRight.identityReference.toString())
+
+                        out-logfile -string "Unsupported NT Authority found - skipping."
+                        out-logfile -string $sendAsRight
+                    }
+                    else 
+                    {
+                        out-logfile -string ("Processing: "+$sendAsRight.identityReference.toString())
+
+                        out-logfile -string "Supported ACL found - processing."
+                        out-logfile -string "Processing ACL"
+                        out-logfile -string $sendAsRight
+
+                        $functionSendAsRightName+=$sendAsRight.identityreference.tostring().split("\")[1]
+                    }
                 }
                 else 
-                {
+                {   
+                    out-logfile -string ("Processing: "+$sendAsRight.identityReference.toString())
+                    
                     out-logfile -string "ACL skipped - SID found - orphaned ACL."    
                     out-logfile -string $sendAsRight
                 }

@@ -131,14 +131,14 @@
             {
                 out-logfile -string ("Testing address for remote routing address = "+$address)
     
-                if ($address.contains("mail.onmicrosoft.com"))
+                if (($address.tolower()).contains("mail.onmicrosoft.com"))
                 {
                     out-logfile -string ("The remote routing address was found = "+$address)
     
                     $functionTargetAddress=$address
                     $functionTargetAddress=$functionTargetAddress.toUpper()
                 }
-                elseif ($address.contains("microsoftonline.com"))
+                elseif (($address.tolower()).contains("microsoftonline.com"))
                 {
                     out-logfile -string ("The remote routing domain based on legacy address was found = "+$address)
 
@@ -154,7 +154,7 @@
             {
                 out-logfile -string ("Testing address for remote routing address = "+$address)
     
-                if ($address.contains($customRoutingDomain))
+                if (($address.tolower()).contains($customRoutingDomain.tolower()))
                 {
                     out-logfile -string ("The remote routing address was found = "+$address)
     
