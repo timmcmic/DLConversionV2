@@ -96,9 +96,10 @@
         else 
         {
             out-logfile -string "Attempting one move back to the source OU - on premises group was moved to no-sync and failure occured."
-        }
 
-          
+            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction SilentlyContinue
+
+        }
 
         Out-LogFile -string "END MOVE-TONONSYNCOU"
         Out-LogFile -string "********************************************************************************"
