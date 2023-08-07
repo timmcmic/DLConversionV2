@@ -4293,7 +4293,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Obtain the migrated DL membership and record it for validation."
 
-    out-logfile -string "Debug error for testing move to original OU." -isError:$TRUE
+    #out-logfile -string "Debug error for testing move to original OU." -isError:$TRUE
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0
