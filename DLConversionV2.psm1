@@ -434,6 +434,11 @@ Function Start-DistributionListMigration
     #Define a global for DLConfiguration cleanup.
 
     $global:DLCleanupInfo=$NULL
+    $global:DLMoveCleanup = New-Object PSObject -Property @{
+        originalDLConfiguration = $null
+        adCredential = $activeDirectoryCredential
+    }
+ 
 
      #Define the status directory.
 

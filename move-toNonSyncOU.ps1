@@ -45,7 +45,9 @@
             [Parameter(Mandatory = $true)]
             $DN,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            $dlMoveCleanup=$FALSE
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -63,31 +65,40 @@
         [boolean]$stopLoop=$false
         [int]$loopCounter = 0
 
-        do
+        if ($dlMoveCleanup -eq $FALSE)
         {
-            Out-LogFile -string "Move the group to the non-SYNC OU..."
-
-            try {
-                move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
-
-                $stopLoop = $true
-            }
-            catch {
-                if ($loopCounter -lt 5)
-                {
-                    out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
-                    out-logfile -string ("Attempt number: "+$loopcounter.tostring())
-
-                    $loopCounter++
-
-                    start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+            do
+            {
+                Out-LogFile -string "Move the group to the non-SYNC OU..."
+    
+                try {
+                    move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
+    
+                    $stopLoop = $true
                 }
-                else {
-                    out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
-                    out-logfile -string $_ -isError:$true
+                catch {
+                    if ($loopCounter -lt 5)
+                    {
+                        out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
+                        out-logfile -string ("Attempt number: "+$loopcounter.tostring())
+    
+                        $loopCounter++
+    
+                        start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+                    }
+                    else {
+                        out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
+                        out-logfile -string $_ -isError:$true
+                    }
                 }
-            }
-        } until ($stopLoop -eq $TRUE)  
+            } until ($stopLoop -eq $TRUE)
+        }
+        else 
+        {
+            out-logfile -string "Attempting one move back to the source OU - on premises group was moved to no-sync and failure occured."
+        }
+
+          
 
         Out-LogFile -string "END MOVE-TONONSYNCOU"
         Out-LogFile -string "********************************************************************************"
