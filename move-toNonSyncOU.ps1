@@ -78,7 +78,7 @@
                     out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
                     out-logfile -string ("Attempt number: "+$loopcounter.tostring())
 
-                    $loopConter++
+                    $loopCounter++
 
                     start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
                 }
