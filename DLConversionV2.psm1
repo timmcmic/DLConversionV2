@@ -3707,6 +3707,8 @@ Function Start-DistributionListMigration
 
             #Set the global DL info to Office365DLConfiguration so that if there is a failure the DL can be removed.
 
+            out-logfile -string "Setting DL cleanup information - if a failure occurs delete the stub DL."
+
             $global:DLCleanupInfo = $office365DLConfigurationPostMigration
 
             #If we made it this far then the group was created.
@@ -4331,7 +4333,13 @@ Function Start-DistributionListMigration
 
     #The DL has no been fully created - any failures from this point should not remove the stub DL.
 
+    out-logfile -string "At this point do not delete the stub DL created in the cloud - the DL is now complete as best possible."
+
     $global:DlCleanupInfo = $NULL
+
+    out-logfile -string "At this point do not move the DL back to the sync OU in the event of a failure."
+
+    $global:DLMoveCleanup.originalDLConfiguration = $NULL
 
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
