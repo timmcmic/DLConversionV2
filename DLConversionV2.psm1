@@ -431,6 +431,10 @@ Function Start-DistributionListMigration
     $windowTitle = ("Start-DistributionListMigration "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
 
+    #Define a global for DLConfiguration cleanup.
+
+    $global:DLCleanupInfo=$NULL
+
      #Define the status directory.
 
      [string]$global:statusPath="\Status\"
@@ -3773,10 +3777,6 @@ Function Start-DistributionListMigration
         catch {
             if ($loopCounter -gt 4)
             {
-                out-logfile -string "Error encountered prior to DL rename - delete temporary cloud only DL."
-
-                remove-cloudOnlyGroup -office365DLConfiguration $office365DLConfiguration -DLCleanupRequired:$TRUE
-
                 out-logFile -string $_ -isError:$TRUE
             }
             else {
@@ -3839,10 +3839,6 @@ Function Start-DistributionListMigration
         catch {
             if ($loopCounter -gt 4)
             {
-                out-logfile -string "Error encountered prior to DL rename - delete temporary cloud only DL."
-
-                remove-cloudOnlyGroup -office365DLConfiguration $office365DLConfiguration -DLCleanupRequired:$TRUE
-
                 out-logfile -string $_ -isError:$TRUE
             }
             else 
@@ -3926,10 +3922,6 @@ Function Start-DistributionListMigration
             out-statusFile -threadNumber $global:threadNumber -errorAction STOP
         }
         catch{
-            out-logfile -string "Error encountered prior to DL rename - delete temporary cloud only DL."
-
-            remove-cloudOnlyGroup -office365DLConfiguration $office365DLConfiguration -DLCleanupRequired:$TRUE
-
             out-logfile -string "Unable to write status file." -isError:$TRUE
         }
 
@@ -3943,10 +3935,6 @@ Function Start-DistributionListMigration
         move-toNonSyncOU -dn $originalDLConfiguration.distinguishedName -OU $dnNoSyncOU -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -errorAction STOP
     }
     catch {
-        out-logfile -string "Error encountered prior to DL rename - delete temporary cloud only DL."
-
-        remove-cloudOnlyGroup -office365DLConfiguration $office365DLConfiguration -DLCleanupRequired:$TRUE
-
         out-logfile -string $_ -isError:$TRUE
     }
 
