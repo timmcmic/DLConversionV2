@@ -64,10 +64,11 @@
         {
             Out-LogFile -string "Move the group to the non-SYNC OU..."
 
-            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer
+            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
         }
         catch 
         {
+            out-logfile -tsring "Unable to move DL to non-sync OU - abandon this migration."
             Out-LogFile -string $_ -isError:$TRUE
         }
 
