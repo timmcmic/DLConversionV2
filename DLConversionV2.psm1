@@ -3700,6 +3700,10 @@ Function Start-DistributionListMigration
         try {
             $office365DLConfigurationPostMigration=new-office365dl -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -grouptypeoverride $groupTypeOverride -errorAction STOP
 
+            #Set the global DL info to Office365DLConfiguration so that if there is a failure the DL can be removed.
+
+            $global:DLCleanupInfo = $office365DLConfigurationPostMigration
+
             #If we made it this far then the group was created.
 
             $stopLoop=$TRUE
@@ -4317,6 +4321,10 @@ Function Start-DistributionListMigration
     $telemetryCreateOffice365DL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time elapsed to fully create Office 365 DL: "+$telemetryCreateOffice365DL.toString())
+
+    #The DL has no been fully created - any failures from this point should not remove the stub DL.
+
+    $global:DlCleanupInfo = $NULL
 
     #The distribution group has been created and both single and multi valued attributes have been updated.
     #The group is fully availablle in exchange online.
