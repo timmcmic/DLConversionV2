@@ -31,6 +31,21 @@
             out-logfile -string "Skip temporary DL removal."
         }
 
+        out-logfile -string "Determining if the original DL should be moved back to the original OU due to failure."
+
+        if ($global:DLMoveCleanup.originalDLConfiguration -ne $NULL)
+        {
+            out-logfile -string "The original DL should be moved back to the original group."
+
+            $tempOUSubstring = Get-OULocation -originalDLConfiguration $global:DLMoveCleanup.originalDLConfiguration -errorAction STOP
+
+            move-toNonSyncOU -OU $tempOUSubstring -dn $global:DLMoveCleanup.originalDLConfiguration.GUID -adCredential $global:DLMoveCleanup.adCredential -globalCatalogServer $global:DLMoveCleanup.globalCatalogServer -dlMoveCleanup:$TRUE -errorAction SilentlyContinue
+        }
+        else 
+        {
+            out-logfile -string "Skip moving original DL to original OU."
+        }
+
         out-logfile "Gathering all PS Sessions"
 
         try{

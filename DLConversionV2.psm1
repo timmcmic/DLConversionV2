@@ -437,6 +437,7 @@ Function Start-DistributionListMigration
     $global:DLMoveCleanup = New-Object PSObject -Property @{
         originalDLConfiguration = $null
         adCredential = $activeDirectoryCredential
+        globalCatalogServer = $globalCatalogServer
     }
  
 
