@@ -3947,6 +3947,8 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
+    $global:DLMoveCleanup.originalDLConfiguration = $originalDLConfiguration
+
     #If there are multiple threads have all threads > 1 sleep for 15 seconds while thread one deletes all status files.
     #This should cover the 5 seconds that any other threads may be sleeping looking to read the status directory.
 
