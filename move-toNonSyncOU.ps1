@@ -64,6 +64,8 @@
         {
             Out-LogFile -string "Move the group to the non-SYNC OU..."
 
+            start-sleep -s 120 #Debug sleep to test OU removal.
+
             move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
         }
         catch 
