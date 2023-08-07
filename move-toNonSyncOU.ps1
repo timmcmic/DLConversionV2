@@ -59,18 +59,35 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START MOVE-TONONSYNCOU"
         Out-LogFile -string "********************************************************************************"
-        
-        try 
+
+        [boolean]$stopLoop=$false
+        [int]$loopCounter = 0
+
+        do
         {
             Out-LogFile -string "Move the group to the non-SYNC OU..."
 
-            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
-        }
-        catch 
-        {
-            out-logfile -string "Unable to move DL to non-sync OU - abandon this migration."
-            Out-LogFile -string $_ -isError:$TRUE
-        }
+            try {
+                move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
+
+                $stopLoop = $true
+            }
+            catch {
+                if ($loopCounter -lt 5)
+                {
+                    out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
+                    out-logfile -string ("Attempt number: "+$loopCounter.tostring())
+
+                    $loopCounter++
+
+                    start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+                }
+                else {
+                    out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
+                    out-logfile -string $_ -isError:$true
+                }
+            }
+        } until ($stopLoop -eq $TRUE)  
 
         Out-LogFile -string "END MOVE-TONONSYNCOU"
         Out-LogFile -string "********************************************************************************"
