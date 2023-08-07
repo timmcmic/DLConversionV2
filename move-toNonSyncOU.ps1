@@ -84,7 +84,6 @@
                 }
                 else {
                     out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
-                    out-logfile -string $_ -isError:$true
                 }
             }
         } until ($stopLoop -eq $TRUE)  

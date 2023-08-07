@@ -39,7 +39,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $office365DLConfiguration
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $false)]
+            $DLCleanupRequired=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -50,14 +52,27 @@
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
-        try{
-            remove-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -confirm:$FALSE -BypassSecurityGroupManagerCheck -errorAction STOP
+        if ($DLCleanupRequired -eq $FALSE)
+        {
+            try{
+                remove-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -confirm:$FALSE -BypassSecurityGroupManagerCheck -errorAction STOP
+            }
+            catch{
+                out-logfile -string "Error removing the original distribution list from Office 365."
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
-        catch{
-            out-logfile -string "Error removing the original distribution list from Office 365."
-            out-logfile -string $_ -isError:$TRUE
+        else 
+        {
+            try{
+                remove-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -confirm:$FALSE -BypassSecurityGroupManagerCheck -errorAction STOP
+            }
+            catch{
+                out-logfile -string "Error removing the original distribution list from Office 365 - not failing is optional cleanup operation."
+                out-logfile -string $_
+            }
         }
-
+        
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END remove-o365CloudOnlyGroup"
         Out-LogFile -string "********************************************************************************"
