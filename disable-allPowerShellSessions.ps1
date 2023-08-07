@@ -39,7 +39,7 @@
 
             $tempOUSubstring = Get-OULocation -originalDLConfiguration $global:DLMoveCleanup.originalDLConfiguration -errorAction STOP
 
-            move-toNonSyncOU -OU $tempOUSubstring -dn $global:DLMoveCleanup.originalDLConfiguration.GUID -adCredential $global:DLMoveCleanup.adCredential -globalCatalogServer $global:DLMoveCleanup.globalCatalogServer -dlMoveCleanup:$TRUE -errorAction SilentlyContinue
+            move-toNonSyncOU -OU $tempOUSubstring -dn $global:DLMoveCleanup.originalDLConfiguration.objectGUID -adCredential $global:DLMoveCleanup.adCredential -globalCatalogServer $global:DLMoveCleanup.globalCatalogServer -dlMoveCleanup:$TRUE -errorAction SilentlyContinue
         }
         else 
         {
