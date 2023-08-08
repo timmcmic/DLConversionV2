@@ -94,7 +94,7 @@
         {
             Out-LogFile -string "Set the AD group name."
 
-            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential
+            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential -errorAction STOP
         }
         catch 
         {
@@ -105,7 +105,7 @@
         {
             out-logfile -string "Setting the new group name.."
 
-            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer -credential $adCredential
+            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer -credential $adCredential -errorAction STOP
         }
         catch
         {
