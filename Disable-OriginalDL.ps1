@@ -77,11 +77,12 @@
         
         try 
         {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential -errorAction Stop
 
         }
         catch 
         {
+            out-logfile -string "Unable to mail disable the original distribution group.  Failing entire job - manual cleanup required - hybrid mail flow cannot proceed."
             Out-LogFile -string $_ -isError:$TRUE
         }
 
