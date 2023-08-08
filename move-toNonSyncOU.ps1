@@ -47,7 +47,9 @@
             [Parameter(Mandatory = $true)]
             $adCredential,
             [Parameter(Mandatory = $false)]
-            $dlMoveCleanup=$FALSE
+            $dlMoveCleanup=$FALSE,
+            [Parameter(Mandatory = $false)]
+            $dlPostCreate=$FALSE
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -67,31 +69,57 @@
 
         if ($dlMoveCleanup -eq $FALSE)
         {
-            do
+            if ($dlPostCreate -eq $FALSE)
             {
-                Out-LogFile -string "Move the group to the non-SYNC OU..."
-    
+                do
+                {
+                    Out-LogFile -string "Move the group to the non-SYNC OU..."
+        
+                    try {
+                        move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
+        
+                        $stopLoop = $true
+                    }
+                    catch {
+                        if ($loopCounter -lt 5)
+                        {
+                            out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
+                            out-logfile -string ("Attempt number: "+$loopcounter.tostring())
+        
+                            $loopCounter++
+        
+                            start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+                        }
+                        else {
+                            out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
+                            out-logfile -string $_ -isError:$true
+                        }
+                    }
+                } until ($stopLoop -eq $TRUE)
+            }
+            else 
+            {
                 try {
                     move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
-    
-                    $stopLoop = $true
                 }
                 catch {
-                    if ($loopCounter -lt 5)
-                    {
-                        out-logfile -string "Attempt to move to non-sync OU failed - wait and retry."
-                        out-logfile -string ("Attempt number: "+$loopcounter.tostring())
-    
-                        $loopCounter++
-    
-                        start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+                    out-logfile -string "Unable to move the group between organizational units.  Manual intervention required."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        PrimarySMTPAddressorUPN = ""
+                        ExternalDirectoryObjectID = ""
+                        Alias = ""
+                        Name = $DN
+                        Attribute = ""
+                        ErrorMessage = "Unable to move the on premises group between OUs.  Manual administrator intervention required."
+                        ErrorMessageDetail = $_
                     }
-                    else {
-                        out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
-                        out-logfile -string $_ -isError:$true
-                    }
+
+                    out-logfile -string $isErrorObject
+
+                    $global:postCreateErrors += $isErrorObject
                 }
-            } until ($stopLoop -eq $TRUE)
+            }
         }
         else 
         {
