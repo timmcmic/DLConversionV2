@@ -4473,8 +4473,6 @@ Function Start-DistributionListMigration
 
                 move-toNonSyncOU -DN $originalDLConfigurationUpdated.distinguishedName -ou $tempOUSubstring -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -dlPostCreate $true -errorAction STOP
 
-                start-sleep -s 300
-
                 $stopLoop = $TRUE
             }
             catch {
