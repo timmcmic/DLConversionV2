@@ -102,6 +102,9 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [pscredential]$activeDirectoryCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Kerberos")]
+            $activeDirectoryAuthenticationMethod="Kerberos",
             #Exchange On-Premises Parameters
             [Parameter(Mandatory = $false)]
             [string]$exchangeServer=$NULL,
