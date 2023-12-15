@@ -180,7 +180,7 @@
 
         #This logic allows the code to be re-used when only the Office 365 information is available.
 
-        if ($isRetry -eq $FALSE)
+        if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.cn.length -gt 0))
         {
             out-logfile -string "Operation is not retried - use on premsies value."
             [string]$functionCN=$originalDLConfiguration.CN.replace(' ','')+$functionMigratedByScript
@@ -197,19 +197,19 @@
         else 
         {
             out-logfile -string "Operation is retried - use Office 365 value."
-            [string]$functionCN=$originalDLConfiguration.alias.replace(' ','')+$functionMigratedByScript
+            [string]$functionCN=$office365DLConfiguration.alias.replace(' ','')+$functionMigratedByScript
 
             if ($functionCN.length -gt $functionMaxLength)
             {
                 out-logfile -string "CalculatedCN is greater than 64 characters."
 
-                (($originalDLConfiguration.CN.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+                (($office365DLConfiguration.CN.substring(0,($office365DLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
 
                 out-logfile -string ("Updated function CN: "+$functionCN)
             }
         }
 
-        if ($isRetry -eq $FALSE)
+        if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.mail.length -gt 0))
         {
             out-logfile -string "Operation is not retried - use on premsies value."
             [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
@@ -270,7 +270,7 @@
 
         [string]$functionProxyAddress="SMTP:"+$functionMail
 
-        if ($isRetry -eq $FALSE)
+        if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.mailNickName.length -gt 0))
         {
             out-logfile -string "Operation is not retried - use on premsies value."
             [string]$functionMailNickName=$originalDLConfiguration.mailNickName.replace(' ','')+$functionMigratedByScript
@@ -287,13 +287,13 @@
         else 
         {
             out-logfile -string "Operation is retried - use Office 365 value."
-            [string]$functionMailNickName=$originalDLConfiguration.alias.replace(' ','')+$functionMigratedByScript
+            [string]$functionMailNickName=$office365DLConfiguration.alias.replace(' ','')+$functionMigratedByScript
 
             if ($functionMailNickName.length -gt $functionMaxLength)
             {
                 out-logfile -string "Calculated mail nick name is greater than 64 characters."
 
-                (($originalDLConfiguration.alias.substring(0,($originalDLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
+                (($office365DLConfiguration.alias.substring(0,($office365DLConfiguration.alias.length - $functionMigratedByScript.Length)))+$functionMigratedByScript)
 
                 out-logfile -string ("Updated function mail nick name: "+$functionMailNickName)
             }
