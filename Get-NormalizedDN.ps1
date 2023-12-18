@@ -412,6 +412,35 @@
                         isErrorMessage="NESTED_GROUP_EXCEPTION: A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
                     }
                 }
+
+                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE)) 
+                {
+                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
+
+                    out-logfile -string "The group is a member and only has a mail address - this results in an Office 365 Group being provisioned.  Allow to proceed."
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
+                        GroupType = $functionTest.GroupType
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
+                        DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
+                        isAlreadyMigrated = $false
+                        isError=$true
+                        isErrorMessage="NESTED_GROUP_EXCEPTION: A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
+                    }
+                }
+
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
                 {
                     #The group is a recipient and has permissions to an attribute.
