@@ -4710,7 +4710,7 @@ Function Start-DistributionListMigration
 
             if ($originalDLConfiguration.mailNickName -eq $NULL)
             {
-                out-logfile -string "On premises mail nickname value is missing - utilize Office 365 values."
+                out-logfile -string "x."
                 out-logfile -string $office365DLConfiguration.alias
                 $originalDLConfiguration.mailNickName = $office365DLConfiguration.alias
                 out-logfile -string $originalDLConfiguration.mailNickName
