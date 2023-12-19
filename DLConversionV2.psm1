@@ -4698,6 +4698,46 @@ Function Start-DistributionListMigration
             #We're going to overload this here - if any of the attributes necessary are set to NULL - then pass in the O365 config and the retry flag.
             #This is what the enable post migration does - bases this off the O365 object.
 
+            out-logfile -string "Determine if on premises values are missing and Office 365 values need to be substituted in."
+
+            if ($originalDLConfiguration.name -eq $NULL)
+            {
+                out-logfile -string "On premises name value is missing - utilize Office 365 values."
+                out-logfile -string $office365DLConfiguration.DisplayName
+                $originalDLConfiguration.name = $office365DLConfiguration.DisplayName
+                out-logfile -string $originalDLConfiguration.name 
+            }
+
+            if ($originalDLConfiguration.mailNickName -eq $NULL)
+            {
+                out-logfile -string "On premises mail nickname value is missing - utilize Office 365 values."
+                out-logfile -string $office365DLConfiguration.alias
+                $originalDLConfiguration.mailNickName = $office365DLConfiguration.alias
+                out-logfile -string $originalDLConfiguration.mailNickName
+            }
+
+            if ($originalDLConfiguration.mail -eq $NULL)
+            {
+                out-logfile -string "On premises mail value is missing - utilize Office 365 values."
+                out-logfile -string $office365DLConfiguration.primarySMTPAddress
+                $originalDLConfiguration.mail = $office365DLConfiguration.primarySMTPAddress
+                out-logfile -string $originalDLConfiguration.mail
+            }
+
+            if ($originalDLConfiguration.displayName -eq $NULL)
+            {
+                out-logfile -tsring "On premises display name value is missing - utilize Office 365 values."
+                out-logfile -string $office365DLConfiguration.displayName
+                $originalDLConfiguration.displayName = $office365DLConfiguration.displayName
+                out-logfile -string $originalDLConfiguration.displayName
+            }
+
+            out-logfile -tsring "Creating the mail dynamic group..."
+
+            $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
+
+            <#
+
             if ( ($originalDLConfiguration.name -eq $NULL) -or ($originalDLConfiguration.mailNickName -eq $NULL) -or ($originalDLConfiguration.mail -eq $NULL) -or ($originalDLConfiguration.displayName -eq $NULL) )
             {
                 out-logfile -string "Using Office 365 attributes for the mail dynamic group."
@@ -4708,6 +4748,8 @@ Function Start-DistributionListMigration
                 out-logfile -string "Using on premises attributes for the mail dynamic group."
                 $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
             }
+
+            #>
         }
         catch{
             out-logfile -string $_
