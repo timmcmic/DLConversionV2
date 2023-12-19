@@ -182,18 +182,27 @@
 
         if ($isRetry -eq $FALSE)
         {
-            $functionEmailAddress = "x500:"+$originalDLConfiguration.legacyExchangeDN
+            if ($originalDLConfiguration.legacyExchangeDN -ne $NULL)
+            {
+                out-logfile -string "Determined that legacy Exchange DN was not NULL - calculate x500 address."
 
-            out-logfile -string $originalDLConfiguration.legacyExchangeDN
-            out-logfile -string ("Calculated x500 Address = "+$functionEmailAddress)
+                $functionEmailAddress = "x500:"+$originalDLConfiguration.legacyExchangeDN
 
-            try{
-                set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
+                out-logfile -string $originalDLConfiguration.legacyExchangeDN
+                out-logfile -string ("Calculated x500 Address = "+$functionEmailAddress)
+
+                try{
+                    set-dynamicDistributionGroup -identity $originalDLConfiguration.mail -emailAddresses @{add=$functionEmailAddress} -domainController $globalCatalogServer
+                }
+                catch{
+                    out-logfile -string $_
+                    $isTestError="Yes"
+                    return $isTestError        
+                }
             }
-            catch{
-                out-logfile -string $_
-                $isTestError="Yes"
-                return $isTestError        
+            else 
+            {
+                out-logfile -string "Original DL configuration legacyExchangeDN is NULL - no action required."
             }
         }
         else 
