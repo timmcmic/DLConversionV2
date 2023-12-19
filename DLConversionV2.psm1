@@ -4726,13 +4726,13 @@ Function Start-DistributionListMigration
 
             if ($originalDLConfiguration.displayName -eq $NULL)
             {
-                out-logfile -tsring "On premises display name value is missing - utilize Office 365 values."
+                out-logfile -string "On premises display name value is missing - utilize Office 365 values."
                 out-logfile -string $office365DLConfiguration.displayName
                 $originalDLConfiguration.displayName = $office365DLConfiguration.displayName
                 out-logfile -string $originalDLConfiguration.displayName
             }
 
-            out-logfile -tsring "Creating the mail dynamic group..."
+            out-logfile -string "Creating the mail dynamic group..."
 
             $isTestError=Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfiguration -routingContactConfig $routingContactConfiguration
 
