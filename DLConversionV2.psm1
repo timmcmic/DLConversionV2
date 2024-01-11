@@ -1351,6 +1351,8 @@ Function Start-DistributionListMigration
         out-logfile -string $_ -isError:$TRUE
     }
 
+    #Testing the returned DL configuration to determine if it is a group.  If the object was found by SMTP address is not a group then exit.
+
     if ($originalDLConfiguration.groupType -eq $NULL)
     {
         out-logfile -string "Object found by SMTP address is not a group." -isError:$TRUE
