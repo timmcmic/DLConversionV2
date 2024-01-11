@@ -1361,7 +1361,6 @@ Function Start-DistributionListMigration
     {
         out-logfile -string "Object located by mail address and group type is present - proceed."
         out-logfile -string $originalDLConfiguration.groupType.tostring()
-        exit
     }
     
     Out-LogFile -string "Log original DL configuration."
