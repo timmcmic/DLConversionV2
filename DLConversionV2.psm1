@@ -354,7 +354,7 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory=$false)]
         [string]$customRoutingDomain="",
         [Parameter(Mandatory=$false)]
-        $skipNestedGroupCheck=$false
+        $skipNestedGroupCheck=$false,
         #Definte parameters for pre-collected permissions
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFullMailboxAccessOnPrem=$FALSE,
