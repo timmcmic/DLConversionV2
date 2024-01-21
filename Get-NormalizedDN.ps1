@@ -174,6 +174,41 @@
                 }
             }
         } until ($stopLoop -eq $TRUE)
+
+        out-logfile -string "Output information utlized for if else evaluation..."
+        out-logfile -string ("Object Class: "+$functionTest.objectClass)
+        if ($functiontest.msExchRecipientDisplayType -ne $NULL)
+        {
+            out-logfile -string ("MSExchRecipientDisplayType: "+$functiontest.msExchRecipientDisplayType)
+        }
+        else 
+        {
+            out-logfile -string "No msExchRecipientDisplayType attribute"
+        }
+        if ($functiontest.mail -ne $NULL)
+        {
+            out-logfile -string ("Mail: "+$functiontest.mail)
+        }
+        else {
+            out-logfile -string "No mail attribute"
+        }
+        if ($functionTest.extensionattribute1 -eq "MigratedByScript")
+        {
+            out-logfile -string ("ExtensionAttribute1: "+$functionTest.extensionattribute1)
+        }
+        else 
+        {
+            out-logfile -string "Extension attribute 1 not relevant to evaluation"
+        }
+        if ($originalDLConfiguration.groupType -ne $NULL)
+        {
+            out-logfile -string ("GroupType: "+$originalDLConfiguration.groupType)
+        }
+        else {
+            out-logfile -string "Group type not utilized for evaluation."
+        }
+        out-logfile -string ("IsMember: "+$isMember)
+        out-logfile -string ("SkipNestedGroupCheck: "+$skipNestedGroupCheck) 
         
         try
         {
