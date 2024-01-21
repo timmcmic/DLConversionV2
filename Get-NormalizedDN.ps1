@@ -478,6 +478,34 @@
                     }
                 }
 
+                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE)) 
+                {
+                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
+
+                    out-logfile -string "A nested group was found where only mail was specified - this should yield a valid recipient if group is also security.."
+                    
+                    $functionObject = New-Object PSObject -Property @{
+                        Alias = $functionTest.mailNickName
+                        Name = $functionTest.Name
+                        PrimarySMTPAddressOrUPN = $functionTest.mail
+                        GUID = $NULL
+                        RecipientType = $functionTest.objectClass
+                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
+                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
+                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
+                        GroupType = $functionTest.GroupType
+                        RecipientOrUser = "Recipient"
+                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        OnPremADAttribute = $activeDirectoryAttribute
+                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
+                        DN = $DN
+                        ParentGroupSMTPAddress = $groupSMTPAddress
+                        isAlreadyMigrated = $false
+                        isError=$false
+                        isErrorMessage=""
+                    }
+                }
+
                 elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE)) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
