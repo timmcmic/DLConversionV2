@@ -478,7 +478,7 @@
                     }
                 }
 
-                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE)) 
+                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE) -and (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
 
