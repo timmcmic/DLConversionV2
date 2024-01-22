@@ -200,9 +200,9 @@
         {
             out-logfile -string "Extension attribute 1 not relevant to evaluation"
         }
-        if ($originalDLConfiguration.groupType -ne $NULL)
+        if ($functionTest.groupType -ne $NULL)
         {
-            out-logfile -string ("GroupType: "+$originalDLConfiguration.groupType)
+            out-logfile -string ("GroupType: "+$functionTest.groupType)
         }
         else {
             out-logfile -string "Group type not utilized for evaluation."
@@ -478,7 +478,7 @@
                     }
                 }
 
-                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE) -and (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))) 
+                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
 
@@ -562,6 +562,7 @@
                         isErrorMessage=""
                     }
                 }
+                <#
                 elseif (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
                 {
                     out-logfile -string "The group object is a security group - which is now represented in Exchange Online."
@@ -587,6 +588,7 @@
                         isErrorMessage=""
                     }
                 }
+                #>
                 else 
                 {
                     out-logfile -string ("The following object "+$dn+" is not mail enabled and must be removed or mail enabled to continue.")
