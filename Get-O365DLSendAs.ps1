@@ -67,12 +67,16 @@
                 Out-LogFile -string $_ -isError:$TRUE
             }
 
+            <#
+
             out-logfile -string "Determining if the group has permissions to itself and excluding it from the array."
             out-logfile -string ("PreCount: "+$functionSendAs.Count)
 
             $functionSendAs = $functionSendAs | where {$_.TrusteeSidString -ne $office365GroupConfiguration.SID}
 
             out-logfile -string ("PostCount: "+$functionSendAs.Count)
+            
+            #>
         }
         else
         {
