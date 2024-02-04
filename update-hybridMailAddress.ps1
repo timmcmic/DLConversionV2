@@ -572,6 +572,7 @@ Function update-hybridMailAddress
     {
         out-logfile -string $address
     }
+    out-logfile -string $originalDLConfigurationupdated.mail
     out-logfile -string $originalDLConfigurationUpdated.mailNickName
     out-logfile -string "Operation completed successfully..."
 }
