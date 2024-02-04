@@ -130,7 +130,7 @@ Function update-hybridMailAddress
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
-    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryEventName = "Update-HybridMailAddress"
     $telemetryFunctionStartTime=$NULL
     $telemetryFunctionEndTime=$NULL
     [double]$telemetryNormalizeDN=0
@@ -575,4 +575,50 @@ Function update-hybridMailAddress
     out-logfile -string $originalDLConfigurationupdated.mail
     out-logfile -string $originalDLConfigurationUpdated.mailNickName
     out-logfile -string "Operation completed successfully..."
+
+    $telemetryEndTime = get-universalDateTime
+    $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
+
+    # build the properties and metrics #
+    $telemetryEventProperties = @{
+        DLConversionV2Command = $telemetryEventName
+        DLConversionV2Version = $telemetryDLConversionV2Version
+        ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        MSGraphAuthentication = $telemetryMSGraphAuthentication
+        MSGraphUsers = $telemetryMSGraphUsers
+        MSGraphGroups = $telemetryMSGraphGroups
+        AzureADVersion = $telemetryAzureADVersion
+        OSVersion = $telemetryOSVersion
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telemetryEndTime
+        MigrationErrors = $telemetryError
+    }
+
+    if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+        }
+    }
+    elseif (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $TRUE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+        }
+    }
+
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        out-logfile -string "Telemetry1"
+        out-logfile -string $traceModuleName
+        out-logfile -string "Telemetry2"
+        out-logfile -string $telemetryEventName
+        out-logfile -string "Telemetry3"
+        out-logfile -string $telemetryEventMetrics
+        out-logfile -string "Telemetry4"
+        out-logfile -string $telemetryEventProperties
+        send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    }
+
+
 }
