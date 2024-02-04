@@ -532,4 +532,23 @@ Function update-hybridMailAddress
         out-logfile -string "Error adding the new SMTP address on premises."
         out-logfile -string $_
     }
+
+    Out-LogFile -string "Getting the original DL Configuration"
+
+    try
+    {
+        $originalDLConfigurationUpdated = Get-ADObjectConfiguration -groupSMTPAddress $newGroupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+    }
+    catch
+    {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    Out-LogFile -string "Log original DL configuration."
+    out-logFile -string $originalDLConfiguration
+
+    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
+
+    Out-XMLFile -itemToExport $originalDLConfigurationUpdated -itemNameToExport $xmlFiles.originalDLConfigurationUpdatedXML.value
+
 }
