@@ -435,12 +435,36 @@ Function update-hybridMailAddress
             out-logfile -string "Unable to set group primary smtp address in Office 365."
             out-logfile -string $_ -isError:$TRUE
         }
+
+        if ($newAlias -ne "")
+        {
+            try {
+                out-logfile -string "Set new alias in Office 365."
+                set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -alias $newAlias -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to set new alias in Office 365."
+                out-logfile -string $_
+            }
+        }
     }
     else
     {
         out-logfile -string "Group is an Office 365 group - set legacy group primary SMTP Address."
         try {
             set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -primarySMTPAddress $newGroupSMTPAddress -errorAction STOP
+
+            if ($newAlias -ne "")
+            {
+                try {
+                    out-logfile -string "Set new alias in Office 365."
+                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -alias $newAlias -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to set new alias in Office 365."
+                    out-logfile -string $_
+                }
+            }
         }
         catch {
             out-logfile -string "Unable to set group primary smtp address in Office 365."
