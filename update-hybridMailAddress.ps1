@@ -180,6 +180,8 @@ Function update-hybridMailAddress
 
     $testMSExchRecipientDisplayType = "3"
 
+    [boolean]$isOffice365Group = $false
+
     #Start the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
@@ -345,7 +347,18 @@ Function update-hybridMailAddress
     }
     catch 
     {
-        out-logFile -string $_ -isError:$TRUE
+        out-logfile -string "Distributoin list not found - testing for Office 365 Group."
+        out-logFile -string $_
+
+        try 
+        {
+            $office365DLConfiguration = Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isUnifiedGroup $TRUE -errorAction STOP
+            $isOffice365Group = $true
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
     }
     try 
     {
@@ -398,4 +411,31 @@ Function update-hybridMailAddress
     {
         out-logfile -string $address
     }
+
+    out-logfile -string "Update the address in Office 365 - if this succeeds we know the address is not in conflict with another object and is at an accepted domain."
+
+    if ( $isOffice365Group -eq $false )
+    {
+        out-logfile -string "Group is not an Office 365 group - set legacy group primary SMTP Address."
+        try {
+            set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -primarySMTPAddress $newGroupSMTPAddress -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to set group primary smtp address in Office 365."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+    else
+    {
+        out-logfile -string "Group is an Office 365 group - set legacy group primary SMTP Address."
+        try {
+            set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -primarySMTPAddress $newGroupSMTPAddress -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to set group primary smtp address in Office 365."
+            out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
+    
 }
