@@ -76,6 +76,14 @@ Function update-hybridMailAddress
         [string]$groupSMTPAddress,
         [Parameter(Mandatory = $true)]
         [string]$newGroupSMTPAddress,
+        #Local Active Director Domain Controller Parameters
+        [Parameter(Mandatory = $true)]
+        [string]$globalCatalogServer,
+        [Parameter(Mandatory = $true)]
+        [pscredential]$activeDirectoryCredential,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Kerberos")]
+        $activeDirectoryAuthenticationMethod="Kerberos",
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,
