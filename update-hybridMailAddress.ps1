@@ -178,6 +178,8 @@ Function update-hybridMailAddress
 
     [array]$dlPropertySet = '*' #Clear all properties of a given object
 
+    $testMSExchRecipientDisplayType = "3"
+
     #Start the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
@@ -368,4 +370,18 @@ Function update-hybridMailAddress
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
+
+    out-logfile -string "Validate the the recipient located in Active Directory is a dynamnic distribution group - this is the object created by enableHybridMailFlow."
+
+    if ($originalDLConfiguration.msExchRecipientDisplayType -ne $testMSExchRecipientDisplayType)
+    {
+        out-logfile -string "The recipient found in Active Directory is not a dynamic distribution group."
+        out-logfile -string $originalDLConfiguration.msExchRecipientDisplayType
+        out-logfile -string "This command will only function on the dynamic distribution group created by enableHybridMailFlow" -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The group is a dynamic distribution list - allow the command to proceed."
+        out-logfile -string $originalDLConfiguration.msExchRecipientDisplayType
+    }
 }
