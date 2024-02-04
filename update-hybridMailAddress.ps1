@@ -176,6 +176,8 @@ Function update-hybridMailAddress
     $office365DLConfigurationUpdated = $NULL
     $office365GroupConfiguration = $NULL
 
+    [array]$dlPropertySet = '*' #Clear all properties of a given object
+
     #Start the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
