@@ -490,6 +490,6 @@ Function update-hybridMailAddress
 
     out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
 
-    $originalSMTPAddress = $originalDLConfiguration.proxyAddresses | where {$_. -eq "'SMTP:'+$groupSMTPAddress"}
+    $originalSMTPAddress = $originalDLConfiguration | where {$_.proxyAddresses -eq "'SMTP:'+$groupSMTPAddress"}
     out-logfile -string $originalSMTPAddress
 }
