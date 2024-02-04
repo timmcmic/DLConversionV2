@@ -518,7 +518,8 @@ Function update-hybridMailAddress
         Set-ADObject -Identity $originalDLConfiguration.distinguishedName -replace @{mail=$newGroupSMTPAdress} -ErrorAction STOP -server $globalCatalogServer -credential $activeDirectoryCredential
     }
     catch {
-        
+        out-logfile -string "Unable to replace the mail address with the new SMTP address."
+        out-logfile -string $_
     }
 
     try {
