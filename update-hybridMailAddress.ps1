@@ -384,4 +384,18 @@ Function update-hybridMailAddress
         out-logfile -string "The group is a dynamic distribution list - allow the command to proceed."
         out-logfile -string $originalDLConfiguration.msExchRecipientDisplayType
     }
+
+    out-logfile -string "List all current SMTP addresses from Active Directory"
+
+    foreach ($address in $originalDLConfiguration.proxyAddresses)
+    {
+        out-logfile -string $address
+    }
+
+    out-logfile -string "List all current SMTP addresses from Office 365."
+
+    foreach ($address in $office365DLConfiguration.emailAddresses)
+    {
+        out-logfile -string $address
+    }
 }
