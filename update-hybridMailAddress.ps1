@@ -497,7 +497,7 @@ Function update-hybridMailAddress
     out-logfile -string $originalSMTPAddress
 
     try {
-        Set-ADUser -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop
     }
     catch {
         out-logfile -string "Error removing original proxy address."
@@ -505,7 +505,7 @@ Function update-hybridMailAddress
     }
 
     try {
-        Set-ADUser -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP
     }
     catch {
         
