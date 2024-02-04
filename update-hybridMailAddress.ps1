@@ -497,7 +497,7 @@ Function update-hybridMailAddress
     out-logfile -string $originalSMTPAddress
 
     try {
-        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop -server $globalCatalogServer -credential $activeDirectoryCredential
         out-logfile -string "Original group SMTP address removed."
     }
     catch {
@@ -506,7 +506,7 @@ Function update-hybridMailAddress
     }
 
     try {
-        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP -server $globalCatalogServer -credential $activeDirectoryCredential
         out-logfile -string "Original group SMTP address added as lower case."
     }
     catch {
@@ -515,9 +515,16 @@ Function update-hybridMailAddress
     }
 
     try {
-        $newGroupSMTPAddess = "SMTP:"+$newGroupgSMTPAddress
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -replace @{mail=$newGroupSMTPAdress} -ErrorAction STOP -server $globalCatalogServer -credential $activeDirectoryCredential
+    }
+    catch {
+        
+    }
+
+    try {
+        $newGroupSMTPAddess = "SMTP:"+$newGroupSMTPAddress
         out-logfile -string $newGroupSMTPAddress
-        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $newGroupSMTPAddress}
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $newGroupSMTPAddress} -server $globalCatalogServer -credential $activeDirectoryCredential
         out-logfile -string "New group SMTP address added successfully."
     }
     catch {
