@@ -154,6 +154,8 @@ Function update-hybridMailAddress
         office365DLConfigurationXML = @{ "Value" =  "office365DLConfigurationXML" ; "Description" = "XML file that exports the Office 365 DL configuration"}
         office365DLConfigurationUpdatedXML = @{ "Value" =  "office365DLConfigurationUpdatedXML" ; "Description" = "XML file that exports the Office 365 DL configuration post migration"}
         office365GroupConfigurationXML = @{ "Value" =  "office365GroupConfigurationXML" ; "Description" = "XML file that exports the Office 365 Group configuration post migration"}
+        office365GroupConfigurationUpdatedXML = @{ "Value" =  "office365GroupConfigurationUpdatedXML" ; "Description" = "XML file that exports the Office 365 Group configuration post migration"}
+
     }
 
     $coreVariables = @{ 
@@ -175,6 +177,7 @@ Function update-hybridMailAddress
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $office365DLConfigurationUpdated = $NULL
     $office365GroupConfiguration = $NULL
+    $office365GroupConfigurationUpdated = $NULL
 
     [array]$dlPropertySet = '*' #Clear all properties of a given object
 
@@ -437,5 +440,51 @@ Function update-hybridMailAddress
         }
     }
 
-    
+    out-logfile -string "Obtain the updated distribution list."
+
+    try 
+    {
+        $office365DLConfigurationUpdated=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
+    }
+    catch 
+    {
+        out-logfile -string "Distributoin list not found - testing for Office 365 Group."
+        out-logFile -string $_
+
+        try 
+        {
+            $office365DLConfigurationUpdated = Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isUnifiedGroup $TRUE -errorAction STOP
+            $isOffice365Group = $true
+        }
+        catch 
+        {
+            out-logFile -string $_ -isError:$TRUE
+        }
+    }
+    try 
+    {
+        $office365GroupConfigurationUpdated = get-o365GroupConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    out-logfile -string "New SMTP addresses present in Office 365."
+
+    foreach ($address in $office365DLConfigurationUpdated)
+    {
+        out-logfile -string $address
+    }
+
+    Out-LogFile -string $office365DLConfigurationUpdated
+
+    Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
+
+    Out-XMLFile -itemToExport $office365DLConfigurationUpdated -itemNameToExport $xmlFiles.office365DLConfigurationUpdatedXML.value
+
+    out-logfile -string $office365GroupConfigurationUpdated
+
+    out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
+
+    out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
 }
