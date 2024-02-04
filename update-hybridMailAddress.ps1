@@ -471,7 +471,7 @@ Function update-hybridMailAddress
 
     out-logfile -string "New SMTP addresses present in Office 365."
 
-    foreach ($address in $office365DLConfigurationUpdated)
+    foreach ($address in $office365DLConfigurationUpdated.emailAddresses)
     {
         out-logfile -string $address
     }
