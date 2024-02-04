@@ -76,6 +76,8 @@ Function update-hybridMailAddress
         [string]$groupSMTPAddress,
         [Parameter(Mandatory = $true)]
         [string]$newGroupSMTPAddress,
+        [Parameter(Mandatory = $false)]
+        [string]$newAlias="",
         #Local Active Director Domain Controller Parameters
         [Parameter(Mandatory = $true)]
         [string]$globalCatalogServer,
@@ -533,6 +535,19 @@ Function update-hybridMailAddress
         out-logfile -string $_
     }
 
+    if ($newAlias -ne "")
+    {
+        out-logfile -string "New alias was provided."
+        try {
+            Set-ADObject -Identity $originalDLConfiguration.distinguishedName -replace @{mailNickName=$newAlias} -ErrorAction STOP -server $globalCatalogServer -credential $activeDirectoryCredential
+        }
+        catch {
+            out-logfile -string "Unable to update object with new alias."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
+    }
+
     Out-LogFile -string "Getting the original DL Configuration"
 
     try
@@ -557,5 +572,6 @@ Function update-hybridMailAddress
     {
         out-logfile -string $address
     }
+    out-logfile -string $originalDLConfigurationUpdated.mailNickName
     out-logfile -string "Operation completed successfully..."
 }
