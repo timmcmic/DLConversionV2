@@ -495,4 +495,19 @@ Function update-hybridMailAddress
     out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
 
     out-logfile -string $originalSMTPAddress
+
+    try {
+        Set-ADUser -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop
+    }
+    catch {
+        out-logfile -string "Error removing original proxy address."
+        out-logfile -string $_
+    }
+
+    try {
+        Set-ADUser -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP
+    }
+    catch {
+        
+    }
 }
