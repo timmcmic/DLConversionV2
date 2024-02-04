@@ -548,6 +548,8 @@ Function update-hybridMailAddress
 
     }
 
+    start-sleepProgress -sleepString "Throttling for 5 seconds..." -sleepSeconds 5
+
     Out-LogFile -string "Getting the original DL Configuration"
 
     try
