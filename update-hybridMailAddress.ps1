@@ -523,7 +523,7 @@ Function update-hybridMailAddress
     }
 
     try {
-        $newGroupSMTPAddess = "SMTP:"+$newGroupSMTPAddress
+        $newGroupSMTPAddress = "SMTP:"+$newGroupSMTPAddress
         out-logfile -string $newGroupSMTPAddress
         Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $newGroupSMTPAddress} -server $globalCatalogServer -credential $activeDirectoryCredential
         out-logfile -string "New group SMTP address added successfully."
