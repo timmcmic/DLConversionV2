@@ -185,6 +185,8 @@ Function update-hybridMailAddress
 
     [boolean]$isOffice365Group = $false
 
+    $originalSMTPAddress = $NULL
+
     #Start the log file.
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
@@ -487,4 +489,7 @@ Function update-hybridMailAddress
     out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
 
     out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
+
+    $originalSMTPAddress = $originalDLConfiguration.proxyAddresses | where {$_. -eq "'SMTP:'+$groupSMTPAddress"}
+    out-logfile -string $originalSMTPAddress
 }
