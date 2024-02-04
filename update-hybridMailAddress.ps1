@@ -408,6 +408,10 @@ Function update-hybridMailAddress
     foreach ($address in $originalDLConfiguration.proxyAddresses)
     {
         out-logfile -string $address
+        if ($address -clike "SMTP*")
+        {
+            $originalSMTPAddress = $address
+        }
     }
 
     out-logfile -string "List all current SMTP addresses from Office 365."
@@ -490,6 +494,5 @@ Function update-hybridMailAddress
 
     out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
 
-    $originalSMTPAddress = $originalDLConfiguration | where {$_.proxyAddresses -eq "'SMTP:'+$groupSMTPAddress"}
     out-logfile -string $originalSMTPAddress
 }
