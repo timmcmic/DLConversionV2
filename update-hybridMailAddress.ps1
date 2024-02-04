@@ -551,4 +551,10 @@ Function update-hybridMailAddress
 
     Out-XMLFile -itemToExport $originalDLConfigurationUpdated -itemNameToExport $xmlFiles.originalDLConfigurationUpdatedXML.value
 
+    out-logfile -string "Writing new SMTP Addresses to log."
+
+    foreach ($address in $originalDLConfigurationUpdated.proxyAddresses)
+    {
+        out-logfile -string $address
+    }
 }
