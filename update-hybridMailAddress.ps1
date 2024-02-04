@@ -454,7 +454,7 @@ Function update-hybridMailAddress
         try {
             set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -primarySMTPAddress $newGroupSMTPAddress -errorAction STOP
 
-            if ($newAlias -ne "")
+            if ($newAlias -ne "") 
             {
                 try {
                     out-logfile -string "Set new alias in Office 365."
