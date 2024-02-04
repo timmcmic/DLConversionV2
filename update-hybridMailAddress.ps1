@@ -498,6 +498,7 @@ Function update-hybridMailAddress
 
     try {
         Set-ADObject -Identity $originalDLConfiguration.distinguishedName -remove @{proxyAddresses=$originalSMTPAddress} -errorAction Stop
+        out-logfile -string "Original group SMTP address removed."
     }
     catch {
         out-logfile -string "Error removing original proxy address."
@@ -506,8 +507,21 @@ Function update-hybridMailAddress
 
     try {
         Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $originalSMTPAddress.toLower()} -ErrorAction STOP
+        out-logfile -string "Original group SMTP address added as lower case."
     }
     catch {
-        
+        out-logfile -string "Error adding the original address as lower case."
+        out-logfile -string $_
+    }
+
+    try {
+        $newGroupSMTPAddess = "SMTP:"+$newGroupgSMTPAddress
+        out-logfile -string $newGroupSMTPAddress
+        Set-ADObject -Identity $originalDLConfiguration.distinguishedName -add @{proxyAddresses = $newGroupSMTPAddress}
+        out-logfile -string "New group SMTP address added successfully."
+    }
+    catch {
+        out-logfile -string "Error adding the new SMTP address on premises."
+        out-logfile -string $_
     }
 }
