@@ -557,4 +557,5 @@ Function update-hybridMailAddress
     {
         out-logfile -string $address
     }
+    out-logfile -string "Operation completed successfully..."
 }
