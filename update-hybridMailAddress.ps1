@@ -405,6 +405,12 @@ Function update-hybridMailAddress
         out-logfile -string $originalDLConfiguration.msExchRecipientDisplayType
     }
 
+    if ($originalDLConfiguration.mail -eq $newGroupSMTPAddress)
+    {
+        out-logfile -string "The current mail address of the dynamic distribution list matches the new SMTP address." 
+        out-logfile -string "The command cannot proceed." -isError:$TRUE
+    }
+
     out-logfile -string "List all current SMTP addresses from Active Directory"
 
     foreach ($address in $originalDLConfiguration.proxyAddresses)
