@@ -5953,6 +5953,13 @@ Function Start-DistributionListMigration
        out-statusFile -threadNumber $global:threadNumber
    }
 
+   #Update 3/27/2024 - removed this section of code.
+   #Status file cleanup of entire directory occurs right at the beginning of thread 1.
+   #Should in theory be no need to remove individual status files.
+   #This could cause a timing issue as other threads complete and remove their status files.
+   
+   <#
+
     #If this is the main thread - introduce a sleep for 10 seconds - allows the other threads to detect 5 files.
     #Reset the status directory for furture thread dependencies.
 
@@ -5967,6 +5974,8 @@ Function Start-DistributionListMigration
             out-logfile -string "Unable to remove status files" -isError:$TRUE
         }
    }
+
+   #>
 
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
