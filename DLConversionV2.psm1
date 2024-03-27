@@ -4073,7 +4073,7 @@ Function Start-DistributionListMigration
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
         if ($coreVariables.useAADConnect.value -eq $TRUE)
         {
@@ -5927,7 +5927,7 @@ Function Start-DistributionListMigration
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
        if ($coreVariables.useAADConnect.value -eq $TRUE)
        {

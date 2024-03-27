@@ -3873,7 +3873,7 @@ Function Start-Office365GroupMigration
 
     #Replicate domain controllers so that the change is received as soon as possible.()
     
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
         start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
@@ -3890,7 +3890,7 @@ Function Start-Office365GroupMigration
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-    if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
         if ($coreVariables.useAADConnect.value -eq $TRUE)
         {
@@ -5747,7 +5747,7 @@ Function Start-Office365GroupMigration
 
    #Replicate domain controllers so that the change is received as soon as possible.()
    
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
        start-sleepProgress -sleepString "Starting sleep before invoking AD replication - 15 seconds." -sleepSeconds 15
 
@@ -5764,7 +5764,7 @@ Function Start-Office365GroupMigration
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
-   if ($global:threadNumber -eq 0 -or ($global:threadNumber -eq 1))
+   if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
        if ($coreVariables.useAADConnect.value -eq $TRUE)
        {
