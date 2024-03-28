@@ -169,7 +169,19 @@
         {
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
             out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
-            out-logfile -string "Error enabling hybrid mail flow." -isError:$TRUE
+            out-logfile -string "Error enabling hybrid mail flow."
+
+            $isErrorObject = new-Object psObject -property @{
+                errorMessage = "Unable to locate a mail.onmicrosoft.com address either on premises or office 365.  This may indicated larger failures to set SMTP addresses.  Manaul correction required and run enable-hybridMailFlowPostMigration to fix."
+                errorMessaegDetail = $errorMessageDetail
+            }
+
+            out-logfile -string $isErrorObject
+
+            $global:generalErrors+=$isErrorObject
+
+            $functionTargetAddress = "ERROR-THISWILLNOTWORK@domain.local"
+
         }
         else
         {

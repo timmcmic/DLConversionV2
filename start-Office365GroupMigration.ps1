@@ -702,7 +702,7 @@ Function Start-Office365GroupMigration
     [array]$office365ReplaceErrors=@()
     [array]$global:office365ReplacePermissionsErrors=@()
     [array]$global:onPremReplacePermissionsErrors=@()
-    [array]$generalErrors=@()
+    [array]$global:generalErrors=@()
     [string]$isTestError="No"
 
 
@@ -5520,7 +5520,7 @@ Function Start-Office365GroupMigration
 
             out-logfile -string $isErrorObject
 
-            $generalErrors+=$isErrorObject
+            $global:generalErrors+=$isErrorObject
         }
 
         #The mail contact has been created and upgrade.  Now we need to capture the updated configuration.
@@ -5574,7 +5574,7 @@ Function Start-Office365GroupMigration
 
             out-logfile -string $isErrorObject
 
-            $generalErrors+=$isErrorObject
+            $global:generalErrors+=$isErrorObject
         }
 
         [boolean]$stopLoop=$FALSE
@@ -5600,7 +5600,7 @@ Function Start-Office365GroupMigration
         
                     out-logfile -string $isErrorObject
         
-                    $generalErrors+=$isErrorObject
+                    $global:generalErrors+=$isErrorObject
 
                     $stopLoop=$TRUE
                 }
@@ -5655,7 +5655,7 @@ Function Start-Office365GroupMigration
 
         out-logfile -string $isErrorObject
 
-        $generalErrors+=$isErrorObject
+        $global:generalErrors+=$isErrorObject
     }
 
     #If the administrator has selected to not retain the group - remove it.
@@ -5684,7 +5684,7 @@ Function Start-Office365GroupMigration
 
         out-logfile -string $isErrorObject
 
-        $generalErrors+=$isErrorObject
+        $global:generalErrors+=$isErrorObject
     }
 
    #If there are multiple threads and we've reached this point - we're ready to write a status file.
@@ -5813,7 +5813,7 @@ Function Start-Office365GroupMigration
     Out-LogFile -string "END Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
-    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -5824,7 +5824,7 @@ Function Start-Office365GroupMigration
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count)
-        out-logfile -string ("General Errors: "+$generalErrors.count)
+        out-logfile -string ("General Errors: "+$global:generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
         out-logfile -string ""
@@ -5908,9 +5908,9 @@ Function Start-Office365GroupMigration
             }
         }
         
-        if ($generalErrors.count -gt 0)
+        if ($global:generalErrors.count -gt 0)
         {
-            foreach ($generalError in $generalErrors)
+            foreach ($generalError in $global:generalErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "General Errors:"

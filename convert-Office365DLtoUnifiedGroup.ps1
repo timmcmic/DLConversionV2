@@ -534,7 +534,7 @@ Function Convert-Office365DLtoUnifiedGroup
     [array]$office365ReplaceErrors=@()
     [array]$global:office365ReplacePermissionsErrors=@()
     [array]$global:onPremReplacePermissionsErrors=@()
-    [array]$generalErrors=@()
+    [array]$global:generalErrors=@()
     [string]$isTestError="No"
 
 
@@ -2765,7 +2765,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "END Start-Office365GroupMigration"
     Out-LogFile -string "================================================================================"
 
-    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($generalErrors.count -gt 0))
+    if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
     {
         out-logfile -string ""
         out-logfile -string "+++++"
@@ -2776,7 +2776,7 @@ Function Convert-Office365DLtoUnifiedGroup
         out-logfile -string ("Office 365 Replace Errors: "+$office365ReplaceErrors.count)
         out-logfile -string ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count)
         out-logfile -string ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count)
-        out-logfile -string ("General Errors: "+$generalErrors.count)
+        out-logfile -string ("General Errors: "+$global:generalErrors.count)
         out-logfile -string "++++++++++"
         out-logfile -string "+++++"
         out-logfile -string ""
@@ -2860,9 +2860,9 @@ Function Convert-Office365DLtoUnifiedGroup
             }
         }
         
-        if ($generalErrors.count -gt 0)
+        if ($global:generalErrors.count -gt 0)
         {
-            foreach ($generalError in $generalErrors)
+            foreach ($generalError in $global:generalErrors)
             {
                 out-logfile -string "====="
                 out-logfile -string "General Errors:"
