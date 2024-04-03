@@ -41,7 +41,7 @@
         Out-LogFile -string "********************************************************************************"
 
         try {
-            Remove-MGGroup -groupObjectID $groupObjectID -errorAction STOP
+            Remove-MGGroup -groupID $groupObjectID -errorAction STOP
         }
         catch {
             out-logfile -string $_

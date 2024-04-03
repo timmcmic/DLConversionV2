@@ -4072,6 +4072,25 @@ Function Start-DistributionListMigration
         }
     }
 
+    #If group deletion via graph is allowed - do it at this time.
+
+    out-logfile -string "If delete via graph is in use - process the deletion via graph."
+
+    if ($removeGroupViaGraph -eq $TRUE)
+    {
+        out-logfile -string "Remove group via graph is enabled."
+
+        try {
+            remove-groupViaGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+            out-logfile -string "Group removal via graph was successful."
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to remove the group via graph - this is a hard failure."  -isError:$TRUE
+        }
+    }
+
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
@@ -4118,23 +4137,6 @@ Function Start-DistributionListMigration
         }
 
         start-sleepProgress -sleepString "Starting sleep after removing individual status files.." -sleepSeconds 5
-    }
-
-    out-logfile -string "If delete via graph is in use - process the deletion via graph."
-
-    if ($removeGroupViaGraph -eq $TRUE)
-    {
-        out-logfile -string "Remove group via graph is enabled."
-
-        try {
-            remove-groupViaGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
-
-            out-logfile -string "Group removal via graph was successful."
-        }
-        catch {
-            out-logfile -string $_
-            out-logfile -string "Unable to remove the group via graph - this is a hard failure."  -isError:$TRUE
-        }
     }
     
     #At this time we have processed the deletion to azure.
