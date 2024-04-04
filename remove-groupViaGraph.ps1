@@ -45,7 +45,7 @@
         }
         catch {
             out-logfile -string $_
-            out-logfile -string "Unable to remove group via graph - hard failure." -isError:$TRUE
+            out-logfile -string "Unable to remove group via graph"
         }
 
         Out-LogFile -string "END REMOVE-GROUPVIAGRAPH"

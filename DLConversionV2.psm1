@@ -4087,7 +4087,8 @@ Function Start-DistributionListMigration
         }
         catch {
             out-logfile -string $_
-            out-logfile -string "Unable to remove the group via graph - this is a hard failure."  -isError:$TRUE
+            out-logfile -string "Unable to remove the group via graph - this is a hard failure."
+            out-logfile -string "Since the group is already gone - assume handeled via ad connect and continue."
         }
     }
 
