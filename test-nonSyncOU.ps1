@@ -70,6 +70,7 @@
             $workingSettingsFile = $null
             $workingSettingsFilePath = ""
             $workingSettingsJSON = $null
+            $workingPartition = $null
 
             $programData = $env:programData
             $adConnectPath = $programData + "\AADConnect\"
@@ -145,7 +146,24 @@
 
             $returnData += $workingSettingsJSON
 
-            #JSON file succssfully found and imported.
+            #JSON file succssfully found and imported.  Look for multiple partitions.
+
+            foreach ($partition in $workingSettingsJSON.onpremisesDirectoryPolicy.partitionFilters)
+            {
+                $returnData += ("Evaluating directory partition: "+$partition)
+
+                if ($args[0].contains($partition.distinguishedName))
+                {
+                    $returnData += ("Distinguished name parittion matching group found: "+$partition.distinguishedName)
+                    $workingPartition = $partition
+                }
+            }
+
+            $returnData += ("Working domain partition: "+$workingPartition)
+
+            #The working partition has been discovered.
+
+            
             
         } -ArgumentList $ou
         
