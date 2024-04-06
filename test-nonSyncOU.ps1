@@ -60,7 +60,44 @@
 
         out-logfile -string "Test that the OU is not syncrhonized in AD Connect."
 
-        
+
+        $testReturn = invoke-command -Session $workingPowershellSession -ScriptBlock {
+
+            #Define working variables.
+
+            $returnData = @()
+            $settingsFiles = @()
+
+            $programData = $env:programData
+            $adConnectPath = $programData + "\AADConnect\"
+            $fileFilter = "Applied-SynchronizationPolicy*.json"
+            $sortFilter = "LastWriteTime"
+
+            #Log calculated information to return variable.
+
+            $returnData += ("Program Data Environment Path: "+$programData)
+            $returnData += ("ADConnect Program Data Path: "+$adConnectPath)
+            $returnData += ("File filter: "+$fileFilter)
+            $returnData += ("Sort filter: "+$sortFilter)
+
+            #Obtain all of the applied settings files in the directory.
+
+            try
+            {
+                $settingsFiles += get-childItem -Path $adConnectPath -Filter $fileFilter -errorAction STOP | Sort-Object $sortFilter -Descending
+            }
+            catch
+            {
+                $returnData += $_
+                $returnData += "ERROR:  Unable to obtain the applied synchronization files.  Unable to validate OU is a non-sync OU."
+                return $returnData
+            }
+
+            $returnData +=("Applied synchronization settings files successfully obtained.")
+            $returnData +- ("Applied settings files count: "+$settingsFiles.count.toString())
+            
+
+        } -ArgumentList $ou
         
 
         Out-LogFile -string "END TEST-NONSYNCOU"

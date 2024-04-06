@@ -21,7 +21,7 @@
 
     #>
     Function remove-groupViaGraph
-     {
+    {
         [cmdletbinding()]
 
         Param
