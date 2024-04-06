@@ -67,11 +67,15 @@
 
             $returnData = @()
             $settingsFiles = @()
+            $workingSettingsFile = $null
+            $workingSettingsFilePath = ""
+            $workingSettingsJSON = $null
 
             $programData = $env:programData
             $adConnectPath = $programData + "\AADConnect\"
             $fileFilter = "Applied-SynchronizationPolicy*.json"
             $sortFilter = "LastWriteTime"
+            
 
             #Log calculated information to return variable.
 
@@ -93,10 +97,56 @@
                 return $returnData
             }
 
-            $returnData +=("Applied synchronization settings files successfully obtained.")
-            $returnData +- ("Applied settings files count: "+$settingsFiles.count.toString())
-            
+            #Validate that the count of settings files is not zero.
 
+            if ($settingsFiles.count -eq 0)
+            {
+                $returnData += "ERROR:  Applied synchorniztion settings file count is zero.  Unable to validate OU is non-sync OU."
+                return $returnData
+            }
+            else 
+            {
+                $returnData +=("Applied synchronization settings files successfully obtained.")
+                $returnData +- ("Applied settings files count: "+$settingsFiles.count.toString())
+            }
+
+            #Take the first settings file entry and utilize this as the settings file for review.
+
+            $workingSettingsFile = $settingsFiles[0]
+            
+            $returnData += ("Settings file utilized for evaluation: "+$workingSettingsFile)
+
+            $workingSettingsFilePath = $adConnectPath + $settingsFiles[0]
+
+            $returnData += ("Settings file utilize for JSON import: "+$workingSettingsFilePath)
+
+            #Import the content of the settings file.
+
+            try {
+                $workingSettingsJSON = get-content -raw -path $workingSettingsFilePath -ErrorAction STOP
+            }
+            catch {
+                $returnData += $_
+                $returnData += "ERROR: Unable to import the content of the current applied synchronization settings file.  Unable to validate OU is a non-sync OU."
+                return $returnData
+            }
+
+            $returnData += $workingSettingsJSON
+
+            #Convert the settings file to JSON.
+
+            try {
+                $workingSettingsJSON = $workingSettingsJSON | ConvertFrom-Json -ErrorAction Stop
+            }
+            catch {
+                $returnData += $_
+                $returnData += "ERROR:  Unable to convert imported applied synchroniztion file to JSON.  Unable to validate OU is a non-sync OU."
+            }
+
+            $returnData += $workingSettingsJSON
+
+            #JSON file succssfully found and imported.
+            
         } -ArgumentList $ou
         
 
