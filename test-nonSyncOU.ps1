@@ -216,6 +216,8 @@
             
         } -ArgumentList $ou
         
+        $testReturn  = $testReturn | Select-Object -Unique
+
         foreach ($entry in $testReturn)
         {
             out-logfile -string $entry
