@@ -74,6 +74,7 @@
             $workingInclusions = $null
             $workingExclusions = $null
             $parentIncluded = $false
+            $exclusionFound = $false
 
             $programData = $env:programData
             $adConnectPath = $programData + "\AADConnect\"
@@ -195,6 +196,7 @@
                     {
                         $returnData += "Parent included / OU explicitly excluded."
                         $returnData += "SUCESS:  The specified OU is excluded from synchronization"
+                        $exclusionFound = $true
                     }
                 }
             }
@@ -202,6 +204,12 @@
             {
                 $returnData += "Parent OU is excluded therefore the sub OU is excluded.."
                 $returnData += "SUCESS:  The specified OU is excluded from synchronization"
+                $exclusionFound = $true
+            }
+
+            if ($exclusionFound -eq $false)
+            {
+                $returnData +="ERROR:  Specified OU was not found as not syncing."
             }
 
             return $returnData
