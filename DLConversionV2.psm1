@@ -1294,7 +1294,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Validating that the OU provided is a non-SYNC OU."
 
         try {
-            test-nonSyncOU -OU $dnNoSyncOU -powershellSessionName $PowershellSessionName -errorAction STOP
+            test-nonSyncOU -OU $dnNoSyncOU -powershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction STOP
         }
         catch {
             out-logfile -string $_
