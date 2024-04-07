@@ -73,6 +73,7 @@
             $workingPartition = $null
             $workingInclusions = $null
             $workingExclusions = $null
+            $parentIncluded = $false
 
             $programData = $env:programData
             $adConnectPath = $programData + "\AADConnect\"
@@ -181,7 +182,35 @@
 
             #Start attempt to determine if the directory is excluded from sync.
 
-            
+            foreach ($inclusion in $workingInclusions)
+            {
+                if ($args[0].contains($inclusion))
+                {
+                    $returnData += "A parent OU was found in the DN of the specified non-Sync OU."
+                    $parentIncluded = $true
+                }
+                else
+                {
+                    $returnData += "This inclusion was not found."
+                }
+            }
+
+            if ($containsOU -eq $TRUE)
+            {
+                foreach ($exclusion in $workingExclusions)
+                {
+                    if ($exclusion -eq $args[0])
+                    {
+                        $returnData += "Parent included / OU explicitly excluded"
+                    }
+                }
+            }
+            else
+            {
+                $returnData += "Excluded by parent."
+            }
+
+            return $returnData
             
         } -ArgumentList $ou
         
