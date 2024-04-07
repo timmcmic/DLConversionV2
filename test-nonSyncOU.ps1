@@ -145,8 +145,6 @@
                 $returnData += "ERROR:  Unable to convert imported applied synchroniztion file to JSON.  Unable to validate OU is a non-sync OU."
             }
 
-            $returnData += $workingSettingsJSON
-
             #JSON file succssfully found and imported.  Look for multiple partitions.
 
             foreach ($partition in $workingSettingsJSON.onpremisesDirectoryPolicy.partitionFilters)
@@ -173,6 +171,7 @@
             foreach ($inclusion in $workingInclusions)
             {
                 $returnData += ("Processing inclusion: "+$inclusion)
+                
                 if ($args[0].contains($inclusion))
                 {
                     $returnData += "A parent OU was found in the DN of the specified non-Sync OU."
