@@ -1290,7 +1290,19 @@ Function Start-DistributionListMigration
             out-logfile -string "Unable to create remote powershell session to the AD Connect server."
             out-logfile -string $_ -isError:$TRUE
         }
+
+        out-logfile -string "Validating that the OU provided is a non-SYNC OU."
+
+        try {
+            test-nonSyncOU -OU $ou -powershellSessionName $PowershellSessionName -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to validate the non-SYNC OU."
+        }
     }
+
+    exit
 
     #Establish powershell session to the global catalog server.
 
@@ -1330,9 +1342,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
         }
-   }
-
-    
+   }    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
