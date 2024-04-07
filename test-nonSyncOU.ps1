@@ -190,16 +190,18 @@
                 foreach ($exclusion in $workingExclusions)
                 {
                     $returnData += ("Processing exclusion: "+$exclusion)
-                    
+
                     if ($exclusion -eq $args[0])
                     {
                         $returnData += "Parent included / OU explicitly excluded."
+                        $returnData += "SUCESS:  The specified OU is excluded from synchronization"
                     }
                 }
             }
             else
             {
                 $returnData += "Parent OU is excluded therefore the sub OU is excluded.."
+                $returnData += "SUCESS:  The specified OU is excluded from synchronization"
             }
 
             return $returnData
