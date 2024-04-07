@@ -185,7 +185,7 @@
                 }
             }
 
-            if ($containsOU -eq $TRUE)
+            if ($parentIncluded -eq $TRUE)
             {
                 foreach ($exclusion in $workingExclusions)
                 {
