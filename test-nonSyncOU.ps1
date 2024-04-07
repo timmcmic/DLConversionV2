@@ -221,7 +221,7 @@
 
         if ($testReturn[-1].contains("ERROR"))
         {
-            throw "SPECIFIED OU NOT FOUND AS EXCLUDED IN AD CONNECT EXCEPTION"
+            throw 
         }
 
         Out-LogFile -string "END TEST-NONSYNCOU"
