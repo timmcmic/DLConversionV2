@@ -171,11 +171,11 @@
             foreach ($inclusion in $workingInclusions)
             {
                 $returnData += ("Processing inclusion: "+$inclusion)
-                
+
                 if ($args[0].contains($inclusion))
                 {
-                    $returnData += "A parent OU was found in the DN of the specified non-Sync OU."
-                    $returnData += "Proceed with validating that the subOU of the parent has an explicit inclusion."
+                    $returnData += "A parent OU or the OU itself was found on the list of inclusions."
+                    $returnData += "Proceed with validating that an exclusion exists for the OU."
                     $parentIncluded = $true
                 }
                 else
