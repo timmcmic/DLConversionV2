@@ -111,7 +111,7 @@
             else 
             {
                 $returnData +=("Applied synchronization settings files successfully obtained.")
-                $returnData +- ("Applied settings files count: "+$settingsFiles.count.toString())
+                $returnData +- ("Applied settings files count: "+($settingsFiles.count.toString()))
             }
 
             #Take the first settings file entry and utilize this as the settings file for review.
