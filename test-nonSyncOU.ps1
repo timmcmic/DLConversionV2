@@ -71,6 +71,8 @@
             $workingSettingsFilePath = ""
             $workingSettingsJSON = $null
             $workingPartition = $null
+            $workingInclusions = $null
+            $workingExclusions = $null
 
             $programData = $env:programData
             $adConnectPath = $programData + "\AADConnect\"
@@ -162,6 +164,22 @@
             $returnData += ("Working domain partition: "+$workingPartition)
 
             #The working partition has been discovered.
+            #Caputure the inclusions and exclusions
+
+            $workingInclusions = $workingPartition.containerinclusions
+            $workingExclusions = $workingPartition.containerexclusions
+
+            foreach ($inclusion in $workingInclusions)
+            {
+                $returnData += ("Directory Inclusion: "+$inclusion)
+            }
+
+            foreach ($exclusion in $workingExclusions)
+            {
+                $returnData += ("Directory Exclusion: "+$exclusion)
+            }
+
+            #Start attempt to determine if the directory is excluded from sync.
 
             
             
