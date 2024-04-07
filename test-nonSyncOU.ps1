@@ -187,7 +187,6 @@
 
             if ($containsOU -eq $TRUE)
             {
-                
                 foreach ($exclusion in $workingExclusions)
                 {
                     $returnData += ("Processing exclusion: "+$exclusion)
