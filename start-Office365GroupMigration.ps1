@@ -1256,6 +1256,16 @@ Function Start-Office365GroupMigration
             out-logfile -string "Unable to create remote powershell session to the AD Connect server."
             out-logfile -string $_ -isError:$TRUE
         }
+
+        out-logfile -string "Validating that the OU provided is a non-SYNC OU."
+
+        try {
+            test-nonSyncOU -OU $dnNoSyncOU -powershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to validate the non-SYNC OU."
+        }
     }
 
     #Establish powershell session to the global catalog server.
