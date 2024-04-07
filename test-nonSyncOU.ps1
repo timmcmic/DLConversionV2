@@ -212,10 +212,7 @@
             
         } -ArgumentList $ou
         
-        foreach ($return in $testReturn)
-        {
-            out-logfile -string $return
-        }
+       
 
         Out-LogFile -string "END TEST-NONSYNCOU"
         Out-LogFile -string "********************************************************************************"
