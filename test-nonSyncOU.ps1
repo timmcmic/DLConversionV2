@@ -219,6 +219,11 @@
             out-logfile -string $entry
         }
 
+        if ($testReturn[-1].contains("Error"))
+        {
+            throw
+        }
+
         Out-LogFile -string "END TEST-NONSYNCOU"
         Out-LogFile -string "********************************************************************************"
     }
