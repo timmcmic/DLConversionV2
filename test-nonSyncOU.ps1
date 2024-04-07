@@ -134,8 +134,6 @@
                 return $returnData
             }
 
-            $returnData += $workingSettingsJSON
-
             #Convert the settings file to JSON.
 
             try {
