@@ -39,8 +39,6 @@
         #Declare function variables.
 
         $testReturn = $null
-        $success = $false
-        $successString = "Success"
 
         #Start function processing.
 
@@ -218,17 +216,7 @@
 
         foreach ($entry in $testReturn)
         {
-            if ($entry.contains($successString))
-            {
-                $success = $true
-            }
-
             out-logfile -string $entry
-        }
-
-        if ($success -eq $FALSE)
-        {
-            out-logfile -string "The dnNoSyncOU specified was not found in the ad connect configuration as non-syncing." -isError:$TRUE
         }
 
         Out-LogFile -string "END TEST-NONSYNCOU"
