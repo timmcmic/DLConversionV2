@@ -187,6 +187,7 @@
                 if ($args[0].contains($inclusion))
                 {
                     $returnData += "A parent OU was found in the DN of the specified non-Sync OU."
+                    $returnData += "Proceed with validating that the subOU of the parent has an explicit inclusion."
                     $parentIncluded = $true
                 }
                 else
@@ -201,19 +202,23 @@
                 {
                     if ($exclusion -eq $args[0])
                     {
-                        $returnData += "Parent included / OU explicitly excluded"
+                        $returnData += "Parent included / OU explicitly excluded."
                     }
                 }
             }
             else
             {
-                $returnData += "Excluded by parent."
+                $returnData += "Parent OU is excluded therefore the sub OU is excluded.."
             }
 
             return $returnData
             
         } -ArgumentList $ou
         
+        foreach ($return in $testReturn)
+        {
+            out-logfile -string $return
+        }
 
         Out-LogFile -string "END TEST-NONSYNCOU"
         Out-LogFile -string "********************************************************************************"
