@@ -1302,7 +1302,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    exit
+    #exit
 
     #Establish powershell session to the global catalog server.
 
