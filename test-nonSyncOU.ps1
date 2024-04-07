@@ -212,9 +212,9 @@
             
         } -ArgumentList $ou
         
-        foreach ($return in $testReturn)
+        foreach ($entry in $testReturn)
         {
-            out-logfile -string $return
+            out-logfile -string $entry
         }
 
         Out-LogFile -string "END TEST-NONSYNCOU"
