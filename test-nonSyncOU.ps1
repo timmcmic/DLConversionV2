@@ -167,20 +167,11 @@
             $workingInclusions = $workingPartition.containerinclusions
             $workingExclusions = $workingPartition.containerexclusions
 
-            foreach ($inclusion in $workingInclusions)
-            {
-                $returnData += ("Directory Inclusion: "+$inclusion)
-            }
-
-            foreach ($exclusion in $workingExclusions)
-            {
-                $returnData += ("Directory Exclusion: "+$exclusion)
-            }
-
             #Start attempt to determine if the directory is excluded from sync.
 
             foreach ($inclusion in $workingInclusions)
             {
+                $returnData += ("Processing inclusion: "+$inclusion)
                 if ($args[0].contains($inclusion))
                 {
                     $returnData += "A parent OU was found in the DN of the specified non-Sync OU."
@@ -189,14 +180,17 @@
                 }
                 else
                 {
-                    $returnData += "This inclusion was not found."
+                    $returnData += "The OU does not contain the inclusion."
                 }
             }
 
             if ($containsOU -eq $TRUE)
             {
+                
                 foreach ($exclusion in $workingExclusions)
                 {
+                    $returnData += ("Processing exclusion: "+$exclusion)
+                    
                     if ($exclusion -eq $args[0])
                     {
                         $returnData += "Parent included / OU explicitly excluded."
