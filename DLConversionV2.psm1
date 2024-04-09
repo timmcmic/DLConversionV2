@@ -332,6 +332,8 @@ Function Start-DistributionListMigration
         [string]$msGraphCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphApplicationID="",
+        [Parameter(Mandatory=$false)]
+        [boolean]$removeGroupViaGraph = $false,
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -1288,7 +1290,19 @@ Function Start-DistributionListMigration
             out-logfile -string "Unable to create remote powershell session to the AD Connect server."
             out-logfile -string $_ -isError:$TRUE
         }
+
+        out-logfile -string "Validating that the OU provided is a non-SYNC OU."
+
+        try {
+            test-nonSyncOU -OU $dnNoSyncOU -powershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to validate the non-SYNC OU."
+        }
     }
+
+    #exit
 
     #Establish powershell session to the global catalog server.
 
@@ -1328,9 +1342,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
         }
-   }
-
-    
+   }    
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
@@ -4067,6 +4079,26 @@ Function Start-DistributionListMigration
         }
         catch {
             out-logfile -string $_
+        }
+    }
+
+    #If group deletion via graph is allowed - do it at this time.
+
+    out-logfile -string "If delete via graph is in use - process the deletion via graph."
+
+    if ($removeGroupViaGraph -eq $TRUE)
+    {
+        out-logfile -string "Remove group via graph is enabled."
+
+        try {
+            remove-groupViaGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+            out-logfile -string "Group removal via graph was successful."
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to remove the group via graph - this is a hard failure."
+            out-logfile -string "Since the group is already gone - assume handeled via ad connect and continue."
         }
     }
 
