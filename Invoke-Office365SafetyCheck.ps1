@@ -70,7 +70,7 @@
                     else 
                     {
                         out-logfile -string $azureADDLConfiguration.OnPremisesSyncEnabled
-                        out-logfile -string "Azure is reporting the list is directory syncrhonized.  Allow the migration to proceed."
+                        out-logfile -string "Azure is reporting the list is directory synchronized.  Allow the migration to proceed."
                     }
                 }
                 else 

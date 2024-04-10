@@ -51,7 +51,7 @@ function convert-O365DLSettingsToOnPremSettings
 
     if ($office365DLConfiguration.recipientType -eq $functionCloudSecurity)
     {
-        out-logfile -string "Group is security type in Office 365 - setting active directory equivilient"
+        out-logfile -string "Group is security type in Office 365 - setting active directory equivalent"
 
         $functionGroupType = $functionADSecurity
     }

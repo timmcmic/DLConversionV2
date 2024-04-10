@@ -87,11 +87,11 @@
 
         if ($isFirstAttempt -eq $FALSE)
         {
-            out-logfile -string "This is not the first pass - set attribute that may collid with the original group."
+            out-logfile -string "This is not the first pass - set attribute that may collide with the original group."
         }
         else 
         {
-            out-logfile -string "This is the first pass set attribute that would not collid with the original group."
+            out-logfile -string "This is the first pass set attribute that would not collide with the original group."
 
             #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
             #The exchange commandlets abstract this by performing a conversion or filling the values in.
@@ -120,7 +120,7 @@
 
             if ($originalDLConfiguration.msExchHideFromAddressLists -eq $NULL)
             {
-                out-logfile -string ("Hidden from adddress list is null.")
+                out-logfile -string ("Hidden from address list is null.")
 
                 $functionHiddenFromAddressList=$FALSE
 
@@ -156,7 +156,7 @@
 
             if ($originalDLConfiguration.mailNickName -eq $NULL)
             {
-                out-logfile -string "On premsies group does not have alias / mail nick name -> using Office 365 value."
+                out-logfile -string "On premises group does not have alias / mail nick name -> using Office 365 value."
 
                 $functionMailNickName = $office365DLConfiguration.alias
 
@@ -164,7 +164,7 @@
             }
             else 
             {
-                out-logfile -string "On premises group has a mail nickname specified - using on premsies value."
+                out-logfile -string "On premises group has a mail nickname specified - using on premises value."
                 $functionMailNickName = $originalDLConfiguration.mailNickName
                 out-logfile -string $functionMailNickName    
             }

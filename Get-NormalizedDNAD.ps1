@@ -108,7 +108,7 @@
                         out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
                     }
 
-                    out-logfile -string "Attepmting to find the user via distinguished name."
+                    out-logfile -string "Attempting to find the user via distinguished name."
 
                     $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
     
@@ -131,7 +131,7 @@
                     }
                     catch
                     {
-                        out-logfile -string "Unable to obtain the DN from canoincal name." -isError:$TRUE
+                        out-logfile -string "Unable to obtain the DN from canonical name." -isError:$TRUE
                     }
 
                     try

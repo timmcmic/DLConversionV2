@@ -299,11 +299,11 @@ Function Start-MultipleMachineDistributionListMigration
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -335,7 +335,7 @@ Function Start-MultipleMachineDistributionListMigration
     {
         Out-LogFile -string $smtpAddress
     }
-    out-logfile -string "Servers to Excute On:"
+    out-logfile -string "Servers to Execute On:"
     foreach ($server in $serverNames)
     {
         Out-LogFile -string $server
@@ -388,15 +388,15 @@ Function Start-MultipleMachineDistributionListMigration
     out-logfile -string ("Retain mailbox folder permissions Office 365 = "+$retainMailboxFolderPermsOffice365)
     out-logfile -string ("Use collected full mailbox permissions on premises = "+$useCollectedFullMailboxAccessOnPrem)
     out-logfile -string ("Use collected full mailbox permissions Office 365 ="+$useCollectedFullMailboxAccessOffice365)
-    out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
-    out-logfile -string ("Use colleced mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
+    out-logfile -string ("Use collected send as on premises = "+$useCollectedSendAsOnPrem)
+    out-logfile -string ("Use collected mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
     out-logfile -string ("Use collected mailbox folder permissions Office 365 = "+$useCollectedFolderPermissionsOffice365)
     Out-LogFile -string "********************************************************************************"
 
     #Perform paramter validation manually.
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "ENTERING PARAMTER VALIDATION"
+    Out-LogFile -string "ENTERING PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
@@ -544,7 +544,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
         else 
         {
-            out-logfile -string ("Skipping testing of host running controoler: "+$server)    
+            out-logfile -string ("Skipping testing of host running controller: "+$server)    
         }
     }
 
@@ -628,7 +628,7 @@ Function Start-MultipleMachineDistributionListMigration
             new-SMBShare -name $dlConversionV2ModuleName -path $logFolderPath -fullAccess $account -errorAction STOP
         }
         catch{
-            out-logfile -string "Uanble to create the DLConversionV2 share."
+            out-logfile -string "Unable to create the DLConversionV2 share."
             out-logfile $_ -isError:$TRUE
         }
     }
@@ -765,7 +765,7 @@ Function Start-MultipleMachineDistributionListMigration
                 catch{
                     if ($loopCounter -gt 4)
                     {
-                        out-logfile -string "Uanble to create the network directory."
+                        out-logfile -string "Unable to create the network directory."
                         out-logfile -string $_ -isError:$TRUE
                     }
                     else 
@@ -810,7 +810,7 @@ Function Start-MultipleMachineDistributionListMigration
                 New-Item -ItemType Directory -Force -Path $forDirectory -errorAction STOP
             }
             catch{
-                out-logfile -string "Uanble to create the network directory."
+                out-logfile -string "Unable to create the network directory."
                 out-logfile -string $_ -isError:$TRUE
             }
 
@@ -938,7 +938,7 @@ Function Start-MultipleMachineDistributionListMigration
                 }
                 else 
                 {
-                    out-logfile -string ("For Counster = "+$forCounter)
+                    out-logfile -string ("For Counter = "+$forCounter)
                     $maxCounter = $maxAddressesPerMachines
                 }
             }

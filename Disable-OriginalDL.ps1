@@ -70,7 +70,7 @@
         Out-LogFile -string "BEGIN Disable-OriginalDLConfiguration"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string ("Disalbed DL Custom Attribute 1 = "+$functionCustomAttribute1)
+        out-logfile -string ("Disabled DL Custom Attribute 1 = "+$functionCustomAttribute1)
         out-logfile -string ("Disabled DL Custom Attribute 2 = "+$functionCustomAttribute2)
 
         #Get the group using LDAP / AD providers.

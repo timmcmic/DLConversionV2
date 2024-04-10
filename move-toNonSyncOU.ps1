@@ -88,7 +88,7 @@
         
                             $loopCounter++
         
-                            start-sleepProgress -sleepSeconds 5 -sleepString "Attemp to move to non-sync OU failed - sleep 5 seconds retry."
+                            start-sleepProgress -sleepSeconds 5 -sleepString "Attempt to move to non-sync OU failed - sleep 5 seconds retry."
                         }
                         else {
                             out-logfile -string "Unable to move the group to a non-sync OU - abandon the move."
@@ -123,7 +123,7 @@
         }
         else 
         {
-            out-logfile -string "Attempting one move back to the source OU - on premises group was moved to no-sync and failure occured."
+            out-logfile -string "Attempting one move back to the source OU - on premises group was moved to no-sync and failure occurred."
 
             move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction SilentlyContinue
 

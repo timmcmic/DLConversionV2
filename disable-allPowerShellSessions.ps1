@@ -23,7 +23,7 @@
 
         if ($global:DLCleanupInfo -ne $NULL)
         {
-            out-logfile -string "Failure occured prior to full DL creation in Office 365.  Remove temporary DL."
+            out-logfile -string "Failure occurred prior to full DL creation in Office 365.  Remove temporary DL."
 
             remove-o365CloudOnlyGroup -office365DLConfiguration $global:DLCleanupInfo -dlCleanupRequired:$TRUE
         }

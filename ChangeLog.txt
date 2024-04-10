@@ -1,0 +1,7 @@
+================================================
+Issue #161 - fixed in build 2.9.8.31
+4/10/2024
+
+Performed spell check against all out-logFile entries and other string values.  Corrections made.
+Corrected extension attribute names in PSObjects when extension attribute failures occur.
+================================================

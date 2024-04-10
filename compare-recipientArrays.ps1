@@ -129,7 +129,7 @@ function compare-recipientArrays
     {
         out-logfile -string "Comparing data from all three directories - this has to be proxy addresses."
 
-        out-logfile -string "Start comparing on premsies to AzureAD to Office 365."
+        out-logfile -string "Start comparing on premises to AzureAD to Office 365."
 
         foreach ($member in $onPremData)
         {
@@ -242,7 +242,7 @@ function compare-recipientArrays
         {
             out-logfile -string ("Evaluating member: "+$member.externalDirectoryObjectID)
 
-            out-logfile -string "In this case start comparison by external directory oubject id - all Office 365 objects have it unless it's a room distribution list."
+            out-logfile -string "In this case start comparison by external directory object id - all Office 365 objects have it unless it's a room distribution list."
             out-logfile -string "Starting Exchange Online -> Azure Evaluation"
 
             out-logfile -string "Determining if the object has a primary SMTP address or only an external address.  Guest users <or> mail contacts may have external addresses."
@@ -319,7 +319,7 @@ function compare-recipientArrays
                 }
                 else 
                 {
-                    out-logfile -string "Azure object is not an on premsies security principal therefore no sid or user principal"
+                    out-logfile -string "Azure object is not an on premises security principal therefore no sid or user principal"
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
@@ -608,7 +608,7 @@ function compare-recipientArrays
                 }
                 else 
                 {
-                    out-logfile -string "The object was not discovered by primary SMTP address - this may not necessarily be incorret since contacts may not have a primary SMTP in Azure."
+                    out-logfile -string "The object was not discovered by primary SMTP address - this may not necessarily be incorrect since contacts may not have a primary SMTP in Azure."
                     out-logfile -string "Search the Office 365 data for the primary SMTP address assume the objects are the same."
 
                     if ($office365DataByExternalSMTPAddress.ContainsKey($member.primarySMTPAddress))

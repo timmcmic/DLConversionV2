@@ -58,7 +58,7 @@
             Out-LogFile -string $_ -isError:$TRUE
         }
 
-        out-logfile -string "Test that the OU is not syncrhonized in AD Connect."
+        out-logfile -string "Test that the OU is not synchronized in AD Connect."
 
 
         $testReturn = invoke-command -Session $workingPowershellSession -ScriptBlock {

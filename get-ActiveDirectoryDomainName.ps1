@@ -54,7 +54,7 @@
 
         out-logfile -string ("DN to convert: "+$DN)
 
-        Out-LogFile -string "Converting the distringuished name."
+        Out-LogFile -string "Converting the distinguished name."
 
         $functionSplitDomainName = $dn -Split "," | ? {$_ -like "DC=*"}
 

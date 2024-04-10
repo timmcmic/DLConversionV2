@@ -274,7 +274,7 @@
                         {
                             if ($loopCounter -gt 4)
                             {
-                                out-logfile -string "Unablet to retrive the object by name."
+                                out-logfile -string "Unable to retrieve the object by name."
                                 out-logfile -string $_ -isError:$TRUE
                             }
                             else 

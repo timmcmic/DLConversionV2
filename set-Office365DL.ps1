@@ -100,7 +100,7 @@
 
         if ($isFirstAttempt -eq $FALSE)
         {
-            out-logfile -string "This is not the first pass - set attribute that may collid with the original group."
+            out-logfile -string "This is not the first pass - set attribute that may collide with the original group."
 
             try 
             {
@@ -155,7 +155,7 @@
         }
         else 
         {
-            out-logfile -string "This is the first pass set attribute that would not collid with the original group."
+            out-logfile -string "This is the first pass set attribute that would not collide with the original group."
 
             #There are several flags of a DL that are either calculated hashes <or> booleans not set by default.
             #The exchange commandlets abstract this by performing a conversion or filling the values in.
@@ -167,7 +167,7 @@
 
             if ( $groupTypeOverride -eq "Security" )
             {
-                out-logfile -string "Group type overriden to Security by administrator.  This requires depart restriction closed."
+                out-logfile -string "Group type overridden to Security by administrator.  This requires depart restriction closed."
 
                 $functionMemberDepartRestriction = "Closed"
 
@@ -222,7 +222,7 @@
 
                 $functionSendModerationNotifications="Never"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
             }
             elseif (($originalDLConfiguration.msExchModerationFlags -eq "2") -or ($originalDLConfiguration.msExchModerationFlags -eq "3")  )
             {
@@ -230,7 +230,7 @@
 
                 $functionSendModerationNotifications="Internal"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
 
             }
             elseif (($originalDLConfiguration.msExchModerationFlags -eq "6") -or ($originalDLConfiguration.msExchModerationFlags -eq "7")  )
@@ -239,7 +239,7 @@
 
                 $functionSendModerationNotifications="Always"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
             }
             else 
             {
@@ -322,7 +322,7 @@
 
             if ($originalDLConfiguration.msExchHideFromAddressLists -eq $NULL)
             {
-                out-logfile -string ("Hidden from adddress list is null.")
+                out-logfile -string ("Hidden from address list is null.")
 
                 $functionHiddenFromAddressList=$FALSE
 
@@ -375,7 +375,7 @@
 
             if ($originalDLConfiguration.mailNickName -eq $NULL)
             {
-                out-logfile -string "On premsies group does not have alias / mail nick name -> using Office 365 value."
+                out-logfile -string "On premises group does not have alias / mail nick name -> using Office 365 value."
 
                 $functionMailNickName = $office365DLConfiguration.alias
 
@@ -383,7 +383,7 @@
             }
             else 
             {
-                out-logfile -string "On premises group has a mail nickname specified - using on premsies value."
+                out-logfile -string "On premises group has a mail nickname specified - using on premises value."
                 $functionMailNickName = $originalDLConfiguration.mailNickName
                 out-logfile -string $functionMailNickName    
             }
@@ -397,7 +397,7 @@
                 $functionDisplayName = $office365DLConfiguration.displayName    
             }
 
-            out-logfile -string "Evaluting prefix and suffix for display name."
+            out-logfile -string "Evaluating prefix and suffix for display name."
 
             $functionDisplayname = $prefix + $functionDisplayName
 
@@ -566,7 +566,7 @@
                 $functionErrors+=$isErrorObject
             }
 
-            out-logfile -string "Setting single valued moderation propeties for the group."
+            out-logfile -string "Setting single valued moderation properties for the group."
 
             try 
             {
@@ -647,7 +647,7 @@
 
             try 
             {
-                out-logfile -string "Setting member join restritions on the group.."
+                out-logfile -string "Setting member join restrictions on the group.."
 
                 Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberJoinRestriction $functionMemberJoinRestriction -errorAction STOP -BypassSecurityGroupManagerCheck
             }
@@ -672,7 +672,7 @@
 
             try 
             {
-                out-logfile -string "Setting member depart restritions on the group.."
+                out-logfile -string "Setting member depart restrictions on the group.."
 
                 Set-O365DistributionGroup -Identity $functionExternalDirectoryObjectID -MemberDepartRestriction $functionMemberDepartRestriction -errorAction STOP -BypassSecurityGroupManagerCheck
             }

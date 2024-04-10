@@ -187,7 +187,7 @@ function start-collectOffice365FullMailboxAccess
             }
             else 
             {
-                out-logfile -string "Brinf your own mailboxes was specified - evaluating only mailboxes specified."
+                out-logfile -string "Bring your own mailboxes was specified - evaluating only mailboxes specified."
 
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {

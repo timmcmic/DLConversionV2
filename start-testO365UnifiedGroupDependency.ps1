@@ -135,7 +135,7 @@
                     ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = "N/A"
                     isError=$true
-                    isErrorMessage="UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premsies the administrator must use -overrideSecurityGroupCheck acknolwedging that permissions may be lost in Office 365 as a result of the migration."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_GROUP_IS_SECURITY_EXCEPTION:  To perform an Office 365 Unified Group migration of a mail-enabled security group on premises the administrator must use -overrideSecurityGroupCheck acknowledging that permissions may be lost in Office 365 as a result of the migration."
                 }
 
                 $global:preCreateErrors+=$errorObject
@@ -204,7 +204,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="UNIFIED_GROUP_MIGRATION_NO_MANAGERS_EXCEPTION: No managers are specified on the on-premsies group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_NO_MANAGERS_EXCEPTION: No managers are specified on the on-premises group.  All Office 365 Unified Groups must have at least one owners.  Managers are the source of owners in an Office 365 Unified Group Migration."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -298,7 +298,7 @@
         }
         else
         {
-            out-logfile -string "Adding managers to membership for evalution."
+            out-logfile -string "Adding managers to membership for evaluation."
 
             $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
         }
@@ -431,7 +431,7 @@
         }
         else
         {
-            out-logfile -string "No on premsies send as rights provided in this function call."
+            out-logfile -string "No on premises send as rights provided in this function call."
         }
 
         if ($allOffice365ManagedBy -ne $NULL)
@@ -461,7 +461,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="UNIFIED_GROUP_MIGRATION_MANAGEDBY_ON_OTHER_OBJECTS_EXCEPTION: Office 365 Unified Groups are not security enabled.  They may not have managed by rights on other groups.  Remove the managed by right on this object in Office 365 to proceed with converstion to an Office 365 Unified Group."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_MANAGEDBY_ON_OTHER_OBJECTS_EXCEPTION: Office 365 Unified Groups are not security enabled.  They may not have managed by rights on other groups.  Remove the managed by right on this object in Office 365 to proceed with conversion to an Office 365 Unified Group."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -474,7 +474,7 @@
 
         if ($allOffice365SendAsAccess -ne $NULL)
         {
-            out-logfile -string "Evaluating all Office 365 send as acesss"
+            out-logfile -string "Evaluating all Office 365 send as access"
 
             foreach ($member in $allOffice365SendAsAccess)
             {
@@ -537,7 +537,7 @@
                     ParentGroupSMTPAddress = $null
                     isAlreadyMigrated = $null
                     isError=$True
-                    isErrorMessage="UNIFIED_GROUP_MIGRATION_FULL_MAILOBOX_ACCESS_EXCEPTION: An Office 365 group is not a security principal.  Either remove the full mailbox access rights assigned to the group on this object or do not inclue useCollectedOffice365FullMailboxAccess."
+                    isErrorMessage="UNIFIED_GROUP_MIGRATION_FULL_MAILOBOX_ACCESS_EXCEPTION: An Office 365 group is not a security principal.  Either remove the full mailbox access rights assigned to the group on this object or do not include useCollectedOffice365FullMailboxAccess."
                 }
 
                 $global:preCreateErrors+=$functionObject
@@ -546,7 +546,7 @@
 
         if ($allOffice365MailboxFolderPermissions -ne $NULL)
         {
-            out-logfile -string "Evaluating all Office 365 send as acesss"
+            out-logfile -string "Evaluating all Office 365 send as access"
 
             foreach ($member in $allOffice365MailboxFolderPermissions)
             {

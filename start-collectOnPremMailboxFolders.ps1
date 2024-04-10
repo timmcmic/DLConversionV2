@@ -154,7 +154,7 @@ function start-collectOnPremMailboxFolders
         }
         else 
         {
-            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+            out-logfile -string "Major issue creating on-premises Exchange powershell session - unknown - ending." -isError:$TRUE
         }
         
         try 
@@ -346,7 +346,7 @@ function start-collectOnPremMailboxFolders
         {
             out-logFile -string ("Processing folder name ="+$folder.Identity)
             out-logfile -string ("Processing folder = "+$folder.FolderId)
-            out-logfile -string ("Processing cotent mailbox guid = "+$folder.ContentMailboxGuid)
+            out-logfile -string ("Processing content mailbox guid = "+$folder.ContentMailboxGuid)
     
             $folderNumber++
     

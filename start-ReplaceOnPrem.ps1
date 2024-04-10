@@ -101,7 +101,7 @@
 
                 if ($functionSleepTest -ne $FALSE)
                 {
-                    start-sleepProgress -sleepString "Failed adding member to the group - sleeping before rety." -sleepSeconds 30
+                    start-sleepProgress -sleepString "Failed adding member to the group - sleeping before retry." -sleepSeconds 30
 
                 }
 

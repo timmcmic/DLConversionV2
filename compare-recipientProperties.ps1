@@ -1383,7 +1383,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute1 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute1"
             onpremisesvalue = $onPremData.msExchExtensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1401,7 +1401,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute2 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute2"
             onpremisesvalue = $onPremData.msExchExtensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1419,7 +1419,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute3 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute3"
             onpremisesvalue = $onPremData.msExchExtensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1437,7 +1437,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute4 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute4"
             onpremisesvalue = $onPremData.msExchExtensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1455,7 +1455,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute5 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute5"
             onpremisesvalue = $onPremData.msExchExtensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1539,7 +1539,7 @@ function compare-recipientProperties
     }
     else 
     {
-        out-logfile -string "On premsies and azure values are not valid."
+        out-logfile -string "On premises and azure values are not valid."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "DisplayName"
@@ -1596,7 +1596,7 @@ function compare-recipientProperties
     }
     else 
     {
-        out-logfile -string "On premsies and office 365 values are not valid."
+        out-logfile -string "On premises and office 365 values are not valid."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
@@ -1789,7 +1789,7 @@ function compare-recipientProperties
     }
     else
     {
-        out-logfile -string "Require authentication does not match between on premsies and office 365."
+        out-logfile -string "Require authentication does not match between on premises and office 365."
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "RequireSenderAuthenticationEnabled"
@@ -1874,7 +1874,7 @@ function compare-recipientProperties
 
         $functionSendModerationNotifications="Never"
 
-        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+        out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
     }
     elseif (($onPremData.msExchModerationFlags -eq "2") -or ($onPremData.msExchModerationFlags -eq "3")  )
     {
@@ -1882,7 +1882,7 @@ function compare-recipientProperties
 
         $functionSendModerationNotifications="Internal"
 
-        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+        out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
 
     }
     elseif (($onPremData.msExchModerationFlags -eq "6") -or ($onPremData.msExchModerationFlags -eq "7")  )
@@ -1891,7 +1891,7 @@ function compare-recipientProperties
 
         $functionSendModerationNotifications="Always"
 
-        out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+        out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
     }
     else 
     {

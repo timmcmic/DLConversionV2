@@ -50,7 +50,7 @@
         
         out-logfile -string "Test for folder permissions."
 
-        out-logfile -string "Filter all permissions for objects that are no longer vaild"
+        out-logfile -string "Filter all permissions for objects that are no longer valid"
         out-logfile -string ("Pre collected data count: "+$collectedData.count)
 
         $collectedData = $collectedData | where {$_.user.adrecipient -ne $NULL}

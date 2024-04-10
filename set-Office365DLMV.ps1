@@ -213,7 +213,7 @@
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
-                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premsies mail address.")
+                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premises mail address.")
                         ErrorMessageDetail = $_
                     }
 
@@ -326,7 +326,7 @@
 
                 out-logfile -string ("Calculated hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
-                out-logfile -string ("Determine if the calcualted routing address is already in use.")
+                out-logfile -string ("Determine if the calculated routing address is already in use.")
 
                 $hybridDoLoop = $FALSE
 
@@ -389,7 +389,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove temporary SMTP address of group."
-                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
+                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manual removal required.")
                     ErrorMessageDetail = $_
                 }
 
@@ -470,7 +470,7 @@
                             }
                             catch 
                             {
-                                out-logfile -string ("Error procesing recipient: "+$recipient)
+                                out-logfile -string ("Error processing recipient: "+$recipient)
 
                                 out-logfile -string $_
 
@@ -573,7 +573,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -677,7 +677,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
     
                             out-logfile -string $_
     
@@ -778,7 +778,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -880,7 +880,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -1111,7 +1111,7 @@
             out-logfile -string "It is possible that grant send on behalf to was set directly in the service."
             out-logfile -string "Grant send on behalf to is only stored as a recipient display name and not a unique id."
             out-logfile -string "If the cloud value is > 0 then we will iterate through each one and attempt an add."
-            out-logfile -string "This can cause a false positive becuase names often cause ambiguous reference errors on adds."
+            out-logfile -string "This can cause a false positive because names often cause ambiguous reference errors on adds."
 
             if ($office365DLConfiguration.grantSendOnBehalfTo.count -gt 0)
             {

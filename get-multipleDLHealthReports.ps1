@@ -244,11 +244,11 @@ Function get-multipleDLHealthReports
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -277,12 +277,12 @@ Function get-multipleDLHealthReports
     Out-LogFile -string ("GlobalCatalogServer = "+$globalCatalogServer)
     Out-LogFile -string ("ActiveDirectoryUserName = "+$activeDirectoryCredential.UserName.tostring())
     Out-LogFile -string ("LogFolderPath = "+$logFolderPath)
-    out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
+    out-logfile -string ("Use collected send as on premises = "+$useCollectedSendAsOnPrem)
     Out-LogFile -string "********************************************************************************"
 
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "ENTERING PARAMTER VALIDATION"
+    Out-LogFile -string "ENTERING PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
 
@@ -386,7 +386,7 @@ Function get-multipleDLHealthReports
 
                 if ($forCounter -eq 0)
                 {
-                    start-sleepProgress -sleepString "Sleeping after job provioning." -sleepSeconds 5
+                    start-sleepProgress -sleepString "Sleeping after job provisioning." -sleepSeconds 5
 
                 }
             }

@@ -108,7 +108,7 @@
 
         if ($originalDLConfiguration.mailNickName -ne $NULL)
         {
-            out-logfile -string "Mail nickname present on premsies -> using this value."
+            out-logfile -string "Mail nickname present on premises -> using this value."
             $functionMailNickName = $originalDLConfiguration.mailNickName
             out-logfile -string $functionMailNickName
         }
@@ -213,7 +213,7 @@
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
-                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premsies mail address.")
+                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premises mail address.")
                         ErrorMessageDetail = $_
                     }
 
@@ -326,7 +326,7 @@
 
                 out-logfile -string ("Calculated hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
-                out-logfile -string ("Determine if the calcualted routing address is already in use.")
+                out-logfile -string ("Determine if the calculated routing address is already in use.")
 
                 $hybridDoLoop = $FALSE
 
@@ -389,7 +389,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove temporary SMTP address of group."
-                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
+                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manual removal required.")
                     ErrorMessageDetail = $_
                 }
 
@@ -415,7 +415,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove the migration administrator as an owner of the group."
-                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manaual removal from owners required.")
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manual removal from owners required.")
                     ErrorMessageDetail = $_
                 }
 
@@ -441,7 +441,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove the migration administrator as an member of the group."
-                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manaual removal from members required.")
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manual removal from members required.")
                     ErrorMessageDetail = $_
                 }
 
@@ -521,7 +521,7 @@
                             }
                             catch 
                             {
-                                out-logfile -string ("Error procesing recipient: "+$recipient)
+                                out-logfile -string ("Error processing recipient: "+$recipient)
 
                                 out-logfile -string $_
 
@@ -641,7 +641,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -761,7 +761,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
     
                             out-logfile -string $_
     
@@ -879,7 +879,7 @@
                             add-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType Owners -links $recipient -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -998,7 +998,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -moderatedBy @{Add=$recipient} -errorAction STOP                    
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 

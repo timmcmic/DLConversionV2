@@ -93,7 +93,7 @@
 
                 if ($powershellModuleName -eq $exchangeOnlineManagementModuleName)
                 {
-                    out-logfile -string "Enfocring new version requirement for Exchange Online Management - minimum v3.0.0"
+                    out-logfile -string "Enforcing new version requirement for Exchange Online Management - minimum v3.0.0"
                     out-logfile -string ("Testing Exchange Online Management Module Version: "+$exchangeOnlineManagementMinimumVersion)
 
                     if ($commandsArray[0].version -lt $exchangeOnlineManagementMinimumVersion)
@@ -134,7 +134,7 @@
             }
             else 
             {
-                out-logfile -string "NUGET package provier not available - version testing unavailable."    
+                out-logfile -string "NUGET package provider not available - version testing unavailable."    
             }
         }
 

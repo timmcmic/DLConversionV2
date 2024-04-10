@@ -564,11 +564,11 @@ Function Convert-Office365DLtoUnifiedGroup
     }
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -583,7 +583,7 @@ Function Convert-Office365DLtoUnifiedGroup
     Out-LogFile -string "BEGIN Convert-Office365DLtoUnifiedGroup"
     Out-LogFile -string "================================================================================"
 
-    out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
+    out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retry"
 
     out-logfile -string ("Runtime start UTC: " + $telemetryStartTime.ToString())
 
@@ -600,7 +600,7 @@ Function Convert-Office365DLtoUnifiedGroup
 
     out-logfile -string "Ensure that all strings specified have no leading or trailing spaces."
 
-    #Perform cleanup of any strings so that no spaces existin trailing or leading.
+    #Perform cleanup of any strings so that no spaces existing trailing or leading.
 
     $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
     $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
@@ -690,7 +690,7 @@ Function Convert-Office365DLtoUnifiedGroup
     #Perform paramter validation manually.
 
     Out-LogFile -string "********************************************************************************"
-    Out-LogFile -string "ENTERING PARAMTER VALIDATION"
+    Out-LogFile -string "ENTERING PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
     #Validate that only one method of engaging exchange online was specified.
@@ -1460,7 +1460,7 @@ Function Convert-Office365DLtoUnifiedGroup
             out-logFile -string $_ -isError:$TRUE
         }
 
-        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365BypassModeration.count)
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to right = "+$allOffice365BypassModeration.count)
 
         try {
             $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -errorAction STOP

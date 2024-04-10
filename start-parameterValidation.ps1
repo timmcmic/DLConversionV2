@@ -180,7 +180,7 @@
         {
             if (($useOnPremisesExchange -eq $False) -and ($enableHybridMailflow -eq $true))
             {
-                out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
+                out-logfile -string "Exchange on premises information must be provided in order to enable hybrid mail flow." -isError:$TRUE
             }
      
         }
@@ -209,7 +209,7 @@
             }
             elseif (($azureCertificateThumbprint -eq "") -and ($azureTenantID -eq "") -and ($azureApplicationID -ne ""))
             {
-                out-logfile -string "No componets of Azure AD Cert Authentication were provided - this is not necessarily an issue."
+                out-logfile -string "No components of Azure AD Cert Authentication were provided - this is not necessarily an issue."
             }
             else 
             {
@@ -233,7 +233,7 @@
             }
             elseif (($msGraphCertificateThumbprint -eq "") -and ($msGraphTenantID -eq "") -and ($msGraphApplicationID -ne ""))
             {
-                out-logfile -string "No componets of msGraph Cert Authentication were provided - this is not necessarily an issue."
+                out-logfile -string "No components of msGraph Cert Authentication were provided - this is not necessarily an issue."
             }
             else 
             {
@@ -271,7 +271,7 @@
         {
             if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
             {
-                out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+                out-logfile -string "The exchange organization name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
             }
             elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
             {
@@ -323,13 +323,13 @@
             {
                 #The exchange credential was specified but the exchange server was not specified.
 
-                Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
+                Out-LogFile -string "ERROR:  Exchange Server is required when specifying Exchange Credential." -isError:$TRUE
             }
             elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
             {
                 #The exchange server was specified but the exchange credential was not.
 
-                Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
+                Out-LogFile -string "ERROR:  Exchange Credential is required when specifying Exchange Server." -isError:$TRUE
             }
             elseif (($exchangeCredential -ne $NULL) -and ($exchangeServer -ne ""))
             {
@@ -362,13 +362,13 @@
             {
                 #The credential was specified but the server name was not.
 
-                Out-LogFile -string "ERROR:  AAD Connect Server is required when specfying AAD Connect Credential" -isError:$TRUE
+                Out-LogFile -string "ERROR:  AAD Connect Server is required when specifying AAD Connect Credential" -isError:$TRUE
             }
             elseif (($aadConnectCredential -eq $NULL) -and ($aadConnectServer -ne ""))
             {
                 #The server name was specified but the credential was not.
 
-                Out-LogFile -string "ERROR:  AAD Connect Credential is required when specfying AAD Connect Server" -isError:$TRUE
+                Out-LogFile -string "ERROR:  AAD Connect Credential is required when specifying AAD Connect Server" -isError:$TRUE
             }
             elseif (($aadConnectCredential -ne $NULL) -and ($aadConnectServer -ne ""))
             {
