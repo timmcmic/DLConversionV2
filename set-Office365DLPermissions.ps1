@@ -99,7 +99,7 @@
 
                 if ($isTestError -eq "Yes")
                 {
-                    out-logfile -string "Error adding mirgated distribution list to send as permission of cloud only group.."
+                    out-logfile -string "Error adding migrated distribution list to send as permission of cloud only group.."
     
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.primarySMTPAddressorUPN

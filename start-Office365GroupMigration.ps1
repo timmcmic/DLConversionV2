@@ -811,7 +811,7 @@ Function Start-Office365GroupMigration
     }
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"

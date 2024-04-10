@@ -192,7 +192,7 @@
         Out-LogFile -string "enable-hybridMailFlowPostMigration"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retrys"
+        out-logfile -string "Set error action preference to continue to allow write-error in out-logfile to service exception retries."
 
         if ($errorActionPreference -ne "Continue")
         {
@@ -243,13 +243,13 @@
         {
             #The exchange credential was specified but the exchange server was not specified.
 
-            Out-LogFile -string "ERROR:  Exchange Server is required when specfying Exchange Credential." -isError:$TRUE
+            Out-LogFile -string "ERROR:  Exchange Server is required when specifying Exchange Credential." -isError:$TRUE
         }
         elseif (($exchangeCredential -eq $NULL) -and ($exchangeServer -ne ""))
         {
             #The exchange server was specified but the exchange credential was not.
 
-            Out-LogFile -string "ERROR:  Exchange Credential is required when specfying Exchange Server." -isError:$TRUE
+            Out-LogFile -string "ERROR:  Exchange Credential is required when specifying Exchange Server." -isError:$TRUE
         }
         elseif (($exchangeCredential -ne $NULL) -and ($exchangetServer -ne ""))
         {
@@ -289,7 +289,7 @@
 
         if (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq ""))
         {
-            out-logfile -string "The exchange organiztion name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
+            out-logfile -string "The exchange organization name and application ID are required when using certificate thumbprint authentication to Exchange Online." -isError:$TRUE
         }
         elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -eq ""))
         {
@@ -306,7 +306,7 @@
 
         if ($coreVariables.useOnPremisesExchange.value -eq $False)
         {
-            out-logfile -string "Exchange on premsies information must be provided in order to enable hybrid mail flow." -isError:$TRUE
+            out-logfile -string "Exchange on premises information must be provided in order to enable hybrid mail flow." -isError:$TRUE
         }
 
         if (Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential -isValidTest:$TRUE)
@@ -403,7 +403,7 @@
             }
             else 
             {
-                out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+                out-logfile -string "Major issue creating on-premises Exchange powershell session - unknown - ending." -isError:$TRUE
             }
 
             try 
@@ -453,7 +453,7 @@
 
         #Now that we have the configuration - we need to ensure dir sync is set to false.
 
-        out-logfile -string "Testing to ensure that the distribution list is directory synchornized."
+        out-logfile -string "Testing to ensure that the distribution list is directory synchronized."
 
         out-logfile -string ("IsDirSynced: "+$office365DLConfiguration.isDirSynced)
 
@@ -479,7 +479,7 @@
         }
         else 
         {
-            out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+            out-logfile -string "The administrator has specified a custom routing domain - maybe for legacy tenant implementations."
 
             $mailOnMicrosoftComDomain = $customRoutingDomain
         }
@@ -515,7 +515,7 @@
         try {
             $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
 
-            out-logfile -string "Overriding OU selection by adminsitrator - contact already exists.  Must be the same as contact."
+            out-logfile -string "Overriding OU selection by administrator - contact already exists.  Must be the same as contact."
 
             $OU = get-OULocation -originalDLConfiguration $routingContactConfiguration
 

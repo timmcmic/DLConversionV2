@@ -47,7 +47,7 @@
         #Output all parameters bound or unbound and their associated values.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGINE remove-o365CloudOnlyGroup"
+        Out-LogFile -string "BEGIN remove-o365CloudOnlyGroup"
         Out-LogFile -string "********************************************************************************"
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)

@@ -108,7 +108,7 @@
 
         if ($originalDLConfiguration.mailNickName -ne $NULL)
         {
-            out-logfile -string "Mail nickname present on premsies -> using this value."
+            out-logfile -string "Mail nickname present on premises -> using this value."
             $functionMailNickName = $originalDLConfiguration.mailNickName
             out-logfile -string $functionMailNickName
         }
@@ -879,7 +879,7 @@
                             add-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType Owners -links $recipient -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 

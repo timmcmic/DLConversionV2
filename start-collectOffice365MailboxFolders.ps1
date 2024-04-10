@@ -129,7 +129,7 @@ function start-collectOffice365MailboxFolders
     if (($bringMyOwnMailboxes -ne $NULL)-and ($retryCollection -EQ $TRUE))
     {
         out-logfile -string "Cannot combine bring your own mailboxes with retry collection."
-        out-logfile -string "If this is a retry after bringning your own mailbox - specify just retry." -isError:$TRUE -isAudit:$true
+        out-logfile -string "If this is a retry after bringing your own mailbox - specify just retry." -isError:$TRUE -isAudit:$true
     }
 
     #Start the connection to Exchange Online.
@@ -322,7 +322,7 @@ function start-collectOffice365MailboxFolders
                 {
                     if ($loopCounter -gt 4)
                     {
-                        out-logfile -string "Error obtaining milbox folder statistics."
+                        out-logfile -string "Error obtaining mailbox folder statistics."
                         out-logfile -string "Collection operation will need to be retried - STOP failure."
                         out-logfile -string $_ -isError:$TRUE -isAudit:$true
                     }                     
@@ -336,7 +336,7 @@ function start-collectOffice365MailboxFolders
                 {
                     if ($loopCounter -gt 4)
                     {
-                        out-logfile -string "Error obtaining milbox folder statistics."
+                        out-logfile -string "Error obtaining mailbox folder statistics."
                         out-logfile -string "Collection operation will need to be retried - STOP failure."
                         out-logfile -string $_ -isError:$TRUE -isAudit:$true
                     }                    
@@ -426,7 +426,7 @@ function start-collectOffice365MailboxFolders
                             }
                             else 
                             {
-                                out-logfile -string "Issues obtaining folder permssions - retry."
+                                out-logfile -string "Issues obtaining folder permissions - retry."
                                 $loopCounter = $loopCounter+1    
                             }
                         }

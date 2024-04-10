@@ -133,7 +133,7 @@
                     }
                     catch
                     {
-                        out-logfile -string "Unable to obtain the DN from canoincal name." -isError:$TRUE
+                        out-logfile -string "Unable to obtain the DN from canonical name." -isError:$TRUE
                     }
 
                     try
@@ -569,7 +569,7 @@
                 {
                     #The group is a recipient and has permissions to an attribute.
                         
-                    out-logfile -string "The group has permissions on the DL and this is permissiable."
+                    out-logfile -string "The group has permissions on the DL and this is permissable."
                     out-logfile -string $dn
 
                     $functionObject = New-Object PSObject -Property @{

@@ -1111,7 +1111,7 @@
             out-logfile -string "It is possible that grant send on behalf to was set directly in the service."
             out-logfile -string "Grant send on behalf to is only stored as a recipient display name and not a unique id."
             out-logfile -string "If the cloud value is > 0 then we will iterate through each one and attempt an add."
-            out-logfile -string "This can cause a false positive becuase names often cause ambiguous reference errors on adds."
+            out-logfile -string "This can cause a false positive because names often cause ambiguous reference errors on adds."
 
             if ($office365DLConfiguration.grantSendOnBehalfTo.count -gt 0)
             {

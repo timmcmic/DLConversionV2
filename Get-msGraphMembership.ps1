@@ -48,7 +48,7 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        out-logfile -string "Attempting to obtain the MSgraph Group membersip."
+        out-logfile -string "Attempting to obtain the MSgraph Group membership."
 
         try {
             $functionDLMembership = get-mgGroupMember -groupID $groupObjectID -all -errorAction STOP

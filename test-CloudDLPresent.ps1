@@ -57,7 +57,7 @@
             }
             else 
             {
-                out-logfile -string "Determine if AD Connect should be proactivly triggered (suspect thread 1 failure)."
+                out-logfile -string "Determine if AD Connect should be proactively triggered (suspect thread 1 failure)."
 
                 if (($waitTime -eq $maxWaitTime) -and ($aadConnectPowershellSessionName -ne $NULL))
                 {
@@ -72,7 +72,7 @@
                 }
                 elseif ($aadConnectPowershellSessionName -eq $NULL)
                 {
-                    out-logfile -string "Not a mutlithreaded migration - no proactive AD Connect calls."
+                    out-logfile -string "Not a multithreaded migration - no proactive AD Connect calls."
                 }
                 else 
                 {

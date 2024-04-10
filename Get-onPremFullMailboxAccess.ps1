@@ -103,7 +103,7 @@
         }
         elseif ($collectedData -ne $NULL)
         {
-            out-logfile -string "Testing for full mailbo access rights.."
+            out-logfile -string "Testing for full mailbox access rights.."
 
             $functionPermissions = $collectedData | where {($_.user.tolower()).contains($originalDLConfiguration.samAccountName.toLower())}
         }

@@ -855,11 +855,11 @@ Function Start-DistributionListMigration
     }
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -1654,7 +1654,7 @@ Function Start-DistributionListMigration
         }
     }
 
-    if ($msGraphDLMembership -ne $NULL)
+    if ($NULL -ne $msGraphDLMembership)
     {
         out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
 
@@ -2631,7 +2631,7 @@ Function Start-DistributionListMigration
         out-logfile -string "There were no managed by members to evaluate."    
     }
 
-    out-logfile -string "Being evaluating all moderated by members."
+    out-logfile -string "Begin evaluating all moderated by members."
 
     if ($exchangeModeratedBySMTP.count -gt 0)
     {
@@ -2937,11 +2937,11 @@ Function Start-DistributionListMigration
 
         if ($isHealthCheck -eq $FALSE)
         {
-            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
         {
-            out-logfile -string "Pre-requist checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
         }  
     }
 
@@ -3078,7 +3078,7 @@ Function Start-DistributionListMigration
 
     if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
     {
-        out-logfile -string "Calling ge canonical name."
+        out-logfile -string "Calling get canonical name."
 
         foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
         {
@@ -3672,7 +3672,6 @@ Function Start-DistributionListMigration
     }
     else 
     {
-        out-logfile -string "Administrator opted out of recording Office 365 dependencies."
         out-logfile -string "Administrator opted out of recording Office 365 dependencies."
         $allOffice365MailboxFolderPermissions=@() 
         $allOffice365FullMailboxAccess=@()  
@@ -4756,7 +4755,7 @@ Function Start-DistributionListMigration
 
             if ($originalDLConfiguration.mailNickName -eq $NULL)
             {
-                out-logfile -string "x."
+                out-logfile -string "On premises mail nickname value missing - utilize Office 365 values."
                 out-logfile -string $office365DLConfiguration.alias
                 $originalDLConfiguration.mailNickName = $office365DLConfiguration.alias
                 out-logfile -string $originalDLConfiguration.mailNickName

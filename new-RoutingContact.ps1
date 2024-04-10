@@ -172,7 +172,7 @@
             out-logfile -string "Error enabling hybrid mail flow."
 
             $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to locate a mail.onmicrosoft.com address either on premises or office 365.  This may indicated larger failures to set SMTP addresses.  Manaul correction required and run enable-hybridMailFlowPostMigration to fix."
+                errorMessage = "Unable to locate a mail.onmicrosoft.com address either on premises or office 365.  This may indicated larger failures to set SMTP addresses.  Manual correction required and run enable-hybridMailFlowPostMigration to fix."
                 errorMessaegDetail = $errorMessageDetail
             }
 
@@ -194,7 +194,7 @@
 
         if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.cn.length -gt 0))
         {
-            out-logfile -string "Operation is not retried - use on premsies value."
+            out-logfile -string "Operation is not retried - use on premises value."
             [string]$functionCN=$originalDLConfiguration.CN.replace(' ','')+$functionMigratedByScript
 
             if ($functionCN.length -gt $functionMaxLength)
@@ -223,7 +223,7 @@
 
         if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.mail.length -gt 0))
         {
-            out-logfile -string "Operation is not retried - use on premsies value."
+            out-logfile -string "Operation is not retried - use on premises value."
             [array]$functionProxyAddressArray=$originalDLConfiguration.mail.split("@")
         }
         else 
@@ -284,7 +284,7 @@
 
         if (($isRetry -eq $FALSE) -and ($originalDLConfiguration.mailNickName.length -gt 0))
         {
-            out-logfile -string "Operation is not retried - use on premsies value."
+            out-logfile -string "Operation is not retried - use on premises value."
             [string]$functionMailNickName=$originalDLConfiguration.mailNickName.replace(' ','')+$functionMigratedByScript
 
             if ($functionMailNickName.length -gt $functionMaxLength)

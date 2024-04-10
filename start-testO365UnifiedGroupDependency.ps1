@@ -298,7 +298,7 @@
         }
         else
         {
-            out-logfile -string "Adding managers to membership for evalution."
+            out-logfile -string "Adding managers to membership for evaluation."
 
             $exchangeDLMembershipSMTP += $exchangeManagedBySMTP
         }
@@ -431,7 +431,7 @@
         }
         else
         {
-            out-logfile -string "No on premsies send as rights provided in this function call."
+            out-logfile -string "No on premises send as rights provided in this function call."
         }
 
         if ($allOffice365ManagedBy -ne $NULL)
@@ -474,7 +474,7 @@
 
         if ($allOffice365SendAsAccess -ne $NULL)
         {
-            out-logfile -string "Evaluating all Office 365 send as acesss"
+            out-logfile -string "Evaluating all Office 365 send as access"
 
             foreach ($member in $allOffice365SendAsAccess)
             {
@@ -546,7 +546,7 @@
 
         if ($allOffice365MailboxFolderPermissions -ne $NULL)
         {
-            out-logfile -string "Evaluating all Office 365 send as acesss"
+            out-logfile -string "Evaluating all Office 365 send as access"
 
             foreach ($member in $allOffice365MailboxFolderPermissions)
             {

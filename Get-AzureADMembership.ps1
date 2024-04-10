@@ -48,7 +48,7 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        out-logfile -string "Attempting to obtain the Azure AD Group membersip."
+        out-logfile -string "Attempting to obtain the Azure AD Group membership."
 
         if ($isHealthReport -eq $FALSE)
         {

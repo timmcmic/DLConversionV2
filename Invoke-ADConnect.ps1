@@ -100,7 +100,7 @@
 
                 if ($invokeTest.result -ne "Success")
                 {
-                    out-logFile -string "An error has occured - this is not necessarily uncommon."
+                    out-logFile -string "An error has occurred - this is not necessarily uncommon."
                     out-logFile -string $invokeTest.exception.toString()
                 }
                 else 
@@ -117,7 +117,7 @@
         }
         else 
         {
-            out-logfile -string "Attempting one time invocation of AD Connnect for multi-threaded retry."
+            out-logfile -string "Attempting one time invocation of AD Connect for multi-threaded retry."
 
             $invokeTest = Invoke-Command -Session $workingPowershellSession -ScriptBlock {start-adsyncsynccycle -policyType 'Delta' -errorAction Continue} *>&1
 
@@ -125,7 +125,7 @@
 
             if ($invokeTest.result -ne "Success")
             {
-                out-logFile -string "An error has occured - this is not necessarily uncommon."
+                out-logFile -string "An error has occurred - this is not necessarily uncommon."
                 out-logFile -string $invokeTest.exception.toString()
             }
             else {

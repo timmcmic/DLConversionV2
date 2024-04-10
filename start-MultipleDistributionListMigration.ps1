@@ -393,11 +393,11 @@ Function Start-MultipleDistributionListMigration
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -472,8 +472,8 @@ Function Start-MultipleDistributionListMigration
     out-logfile -string ("Retain mailbox folder permissions Office 365 = "+$retainMailboxFolderPermsOffice365)
     out-logfile -string ("Use collected full mailbox permissions on premises = "+$useCollectedFullMailboxAccessOnPrem)
     out-logfile -string ("Use collected full mailbox permissions Office 365 ="+$useCollectedFullMailboxAccessOffice365)
-    out-logfile -string ("Use collected send as on premsies = "+$useCollectedSendAsOnPrem)
-    out-logfile -string ("Use colleced mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
+    out-logfile -string ("Use collected send as on premises = "+$useCollectedSendAsOnPrem)
+    out-logfile -string ("Use collected mailbox folder permissions on premises = "+$useCollectedFolderPermissionsOnPrem)
     out-logfile -string ("Use collected mailbox folder permissions Office 365 = "+$useCollectedFolderPermissionsOffice365)
     Out-LogFile -string "********************************************************************************"
 
@@ -482,7 +482,7 @@ Function Start-MultipleDistributionListMigration
         #Perform paramter validation manually.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "ENTERING PARAMTER VALIDATION"
+        Out-LogFile -string "ENTERING PARAMETER VALIDATION"
         Out-LogFile -string "********************************************************************************"
 
         #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
@@ -511,7 +511,7 @@ Function Start-MultipleDistributionListMigration
 
         #Validate that only one method of engaging azure was specified.
 
-        Out-LogFile -string "Valdating azure credentials."
+        Out-LogFile -string "Validating azure credentials."
 
         start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount 5
 
@@ -653,7 +653,7 @@ Function Start-MultipleDistributionListMigration
     
                     if ($forCounter -eq 0)
                     {
-                        start-sleepProgress -sleepString "Sleeping after job provioning." -sleepSeconds 5
+                        start-sleepProgress -sleepString "Sleeping after job provisioning." -sleepSeconds 5
                     }
                 }
     
@@ -879,7 +879,7 @@ Function Start-MultipleDistributionListMigration
                 }
             }
 
-            out-logfile -string "Creating arrays for groups to reproces and groups in permenant failure."
+            out-logfile -string "Creating arrays for groups to reprocess and groups in permanent failure."
     
             foreach ($group in $nestedRetryGroups)
             {
@@ -911,7 +911,7 @@ Function Start-MultipleDistributionListMigration
                 out-xmlFile -itemToExport $noCrossGroupDependencyFound -itemNameToExport $xmlFiles.nestedXML.value
             }
 
-            out-logfile -string "Determining if groups are eligable for reprocessing..."
+            out-logfile -string "Determining if groups are eligible for reprocessing..."
     
             if ($noCrossGroupDependencyFound.count -gt 0)
             {
@@ -930,14 +930,14 @@ Function Start-MultipleDistributionListMigration
                         $group.isError = $TRUE
                         $group.isErrorMessage = "CHILD_GROUP_MIGRATION_EXCEPTION:  The groupt to be migrated has a child group not included in the migration set."
                         $crossGroupDependencyFound +=$group #Overloading this since it contains errors before and this is an error that I want outputted.
-                        out-logfile -string "Parent group not eligable for retry - child not included in migration set."
+                        out-logfile -string "Parent group not eligible for retry - child not included in migration set."
                     }
                 } 
             }
     
             out-logfile -string ("Number of groups to retry: "+$groupsToRetry.Count.tostring())
     
-            out-logfile -string "Resetting groupSMTPAddresses to the retry group set and seleting only unique values."
+            out-logfile -string "Resetting groupSMTPAddresses to the retry group set and selecting only unique values."
     
             $groupSMTPAddresses = $groupsToRetry | Select-Object -Unique
     
@@ -971,7 +971,7 @@ Function Start-MultipleDistributionListMigration
         out-logfile -string "ERROR:  The following nested groups have errors."
         out-logfile -string "CircularReferenceException = A group to be migrated has a child group where the child group has the migrated group as a member."
         out-logfile -string "Group -> GroupB || GroupB -> GroupA"
-        out-logfile -string "The dependencies must be removed and each group migrated.  Post mirgation the dependencies may be restored."
+        out-logfile -string "The dependencies must be removed and each group migrated.  Post migration the dependencies may be restored."
         out-logfile -string "ChildGroupMigrationException = A group contains a child group not included in the migration set."
         out-logfile -string "Automatic migration of nested groups cannot proceed.  Remove the child group or add the child group to the migration set."
         out-logfile -string "+++++++++++++++++++++++++++++++++++++++++++"

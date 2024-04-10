@@ -149,7 +149,7 @@ function start-collectOnPremFullMailboxAccess
         }
         else 
         {
-            out-logfile -string "Major issue creating on-premsies Exchange powershell session - unknown - ending." -isError:$TRUE
+            out-logfile -string "Major issue creating on-premises Exchange powershell session - unknown - ending." -isError:$TRUE
         }
         
         try 

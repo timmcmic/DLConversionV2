@@ -194,7 +194,7 @@ Function update-hybridMailAddress
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
     out-logfile -string "********************************************************************************"
-    out-logfile -string "NOCTICE"
+    out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
@@ -383,7 +383,7 @@ Function update-hybridMailAddress
 
     out-logfile -string $office365GroupConfiguration
 
-    out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
+    out-logfile -string "Create an XML file backup of the office 365 group configuration."
 
     out-xmlfile -itemToExport $office365GroupConfiguration -itemNameToExport $xmlFiles.office365GroupConfigurationXML.value
 
@@ -391,7 +391,7 @@ Function update-hybridMailAddress
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string "Validate the the recipient located in Active Directory is a dynamnic distribution group - this is the object created by enableHybridMailFlow."
+    out-logfile -string "Validate the the recipient located in Active Directory is a dynamic distribution group - this is the object created by enableHybridMailFlow."
 
     if ($originalDLConfiguration.msExchRecipientDisplayType -ne $testMSExchRecipientDisplayType)
     {
@@ -522,7 +522,7 @@ Function update-hybridMailAddress
 
     out-logfile -string $office365GroupConfigurationUpdated
 
-    out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
+    out-logfile -string "Create an XML file backup of the office 365 group configuration."
 
     out-xmlfile -itemToExport $office365GroupConfigurationUpdated -itemNameToExport $xmlFiles.office365GroupConfigurationUpdatedXML.value
 
