@@ -213,7 +213,7 @@
                         Alias = $functionMailNickName
                         Name = $originalDLConfiguration.name
                         Attribute = "Cloud Proxy Addresses"
-                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premsies mail address.")
+                        ErrorMessage = ("Unable to set cloud distribution group primary SMTP address to match on-premises mail address.")
                         ErrorMessageDetail = $_
                     }
 
@@ -389,7 +389,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove temporary SMTP address of group."
-                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manaual removal required.")
+                    ErrorMessage = ("Unable to remove" +$functionEmailAddressToRemove+" - manual removal required.")
                     ErrorMessageDetail = $_
                 }
 

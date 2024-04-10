@@ -104,7 +104,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.primarySMTPAddressorUPN
                         attribute = "SendAs Permission"
-                        errorMessage = "Migrated DL has send as permissions on directory synced group.  Attempt to mirror permission in cloud failed.  Manaul add required."
+                        errorMessage = "Migrated DL has send as permissions on directory synced group.  Attempt to mirror permission in cloud failed.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
     
@@ -154,7 +154,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "SendAs Permission"
-                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
     
@@ -185,7 +185,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "SendAs Permission"
-                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
     
@@ -232,7 +232,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "FullMailboxAccess Permission"
-                        errorMessage = "Unable to remove the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to remove the migrated distribution list with full mailbox access permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
 
@@ -264,7 +264,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "FullMailboxAccess Permission"
-                        errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to add the migrated distribution list with full mailbox access permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
 
@@ -314,7 +314,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "Mailbox Folder Permission"
-                        errorMessage = "Unable to remove the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to remove the migrated distribution list with mailbox folder permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
     
@@ -352,7 +352,7 @@
                     $isErrorObject = new-Object psObject -property @{
                         permissionIdentity = $permission.Identity
                         attribute = "Mailbox Folder Permission"
-                        errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manaul add required."
+                        errorMessage = "Unable to add the migrated distribution list with mailbox folder permissions to resource.  Manual add required."
                         errorMessageDetail = $errorMessageDetail
                     }
     

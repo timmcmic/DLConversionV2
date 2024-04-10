@@ -1383,7 +1383,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute1 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute1"
             onpremisesvalue = $onPremData.msExchExtensionAttribute1
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1401,7 +1401,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute2 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute2"
             onpremisesvalue = $onPremData.msExchExtensionAttribute2
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1419,7 +1419,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute3 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute3"
             onpremisesvalue = $onPremData.msExchExtensionAttribute3
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1437,7 +1437,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute4 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute4"
             onpremisesvalue = $onPremData.msExchExtensionAttribute4
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
@@ -1455,7 +1455,7 @@ function compare-recipientProperties
     if ($onPremData.msExchExtensionAttribute5 -ne $NULL)
     {
         $functionObject = New-Object PSObject -Property @{
-            Attribute = "ExtensionCustomAttribte1"
+            Attribute = "ExtensionCustomAttribute5"
             onpremisesvalue = $onPremData.msExchExtensionAttribute5
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
