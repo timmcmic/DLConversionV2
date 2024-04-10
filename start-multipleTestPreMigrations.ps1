@@ -378,7 +378,7 @@ Function start-MultipleTestPreMigrations
 
                 if ($forCounter -eq 0)
                 {
-                    start-sleepProgress -sleepString "Sleeping after job provioning." -sleepSeconds 5
+                    start-sleepProgress -sleepString "Sleeping after job provisioning." -sleepSeconds 5
 
                 }
             }

@@ -222,7 +222,7 @@
 
                 $functionSendModerationNotifications="Never"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
             }
             elseif (($originalDLConfiguration.msExchModerationFlags -eq "2") -or ($originalDLConfiguration.msExchModerationFlags -eq "3")  )
             {
@@ -230,7 +230,7 @@
 
                 $functionSendModerationNotifications="Internal"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
 
             }
             elseif (($originalDLConfiguration.msExchModerationFlags -eq "6") -or ($originalDLConfiguration.msExchModerationFlags -eq "7")  )
@@ -239,7 +239,7 @@
 
                 $functionSendModerationNotifications="Always"
 
-                out-logfile -string ("The function send moderations notifications is = "+$functionSendModerationNotifications)
+                out-logfile -string ("The function send moderation notifications is = "+$functionSendModerationNotifications)
             }
             else 
             {
@@ -322,7 +322,7 @@
 
             if ($originalDLConfiguration.msExchHideFromAddressLists -eq $NULL)
             {
-                out-logfile -string ("Hidden from adddress list is null.")
+                out-logfile -string ("Hidden from address list is null.")
 
                 $functionHiddenFromAddressList=$FALSE
 

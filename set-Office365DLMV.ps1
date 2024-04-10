@@ -326,7 +326,7 @@
 
                 out-logfile -string ("Calculated hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
-                out-logfile -string ("Determine if the calcualted routing address is already in use.")
+                out-logfile -string ("Determine if the calculated routing address is already in use.")
 
                 $hybridDoLoop = $FALSE
 
@@ -470,7 +470,7 @@
                             }
                             catch 
                             {
-                                out-logfile -string ("Error procesing recipient: "+$recipient)
+                                out-logfile -string ("Error processing recipient: "+$recipient)
 
                                 out-logfile -string $_
 
@@ -573,7 +573,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -677,7 +677,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
     
                             out-logfile -string $_
     
@@ -778,7 +778,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -managedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -880,7 +880,7 @@
                         try {
                             set-o365DistributionGroup -identity $functionExternalDirectoryObjectID -moderatedBy @{Add=$recipient} -errorAction STOP -BypassSecurityGroupManagerCheck                    }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 

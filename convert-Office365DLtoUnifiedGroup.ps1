@@ -568,7 +568,7 @@ Function Convert-Office365DLtoUnifiedGroup
     out-logfile -string "Telemetry collection is now enabled by default."
     out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
     out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
-    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhacement."
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
     out-logfile -string "********************************************************************************"
 
     #Output all parameters bound or unbound and their associated values.
@@ -1460,7 +1460,7 @@ Function Convert-Office365DLtoUnifiedGroup
             out-logFile -string $_ -isError:$TRUE
         }
 
-        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to righbypassModeration rights = "+$allOffice365BypassModeration.count)
+        out-logfile -string ("The number of groups in Office 365 cloud only that the DL has grant send on behalf to right = "+$allOffice365BypassModeration.count)
 
         try {
             $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -errorAction STOP

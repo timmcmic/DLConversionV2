@@ -544,7 +544,7 @@ Function Start-MultipleMachineDistributionListMigration
         }
         else 
         {
-            out-logfile -string ("Skipping testing of host running controoler: "+$server)    
+            out-logfile -string ("Skipping testing of host running controller: "+$server)    
         }
     }
 
@@ -938,7 +938,7 @@ Function Start-MultipleMachineDistributionListMigration
                 }
                 else 
                 {
-                    out-logfile -string ("For Counster = "+$forCounter)
+                    out-logfile -string ("For Counter = "+$forCounter)
                     $maxCounter = $maxAddressesPerMachines
                 }
             }

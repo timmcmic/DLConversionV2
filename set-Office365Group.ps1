@@ -120,7 +120,7 @@
 
             if ($originalDLConfiguration.msExchHideFromAddressLists -eq $NULL)
             {
-                out-logfile -string ("Hidden from adddress list is null.")
+                out-logfile -string ("Hidden from address list is null.")
 
                 $functionHiddenFromAddressList=$FALSE
 

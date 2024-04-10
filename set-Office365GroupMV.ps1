@@ -326,7 +326,7 @@
 
                 out-logfile -string ("Calculated hybrid remote routing address = "+$hybridRemoteRoutingAddress)
 
-                out-logfile -string ("Determine if the calcualted routing address is already in use.")
+                out-logfile -string ("Determine if the calculated routing address is already in use.")
 
                 $hybridDoLoop = $FALSE
 
@@ -521,7 +521,7 @@
                             }
                             catch 
                             {
-                                out-logfile -string ("Error procesing recipient: "+$recipient)
+                                out-logfile -string ("Error processing recipient: "+$recipient)
 
                                 out-logfile -string $_
 
@@ -641,7 +641,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -RejectMessagesFromSendersOrMembers @{Add=$recipient} -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
@@ -761,7 +761,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -AcceptMessagesOnlyFromSendersOrMembers @{Add=$recipient} -errorAction STOP
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
     
                             out-logfile -string $_
     
@@ -998,7 +998,7 @@
                             set-o365UnifiedGroup -identity $functionExternalDirectoryObjectID -moderatedBy @{Add=$recipient} -errorAction STOP                    
                         }
                         catch {
-                            out-logfile -string ("Error procesing recipient: "+$recipient)
+                            out-logfile -string ("Error processing recipient: "+$recipient)
 
                             out-logfile -string $_
 
