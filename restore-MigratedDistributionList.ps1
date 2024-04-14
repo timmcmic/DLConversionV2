@@ -443,7 +443,7 @@ Function restore-MigratedDistributionList
     if($dataPath.remove(0,($dataPath.length - 1)) -ne "\")
     {
         out-logfile -string "Data path does not have trailing \"
-        out-logfile -string $dataPath + "\"
+        $dataPath = $dataPath + "\"
         out-logfile -string $dataPath
     }
 
