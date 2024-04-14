@@ -628,6 +628,7 @@ Function restore-MigratedDistributionList
     try
     {
         out-logfile -string "Attempting to locate the original group object by objectGUID."
+        out-logfile -string $importedDLConfiguration.objectGUID
         $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
     }
     catch
@@ -642,7 +643,13 @@ Function restore-MigratedDistributionList
         $originalGroupFound = $TRUE
     }
 
-    
+    if ($originalGroupFound -eq $TRUE)
+    {
+        foreach ($property in $originalDLConfiguraiton.psObject.properties)
+        {
+            out-logfile -string ("Resetting property: "+$property.Name+ "with value: "+$property.value)
+        }
+    }
 
     exit
 
