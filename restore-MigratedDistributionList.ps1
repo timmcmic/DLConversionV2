@@ -390,7 +390,7 @@ Function restore-MigratedDistributionList
 
     #Log start of DL migration to the log file.
 
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+    new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
 
     out-logfile -string "Testing for supported version of Powershell engine."
 
