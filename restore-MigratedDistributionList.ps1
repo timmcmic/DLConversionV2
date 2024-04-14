@@ -651,6 +651,13 @@ Function restore-MigratedDistributionList
         foreach ($property in $importedDLConfiguration.psObject.properties)
         {
             out-logfile -string ("Resetting property: "+$property.Name+ " with value: "+$property.value)
+
+            try {
+                set-adbject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $property.value}
+            }
+            catch {
+                out-logfile -string $_
+            }
         }
     }
 
