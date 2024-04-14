@@ -543,7 +543,27 @@ Function restore-MigratedDistributionList
         out-logfile -string "No need to prompt administrator - no object to remove."
     }
 
-    out-logfile -string $adminAnswer.tostring()
+    switch ($adminAnswer)
+    {
+        6 {
+            out-logfile -string "Administrator selected yes to proceed with delete."
+            out-logfile -string $adminAnswer.tostring()
+
+            try {
+                remove-ADObject -identity $testADObject.distinguishedName -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -confirm:$FALSE -errorAction STOP 
+            }
+            catch {
+                out-logfile -string $_
+                out-logfile -string "Unable to remove the AD object that has the same SMTP address as the restored group."
+            }
+
+        }
+        7 {
+            out-logfile -string "Administrator selected no to proceed with delete."
+            out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
+            out-logfile -string $adminAdmin.toString() -isError:$TRUE
+        }
+    }
 
     exit
 
