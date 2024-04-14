@@ -515,6 +515,8 @@ Function restore-MigratedDistributionList
     out-logfile -string "The original DL configuration was successfully imported."
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
+    out-logfile -string $importedDLConfiguration.mail
+
     try {
         $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
     }
@@ -524,8 +526,6 @@ Function restore-MigratedDistributionList
     }
 
     out-logfile -string "An object with the mail address was located in the directory."
-
-    out-logfile -string $testADObject.count.tostring()
 
     if ($NULL -ne $testADObject)
     {
