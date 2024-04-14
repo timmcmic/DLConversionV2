@@ -625,10 +625,11 @@ Function restore-MigratedDistributionList
 
     #Determine if the original group can be located in the directory.  By default the group is retained.
 
+    out-logfile -string "Attempting to locate the original group object by objectGUID."
+    out-logfile -string $importedDLConfiguration.objectGUID
+
     try
     {
-        out-logfile -string "Attempting to locate the original group object by objectGUID."
-        out-logfile -string $importedDLConfiguration.objectGUID
         $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         $originalGroupFound = $TRUE
     }
