@@ -670,6 +670,7 @@ Function restore-MigratedDistributionList
             catch
             {
                 $trimValue = "Parameter Name: "+$property.name
+                out-logfile -string $trimValue
                 $test = $_.exception.message
                 $test.trim($trimvalue)
                 out-logfile -string $test
