@@ -373,7 +373,7 @@ Function restore-MigratedDistributionList
                 {
                     out-logfile -string "Administrator selected no to proceed with delete."
                     out-logfile -string "Deleting this object is not required for restoration to proceed."
-                    out-logfile -string $adminAnswer.toString() -isError:$TRUE
+                    out-logfile -string $adminAnswer.toString()
                 }
             }
         }
