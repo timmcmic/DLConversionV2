@@ -631,7 +631,6 @@ Function restore-MigratedDistributionList
     try
     {
         $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-        $originalGroupFound = $TRUE
     }
     catch
     {
@@ -647,7 +646,7 @@ Function restore-MigratedDistributionList
 
     if ($originalGroupFound -eq $TRUE)
     {
-        foreach ($property in $originalDLConfiguraiton.psObject.properties)
+        foreach ($property in $originalDLConfiguration.psObject.properties)
         {
             out-logfile -string ("Resetting property: "+$property.Name+ "with value: "+$property.value)
         }
