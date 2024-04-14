@@ -308,7 +308,7 @@ Function restore-MigratedDistributionList
             [Parameter(Mandatory = $true)]
             [string]$identity,
             [Parameter(Mandatory = $false)]
-            [boolean]$deleteRequire=$FALSE
+            [boolean]$deleteRequired=$FALSE
         )
 
         $testADObject = Get-ADObject -filter "mail -eq `"$identity`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
