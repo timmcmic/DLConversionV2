@@ -515,22 +515,22 @@ Function restore-MigratedDistributionList
     out-logfile -string "The original DL configuration was successfully imported."
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
-    out-logfile -string $importedDLConfiguration.mail
+    $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
 
-    try {
-        $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+    if ($NULL -eq $testADObject)
+    {
+        out-logfile -string "An object was not located in the directory with the imported mail address - this is ok."
+        out-logfile -string $testADObject.mail  
     }
-    catch {
-        out-logfile -string $_
-        out-logfile -string "An Active Directory object with the mail address was not found.  This is ok - proceed."
+    else
+    {
+        out-logfile -string "An object was located in the directory with the imported mail address - prompt administrator to remove it later."
     }
 
-    out-logfile -string "An object with the mail address was located in the directory."
+    out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
 
     if ($NULL -ne $testADObject)
     {
-        out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
-
         $promptString = ("Delete the ad object with mail address: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
 
         $adminAnswer = $wshell.popUp($promptString,0,"Remove AD Object Required",32+4)
