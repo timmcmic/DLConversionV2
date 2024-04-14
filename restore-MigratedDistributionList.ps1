@@ -378,6 +378,7 @@ Function restore-MigratedDistributionList
             }
         }
 
+        $testADObject = $NULL
     }
 
     #Initialize telemetry collection.
@@ -467,6 +468,7 @@ Function restore-MigratedDistributionList
     #On premises variables for the distribution list to be migrated.
 
     $importedDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    $originalDLConfiguraiton = $NULL
     $testADObject = $NULL
 
     #Define new arrays to check for errors instead of failing.
@@ -479,6 +481,7 @@ Function restore-MigratedDistributionList
     $symbolToReplace = "@"
     $replacementString = "-MigratedByScript@"
     $blackSlash = "\"
+    $originalGroupFound = $FALSE
 
     #Log start of DL migration to the log file.
 
@@ -620,7 +623,26 @@ Function restore-MigratedDistributionList
 
     getRemoveObject -identity $testMail -xmlExportName $xmlFiles.routingContactXML.value
 
+    #Determine if the original group can be located in the directory.  By default the group is retained.
 
+    try
+    {
+        out-logfile -string "Attempting to locate the original group object by objectGUID."
+        $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+    }
+    catch
+    {
+        out-logfile -string "Unable to query Active Directory for the presence of the original group."
+        out-logfile -string $_
+    }
+
+    if ($NULL -ne $originalDLConfiguration)
+    {
+        out-logfile -string "The original group was found in Active Directory."
+        $originalGroupFound = $TRUE
+    }
+
+    
 
     exit
 
