@@ -648,24 +648,20 @@ Function restore-MigratedDistributionList
     {
         out-logfile -string "Resetting properties of the original group to match backup."
 
-        foreach ($property in $importedDLConfiguration.psObject.properties)
+        #First order of business is to clear any property of the current group that will allow it.
+
+        foreach ($property in $originalDLConfiguration.psObject.properties)
         {
-            out-logfile -string ("Resetting property: "+$property.Name+ " with value: "+$property.value)
+            out-logfile -string ("Clearing property: "+$property.name)
 
-            if ($property.value.count -gt 1)
+            try
             {
-                out-logfile -string $property.Name
+                set-adObject -identity $originalDLConfiguration.objectGUID -clear $property.Name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
-
-            <#
-            try {
-                set-adobject -identity $originalDLConfiguration.objectGUID -add @{$property.name = [string]$property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-            }
-            catch {
+            catch
+            {
                 out-logfile -string $_
             }
-
-            #>
         }
     }
 
