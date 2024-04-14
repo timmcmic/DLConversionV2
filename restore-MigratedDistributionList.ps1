@@ -525,7 +525,7 @@ Function restore-MigratedDistributionList
 
     out-logfile -string "An object with the mail address was located in the directory."
 
-    out-logfile -string $testADObject.mail
+    out-logfile -string $testADObject.count.tostring()
 
     if ($NULL -ne $testADObject)
     {
