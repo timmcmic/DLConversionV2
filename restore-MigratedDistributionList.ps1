@@ -669,8 +669,9 @@ Function restore-MigratedDistributionList
             }
             catch
             {
+
                 #if ($directoryExceptions.contains($_.exception.message))
-                if ((@($directoryExceptions) -like $_.exception.message).count -gt 0)
+                if ((@($directoryExceptions) -like $_.exception.message+"*").count -gt 0)
                 {
                     out-logfile -string $_.exception.message
                     out-logfile -string "Error skipped - locked or not found attribute."
