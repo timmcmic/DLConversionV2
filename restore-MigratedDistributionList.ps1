@@ -307,6 +307,8 @@ Function restore-MigratedDistributionList
             #Local Active Director Domain Controller Parameters
             [Parameter(Mandatory = $true)]
             [string]$identity,
+            [Parameter(Mandatory = $true)]
+            [string]$xmlExportName,
             [Parameter(Mandatory = $false)]
             [boolean]$deleteRequired=$FALSE
         )
@@ -320,7 +322,7 @@ Function restore-MigratedDistributionList
         else
         {
             out-logfile -string "An object was located in the directory with the imported mail address - prompt administrator to remove it later."
-            out-xmlFile -itemToExport $testADObject -itemNameToExport $xmlFiles.adObjectWithAddressXML.Value
+            out-xmlFile -itemToExport $testADObject -itemNameToExport $xmlExportName
         }
 
         out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
@@ -458,7 +460,8 @@ Function restore-MigratedDistributionList
     $xmlFiles = @{
         originalDLConfigurationADXML = @{ "Value" =  "originalDLConfigurationADXML.xml" ; "Description" = "XML file that exports the original DL configuration"}
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
-        adObjectWithAddressXML = @{ "Value" =  "adObjectWithAddress" ; "Description" = "XML file that exports the updated DL configuration"}
+        adObjectWithAddressXML = @{ "Value" =  "adObjectWithAddressXML" ; "Description" = "XML file that exports the updated DL configuration"}
+        routingContactXML = @{ "Value" =  "routingContactXML" ; "Description" = "XML file that exports the updated DL configuration"}
     }
 
     #On premises variables for the distribution list to be migrated.
@@ -571,6 +574,7 @@ Function restore-MigratedDistributionList
     Out-LogFile -string "********************************************************************************"
 
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
+    #Test the path and make sure it exists.
 
     out-logfile -string "Testing to ensure that the original DL configuration XML is accessiable at the path provided."
 
@@ -583,6 +587,8 @@ Function restore-MigratedDistributionList
         out-logfile -string $_
         out-logfile -string "The original DL Configuration was not found in the data path provided." -isError:$TRUE
     }
+
+    #Import the XML file.
 
     out-logfile -string "Importing the original DL configuration from the data path provided."
 
@@ -597,17 +603,24 @@ Function restore-MigratedDistributionList
     }
 
     out-logfile -string "The original DL configuration was successfully imported."
+
+    #Test to see if hybrid mail flow was enabled and request administrator remove object if dynamic DL is present.
+
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
     $testMail = $importedDLConfiguration.mail
     out-logfile -string ("SMTP address of imported configuration: "+$testMail)
 
-    getRemoveObject -identity $testMail -deleteRequired:$TRUE
+    getRemoveObject -identity $testMail -deleteRequired:$TRUE -xmlExportName $xmlFiles.adObjectWithAddressXML.Value
+
+    #Search the directory for the mail contact that is created post migration - prompt administrator for removal.  This is not required to proceed.
 
     $testMail = $importedDLConfiguration.mail.replace($symbolToReplace,$replacementString)
     out-logfile -string ("SMTP address of routing contact calculated: "+$testMail)
 
-    getRemoveObject -identity $testMail
+    getRemoveObject -identity $testMail -xmlExportName $xmlFiles.routingContactXML.value
+
+
 
     exit
 
