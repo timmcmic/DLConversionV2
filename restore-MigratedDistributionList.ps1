@@ -378,6 +378,7 @@ Function restore-MigratedDistributionList
     $xmlFiles = @{
         originalDLConfigurationADXML = @{ "Value" =  "originalDLConfigurationADXML.xml" ; "Description" = "XML file that exports the original DL configuration"}
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
+        adObjectWithAddressXML = @{ "Value" =  "adObjectWithAddress" ; "Description" = "XML file that exports the updated DL configuration"}
     }
 
     #On premises variables for the distribution list to be migrated.
@@ -528,6 +529,7 @@ Function restore-MigratedDistributionList
     else
     {
         out-logfile -string "An object was located in the directory with the imported mail address - prompt administrator to remove it later."
+        out-xmlFile -itemToExport $testADObject -itemNameToExport $xmlFiles.adObjectWithAddressXML.Value
     }
 
     out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
