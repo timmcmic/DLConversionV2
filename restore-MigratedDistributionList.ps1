@@ -367,7 +367,7 @@ Function restore-MigratedDistributionList
                 {
                     out-logfile -string "Administrator selected no to proceed with delete."
                     out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
-                    out-logfile -string $$adminAnswer.toString() -isError:$TRUE
+                    out-logfile -string $adminAnswer.toString() -isError:$TRUE
                 }
                 else
                 {
