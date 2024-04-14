@@ -708,7 +708,7 @@ Function restore-MigratedDistributionList
 
             if ($property.value.count -gt 1)
             {
-                out-logfile -string "Object is multi-valued.".
+                out-logfile -string "Object is multi-valued."
 
                 foreach ($value in $property.value)
                 {
