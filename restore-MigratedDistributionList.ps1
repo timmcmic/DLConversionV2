@@ -630,6 +630,7 @@ Function restore-MigratedDistributionList
         out-logfile -string "Attempting to locate the original group object by objectGUID."
         out-logfile -string $importedDLConfiguration.objectGUID
         $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        $originalGroupFound = $TRUE
     }
     catch
     {
