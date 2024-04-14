@@ -662,11 +662,13 @@ Function restore-MigratedDistributionList
             }
             catch
             {
-                out-logfile -string $_
+                out-logfile -string $_.Exception.Message
             }
         }
 
         #Second order of business is to rename the group.
+
+        out-logfile -string "Rename the original group to match the CN of the imported group information."
 
         try
         {
@@ -675,6 +677,10 @@ Function restore-MigratedDistributionList
         catch {
             out-logfile -string $_
         }
+
+        #Reset the attributes of the group.
+
+        out-logfile -string "Resetting the attributes of the group to match the backup information."
     }
 
     exit
