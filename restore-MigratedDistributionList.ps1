@@ -289,8 +289,8 @@ Function restore-MigratedDistributionList
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
+        [ValidateSet("Basic","Negotiate")]
+        $activeDirectoryAuthenticationMethod="Negotiate",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
