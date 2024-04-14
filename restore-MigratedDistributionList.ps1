@@ -500,7 +500,7 @@ Function restore-MigratedDistributionList
 
     try
     {
-        $importedDLConfiguration = import-clixml -path $importedDataFile -errorAction STOP
+        $importedDLConfiguration = import-clixml -path $importDataFile -errorAction STOP
     }
     catch
     {
