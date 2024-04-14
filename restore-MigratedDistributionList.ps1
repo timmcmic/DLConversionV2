@@ -447,7 +447,7 @@ Function restore-MigratedDistributionList
         out-logfile -string $dataPath
     }
 
-    $importDataFile = $dataPath + $xmlFiles.originalDLConfigurationADXML
+    $importDataFile = $dataPath + $xmlFiles.originalDLConfigurationADXML.Value
 
     out-logfile -string ("Calculdated data file for import: "+$importDataFile)
 
