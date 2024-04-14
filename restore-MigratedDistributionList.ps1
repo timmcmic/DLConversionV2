@@ -534,7 +534,7 @@ Function restore-MigratedDistributionList
 
     if ($NULL -ne $testADObject)
     {
-        $promptString = ("Delete the ad object with mail address: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
+        $promptString = ("Delete the ad object: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
 
         $adminAnswer = $wshell.popUp($promptString,0,"Remove AD Object Required",32+4)
     }
