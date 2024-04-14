@@ -565,6 +565,10 @@ Function restore-MigratedDistributionList
         }
     }
 
+    $testMail = $importedDLConfiguration.mail.replace("@","-MigratedByScript@")
+
+    out-logfile -string ("SMTP address of imported configuration: "+$testMail)
+
     exit
 
     try
