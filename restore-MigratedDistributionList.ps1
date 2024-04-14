@@ -485,7 +485,7 @@ Function restore-MigratedDistributionList
 
     [array]$directoryExceptions = @()
     $directoryExceptions += "The specified directory service attribute or value does not exist"
-    $directoryExceptions += "Invalid type 'System.DateTime'."
+    $directoryExceptions += "Invalid type 'System.DateTime'"
     $directoryExceptions += "The attribute cannot be modified because it is owned by the system"
     $directoryExceptions += "Modification of a constructed attribute is not allowed"    
     $directoryExceptions += "Illegal modify operation. Some aspect of the modification is not permitted"
