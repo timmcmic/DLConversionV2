@@ -670,7 +670,7 @@ Function restore-MigratedDistributionList
             catch
             {
                 $test = $_.exception.message
-                $test.trim(\n)
+                $test.trim(`n)
                 out-logfile -string $test
 
                 #if ($directoryExceptions.contains($_.exception.message))
