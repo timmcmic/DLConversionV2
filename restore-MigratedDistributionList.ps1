@@ -648,6 +648,8 @@ Function restore-MigratedDistributionList
     {
         out-logfile -string "Resetting properties of the original group to match backup."
 
+        out-logfile -string "Clearing all writeable properties of the existing group."
+
         #First order of business is to clear any property of the current group that will allow it.
 
         foreach ($property in $originalDLConfiguration.psObject.properties)
@@ -662,6 +664,16 @@ Function restore-MigratedDistributionList
             {
                 out-logfile -string $_
             }
+        }
+
+        #Second order of business is to rename the group.
+
+        try
+        {
+            rename-ADObect -identity $originalDLConfiguration.objectGUID -newName $importedDLConfiguration.cn -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
         }
     }
 
