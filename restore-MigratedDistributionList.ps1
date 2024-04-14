@@ -483,6 +483,13 @@ Function restore-MigratedDistributionList
     $blackSlash = "\"
     $originalGroupFound = $FALSE
 
+    [array]$directoryExceptions = @()
+    $directoryExceptions += "The attribute cannot be modified because it is owned by the system"
+    $directoryExceptions += "Modification of a constructed attribute is not allowed"
+    $directoryExceptions += "The specified directory service attribute or value does not exist"
+    $directoryExceptions += "Illegal modify operation. Some aspect of the modification is not permitted"
+    $directoryExceptions += "Access to the attribute is not permitted because the attribute is owned by the Security Accounts Manager (SAM)"
+    
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
@@ -662,7 +669,14 @@ Function restore-MigratedDistributionList
             }
             catch
             {
-                out-logfile -string $_.Exception.Message
+                if ($directoryExceptions.contains($_.exception.message))
+                {
+                    out-logfile -string $_.exception.message
+                    out-logfile -string "Error skipped - locked or not found attribute."
+                }
+                else {
+                    out-logfile -string $_.exception.message -isError:$TRUE
+                }
             }
         }
 
