@@ -383,6 +383,7 @@ Function restore-MigratedDistributionList
     #On premises variables for the distribution list to be migrated.
 
     $importedDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    $testADObject = $NULL
 
     #Define new arrays to check for errors instead of failing.
 
@@ -483,7 +484,7 @@ Function restore-MigratedDistributionList
 
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
-    out-logfile -string "Importing the original DL configuration from the data path provided."
+    out-logfile -string "Testing to ensure that the original DL configuration XML is accessiable at the path provided."
 
     if (Test-Path $importDataFile -pathType Leaf)
     {
@@ -491,12 +492,34 @@ Function restore-MigratedDistributionList
     }
     else 
     {
+        out-logfile -string $_
         out-logfile -string "The original DL Configuration was not found in the data path provided." -isError:$TRUE
     }
 
-    exit
+    out-logfile -string "Importing the original DL configuration from the data path provided."
 
-    Out-LogFile -string "Getting the original DL Configuration"
+    try
+    {
+        $importedDLConfiguration = import-clixml -path $importedDatFile -errorAction STOP
+    }
+    catch
+    {
+        out-logfile -string $_
+        out-logfile -string "Unable to import the original DL configuration XML file." -isError:$TRUE
+    }
+
+    out-logfile -string "The original DL configuraiton was successfully imported."
+    out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
+
+    try {
+        $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $adCredential -authTupe $activeDirectoryAuthenticationMethod -errorAction STOP
+    }
+    catch {
+        out-logfile -string $_
+        out-logfile -string "An Active Directory object with the mail address was not found.  This is ok - proceed."
+    }
+
+    exit
 
     try
     {
