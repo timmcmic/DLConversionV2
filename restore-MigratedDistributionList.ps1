@@ -519,6 +519,8 @@ Function restore-MigratedDistributionList
         out-logfile -string "An Active Directory object with the mail address was not found.  This is ok - proceed."
     }
 
+    out-logfile -string "An object with the mail address was located in the directory."
+
     exit
 
     try
