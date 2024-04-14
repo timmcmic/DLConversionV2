@@ -298,6 +298,66 @@ Function restore-MigratedDistributionList
         [string]$dataPath
     )
 
+    #================================================================================
+
+    function getRemoveObject
+    {
+        Param
+        (
+            #Local Active Director Domain Controller Parameters
+            [Parameter(Mandatory = $true)]
+            [string]$identity
+        )
+
+        $testADObject = Get-ADObject -filter "mail -eq `"$identity`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+
+        if ($NULL -eq $testADObject)
+        {
+            out-logfile -string "An object was not located in the directory with the imported mail address - this is ok."
+        }
+        else
+        {
+            out-logfile -string "An object was located in the directory with the imported mail address - prompt administrator to remove it later."
+            out-xmlFile -itemToExport $testADObject -itemNameToExport $xmlFiles.adObjectWithAddressXML.Value
+        }
+
+        out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
+
+        if ($NULL -ne $testADObject)
+        {
+            $promptString = ("Delete the ad object: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
+
+            $adminAnswer = $wshell.popUp($promptString,0,"Remove AD Object Required",32+4)
+        }
+        else 
+        {
+            out-logfile -string "No need to prompt administrator - no object to remove."
+        }
+
+        switch ($adminAnswer)
+        {
+            6 {
+                out-logfile -string "Administrator selected yes to proceed with delete."
+                out-logfile -string $adminAnswer.tostring()
+
+                try {
+                    remove-ADObject -identity $testADObject.distinguishedName -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -confirm:$FALSE -errorAction STOP 
+                }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to remove the AD object that has the same SMTP address as the restored group."
+                }
+
+            }
+            7 {
+                out-logfile -string "Administrator selected no to proceed with delete."
+                out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
+                out-logfile -string $adminAdmin.toString() -isError:$TRUE
+            }
+        }
+
+    }
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
@@ -518,58 +578,15 @@ Function restore-MigratedDistributionList
 
     $testMail = $importedDLConfiguration.mail
 
+    getRemoveObject -identity $testMail
+
     out-logfile -string ("SMTP address of imported configuration: "+$testMail)
-
-    $testADObject = Get-ADObject -filter "mail -eq `"$testMail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-
-    if ($NULL -eq $testADObject)
-    {
-        out-logfile -string "An object was not located in the directory with the imported mail address - this is ok."
-    }
-    else
-    {
-        out-logfile -string "An object was located in the directory with the imported mail address - prompt administrator to remove it later."
-        out-xmlFile -itemToExport $testADObject -itemNameToExport $xmlFiles.adObjectWithAddressXML.Value
-    }
-
-    out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
-
-    if ($NULL -ne $testADObject)
-    {
-        $promptString = ("Delete the ad object: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
-
-        $adminAnswer = $wshell.popUp($promptString,0,"Remove AD Object Required",32+4)
-    }
-    else 
-    {
-        out-logfile -string "No need to prompt administrator - no object to remove."
-    }
-
-    switch ($adminAnswer)
-    {
-        6 {
-            out-logfile -string "Administrator selected yes to proceed with delete."
-            out-logfile -string $adminAnswer.tostring()
-
-            try {
-                remove-ADObject -identity $testADObject.distinguishedName -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -confirm:$FALSE -errorAction STOP 
-            }
-            catch {
-                out-logfile -string $_
-                out-logfile -string "Unable to remove the AD object that has the same SMTP address as the restored group."
-            }
-
-        }
-        7 {
-            out-logfile -string "Administrator selected no to proceed with delete."
-            out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
-            out-logfile -string $adminAdmin.toString() -isError:$TRUE
-        }
-    }
 
     $testMail = $importedDLConfiguration.mail.replace("@","-MigratedByScript@")
 
     out-logfile -string ("SMTP address of imported configuration: "+$testMail)
+
+
 
     exit
 
