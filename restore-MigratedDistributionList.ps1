@@ -525,6 +525,8 @@ Function restore-MigratedDistributionList
 
     out-logfile -string "An object with the mail address was located in the directory."
 
+    out-logfile -string $testADObject
+
     if ($NULL -ne $testADObject)
     {
         out-logfile -string "Prompt administrator to allow for deletion of existing object with the mail address."
