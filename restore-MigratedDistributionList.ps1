@@ -701,6 +701,65 @@ Function restore-MigratedDistributionList
         #Reset the attributes of the group.
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
+
+        foreach ($property in $importedDLConfiguration.psObject.properties)
+        {
+            out-logfile -string ("Setting property: "+$property.name)
+
+            if ($property.value.count -gt 1)
+            {
+                out-logfile -string "Object is multi-valued.".
+
+                foreach ($value in $property.value)
+                {
+                    out-logfile -string ("Setting value: "+$value)
+
+                    try 
+                    {
+                        set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                    }
+                    catch 
+                    {
+                        if ($_.exception.message.contains($directoryExceptions[0]))
+                        {
+                            out-logfile -string $_.exception.message
+                            out-logfile -string "Error skipped - locked or not found attribute."
+                        }
+                        elseif ($directoryExceptions.contains($_.exception.message))
+                        {
+                            out-logfile -string $_.exception.message
+                            out-logfile -string "Error skipped - locked or not found attribute."
+                        }
+                        else {
+                            out-logfile -string $_.exception.message -isError:$TRUE
+                        }
+                    }
+                }
+            }
+            else 
+            {
+                try 
+                {
+                    set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                }
+                catch 
+                {
+                    if ($_.exception.message.contains($directoryExceptions[0]))
+                    {
+                        out-logfile -string $_.exception.message
+                        out-logfile -string "Error skipped - locked or not found attribute."
+                    }
+                    elseif ($directoryExceptions.contains($_.exception.message))
+                    {
+                        out-logfile -string $_.exception.message
+                        out-logfile -string "Error skipped - locked or not found attribute."
+                    }
+                    else {
+                        out-logfile -string $_.exception.message -isError:$TRUE
+                    }
+                }
+            }
+        }
     }
 
     exit
