@@ -512,7 +512,7 @@ Function restore-MigratedDistributionList
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
     try {
-        $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authTupe $activeDirectoryAuthenticationMethod -errorAction STOP
+        $testADObject = Get-ADObject -filter "mail -eq `"$importedDLConfiguration.mail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
     }
     catch {
         out-logfile -string $_
