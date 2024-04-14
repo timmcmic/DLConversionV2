@@ -669,6 +669,9 @@ Function restore-MigratedDistributionList
             }
             catch
             {
+                $test = $_.exception.message
+                $test.trim(\n)
+                out-logfile -string $test
 
                 #if ($directoryExceptions.contains($_.exception.message))
                 if ((@($directoryExceptions) -like $_.exception.message+"*").count -gt 0)
