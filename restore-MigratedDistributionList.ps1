@@ -543,6 +543,8 @@ Function restore-MigratedDistributionList
         out-logfile -string "No need to prompt administrator - no object to remove."
     }
 
+    out-logfile -string $adminAnswer.tostring()
+
     exit
 
     try
