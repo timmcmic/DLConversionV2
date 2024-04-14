@@ -670,7 +670,7 @@ Function restore-MigratedDistributionList
 
         try
         {
-            rename-ADObect -identity $originalDLConfiguration.objectGUID -newName $importedDLConfiguration.cn -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+            rename-ADObject -identity $originalDLConfiguration.objectGUID -newName $importedDLConfiguration.cn -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch {
             out-logfile -string $_
