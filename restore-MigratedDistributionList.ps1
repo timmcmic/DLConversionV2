@@ -484,9 +484,9 @@ Function restore-MigratedDistributionList
     $originalGroupFound = $FALSE
 
     [array]$directoryExceptions = @()
-    $directoryExceptions += "The attribute cannot be modified because it is owned by the system"
-    $directoryExceptions += "Modification of a constructed attribute is not allowed"
     $directoryExceptions += "The specified directory service attribute or value does not exist"
+    $directoryExceptions += "The attribute cannot be modified because it is owned by the system"
+    $directoryExceptions += "Modification of a constructed attribute is not allowed"    
     $directoryExceptions += "Illegal modify operation. Some aspect of the modification is not permitted"
     $directoryExceptions += "Access to the attribute is not permitted because the attribute is owned by the Security Accounts Manager (SAM)"
     
@@ -669,14 +669,12 @@ Function restore-MigratedDistributionList
             }
             catch
             {
-                $trimValue = "Parameter name: "+$property.name
-                out-logfile -string $trimValue
-                $test = $_.exception.message
-                $test.trim($trimvalue)
-                $test.trim('`n')
-                out-logfile -string $test
-
-                if ($directoryExceptions.contains($test))
+                if ($_.exception.message.contains($directoryExceptions[0]))
+                {
+                    out-logfile -string $_.exception.message
+                    out-logfile -string "Error skipped - locked or not found attribute."
+                }
+                elseif ($directoryExceptions.contains($_.exception.message))
                 {
                     out-logfile -string $_.exception.message
                     out-logfile -string "Error skipped - locked or not found attribute."
