@@ -489,6 +489,7 @@ Function restore-MigratedDistributionList
     $directoryExceptions += "Modification of a constructed attribute is not allowed"    
     $directoryExceptions += "Illegal modify operation. Some aspect of the modification is not permitted"
     $directoryExceptions += "Access to the attribute is not permitted because the attribute is owned by the Security Accounts Manager (SAM)"
+    $directoryExceptions += "The parameter is incorrect"
     
     #Log start of DL migration to the log file.
 
