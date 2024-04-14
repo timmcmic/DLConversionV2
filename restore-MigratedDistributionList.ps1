@@ -646,6 +646,8 @@ Function restore-MigratedDistributionList
 
     if ($originalGroupFound -eq $TRUE)
     {
+        out-logfile -string "Resetting properties of the original group to match backup."
+        
         foreach ($property in $originalDLConfiguration.psObject.properties)
         {
             out-logfile -string ("Resetting property: "+$property.Name+ "with value: "+$property.value)
