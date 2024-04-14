@@ -669,8 +669,9 @@ Function restore-MigratedDistributionList
             }
             catch
             {
+                $trimValue = "Parameter Name: "+$property.name
                 $test = $_.exception.message
-                $test.trim()
+                $test.trim($trimvalue)
                 out-logfile -string $test
 
                 #if ($directoryExceptions.contains($_.exception.message))
