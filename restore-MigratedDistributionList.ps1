@@ -653,7 +653,7 @@ Function restore-MigratedDistributionList
             out-logfile -string ("Resetting property: "+$property.Name+ " with value: "+$property.value)
 
             try {
-                set-adbject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                set-adobject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch {
                 out-logfile -string $_
