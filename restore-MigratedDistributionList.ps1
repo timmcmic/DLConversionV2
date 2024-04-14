@@ -306,7 +306,9 @@ Function restore-MigratedDistributionList
         (
             #Local Active Director Domain Controller Parameters
             [Parameter(Mandatory = $true)]
-            [string]$identity
+            [string]$identity,
+            [Parameter(Mandatory = $false)]
+            [boolean]$deleteRequire=$FALSE
         )
 
         $testADObject = Get-ADObject -filter "mail -eq `"$identity`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
@@ -350,9 +352,18 @@ Function restore-MigratedDistributionList
 
             }
             7 {
-                out-logfile -string "Administrator selected no to proceed with delete."
-                out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
-                out-logfile -string $adminAdmin.toString() -isError:$TRUE
+                if ($deleteRequired -eq $TRUE)
+                {
+                    out-logfile -string "Administrator selected no to proceed with delete."
+                    out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
+                    out-logfile -string $adminAdmin.toString() -isError:$TRUE
+                }
+                else
+                {
+                    out-logfile -string "Administrator selected no to proceed with delete."
+                    out-logfile -string "Deleting this object is not required for restoration to proceed."
+                    out-logfile -string $adminAnswer.toString() -isError:$TRUE
+                }
             }
         }
 
@@ -582,7 +593,7 @@ Function restore-MigratedDistributionList
     $testMail = $importedDLConfiguration.mail
     out-logfile -string ("SMTP address of imported configuration: "+$testMail)
 
-    getRemoveObject -identity $testMail
+    getRemoveObject -identity $testMail -deleteRequired:$TRUE
 
     $testMail = $importedDLConfiguration.mail.replace($symbolToReplace,$replacementString)
     out-logfile -string ("SMTP address of routing contact calculated: "+$testMail)
