@@ -367,7 +367,7 @@ Function restore-MigratedDistributionList
                 {
                     out-logfile -string "Administrator selected no to proceed with delete."
                     out-logfile -string "Deleting the AD object holding the same address to be deleted is required."
-                    out-logfile -string $adminAdmin.toString() -isError:$TRUE
+                    out-logfile -string $$adminAnswer.toString() -isError:$TRUE
                 }
                 else
                 {
@@ -652,12 +652,20 @@ Function restore-MigratedDistributionList
         {
             out-logfile -string ("Resetting property: "+$property.Name+ " with value: "+$property.value)
 
+            if ($property.value.count -gt 1)
+            {
+                out-logfile -string $property.Name
+            }
+
+            <#
             try {
                 set-adobject -identity $originalDLConfiguration.objectGUID -add @{$property.name = [string]$property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch {
                 out-logfile -string $_
             }
+
+            #>
         }
     }
 
