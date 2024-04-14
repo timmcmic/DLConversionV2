@@ -453,6 +453,9 @@ Function restore-MigratedDistributionList
     #Define other needed variables.
 
     $wshell = New-Object -ComObject Wscript.Shell
+    $symbolToReplace = "@"
+    $replacementString = "-MigratedByScript@"
+    $blackSlash = "\"
 
     #Log start of DL migration to the log file.
 
@@ -509,7 +512,7 @@ Function restore-MigratedDistributionList
     if($dataPath.remove(0,($dataPath.length - 1)) -ne "\")
     {
         out-logfile -string "Data path does not have trailing \"
-        $dataPath = $dataPath + "\"
+        $dataPath = $dataPath + $blackSlash
         out-logfile -string $dataPath
     }
 
@@ -577,16 +580,14 @@ Function restore-MigratedDistributionList
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
     $testMail = $importedDLConfiguration.mail
+    out-logfile -string ("SMTP address of imported configuration: "+$testMail)
 
     getRemoveObject -identity $testMail
 
-    out-logfile -string ("SMTP address of imported configuration: "+$testMail)
+    $testMail = $importedDLConfiguration.mail.replace($symbolToReplace,$replacementString)
+    out-logfile -string ("SMTP address of routing contact calculated: "+$testMail)
 
-    $testMail = $importedDLConfiguration.mail.replace("@","-MigratedByScript@")
-
-    out-logfile -string ("SMTP address of imported configuration: "+$testMail)
-
-
+    getRemoveObject -identity $testMail
 
     exit
 
