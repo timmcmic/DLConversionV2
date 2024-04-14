@@ -389,6 +389,10 @@ Function restore-MigratedDistributionList
 
     [array]$onPremReplaceErrors=@()
 
+    #Define other needed variables.
+
+    $wshell = New-Object -ComObject Wscript.Shell
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
@@ -508,7 +512,7 @@ Function restore-MigratedDistributionList
         out-logfile -string "Unable to import the original DL configuration XML file." -isError:$TRUE
     }
 
-    out-logfile -string "The original DL configuraiton was successfully imported."
+    out-logfile -string "The original DL configuration was successfully imported."
     out-logfile -string "Using the mail field imported - test to ensure that no other objects exist in the directory."
 
     try {
@@ -520,6 +524,13 @@ Function restore-MigratedDistributionList
     }
 
     out-logfile -string "An object with the mail address was located in the directory."
+
+    if ($NULL -ne $testADObject)
+    {
+        $promptString = ("Delete the ad object with mail address: "+$testADObject.mail+" Type: "+$testADObject.objectClass)
+
+        $adminAnswer = $wshell.popUp($promptString,0,"Remove AD Object Required",32+4)
+    }
 
     exit
 
