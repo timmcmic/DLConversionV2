@@ -719,22 +719,32 @@ Function restore-MigratedDistributionList
                 {
                     out-logfile -string "Single value property - use replace."
 
-                    try {
-                        set-ADObject -identity $originalDLConfiguration.objectGUID -Add @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-                    }
-                    catch {
-                        out-logfile -string $_
+                    if ($null -ne $property.value)
+                    {
+                        out-logfile -string "Single value property is not null."
 
-                        $functionObject = New-Object PSObject -Property @{
-                            PropertyName = $property.Name
-                            PropertyValue = $value
-                            Operation = "Replace"
-                            ErrorDetails = $_
-                            ErrorCommon = "Unable to update original group property."
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                         }
-
-                        $onPremReplaceErrors += $functionObject
+                        catch {
+                            out-logfile -string $_
+    
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Replace"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+    
+                            $onPremReplaceErrors += $functionObject
+                        }
                     }
+                    else 
+                    {
+                        out-logfile -string "Single value property is NULL - skipping."
+                    }
+                  
                 }
             }
             else 
