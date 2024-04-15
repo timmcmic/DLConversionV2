@@ -945,16 +945,24 @@ Function restore-MigratedDistributionList
         }
     }
 
-    exit
-
     try
     {
-        $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+        $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
     }
     catch
     {
         out-logfile -string $_ -isError:$TRUE
     }
+
+    try
+    {
+        out-xmlFile -itemToExport $originalDLConfiguration -itemNameTOExport $xmlFiles.originalDLConfigurationUpdatedXML.Value
+    }
+    catch {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
+    exit
 
     #Testing the returned DL configuration to determine if it is a group.  If the object was found by SMTP address is not a group then exit.
 
