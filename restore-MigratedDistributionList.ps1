@@ -456,6 +456,8 @@ Function restore-MigratedDistributionList
         onPremGroupType = @{"Value" = "groupType" ; "Description" = "Value representing universal / global / local / security / distribution"}
     }
 
+    [array]$dlPropertiesToClearModern='Description','groupType',$onPremADAttributes.onPremAcceptMessagesFromSenders.Value,'DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,$onPremADAttributes.onPremBypassModerationFromSenders.value,$onPremADAttributes.onPremCoManagedBy.value,'msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists',$onPremADAttributes.onPremModeratedBy.value,'msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner',$onPremADAttributes.onPremRejectMessagesFromSenders.value,'msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion','sAMAccountName' #Properties Exchange 2016 or newer schema.
+
     #Define XML files to contain backups.
 
     $xmlFiles = @{
@@ -483,17 +485,6 @@ Function restore-MigratedDistributionList
     $blackSlash = "\"
     $originalGroupFound = $FALSE
 
-    [array]$directoryExceptions = @()
-    $directoryExceptions += "The specified directory service attribute or value does not exist"
-    $directoryExceptions += "Invalid type 'System.DateTime'"
-    $directoryExceptions += "The attribute cannot be modified because it is owned by the system"
-    $directoryExceptions += "Modification of a constructed attribute is not allowed"    
-    $directoryExceptions += "Illegal modify operation. Some aspect of the modification is not permitted"
-    $directoryExceptions += "Access to the attribute is not permitted because the attribute is owned by the Security Accounts Manager (SAM)"
-    $directoryExceptions += "The parameter is incorrect"
-    $directoryExceptions += "Unable to cast object of type 'System.String[]' to type 'System.String'."
-    
-    
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
@@ -659,37 +650,7 @@ Function restore-MigratedDistributionList
     {
         out-logfile -string "Resetting properties of the original group to match backup."
 
-        out-logfile -string "Clearing all writeable properties of the existing group."
-
-        #First order of business is to clear any property of the current group that will allow it.
-
-        foreach ($property in $originalDLConfiguration.psObject.properties)
-        {
-            out-logfile -string ("Clearing property: "+$property.name)
-
-            try
-            {
-                set-adObject -identity $originalDLConfiguration.objectGUID -clear $property.Name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-            }
-            catch
-            {
-                if ($_.exception.message.contains($directoryExceptions[0]))
-                {
-                    out-logfile -string $_.exception.message
-                    out-logfile -string "Error skipped - locked or not found attribute."
-                }
-                elseif ($directoryExceptions.contains($_.exception.message))
-                {
-                    out-logfile -string $_.exception.message
-                    out-logfile -string "Error skipped - locked or not found attribute."
-                }
-                else {
-                    out-logfile -string $_.exception.message -isError:$TRUE
-                }
-            }
-        }
-
-        #Second order of business is to rename the group.
+        #First order of business - rename the group.
 
         out-logfile -string "Rename the original group to match the CN of the imported group information."
 
@@ -701,71 +662,22 @@ Function restore-MigratedDistributionList
             out-logfile -string $_
         }
 
-        #Reset the attributes of the group.
+        #Second order of business reset the attributes.
+        #If the attribute in the file is contained in the AD attributes array then reset it.
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
 
         foreach ($property in $importedDLConfiguration.psObject.properties)
         {
-            out-logfile -string ("Setting property: "+$property.name)
+            out-logfile -string ("Evaluating property: "+$property.name)
 
-            if ($property.value.count -gt 1)
+            if ($dlPropertiesToClearModern.contains($property.name))
             {
-                out-logfile -string "Object is multi-valued."
-
-                foreach ($value in $property.value)
-                {
-                    out-logfile -string ("Setting value: "+$value)
-
-                    try 
-                    {
-                        set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-                    }
-                    catch 
-                    {
-                        if ($_.exception.message.contains($directoryExceptions[0]))
-                        {
-                            out-logfile -string $_.exception.message
-                            out-logfile -string "Error skipped - locked or not found attribute."
-                        }
-                        elseif ($_.exception.message.contains($directoryExceptions[1]))
-                        {
-                            out-logfile -string $_.exception.message
-                            out-logfile -string "Error skipped - locked or not found attribute."
-                        }
-                        elseif ($directoryExceptions.contains($_.exception.message))
-                        {
-                            out-logfile -string $_.exception.message
-                            out-logfile -string "Error skipped - locked or not found attribute."
-                        }
-                        else {
-                            out-logfile -string $_.exception.message -isError:$TRUE
-                        }
-                    }
-                }
+                out-logfile -string ("The property is a writeable property contained in the backup set.")
             }
             else 
             {
-                try 
-                {
-                    set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-                }
-                catch 
-                {
-                    if ($_.exception.message.contains($directoryExceptions[0]))
-                    {
-                        out-logfile -string $_.exception.message
-                        out-logfile -string "Error skipped - locked or not found attribute."
-                    }
-                    elseif ($directoryExceptions.contains($_.exception.message))
-                    {
-                        out-logfile -string $_.exception.message
-                        out-logfile -string "Error skipped - locked or not found attribute."
-                    }
-                    else {
-                        out-logfile -string $_.exception.message -isError:$TRUE
-                    }
-                }
+                out-logfile -string ("The property is not a writeable property - skip.")
             }
         }
     }
