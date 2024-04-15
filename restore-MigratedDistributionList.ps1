@@ -625,6 +625,8 @@ Function restore-MigratedDistributionList
         out-logfile -string $_ -isError:$TRUE
     }
 
+    exit
+
     out-logfile -string "The original DL configuration was successfully imported."
 
     #Test to see if hybrid mail flow was enabled and request administrator remove object if dynamic DL is present.
