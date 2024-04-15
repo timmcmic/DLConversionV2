@@ -387,7 +387,79 @@ Function restore-MigratedDistributionList
 
     function setAttributesOnGroup
     {
-        
+        out-logfile -string "Resetting the attributes of the group to match the backup information."
+
+        foreach ($property in $importedDLConfiguration.psObject.properties)
+        {
+            out-logfile -string ("Evaluating property: "+$property.name)
+
+            if ($dlPropertiesToClearModern.toLower().contains($property.name.toLower()))
+            {
+                out-logfile -string "The property is a writeable property contained in the backup set."
+
+                if (($property.Value.count) -gt 1)
+                {
+                    out-logfile -string "Multivalued property - use add."
+
+                    foreach ($value in $property.Value)
+                    {
+                        out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
+
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value.toString()} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Add"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+
+                            $onPremReplaceErrors += $functionObject
+                        }
+                    }
+                }
+                else 
+                {
+                    out-logfile -string "Single value property - use replace."
+
+                    if ($null -ne $property.value)
+                    {
+                        out-logfile -string "Single value property is not null."
+
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+    
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Replace"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+    
+                            $onPremReplaceErrors += $functionObject
+                        }
+                    }
+                    else 
+                    {
+                        out-logfile -string "Single value property is null - skip."
+                    }
+                  
+                }
+            }
+            else 
+            {
+                out-logfile -string ("The property is not a writeable property - skip.")
+            }
+        }
     }
 
 
@@ -486,7 +558,7 @@ Function restore-MigratedDistributionList
 
     #Define new arrays to check for errors instead of failing.
 
-    [array]$onPremReplaceErrors=@()
+    [array]$global:onPremReplaceErrors=@()
 
     #Define other needed variables.
 
@@ -678,80 +750,6 @@ Function restore-MigratedDistributionList
         #If the attribute in the file is contained in the AD attributes array then reset it.
 
         setAttributesOnGroup
-
-        out-logfile -string "Resetting the attributes of the group to match the backup information."
-
-        foreach ($property in $importedDLConfiguration.psObject.properties)
-        {
-            out-logfile -string ("Evaluating property: "+$property.name)
-
-            if ($dlPropertiesToClearModern.toLower().contains($property.name.toLower()))
-            {
-                out-logfile -string "The property is a writeable property contained in the backup set."
-
-                if (($property.Value.count) -gt 1)
-                {
-                    out-logfile -string "Multivalued property - use add."
-
-                    foreach ($value in $property.Value)
-                    {
-                        out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
-
-                        try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value.toString()} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-                        }
-                        catch {
-                            out-logfile -string $_
-
-                            $functionObject = New-Object PSObject -Property @{
-                                PropertyName = $property.Name
-                                PropertyValue = $value
-                                Operation = "Add"
-                                ErrorDetails = $_
-                                ErrorCommon = "Unable to update original group property."
-                            }
-
-                            $onPremReplaceErrors += $functionObject
-                        }
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Single value property - use replace."
-
-                    if ($null -ne $property.value)
-                    {
-                        out-logfile -string "Single value property is not null."
-
-                        try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-                        }
-                        catch {
-                            out-logfile -string $_
-    
-                            $functionObject = New-Object PSObject -Property @{
-                                PropertyName = $property.Name
-                                PropertyValue = $value
-                                Operation = "Replace"
-                                ErrorDetails = $_
-                                ErrorCommon = "Unable to update original group property."
-                            }
-    
-                            $onPremReplaceErrors += $functionObject
-                        }
-                    }
-                    else 
-                    {
-                        out-logfile -string "Single value property is null - skip."
-                    }
-                  
-                }
-            }
-            else 
-            {
-                out-logfile -string ("The property is not a writeable property - skip.")
-            }
-        }
     }
 
     exit
