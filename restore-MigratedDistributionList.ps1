@@ -472,6 +472,8 @@ Function restore-MigratedDistributionList
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
         adObjectWithAddressXML = @{ "Value" =  "adObjectWithAddressXML" ; "Description" = "XML file that exports the updated DL configuration"}
         routingContactXML = @{ "Value" =  "routingContactXML" ; "Description" = "XML file that exports the updated DL configuration"}
+        importedDLXML = @{ "Value" =  "importedDLXML" ; "Description" = "XML file that exports the updated DL configuration"}
+
     }
 
     #On premises variables for the distribution list to be migrated.
@@ -614,6 +616,15 @@ Function restore-MigratedDistributionList
         out-logfile -string "Unable to import the original DL configuration XML file." -isError:$TRUE
     }
 
+    try 
+    {
+        out-xmlFile -itemNameTOExport $importedDLConfiguration -itemNameToExport $xmlFiles.importedDLXML.value -errorAction Stop
+    }
+    catch 
+    {
+        out-logfile -string $_ -isError:$TRUE
+    }
+
     out-logfile -string "The original DL configuration was successfully imported."
 
     #Test to see if hybrid mail flow was enabled and request administrator remove object if dynamic DL is present.
@@ -651,7 +662,13 @@ Function restore-MigratedDistributionList
     {
         out-logfile -string "The original group was found in Active Directory."
         $originalGroupFound = $TRUE
-        out-xmlFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXMLOutput.value
+
+        try {
+            out-xmlFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXMLOutput.value -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     if ($originalGroupFound -eq $TRUE)
