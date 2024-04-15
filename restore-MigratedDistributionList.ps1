@@ -543,9 +543,25 @@ Function restore-MigratedDistributionList
             $mgGroup = get-mgGroup -filter "OnPremisesSecurityIdentifier eq '$($originalDLConfiguration.objectSID)'" -errorAction Stop
         }
         catch {
-            out-logfile -string "Error attempting to remove the group via graph."
+            out-logfile -string "Error capturing the group via graph - this may or may not be an issue."
             out-logfile -string $_
         }
+
+        if ($null -ne $mgGroup)
+        {
+            out-logfile -string "Group was found by on premsies object SID in Entra ID - remove to allow for soft match."
+            try {
+                remove-mgGroup -GroupId $mgGroup.id -confirm:$false
+            }
+            catch {
+                out-logfile -string "Error removing the group via graph - this may or may not be an issue."
+                out-logfile $_ -isError:$TRUE
+            }
+        }
+        else 
+        {
+            out-logfile -string "The group was not found by onPremisesObjectSID in Entra ID."
+        }       
     }
 
     exit
