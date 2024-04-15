@@ -462,6 +462,7 @@ Function restore-MigratedDistributionList
 
     $xmlFiles = @{
         originalDLConfigurationADXML = @{ "Value" =  "originalDLConfigurationADXML.xml" ; "Description" = "XML file that exports the original DL configuration"}
+        originalDLConfigurationADXMLOutput = @{ "Value" =  "originalDLConfigurationADXML" ; "Description" = "XML file that exports the original DL configuration"}
         originalDLConfigurationUpdatedXML = @{ "Value" =  "originalDLConfigurationUpdatedXML" ; "Description" = "XML file that exports the updated DL configuration"}
         adObjectWithAddressXML = @{ "Value" =  "adObjectWithAddressXML" ; "Description" = "XML file that exports the updated DL configuration"}
         routingContactXML = @{ "Value" =  "routingContactXML" ; "Description" = "XML file that exports the updated DL configuration"}
@@ -644,6 +645,7 @@ Function restore-MigratedDistributionList
     {
         out-logfile -string "The original group was found in Active Directory."
         $originalGroupFound = $TRUE
+        out-xmlFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXMLOutput.value
     }
 
     if ($originalGroupFound -eq $TRUE)
@@ -673,11 +675,24 @@ Function restore-MigratedDistributionList
 
             if ($dlPropertiesToClearModern.contains($property.name))
             {
-                out-logfile -string ("The property is a writeable property contained in the backup set.")
+                out-logfile -string "The property is a writeable property contained in the backup set."
 
-                if ($property.Value.count -gt 1)
+                if (($property.Value.count) -gt 1)
                 {
                     out-logfile -string "Multivalued property - use add."
+
+                    foreach ($value -in $property.Value)
+                    {
+                        out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
+
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+
+                        }
+                    }
                 }
                 else 
                 {
