@@ -685,6 +685,9 @@ Function restore-MigratedDistributionList
         {
             out-logfile -string ("Evaluating property: "+$property.name)
 
+            $test = $importedDLConfiguration.($property.name)
+            out-logfile -string $test
+
             if ($dlPropertiesToClearModern.contains($property.name))
             {
                 out-logfile -string "The property is a writeable property contained in the backup set."
