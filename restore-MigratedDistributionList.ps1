@@ -422,29 +422,29 @@ Function restore-MigratedDistributionList
 
     Out-LogFile -string "Calling nea-msGraphPowershellSession to create new connection to msGraph active directory."
 
-   if ($msGraphCertificateThumbprint -ne "")
-   {
-      #User specified thumbprint authentication.
+    if ($msGraphCertificateThumbprint -ne "")
+    {
+        #User specified thumbprint authentication.
 
-        try {
-            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
-        }
-        catch {
-            out-logfile -string "Unable to create the msgraph connection using certificate."
-            out-logfile -string $_ -isError:$TRUE
-        }
-   }
-   elseif ($msGraphTenantID -ne "")
-   {
-        try
-        {
-            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
-        }
-        catch
-        {
-            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
-        }
-   }   
+            try {
+                new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+            }
+            catch {
+                out-logfile -string "Unable to create the msgraph connection using certificate."
+                out-logfile -string $_ -isError:$TRUE
+            }
+    }
+    elseif ($msGraphTenantID -ne "")
+    {
+            try
+            {
+                new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+            }
+            catch
+            {
+                out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
+            }
+    }   
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
@@ -536,7 +536,19 @@ Function restore-MigratedDistributionList
         catch {
             out-logfile -string $_ -isError:$TRUE
         }
+
+        out-logfile -string "Remove the group via graph to allow for soft matching during next AD Sync cycle."
+
+        try {
+            get-mgGroup -filter "OnPremisesSecurityIdentifier eq '$originalDLConfiguration.objectSID" | remove-mgGroup -Confirm:$false -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Error attempting to remove the group via graph."
+            out-logfile -string $_
+        }
     }
+
+    exit
 
     if ($originalGroupFound -eq $TRUE)
     {
