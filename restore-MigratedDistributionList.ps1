@@ -428,7 +428,7 @@ Function restore-MigratedDistributionList
                     out-logfile -string "Single value property - use replace."
 
                     try {
-                        set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        set-ADObject -identity $originalDLConfiguration.objectGUID -Add @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                     }
                     catch {
                         out-logfile -string $_
