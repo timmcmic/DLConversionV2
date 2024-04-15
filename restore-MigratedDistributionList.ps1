@@ -419,7 +419,7 @@ Function restore-MigratedDistributionList
                                 ErrorCommon = "Unable to update original group property."
                             }
 
-                            $onPremReplaceErrors += $functionObject
+                            $global:onPremReplaceErrors += $functionObject
                         }
                     }
                 }
@@ -445,7 +445,7 @@ Function restore-MigratedDistributionList
                                 ErrorCommon = "Unable to update original group property."
                             }
     
-                            $onPremReplaceErrors += $functionObject
+                            $global:onPremReplaceErrors += $functionObject
                         }
                     }
                     else 
