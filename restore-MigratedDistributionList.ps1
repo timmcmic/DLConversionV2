@@ -84,6 +84,16 @@ Function restore-MigratedDistributionList
         [Parameter(Mandatory = $false)]
         [ValidateSet("Basic","Negotiate")]
         $activeDirectoryAuthenticationMethod="Negotiate",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$true)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -197,6 +207,9 @@ Function restore-MigratedDistributionList
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
     $telemetryEventName = "Restore-MigratedDistributionList"
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
 
     $windowTitle = ("Restore-MigratedDistributionList "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
@@ -213,6 +226,9 @@ Function restore-MigratedDistributionList
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
         globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
         globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
+        msGraphAuthenticationPowershellModuleName = @{ "Value" = "Microsoft.Graph.Authentication" ; "Description" = "Static ms graph powershell name authentication" }
+        msGraphUsersPowershellModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
+        msGraphGroupsPowershellModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
     }
 
     #The variables below are utilized to define working parameter sets.
@@ -287,6 +303,12 @@ Function restore-MigratedDistributionList
     $blackSlash = "\"
     $originalGroupFound = $FALSE
 
+    [boolean]$removeGroupViaGraph = $true
+
+     #Establish required MS Graph Scopes
+
+     $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
+
     #Log start of DL migration to the log file.
 
     new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
@@ -338,6 +360,9 @@ Function restore-MigratedDistributionList
     $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
     $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
     $dataPath = remove-stringSpace -stringToFix $dataPath
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
 
     if($dataPath.remove(0,($dataPath.length - 1)) -ne "\")
     {
@@ -349,6 +374,17 @@ Function restore-MigratedDistributionList
     $importDataFile = $dataPath + $xmlFiles.originalDLConfigurationADXML.Value
 
     out-logfile -string ("Calculdated data file for import: "+$importDataFile)
+
+    if ($msGraphCertificateThumbprint -eq "")
+    {
+        out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    }
+    else
+    {
+        out-logfile -string "MS graph cert auth is not being utilized - assume interactive auth."
+    }
 
     Out-LogFile -string "********************************************************************************"
 
@@ -371,6 +407,44 @@ Function restore-MigratedDistributionList
     out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
     $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
+
+    $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+ 
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+ 
+    $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+ 
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+ 
+    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
+    Out-LogFile -string "Calling nea-msGraphPowershellSession to create new connection to msGraph active directory."
+
+   if ($msGraphCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch {
+            out-logfile -string "Unable to create the msgraph connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($msGraphTenantID -ne "")
+   {
+        try
+        {
+            new-msGraphPowershellSession -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired
+        }
+        catch
+        {
+            out-logfile -=string "Unable to create the msgraph connection using tenant ID and credentials."
+        }
+   }   
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
