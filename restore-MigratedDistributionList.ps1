@@ -564,8 +564,6 @@ Function restore-MigratedDistributionList
         }       
     }
 
-    exit
-
     if ($originalGroupFound -eq $TRUE)
     {
         out-logfile -string "Resetting properties of the original group to match backup."
