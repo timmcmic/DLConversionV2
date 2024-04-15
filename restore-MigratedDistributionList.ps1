@@ -706,6 +706,23 @@ Function restore-MigratedDistributionList
                 else 
                 {
                     out-logfile -string "Single value property - use replace."
+
+                    try {
+                        set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                    }
+                    catch {
+                        out-logfile -string $_
+
+                        $functionObject = New-Object PSObject -Property @{
+                            PropertyName = $property.Name
+                            PropertyValue = $value
+                            Operation = "Replace"
+                            ErrorDetails = $_
+                            ErrorCommon = "Unable to update original group property."
+                        }
+
+                        $onPremRepalceErrors += $functionObject
+                    }
                 }
             }
             else 
