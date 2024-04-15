@@ -618,7 +618,7 @@ Function restore-MigratedDistributionList
 
     try 
     {
-        out-xmlFile -itemNameTOExport $importedDLConfiguration -itemNameToExport $xmlFiles.importedDLXML.value -errorAction Stop
+        out-xmlFile -itemTOExport $importedDLConfiguration -itemNameTOExport $xmlFiles.importedDLXML.value -errorAction Stop
     }
     catch 
     {
