@@ -868,7 +868,7 @@ Function restore-MigratedDistributionList
                         $attribute = $onPremADAttributes.onPremBypassModerationFromSenders.value
                     }
                     $onPremADAttributes.onPremMemberOf.Value{
-                        $attribute = $onPremADAttributes.onPremMemberOf.Value
+                        $attribute = $onPremADAttributes.onPremMembers.Value
                     }
                     $onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value{
                         $attribute = $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value
@@ -889,17 +889,17 @@ Function restore-MigratedDistributionList
                         out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
 
                         try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value.toString()} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                            set-ADObject -identity $value -add @{$attribute = $originalDLConfiguration.distinguishedName} -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                         }
                         catch {
                             out-logfile -string $_
 
                             $functionObject = New-Object PSObject -Property @{
-                                PropertyName = $property.Name
+                                PropertyName = $attribute
                                 PropertyValue = $value
                                 Operation = "Add"
                                 ErrorDetails = $_
-                                ErrorCommon = "Unable to update original group property."
+                                ErrorCommon = "Unable to add the new list to this attribute on another object."
                             }
 
                             $onPremReplaceErrors += $functionObject
@@ -915,17 +915,17 @@ Function restore-MigratedDistributionList
                         out-logfile -string "Single value property is not null."
 
                         try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                            set-ADObject -identity $value -Replace @{$attribute = $originalDLConfiguration.distinguishedName} -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                         }
                         catch {
                             out-logfile -string $_
     
                             $functionObject = New-Object PSObject -Property @{
-                                PropertyName = $property.Name
+                                PropertyName = $attribute
                                 PropertyValue = $value
                                 Operation = "Replace"
                                 ErrorDetails = $_
-                                ErrorCommon = "Unable to update original group property."
+                                ErrorCommon = "Unable to add the new list to this attribute on another object."
                             }
     
                             $onPremReplaceErrors += $functionObject
