@@ -757,7 +757,7 @@ Function restore-MigratedDistributionList
 
         try 
         {
-            $originalDLConfiguration = new-ADGroup -Description $importedDLConfiguration.description -displayName $importedDlConfiguration.displayName -groupCategory "Distribution" -groupScope "Universal" -path (get-OULocation -originalDLConfiguration $importedDLConfiguration) -name $importedDLConfiguration.name
+            $originalDLConfiguration = new-ADGroup -Description $importedDLConfiguration.description -displayName $importedDlConfiguration.displayName -groupCategory "Distribution" -groupScope "Universal" -path (get-OULocation -originalDLConfiguration $importedDLConfiguration) -name $importedDLConfiguration.name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch 
         {
