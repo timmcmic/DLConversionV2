@@ -762,7 +762,8 @@ Function restore-MigratedDistributionList
 
         try 
         {
-            $originalDLConfiguration = Get-ADObject -filter {mail -eq $importedDLConfiguration.Mail} -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+            $tempMail = $importedDLConfiguration.mail
+            $originalDLConfiguration = Get-ADObject -filter "mail -eq `"$tempMail`"" -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch 
         {
