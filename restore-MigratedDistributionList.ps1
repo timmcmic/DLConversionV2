@@ -858,22 +858,22 @@ Function restore-MigratedDistributionList
 
                 switch ($property.name)
                 {
-                    $onPremADAttributes.onPremGrantSendOnBehalfToBL.Value{
+                    $onPremADAttributes.onPremGrantSendOnBehalfToBL.Value {
                         $attribute = $onPremADAttributes.onPremGrantSendOnBehalfTo.value
                     }
-                    $onPremADAttributes.onPremCoManagedByBL.Value{
+                    $onPremADAttributes.onPremCoManagedByBL.Value {
                         $attribute = $onPremADAttributes.onPremCoManagedBy.value
                     }
-                    $onPremADAttributes.onPremBypassModerationFromDLMembersBL.Value{
+                    $onPremADAttributes.onPremBypassModerationFromDLMembersBL.Value {
                         $attribute = $onPremADAttributes.onPremBypassModerationFromSenders.value
                     }
-                    $onPremADAttributes.onPremMemberOf.Value{
+                    $onPremADAttributes.onPremMemberOf.Value {
                         $attribute = $onPremADAttributes.onPremMembers.Value
                     }
-                    $onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value{
+                    $onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value {
                         $attribute = $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value
                     }
-                    $onPremADAttributes.onPremRejectMessagesFromDLMembersBL.Value{
+                    $onPremADAttributes.onPremRejectMessagesFromDLMembersBL.Value {
                         $attribute = $onPremADAttributes.onPremRejectMessagesFromDLMembers.value
                     }
                 }
