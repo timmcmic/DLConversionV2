@@ -685,9 +685,6 @@ Function restore-MigratedDistributionList
         {
             out-logfile -string ("Evaluating property: "+$property.name)
 
-            $test = $importedDLConfiguration.$($property.name)
-            out-logfile -string $test
-
             if ($dlPropertiesToClearModern.contains($property.name))
             {
                 out-logfile -string "The property is a writeable property contained in the backup set."
@@ -723,7 +720,7 @@ Function restore-MigratedDistributionList
                     out-logfile -string "Single value property - use replace."
 
                     try {
-                        set-ADObject -identity $originalDLConfiguration.objectGUID -Add @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        set-ADObject -identity $originalDLConfiguration.objectGUID -Add @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                     }
                     catch {
                         out-logfile -string $_
