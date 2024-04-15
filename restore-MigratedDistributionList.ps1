@@ -681,23 +681,6 @@ Function restore-MigratedDistributionList
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
 
-        foreach ($member in $dlPropertiesToClearModern)
-        {
-            out-logfile -string ("Evaluating attribute: "+$member)
-
-            if ($importedDLConfiguration.psObject.properties.name.contains($member))
-            {
-                out-logfile -string "Member found - proceed with update"
-
-                if ($importedDLConfiguration.'$member'.count -gt 1)
-                {
-                    out-logfile -string "Attribute is multivalued - use add."
-                }
-            }
-        }
-
-        <#
-
         foreach ($property in $importedDLConfiguration.psObject.properties)
         {
             out-logfile -string ("Evaluating property: "+$property.name)
@@ -715,7 +698,7 @@ Function restore-MigratedDistributionList
                         out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
 
                         try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value.toString()} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                         }
                         catch {
                             out-logfile -string $_
@@ -759,7 +742,6 @@ Function restore-MigratedDistributionList
                 out-logfile -string ("The property is not a writeable property - skip.")
             }
         }
-        #>
     }
 
     exit
