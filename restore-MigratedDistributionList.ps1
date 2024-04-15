@@ -751,6 +751,20 @@ Function restore-MigratedDistributionList
 
         setAttributesOnGroup
     }
+    else 
+    {
+        out-logfile -string "The original group no longer exists - recreate the group."
+
+        try 
+        {
+            $originalDLConfiguration = new-ADGroup -Description $importedDLConfiguration.description -displayName $importedDlConfiguration.displayName -groupCategory "Distribution" -groupScope "Univeral" -path (get-distinguishedName -canonicalName $importedDLConfiguration.CanonicalName) -name $importedDLConfiguration.name
+        }
+        catch 
+        {
+            out-logfile -string $_
+            out-logfile -string "Unable to restore the distribution list by creating a new group."
+        }
+    }
 
     exit
 
