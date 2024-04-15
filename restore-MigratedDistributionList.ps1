@@ -764,6 +764,8 @@ Function restore-MigratedDistributionList
             out-logfile -string $_
             out-logfile -string "Unable to restore the distribution list by creating a new group."
         }
+
+        setAttributesOnGroup
     }
 
     exit
