@@ -681,6 +681,13 @@ Function restore-MigratedDistributionList
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
 
+        foreach ($member in $dlPropertiesToClearModern)
+        {
+            out-logfile -string ("Evaluating attribute: "+$member)
+        }
+
+        <#
+
         foreach ($property in $importedDLConfiguration.psObject.properties)
         {
             out-logfile -string ("Evaluating property: "+$property.name)
@@ -742,6 +749,7 @@ Function restore-MigratedDistributionList
                 out-logfile -string ("The property is not a writeable property - skip.")
             }
         }
+        #>
     }
 
     exit
