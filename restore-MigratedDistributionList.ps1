@@ -540,7 +540,7 @@ Function restore-MigratedDistributionList
         out-logfile -string "Remove the group via graph to allow for soft matching during next AD Sync cycle."
 
         try {
-            $mgGroup = get-mgGroup -filter "OnPremisesSecurityIdentifier eq $($originalDLConfiguration.objectSID)" -errorAction Stop
+            $mgGroup = get-mgGroup -filter "OnPremisesSecurityIdentifier eq '$($originalDLConfiguration.objectSID)'" -errorAction Stop
         }
         catch {
             out-logfile -string "Error attempting to remove the group via graph."
