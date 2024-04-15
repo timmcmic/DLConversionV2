@@ -461,7 +461,8 @@ Function restore-MigratedDistributionList
         onPremGroupType = @{"Value" = "groupType" ; "Description" = "Value representing universal / global / local / security / distribution"}
     }
 
-    [array]$dlPropertiesToClearModern='Name','Description','groupType',$onPremADAttributes.onPremAcceptMessagesFromSenders.Value,'DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,$onPremADAttributes.onPremBypassModerationFromSenders.value,$onPremADAttributes.onPremCoManagedBy.value,'msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists',$onPremADAttributes.onPremModeratedBy.value,'msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unauthorig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion','sAMAccountName' #Properties Exchange 2016 or newer schema.
+    [array]$dlPropertiesToClearModern='Member','Name','Description','groupType',$onPremADAttributes.onPremAcceptMessagesFromSenders.Value,'DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,$onPremADAttributes.onPremBypassModerationFromSenders.value,$onPremADAttributes.onPremCoManagedBy.value,'msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists',$onPremADAttributes.onPremModeratedBy.value,'msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unauthorig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion','sAMAccountName' #Properties Exchange 2016 or newer schema.
+    [array]$backLinkAttributes = 'publicDelegatesBL','msExchCoManagedObjectsBL','msExchBypassModerationFromDLMembersBL','memberOf','dLMemSubmitPermsBL','dLMemRejectPermsBL'
 
     #Define XML files to contain backups.
 
@@ -780,6 +781,104 @@ Function restore-MigratedDistributionList
             if ($dlPropertiesToClearModern.toLower().contains($property.name.toLower()))
             {
                 out-logfile -string "The property is a writeable property contained in the backup set."
+
+                if (($property.Value.count) -gt 1)
+                {
+                    out-logfile -string "Multivalued property - use add."
+
+                    foreach ($value in $property.Value)
+                    {
+                        out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
+
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -add @{$property.Name = $value.toString()} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Add"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+
+                            $onPremReplaceErrors += $functionObject
+                        }
+                    }
+                }
+                else 
+                {
+                    out-logfile -string "Single value property - use replace."
+
+                    if ($null -ne $property.value)
+                    {
+                        out-logfile -string "Single value property is not null."
+
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -Replace @{$property.Name = $property.value} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+    
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Replace"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+    
+                            $onPremReplaceErrors += $functionObject
+                        }
+                    }
+                    else 
+                    {
+                        out-logfile -string "Single value property is null - skip."
+                    }
+                  
+                }
+            }
+            else 
+            {
+                out-logfile -string ("The property is not a writeable property - skip.")
+            }
+        }
+
+        out-logfile -string "This group was recreated - attempt to reset other backlink attributes."
+
+        foreach ($property in $importedDLConfiguration.psObject.properties)
+        {
+            out-logfile -string ("Evaluating property: "+$property.name)
+
+            if ($backLinkAttributes.toLower().contains($property.name.toLower()))
+            {
+                out-logfile -string "This multivalued property exists on the object - convert the property to the non-backlink"
+
+                swtich ($property.name)
+                {
+                    $onPremADAttributes.onPremGrantSendOnBehalfToBL.Value{
+                        $attribute = $onPremADAttributes.onPremGrantSendOnBehalfTo.value
+                    }
+                    $onPremADAttributes.onPremCoManagedByBL.Value{
+                        $attribute = $onPremADAttributes.onPremCoManagedBy.value
+                    }
+                    $onPremADAttributes.onPremBypassModerationFromDLMembersBL.Value{
+                        $attribute = $onPremADAttributes.onPremBypassModerationFromSenders.value
+                    }
+                    $onPremADAttributes.onPremMemberOf.Value{
+                        $attribute = $onPremADAttributes.onPremMemberOf.Value
+                    }
+                    $onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value{
+                        $attribute = $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value
+                    }
+                    $onPremADAttributes.onPremRejectMessagesFromDLMembersBL.Value{
+                        $attribute = $onPremADAttributes.onPremRejectMessagesFromDLMembers.value
+                    }
+                }
+
+                out-logfile -string ("Attribute to modify: "+$attribute)
 
                 if (($property.Value.count) -gt 1)
                 {
