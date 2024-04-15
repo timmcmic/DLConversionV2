@@ -689,7 +689,7 @@ Function restore-MigratedDistributionList
             {
                 out-logfile -string "Member found - proceed with update"
 
-                if ($importedDLConfiguration."$member".count -gt 1)
+                if ($importedDLConfiguration.'$member'.count -gt 1)
                 {
                     out-logfile -string "Attribute is multivalued - use add."
                 }
