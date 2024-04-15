@@ -757,16 +757,17 @@ Function restore-MigratedDistributionList
         catch 
         {
             out-logfile -string $_
-            out-logfile -string "Unable to restore the distribution list by creating a new group."
+            out-logfile -string "Unable to restore the distribution list by creating a new group." -isError:$TRUE
         }
 
         try 
         {
-            $originalDLConfiguraiton = Get-ADObject -filter {mail -eq $importedDLConfiguration.Mail} -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+            $originalDLConfiguration = Get-ADObject -filter {mail -eq $importedDLConfiguration.Mail} -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch 
         {
-            <#Do this if a terminating exception happens#>
+            out-logfile -string $_
+            out-logfile -string "Unable to obtain the newly created group by mail address."
         }
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
