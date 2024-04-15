@@ -685,7 +685,7 @@ Function restore-MigratedDistributionList
         {
             out-logfile -string ("Evaluating attribute: "+$member)
 
-            if ($importedDLConfiguration.psObject.properties.contains($member))
+            if ($importedDLConfiguration.psObject.properties.name.contains($member))
             {
                 out-logfile -string "Member found"
             }
