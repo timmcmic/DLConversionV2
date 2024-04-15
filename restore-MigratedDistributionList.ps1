@@ -685,7 +685,7 @@ Function restore-MigratedDistributionList
         {
             out-logfile -string ("Evaluating property: "+$property.name)
 
-            $test = $importedDLConfiguration.($property.name)
+            $test = $importedDLConfiguration.$($property.name)
             out-logfile -string $test
 
             if ($dlPropertiesToClearModern.contains($property.name))
