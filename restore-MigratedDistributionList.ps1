@@ -856,7 +856,7 @@ Function restore-MigratedDistributionList
             {
                 out-logfile -string "This multivalued property exists on the object - convert the property to the non-backlink"
 
-                swtich ($property.name)
+                switch ($property.name)
                 {
                     $onPremADAttributes.onPremGrantSendOnBehalfToBL.Value{
                         $attribute = $onPremADAttributes.onPremGrantSendOnBehalfTo.value
