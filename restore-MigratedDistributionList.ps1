@@ -742,7 +742,22 @@ Function restore-MigratedDistributionList
                     }
                     else 
                     {
-                        out-logfile -string "Single value property is NULL - skipping."
+                        try {
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -Clear @{$property.Name} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                        }
+                        catch {
+                            out-logfile -string $_
+    
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Clear"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to clear original group property."
+                            }
+    
+                            $onPremReplaceErrors += $functionObject
+                        }
                     }
                   
                 }
