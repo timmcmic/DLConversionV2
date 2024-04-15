@@ -674,6 +674,15 @@ Function restore-MigratedDistributionList
             if ($dlPropertiesToClearModern.contains($property.name))
             {
                 out-logfile -string ("The property is a writeable property contained in the backup set.")
+
+                if ($property.Value.count -gt 1)
+                {
+                    out-logfile -string "Multivalued property - use add."
+                }
+                else 
+                {
+                    out-logfile -string "Single value property - use replace."
+                }
             }
             else 
             {
