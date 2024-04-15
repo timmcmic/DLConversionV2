@@ -687,7 +687,12 @@ Function restore-MigratedDistributionList
 
             if ($importedDLConfiguration.psObject.properties.name.contains($member))
             {
-                out-logfile -string "Member found"
+                out-logfile -string "Member found - proceed with update"
+
+                if ($importedDLConfiguration."$member".count -gt 1)
+                {
+                    out-logfile -string "Attribute is multivalued - use add."
+                }
             }
         }
 
