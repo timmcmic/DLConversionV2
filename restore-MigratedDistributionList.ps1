@@ -752,12 +752,21 @@ Function restore-MigratedDistributionList
 
         try 
         {
-            $originalDLConfiguration = new-ADGroup -Description $importedDLConfiguration.description -displayName $importedDlConfiguration.displayName -groupCategory "Distribution" -groupScope "Universal" -path (get-OULocation -originalDLConfiguration $importedDLConfiguration) -name $importedDLConfiguration.name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+            new-ADGroup -Description $importedDLConfiguration.description -displayName $importedDlConfiguration.displayName -groupCategory "Distribution" -groupScope "Universal" -path (get-OULocation -originalDLConfiguration $importedDLConfiguration) -name $importedDLConfiguration.name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -otherAttributes @{mail = $importedDLConfiguration.mail} -errorAction STOP
         }
         catch 
         {
             out-logfile -string $_
             out-logfile -string "Unable to restore the distribution list by creating a new group."
+        }
+
+        try 
+        {
+            $originalDLConfiguraiton = Get-ADObject -filter {mail -eq $importedDLConfiguration.Mail} -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+        catch 
+        {
+            <#Do this if a terminating exception happens#>
         }
 
         out-logfile -string "Resetting the attributes of the group to match the backup information."
