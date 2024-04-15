@@ -743,7 +743,7 @@ Function restore-MigratedDistributionList
                     else 
                     {
                         try {
-                            set-ADObject -identity $originalDLConfiguration.objectGUID -Clear @{$property.Name} -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                            set-ADObject -identity $originalDLConfiguration.objectGUID -Clear $property.Name -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
                         }
                         catch {
                             out-logfile -string $_
