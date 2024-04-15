@@ -684,6 +684,11 @@ Function restore-MigratedDistributionList
         foreach ($member in $dlPropertiesToClearModern)
         {
             out-logfile -string ("Evaluating attribute: "+$member)
+
+            if ($importedDLConfiguration.psObject.properties.contains($member))
+            {
+                out-logfile -string "Member found"
+            }
         }
 
         <#
