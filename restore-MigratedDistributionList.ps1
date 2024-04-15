@@ -681,7 +681,7 @@ Function restore-MigratedDistributionList
                 {
                     out-logfile -string "Multivalued property - use add."
 
-                    foreach ($value -in $property.Value)
+                    foreach ($value in $property.Value)
                     {
                         out-logfile -string ("Adding value: "+$value+" to property "+$property.name)
 
@@ -691,6 +691,15 @@ Function restore-MigratedDistributionList
                         catch {
                             out-logfile -string $_
 
+                            $functionObject = New-Object PSObject -Property @{
+                                PropertyName = $property.Name
+                                PropertyValue = $value
+                                Operation = "Add"
+                                ErrorDetails = $_
+                                ErrorCommon = "Unable to update original group property."
+                            }
+
+                            $onPremRepalceErrors += $functionObject
                         }
                     }
                 }
