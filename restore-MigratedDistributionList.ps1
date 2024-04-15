@@ -746,6 +746,15 @@ Function restore-MigratedDistributionList
                 out-logfile -string ("The property is not a writeable property - skip.")
             }
         }
+
+        try
+        {
+            $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+        catch
+        {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     else 
     {
@@ -943,15 +952,15 @@ Function restore-MigratedDistributionList
                 out-logfile -string ("The property is not a writeable property - skip.")
             }
         }
-    }
 
-    try
-    {
-        $originalDLConfiguration = Get-ADObject -identity $importedDLConfiguration.objectGUID -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-    }
-    catch
-    {
-        out-logfile -string $_ -isError:$TRUE
+        try
+        {
+            $originalDLConfiguration = Get-ADObject -identity $originalDLConfiguration.distinguishedName -properties * -server $coreVariables.globalCatalogWithPort.value -credential $activeDirectoryCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+        catch
+        {
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
 
     try
