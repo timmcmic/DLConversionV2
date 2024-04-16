@@ -292,8 +292,8 @@ Function Start-DistributionListMigration
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
+        [ValidateSet("Basic","Negotiate")]
+        $activeDirectoryAuthenticationMethod="Negotiate",
         #Azure Active Directory Connect Parameters
         [Parameter(Mandatory = $false)]
         [string]$aadConnectServer=$NULL,
