@@ -103,8 +103,8 @@
             [Parameter(Mandatory = $true)]
             [pscredential]$activeDirectoryCredential,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("Basic","Kerberos")]
-            $activeDirectoryAuthenticationMethod="Kerberos",
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",            
             #Exchange On-Premises Parameters
             [Parameter(Mandatory = $false)]
             [string]$exchangeServer=$NULL,

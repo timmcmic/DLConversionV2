@@ -57,6 +57,10 @@
             $adCredential,
             [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
+            [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
             [boolean]$isValidTest=$FALSE
         )
 
@@ -102,13 +106,13 @@
 
                 out-logfile -string ("Spaces Removed Address Length: "+$groupsmtpAddress.length.toString())
 
-                $functionDLConfiguration=Get-ADObject -filter "mail -eq `"$groupSMTPAddress`"" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                $functionDLConfiguration=Get-ADObject -filter "mail -eq `"$groupSMTPAddress`"" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             elseif ($DN -ne "None")
             {
                 out-logfile -string ("Searching by distinguished name "+$dn)
 
-                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             else 
             {

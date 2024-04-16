@@ -47,6 +47,9 @@
             [Parameter(Mandatory = $true)]
             $adCredential,
             [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
+            [Parameter(Mandatory = $false)]
             $dlMoveCleanup=$FALSE,
             [Parameter(Mandatory = $false)]
             $dlPostCreate=$FALSE
@@ -76,7 +79,7 @@
                     Out-LogFile -string "Move the group to the non-SYNC OU..."
         
                     try {
-                        move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
+                        move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction Stop
         
                         $stopLoop = $true
                     }
@@ -100,7 +103,7 @@
             else 
             {
                 try {
-                    move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction Stop
+                    move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction Stop
                 }
                 catch {
                     out-logfile -string "Unable to move the group between organizational units.  Manual intervention required."
@@ -125,8 +128,7 @@
         {
             out-logfile -string "Attempting one move back to the source OU - on premises group was moved to no-sync and failure occurred."
 
-            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -errorAction SilentlyContinue
-
+            move-adObject -identity $DN -targetPath $OU -credential $adCredential -server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction SilentlyContinue
         }
 
         Out-LogFile -string "END MOVE-TONONSYNCOU"

@@ -5,3 +5,43 @@ Issue #161 - fixed in build 2.9.8.31
 Performed spell check against all out-logFile entries and other string values.  Corrections made.
 Corrected extension attribute names in PSObjects when extension attribute failures occur.
 ================================================
+
+================================================
+Issue #166 - fixed in build 2.9.8.32
+4/15/2024
+
+Created function restore-MigratedDistributionList
+
+This function takes the originalDLConfigurationADXML and imports the settings.  A restoration of the group based on this data is then performed.
+
+If the group mail address is found (most likely the dynamic DL) the administrator is prompted to remove it.  (Mandatory)
+
+If the group mail address-migratedBySCript is found the administrator is prompted to remove it.  (Optional)
+
+If the renamed group with ! is found by searching for object GUID then a restoration of attributes is performed to this object.
+
+If the renamed group via objectGUID is not found then an entirely new group is created.
+
+Graph is utilized to delete the group based on group SID from Entra ID.   This allows ad connect to soft match the restored group.
+
+NOTE:  This restores the group to it's state at the time of migration and will result in rolling back any changes in Office 365.
+================================================
+
+================================================
+Issue #164 - addresed in build 2.9.8.33
+4/15/2024
+
+Customer migrating from machine that is Azure AD Joined and not a member of the domain.
+
+Multiple ad calls failing.
+
+Discovered that all AD functions were not implementing the auth type specified in the DL migration command.
+
+Updated the acceptable types from Basic,Kerberos to Basic,Negotiate.  Using negotiate allows NTML or Kerberos.
+
+Updated all functions that utilize AD commands to include the parameter $activeDirectoryAuthenticationMethod.
+
+Updated all function calls to pass the method.
+
+Default is negotiate.
+================================================

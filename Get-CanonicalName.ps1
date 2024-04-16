@@ -34,6 +34,9 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             [string]$DN,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",            
             [Parameter(Mandatory = $true)]
             $adCredential
         )
@@ -64,7 +67,7 @@
             {
                 Out-LogFile -string "Gathering the AD object based on distinguished name."
     
-                $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -server $globalCatalogServer -errorAction STOP
+                $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -authType $activeDirectoryAuthenticationMethod -server $globalCatalogServer -errorAction STOP
 
                 $stopLoop = $TRUE
             }

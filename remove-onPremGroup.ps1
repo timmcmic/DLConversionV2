@@ -39,7 +39,10 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate"
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -56,7 +59,7 @@
 
         try
         {
-            remove-adobject -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -credential $adCredential -confirm:$FALSE -errorAction STOP
+            remove-adobject -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -confirm:$FALSE -errorAction STOP
         }
         catch
         {

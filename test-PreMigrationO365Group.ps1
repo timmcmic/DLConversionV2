@@ -115,8 +115,8 @@ Function Test-PreMigrationO365Group
         [Parameter(Mandatory = $true)]
         [pscredential]$activeDirectoryCredential,
         [Parameter(Mandatory = $false)]
-        [ValidateSet("Basic","Kerberos")]
-        $activeDirectoryAuthenticationMethod="Kerberos",
+        [ValidateSet("Basic","Negotiate")]
+        $activeDirectoryAuthenticationMethod="Negotiate",
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
         [pscredential]$exchangeOnlineCredential=$NULL,

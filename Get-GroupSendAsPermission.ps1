@@ -46,6 +46,9 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
             [Parameter(Mandatory = $true)]
             $groupSMTPAddress
         )
@@ -266,7 +269,7 @@
                     {
                         try 
                         {
-                            $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
+                            $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod).distinguishedName
 
                             $stopLoop = $TRUE
                         }

@@ -51,7 +51,10 @@
             [Parameter(Mandatory = $false)]
             [boolean]$useOnPremisesExchange=$FALSE,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -77,7 +80,7 @@
         
         try 
         {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential -errorAction Stop
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -server $globalCatalogServer -clear $parameterSet -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction Stop
 
         }
         catch 
@@ -91,7 +94,7 @@
         out-logfile -string "The group has been migrated and is retained - set custom attributes with original information for other migration dependencies."
         
         try {
-            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer -credential $adCredential
+            set-adgroup -identity $originalDLConfiguration.distinguishedName -add @{extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2} -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
