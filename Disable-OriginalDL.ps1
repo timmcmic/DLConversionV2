@@ -54,7 +54,7 @@
             $adCredential,
             [Parameter(Mandatory = $false)]
             [ValidateSet("Basic","Negotiate")]
-            $activeDirectoryAuthenticationMethod="Negotiate",
+            $activeDirectoryAuthenticationMethod="Negotiate"
         )
 
         #Output all parameters bound or unbound and their associated values.
