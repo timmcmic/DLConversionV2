@@ -72,7 +72,7 @@
         #Declare function variables.
 
 
-        $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential
+        $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
         $loopCounter=0
         $functionSleepTest=$FALSE
         $loopError=$FALSE

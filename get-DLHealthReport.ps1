@@ -1393,7 +1393,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1438,7 +1438,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1470,7 +1470,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1514,7 +1514,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1546,7 +1546,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1591,7 +1591,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1623,7 +1623,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1668,7 +1668,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1713,7 +1713,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1747,7 +1747,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest = get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1788,7 +1788,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
@@ -1833,7 +1833,7 @@ Function get-DLHealthReport
 
             try 
             {
-                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -CN:$permission.Identity
+                $normalizedTest=get-normalizedDNAD -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN "None" -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute "SendAsDependency" -activeDirectoryAttributeCommon "SendAsDependency" -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -CN:$permission.Identity
 
                 out-logfile -string $normalizedTest
 
@@ -1914,7 +1914,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -1943,7 +1943,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -1972,7 +1972,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -2001,7 +2001,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -2028,7 +2028,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
 
             }
             catch {
@@ -2061,7 +2061,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -2090,7 +2090,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {
@@ -2119,7 +2119,7 @@ Function get-DLHealthReport
         {
             try 
             {
-                $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -errorAction STOP
+                $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch 
             {

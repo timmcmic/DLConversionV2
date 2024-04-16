@@ -530,7 +530,7 @@
             try{
                 out-logfile -string "Creating the routing contact that is missing."
 
-                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -errorAction STOP
+                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
 
                 out-logfile -string "The routing contact was created successfully."
             }
