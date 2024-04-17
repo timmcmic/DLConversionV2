@@ -1,0 +1,184 @@
+======================================================================
+DLConversionV2 QuickStart Guide
+======================================================================
+
+If you have accessed this quick start guide you have discovered and installed the DLConversionV2 Powershell Module. 
+Congratulations!
+
+The purpose of this guide is to assist in getting started as quickly as possible migrating your distribution lists to Office 365.
+
+*********************
+
+Step 0:  Ensure all dependent powershell modules are updated.
+
+By default installing the module installs the minimum requirements for the module to run.  It is possible that these are out of date already.
+
+Open powershell as administrator
+Run:  Get-Module Microsoft.Graph* | update-module -force
+Run:  Update-Module ExchangeOnlineManagement
+
+*********************
+
+Step 1:  Identify how Office 365 resources will be accessed.
+
+When performing single migrations the module supports interactive authentication to Office 365 resources <or> certificate authentication to application registrations.
+When performing multiple migrations the module REQUIRES certificate authentication to Office 365.
+Certificate authentication is required for Microsoft Graph and Exchange Online.
+
+ProTip:  Setting up certificate authentication streamlines this process and is recommended.
+
+Establishing Certificate Authentication for Microsoft Graph:
+https://practical365.com/use-certificate-authentication-microsoft-graph-sdk/
+
+Establishing Certificate Authentication for Exchange Online
+https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps
+
+ProTip:  The same EntraID application registration can be utilized for both Exchange Online and Microsoft Graph if the permissions are applied to the same app registration.
+
+If certificate authentication is configured record the certificate thumbprint and the application registration ID.  This will be required for later commands.
+
+*********************
+
+Step 2:  Identity the EntraID tenant ID that will be required to execute commands.
+https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/find-tenant-id-domain
+
+*********************
+
+Step 3:  Identity the onmicrosoft.com domain associated with your Exchange Online organization.
+
+This step is only required if utilizing certificate authentication for Exchange Online.
+
+Log into the Entra portal.
+Select EntraID
+Under EntraID select custom domains.
+The something.onmicrosoft.com domain will be listed.  This is the domain required to proceed.
+
+*********************
+
+Step 4:  Identify other accounts required to run the powershell module.
+
+A)  Active Directory:
+    *Domain Administrator:  If all groups and resources reside in the same domain in the Active Directory forest.
+    *Enterprise Administrator:  If groups and members reside in multiple domains in the Active Directory forest.
+    *Note:  The module is not tested with any other Active Directory permissions.
+B)  EntraID Connect:
+    *The account specified must be a local administrator on the EntraID Connect server.
+    *In many cases this is the same account utilized for Active Directory connectivity in Step 4A.
+C)  Exchange Online  (Optional):
+    *This account must be an Exchange Organization Administrator.
+    *This is not required if certificate authentication is utilized.
+D)  Microsoft Graph  (Optional):
+    *This account will be utilized to connect to Microsoft Graph.
+    *The account will be assigned the scopes at minimum User.Read.All and Group.Read.All.
+E)  Exchange On-Premises (Optional):
+    *This account will be utilized to run local Exchange Online operations.
+    *The account must be an Exchange Organization Administrator.
+
+When running a migration Exchange Online connection allows the administrator to specify a credentials variable.  This triggers non-interactive authentication - this requires multifactor authentication not be enabled on the account.
+
+When utilizing interactive authentication for Exchange Online and Microsoft Graph (not specifying any credentials within the migration command) multifactor authentication may be utilized.
+
+*********************
+
+Step 5:  Test the MS Graph connection to ensure that the scopes are properly assigned.
+
+A)  Certificate Authentication
+    *Connect-MGGraph -scopes "User.Read.All,Group.Read.All" -TenantId "TenantId" -AppId "AppID" -CertificateThumbprint "ThumbPrint"
+    *If the scopes required are not present the administrator is prompted to approve the scopes or request approval.
+B)  User Authentication
+    *Connect-MGGraph -scopes "User.Read.All,Group.Read.All" -TenantID "TenantID"
+    *If the scopes required are not present the administrator is prompted to approve the scopes or request approval.
+
+*********************
+
+Step 6:  Identify the best global catalog server to utilize.
+
+Timing is everything with your migrations.  Processing changes on domain controllers that either EntraID connect is utilizing or co-located with EntraID connect is important.
+
+I recommend opening the sync service manager on the EntraID Connect server.  Select the delta import for the domain where the group resides.
+
+In the information panel the domain controller utilized for operations is displayed.  Note this server and utilize it for domain controller operations.
+
+*********************
+
+Step 8:  Identity an organizational unit within Active Directory that is set not to synchronize via EntraID Connect.
+
+During a migration this organizational unit is where the group is placed to trigger group deletion in Office 365.  
+
+If you are not sure what OU does not sync, on the desktop of the EntraID Connect server is the EntraID configuration application.
+
+Run this application and choose configure.
+
+Choose customize synchronization options -> next.
+
+Input any global administrator account and select next.
+
+On the domains selection page select next.
+
+This takes you to the OU customization page where you can review organizational units that sync or do not sync.  If you sync your entire domain this is where you can customize and OU to not sync.
+
+Record the full distinguished name of this organization unit in Active Directory.
+
+*********************
+
+Step 9:  Identify a logging directory on the server or client where migrations will be performed.
+
+This directory is where all migration related documents will be recorded.  
+
+*********************
+
+Step 10:  At this time you are ready to run your first migration.  Here are some sample commands that you may find helpful.
+
+The migration command requires storage of several credentials.  These two command will prompt the administrator to store credentials.
+
+$adCred = get-credential
+$entraConnectCred = get-credential
+
+Protip:  Credentials can be stored in XML files for easy reuse.  The XML files are signed to the windows profile they are created in and not transportable.  Storaing credentials in the XML file does not prevent anyone who has access to them from reviewing the credentials.
+https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/export-clixml?view=powershell-7.4
+
+$adCred = get-credential
+$adCred | export-cliXML c:\scripts\adCred.XML
+
+The credentials can then be imported in additional operations
+
+$adCred = import-cliXML c:\Scripts\adCred.XML
+
+A)  Utilizing interactive authentication to Microsoft Graph and Exchange Online.
+
+start-distributionListMigration -groupSMTPAddress "Address" -globalCatalogServer "FQDN of Server from Step 6" -activeDirectoryCredential $adCred -aadConnectServer "FQDN of EntraID Connect Server" -aadConnectCredential $entraIDCred -msGraphTenantID "TenantID from Step 2" -logFolderPath "Path from Step 9" -dnNoSyncOU "Distinguished Name from Step 8"
+
+start-distributionListMigration -groupSMTPAddress group@contoso.com -globalCatalogServer "gc.contoso.local" -activeDirectoryCredential $adCred -aadConnectServer "aadConnect.contoso.local" -aadConnectCredential $entraIDCredential -msGraphTeantID "d57393fc-db12-4126-9923-7598296f0b85" -logFolderPath "c:\DLMigrations\Logs" -dnNoSyncOU "OU=NoSync,DC=contoso,DC=local"
+
+B)  Utilizing certificate authentication to Microsoft Graph and Exchange Online.
+
+start-distributionListMigration -groupSMTPAddress "Address" -globalCatalogServer "FQDN of Server from Step 6" -activeDirectoryCredential $adCred -aadConnectServer "FQDN of EntraID Connect Server" -aadConnectCredential $entraIDCred -msGraphTenantID "TenantID from Step 2" -msGraphCertificateThumbprint "Certificate Thumprint from Step 1" -msGraphApplicationID "ApplicationID from Step 1" -exchangeOnlineOrganizationName "Organization name from step 3" -exchangeOnlineAppID "AppID from Step2" -exchangeOnlineCertificateThumbPrint "Certificate Thumbprint from Step 2" -logFolderPath "Path from Step 9" -dnNoSyncOU "Distinguished Name from Step 8"
+
+start-distributionListMigration -groupSMTPAddress group@contoso.com -globalCatalogServer "gc.contoso.local" -activeDirectoryCredential $adCred -aadConnectServer "aadConnect.contoso.local" -aadConnectCredential $entraIDCredential -msGraphTeantID "d57393fc-db12-4126-9923-7598296f0b85" -msGraphCertificateThumbprint "FC92991B21219F178AFB37C12DF231B6AFC3D790" -msGraphApplicationID "47bde6d9-d8a4-4959-b4c8-8d975aa8174a" -exchangeOnlineOrganizationName "contoso.onmicrosoft.com" -exchangeOnlineAppID "47bde6d9-d8a4-4959-b4c8-8d975aa8174a" -exchangeOnlineCertificateThumbPrint "FC92991B21219F178AFB37C12DF231B6AFC3D790" -logFolderPath "c:\DLMigrations\Logs" -dnNoSyncOU "OU=NoSync,DC=contoso,DC=local"
+
+If you have some interest in a sample script run show-SampleMigrationScript
+
+*********************
+
+Step 11:
+
+There are several advanced topics that may impact your migration.  Step 10 shows two simple migration commands.  Here are some additional items to research:
+
+A)  -enableHybridMailFlow
+
+This option requires specification of the -exchangeServer and -exchangeCredential attributes in the migration command.
+Utilizing this switch enables mail flow objects if email is still relayed through on premises resources to Office 365.
+
+B)  Permissions Pre-Collection
+
+Distribution lists may be utilized for a variety of permissions.  The module supports several methods to precollect these permissions and maintain them during migration.
+
+start-collectOnPremSendAs
+start-collectOnPremMailboxFolders
+start-collectOnPremFullMailboxAccess
+start-collectOffice365FullMailboxAccess
+start-collectOffice365MailboxFOlders
+
+Most commonly start-collectOnPremSendAs and start-collectOffice365FullMailboxAccess are utilized.  Any command involving mailbox folders can take days to complete due to complexity.
+
+
