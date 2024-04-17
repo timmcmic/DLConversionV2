@@ -1,0 +1,40 @@
+#Define on premises credentials.  (This assumes credential XMLs were previously defined.)
+
+$adCred = import-cliXML c:\path\adCred.XML
+$entraIDCred = import-cliXML c:\path\entraIDCred.XML
+$exchangeOnPremCred = import-cliXML c:\path\exchangeOnPremCred.XML
+
+#Define Active Directory information
+
+$globalCatalogServer = "gc.contoso.local"
+
+#Define EntraID Connect information
+
+$aadConnectServer = "aadConnect.contoso.local"
+
+$Define Exchange On Premises information
+
+$exchangeServer = "exchange.contoso.local"
+
+#Define ms graph connection information
+
+$msGraphTenantID="68cef4f8-9392-496c-b414-9bbb61246d3b"
+$msGraphCertificateThumbprint="FC92991B21219F178AFB37C12DF231B6AFC3D790"
+$msGraphApplicationID="49390024-2b8c-46f3-a332-f1ae849267b4"
+
+#Define Exchange Online connection information
+
+$exchangeOnlineCertificateThumbPrint="FC92991B21219F178AFB37C12DF231B6AFC3D790"
+$exchangeOnlineOrganizationName="contoso.onmicrosoft.com"
+$exchangeOnlineAppID="49390024-2b8c-46f3-a332-f1ae849267b4"
+
+#Define additional parameters
+
+$enableHybridMailFlow = $TRUE
+$logFolderPath = "c:\DLMigrations\Logs"
+$dnNoSyncOU = "OU=NoSync,DC=contoso,DC=local"
+$groupSMTPAddress = "group@contoso.com"
+
+#Execute common migration command
+
+start-distributionListMigration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $adCred -aadConnectServer $aadConnectServer -aadConnectCredential $entrIDCred -exchangeServer $exchangeServer -exchangeCredential $exchangeOnPremCred -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -exchangeOnlineAppID $exchangeOnlineAppID -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -enableHybridMailFlow $enableHybridMailFlow -logFolderPath $logFolderPath -dnNoSyncOU $dnNoSyncOU
