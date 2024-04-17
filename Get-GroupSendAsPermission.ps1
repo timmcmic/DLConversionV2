@@ -46,6 +46,9 @@
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
             $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
             [Parameter(Mandatory = $true)]
             $groupSMTPAddress
         )
@@ -266,7 +269,7 @@
                     {
                         try 
                         {
-                            $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential).distinguishedName
+                            $functionSendAsRightDN+=(get-adobject -filter {SAMAccountName -eq $sendAsName} -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod).distinguishedName
 
                             $stopLoop = $TRUE
                         }
@@ -309,7 +312,7 @@
                 {
                     #$functionSendAsTest+=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn  -errorAction STOP -cn "None"
 
-                    $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn -activeDirectoryAttribute "SendAs" -activeDirectoryAttributeCommon "SendAsPermissionOnGroup" -groupSMTPAddress $groupSMTPAddress -errorAction STOP -cn "None"
+                    $normalizedTest=get-normalizedDN -globalCatalogServer $globalCatalogServer -DN $dnToNormalize -adCredential $activeDirectoryCredential -originalGroupDN $dn -activeDirectoryAttribute "SendAs" -activeDirectoryAttributeCommon "SendAsPermissionOnGroup" -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                     out-logfile -string $normalizedTest
 

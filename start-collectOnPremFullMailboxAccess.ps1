@@ -9,7 +9,7 @@ function start-collectOnPremFullMailboxAccess
 
     Trigger function..
 
-        .PARAMETER EXCHANGESERVER
+    .PARAMETER EXCHANGESERVER
 
     *OPTIONAL*
     *REQUIRED with enableHybridMailFlow:TRUE*

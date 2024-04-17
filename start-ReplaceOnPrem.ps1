@@ -51,7 +51,10 @@
             [Parameter(Mandatory = $true)]
             $adCredential,
             [Parameter(Mandatory = $true)]
-            [string]$globalCatalogServer
+            [string]$globalCatalogServer,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate"
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -69,7 +72,7 @@
         #Declare function variables.
 
 
-        $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential
+        $functionContactObject = get-canonicalName -globalCatalogServer $globalCatalogServer -dn $routingContact.distinguishedName -adCredential $adCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
         $loopCounter=0
         $functionSleepTest=$FALSE
         $loopError=$FALSE
@@ -85,7 +88,7 @@
             out-logfile -string "Source and Target objects are in the same domain - utilize GC."
 
             try{
-                set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $globalCatalogServer -credential $adCredential -errorAction STOP
+                set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -107,7 +110,7 @@
 
                 try
                 {
-                    set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential -errorAction STOP
+                    set-adobject -identity $canonicalObject.distinguishedName -add @{$attributeOperation=$routingContact.distinguishedName} -server $canonicalObject.canonicalDomainName -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
 
                     $functionSleepTest=$TRUE
 

@@ -103,8 +103,8 @@
             [Parameter(Mandatory = $true)]
             [pscredential]$activeDirectoryCredential,
             [Parameter(Mandatory = $false)]
-            [ValidateSet("Basic","Kerberos")]
-            $activeDirectoryAuthenticationMethod="Kerberos",
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",            
             #Exchange On-Premises Parameters
             [Parameter(Mandatory = $false)]
             [string]$exchangeServer=$NULL,
@@ -530,7 +530,7 @@
             try{
                 out-logfile -string "Creating the routing contact that is missing."
 
-                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -errorAction STOP
+                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
 
                 out-logfile -string "The routing contact was created successfully."
             }

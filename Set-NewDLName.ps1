@@ -49,7 +49,10 @@
             [Parameter(Mandatory = $true)]
             $DN,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate"
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -94,7 +97,7 @@
         {
             Out-LogFile -string "Set the AD group name."
 
-            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential -errorAction STOP
+            set-adGroup -identity $dn -samAccountName $functionGroupSAMAccountName -server $globalCatalogServer -Credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch 
         {
@@ -105,7 +108,7 @@
         {
             out-logfile -string "Setting the new group name.."
 
-            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            rename-adobject -identity $dn -newName $functionGroupName -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch
         {

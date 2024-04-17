@@ -26,7 +26,10 @@
             [Parameter(Mandatory = $true)]
             [string]$globalCatalogServer,
             [Parameter(Mandatory = $true)]
-            $adCredential
+            $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate"
         )
 
         out-logfile -string "Output bound parameters..."
@@ -49,7 +52,7 @@
         $functionExchangeRangeUpper = $null
 
         try{
-            $functionADRootDSE=Get-ADRootDSE -server $globalCatalogServer -credential $adCredential -errorAction STOP
+            $functionADRootDSE=Get-ADRootDSE -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
             out-logfile -string "The AD Root Schema:"
             out-logfile -string $functionADRootDSE
         }
@@ -67,7 +70,7 @@
         out-logfile -string ("The functionExchangeSchemaContext is: "+$functionExchangeSchemaContext)
 
         try{
-            $functionExchangeSchemaObject = Get-AdObject $functionExchangeSchemaContext -server $globalCatalogServer -credential $adCredential -properties * -errorAction STOP 
+            $functionExchangeSchemaObject = Get-AdObject $functionExchangeSchemaContext -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -properties * -errorAction STOP 
             out-logfile -string ("The Exchange Schema Object is: ")
             out-logfile -string $functionExchangeSchemaObject
         }

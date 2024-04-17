@@ -56,6 +56,9 @@
             [string]$CN,
             [Parameter(Mandatory = $TRUE)]
             $adCredential,
+            [Parameter(Mandatory = $false)]
+            [ValidateSet("Basic","Negotiate")]
+            $activeDirectoryAuthenticationMethod="Negotiate",
             [Parameter(Mandatory = $TRUE)]
             [string]$originalGroupDN,
             [Parameter(Mandatory = $false)]
@@ -112,7 +115,7 @@
 
                     out-logfile -string "Attepmting to find the user via distinguished name."
 
-                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP -server $activeDirectoryDomainName
     
                     if ($functionTest -eq $NULL)
                     {
@@ -148,7 +151,7 @@
                         out-logfile "Unable to calculate the active directory domain name via DN." -isError:$TRUE
                     }
 
-                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -errorAction STOP -server $activeDirectoryDomainName
+                    $functionTest = get-adObject -filter {distinguishedname -eq $dn} -properties * -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP -server $activeDirectoryDomainName
     
                     if ($functionTest -eq $NULL)
                     {
