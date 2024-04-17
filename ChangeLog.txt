@@ -28,7 +28,7 @@ NOTE:  This restores the group to it's state at the time of migration and will r
 ================================================
 
 ================================================
-Issue #164 - addresed in build 2.9.8.33
+Issue #164 - addressed in build 2.9.8.33
 4/15/2024
 
 Customer migrating from machine that is Azure AD Joined and not a member of the domain.
@@ -44,4 +44,11 @@ Updated all functions that utilize AD commands to include the parameter $activeD
 Updated all function calls to pass the method.
 
 Default is negotiate.
+================================================
+
+================================================
+2.9.8.34
+4/17/2024
+
+Implemented functions show-QuickStartGuid and show-SampelMigrationScript to provide quick start information to users.
 ================================================

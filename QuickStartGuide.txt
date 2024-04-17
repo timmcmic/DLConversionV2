@@ -181,4 +181,10 @@ start-collectOffice365MailboxFOlders
 
 Most commonly start-collectOnPremSendAs and start-collectOffice365FullMailboxAccess are utilized.  Any command involving mailbox folders can take days to complete due to complexity.
 
+*********************
 
+Shameless plug...
+Did you know that the majority of this module was written and tested in my spare time.
+If you're enjoying it consider letting my management know at dlConversionV2@service.microsoft.com
+
+Need additional support or questions:  dlconversionv2@service.microsoft.com or post an issue on gitHub https://github.com/timmcmic/DLConversionV2
