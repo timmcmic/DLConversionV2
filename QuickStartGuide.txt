@@ -63,6 +63,7 @@ A)  Active Directory:
     *Note:  The module is not tested with any other Active Directory permissions.
 B)  EntraID Connect:
     *The account specified must be a local administrator on the EntraID Connect server.
+    *The account must have the ability to execute a delta sycn by being a member of the local group ADSyncOperators.
     *In many cases this is the same account utilized for Active Directory connectivity in Step 4A.
 C)  Exchange Online  (Optional):
     *This account must be an Exchange Organization Administrator.
