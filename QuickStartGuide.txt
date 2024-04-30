@@ -27,13 +27,16 @@ Certificate authentication is required for Microsoft Graph and Exchange Online.
 
 ProTip:  Setting up certificate authentication streamlines this process and is recommended.
 
-Establishing Certificate Authentication for Microsoft Graph:
-https://practical365.com/use-certificate-authentication-microsoft-graph-sdk/
-
 Establishing Certificate Authentication for Exchange Online
 https://learn.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps
 
+Establishing Certificate Authentication for Microsoft Graph:
+https://practical365.com/use-certificate-authentication-microsoft-graph-sdk/
+
+
 ProTip:  The same EntraID application registration can be utilized for both Exchange Online and Microsoft Graph if the permissions are applied to the same app registration.
+
+ProTip:  The instructions to create the self signed certificate in the Exchange Online directions contains commands that allow the certificate to work with Exchange Online Powershell.  If you do not use the -keySpec as outlined the certificate will not work.
 
 If certificate authentication is configured record the certificate thumbprint and the application registration ID.  This will be required for later commands.
 
