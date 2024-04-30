@@ -84,10 +84,10 @@ When utilizing interactive authentication for Exchange Online and Microsoft Grap
 Step 5:  Test the MS Graph connection to ensure that the scopes are properly assigned.
 
 A)  Certificate Authentication
-    *Connect-MGGraph -scopes "User.Read.All,Group.Read.All" -TenantId "TenantId" -AppId "AppID" -CertificateThumbprint "ThumbPrint"
+    *Connect-MGGraph -TenantId "TenantId" -ClientID "AppID" -CertificateThumbprint "ThumbPrint"
     *If the scopes required are not present the administrator is prompted to approve the scopes or request approval.
 B)  User Authentication
-    *Connect-MGGraph -scopes "User.Read.All,Group.Read.All" -TenantID "TenantID"
+    *Connect-MGGraph -scopes "User.Read.All","Group.Read.All" -TenantID "TenantID"
     *If the scopes required are not present the administrator is prompted to approve the scopes or request approval.
 
 *********************
