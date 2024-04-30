@@ -112,7 +112,7 @@
             [pscredential]$exchangeCredential=$NULL,
             [Parameter(Mandatory = $false)]
             [ValidateSet("Basic","Kerberos")]
-            [string]$exchangeAuthenticationMethod="Basic",
+            [string]$exchangeAuthenticationMethod="Kerberos",
             #Exchange Online Parameters
             [Parameter(Mandatory = $false)]
             [pscredential]$exchangeOnlineCredential=$NULL,
