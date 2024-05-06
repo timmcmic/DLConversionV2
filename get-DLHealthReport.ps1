@@ -4922,8 +4922,6 @@ th {
             out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
         }
 
-        $html  = get-content $htmlFilePath
-
         out-logfile -string "Adding generated HTML to current HTML file."
 
         $finalHTML += $html 
