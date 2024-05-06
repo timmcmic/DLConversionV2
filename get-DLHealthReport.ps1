@@ -3146,10 +3146,12 @@ Function get-DLHealthReport
 
             if ($office365AttributeEval.count -gt 0)
             {
-                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "True"})
+                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isValidMember -ne "True"})
 
                 if ($errorMemberOnline -eq $FALSE)
                 {
+                    out-logfile -string "Generate HTML fragment for Office365AttributeEval"
+
                     New-HTMLSection -HeaderText "Single Value Attribute Evaluation" {
                         new-htmlTable -DataTable ($office365AttributeEval | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
                         } -AutoSize
@@ -3159,7 +3161,7 @@ Function get-DLHealthReport
 
                 if ($office365AttributeEvalErrors.count -gt 0)
                 {
-                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+                    out-logfile -string "Generate HTML fragment for Office365AttributeEval ERRORS."
 
                     New-HTMLSection -HeaderText "Single Value Attribute Evaluation ERRORS" {
                         new-htmlTable -DataTable ( $office365AttributeEvalErrors | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
