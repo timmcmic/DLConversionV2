@@ -2986,7 +2986,7 @@ Function get-DLHealthReport
     New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
         New-HTMLSection -HeaderText ("Group Health Evaluation for: "+$groupSMTPAddress) {
-            
+
             out-logfile -string "Split the on premises data from the Office 365 data."
 
             [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
@@ -3000,6 +3000,35 @@ Function get-DLHealthReport
             $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
 
             out-logfile -string "Generate HTML fragment for Office365MemberEval."
+
+            if ($office365MemberEval.count -gt 0)
+            {
+                out-logfile -string $office365MemberEval
+
+                [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable $office365MemberEval {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365MemberEvalErrors.count -gt 0)
+                {
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable $office365MemberEvalErrors {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            
+                    out-logfile -string "Exporting Office 365 member evaluation."
+
+                    out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
+                }
+            }
         }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -BorderRadius 10px
     }-Online -ShowHTML    
 
