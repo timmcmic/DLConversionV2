@@ -3640,7 +3640,7 @@ Function get-DLHealthReport
         if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Grant Send on Behalf To" {
-                new-htmlTable -DataTable ($allOffice365FullMailboxAccess) {
+                new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
