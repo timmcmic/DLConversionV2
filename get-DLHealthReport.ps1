@@ -3243,9 +3243,9 @@ Function get-DLHealthReport
 
                 if ($errorMembersOnly -eq $FALSE)
                 {
-                    out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers"
+                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers"
 
-                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
                         new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
@@ -3254,9 +3254,9 @@ Function get-DLHealthReport
 
                 if ($office365BypassModerationFromSendersOrMembersEvalErrors.count -gt 0)
                 {
-                    out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers ERRORS."
+                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers ERRORS."
 
-                    New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
                         new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
