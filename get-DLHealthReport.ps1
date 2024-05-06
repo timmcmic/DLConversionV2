@@ -3264,6 +3264,41 @@ Function get-DLHealthReport
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
             }
+
+            #===========================================================================
+
+            out-logfile -string "Generate HTML for moderated by"
+
+            if ($office365ModeratedByEval.count -gt 0)
+            {
+                [array]$office365ModeratedByEvalErrors = @($office365ModeratedByEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ModeratedBy"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 ModeratedBy" {
+                        new-htmlTable -DataTable ($office365ModeratedByEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ModeratedByEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ModeratedBy ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 ModeratedBy" {
+                        new-htmlTable -DataTable ( $office365ModeratedByEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            
         }
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
