@@ -3137,6 +3137,38 @@ Function get-DLHealthReport
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
             }
+
+            #===========================================================================
+
+            out-logfile -string "Generate report for attribute verification."
+
+            [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "False"})
+
+            if ($office365AttributeEval.count -gt 0)
+            {
+
+                if ($errorMemberOnline -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Single Value Attribute Evaluation" {
+                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365AttributeEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Single Value Attribute Evaluation ERRORS" {
+                        new-htmlTable -DataTable ( $office365AttributeEvalErrors | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
         }
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
