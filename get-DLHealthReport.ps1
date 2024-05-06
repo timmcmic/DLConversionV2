@@ -3710,7 +3710,7 @@ Function get-DLHealthReport
             if ($exchangeManagedBySMTP.count)
             {
                 New-HTMLSection -HeaderText "Active Directory ManagedBy Expanded" {
-                    new-htmlTable -DataTable ($exchangeManagedBySMTP | select-object Identity) {
+                    new-htmlTable -DataTable ($exchangeManagedBySMTP) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3787,7 +3787,7 @@ Function get-DLHealthReport
             if ($office365BypassModerationFromSendersOrMembers.count)
             {
                 New-HTMLSection -HeaderText "Office 365 Bypass Moderation From Senders Or Memebers Expanded" {
-                    new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembers | select-object Identity) {
+                    new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembers) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3798,7 +3798,7 @@ Function get-DLHealthReport
             if ($office365GrantSendOnBehalfTo.count)
             {
                 New-HTMLSection -HeaderText "Office 365 Grant Send On Behalf To Expanded" {
-                    new-htmlTable -DataTable ($office365GrantSendOnBehalfTo | select-object Identity) {
+                    new-htmlTable -DataTable ($office365GrantSendOnBehalfTo) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3808,7 +3808,7 @@ Function get-DLHealthReport
         if ($functionObject -ne $NULL)
         {
             New-HTMLSection -HeaderText "Distribution List Stats Count" {
-                new-htmlTable -DataTable ($office365GrantSendOnBehalfTo | select-object Identity) {
+                new-htmlTable -DataTable ($office365GrantSendOnBehalfTo) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
