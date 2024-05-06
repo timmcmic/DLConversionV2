@@ -2991,6 +2991,8 @@ Function get-DLHealthReport
 
        New-HTMLMain{
 
+            #===========================================================================
+
             out-logfile -string "Split the on premises data from the Office 365 data."
 
             [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
@@ -3036,6 +3038,8 @@ Function get-DLHealthReport
                 }
             }
 
+            #===========================================================================
+
             out-logfile -string "Generate HTML fragment for OnPremMemberEval."
 
             if ($onPremMemberEval.count -gt 0)
@@ -3067,6 +3071,70 @@ Function get-DLHealthReport
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
 
                     out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generate report for proxy address verification."
+
+            out-logfile -string "Split the on premises data from the Office 365 data."
+
+            [array]$onPremProxyAddressEval = @($office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"})
+            [array]$onPremProxyAddressEvalErrors = @($onPremProxyAddressEval | where-object {$_.isValidMember -ne "True"})
+
+            out-logfile -string "Split the cloud data from the on premises data."
+
+            [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
+            [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressEval | where-object {$_.isValidMember -ne "True"})
+
+            if ($office365ProxyAddressesEval.count -gt 0)
+            {
+                out-logfile -string "Generate HTML fragment for Office365ProxyAddressEvale with All Object."
+
+                if ($errorMemberOnline -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
+                        new-htmlTable -DataTable ($office365ProxyAddressesEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ProxyAddressEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Proxy Address ERRORS Evaluation :: Office 365 -> Active Directory" {
+                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors | | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            if ($onPremProxyAddressEval.count -gt 0)
+            {
+                out-logfile -string "Generate HTML fragment for OnPremisesProxyAddressEval with All Object."
+
+                if ($errorMemberOnline -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($onPremProxyAddressEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Proxy Address ERROR Evaluation :: Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
             }
         }
