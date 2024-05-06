@@ -87,7 +87,7 @@ function compare-recipientProperties
     }
     else 
     {
-        out-logfile -string $onPremData.msExchModerationFlags
+        out-logfile -string "No moderation flags present."
 
         $functionModerationFlags = $FALSE
 
