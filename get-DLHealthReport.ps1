@@ -3071,7 +3071,7 @@ Function get-DLHealthReport
             }
         }
         New-HTMLFooter {
-            New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+            New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
         }
     }-Online -ShowHTML    
 
