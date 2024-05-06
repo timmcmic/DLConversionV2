@@ -3298,7 +3298,39 @@ Function get-DLHealthReport
 
             #===========================================================================
 
+            out-logfile -string "Generated HTML for managed by."
+
+            if ($office365ManagedByEval.count -gt 0)
+            {
+                [array]$office365ManagedByEvalErrors = @($office365ManagedByEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ManagedBy"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Managed By" {
+                        new-htmlTable -DataTable ($office365ManagedByEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ManagedByEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ManagedBy ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Managed By" {
+                        new-htmlTable -DataTable ( $office365ManagedByEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
             
+
         }
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
