@@ -3808,11 +3808,11 @@ Function get-DLHealthReport
         if ($functionObject -ne $NULL)
         {
             New-HTMLSection -HeaderText "Distribution List Stats Count" {
-                New-HTMLList {
-                    foreach ($object in $functionObject.psobject.Properties)
+                New-HTMLList{
+                    foreach ($object in $functionObject.psObject.properties)
                     {
-                        $string = ($object.name + " " $object.value.tostring())
-                        New-HTMLListItem -Text $string -FontSize 12
+                        $string = ($object.name + " " + $object.value.tostring())
+                        new-htmlListItem -text $string -fontSize 12
                     }
                 }
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
