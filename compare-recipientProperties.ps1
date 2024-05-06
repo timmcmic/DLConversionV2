@@ -1573,27 +1573,27 @@ function compare-recipientProperties
 
         out-logfile -string $functionHiddenFromAddressListEnabled 
     }
+
+    if ($office365Data.HiddenFromAddressListsEnabled -eq $FALSE)
+    {
+        $office365HiddenFromAddressListsEnabled = "False"
+    }
+    else 
+    {
+        $office365HiddenFromAddressListsEnabled = "True"
+    }
+
+    if ($functionHiddenFromAddressListEnabled -eq $FALSE)
+    {
+        $onPremHiddentFromAddressListEnabled = "False"
+    }
+    else 
+    {
+        $onPremHiddentFromAddressListEnabled = "True"
+    }
     
     if ($office365Data.HiddenFromAddressListsEnabled -eq $functionHiddenFromAddressListEnabled)
     {
-        if ($office365Data.HiddenFromAddressListsEnabled -eq $FALSE)
-        {
-            $office365HiddenFromAddressListsEnabled = "False"
-        }
-        else 
-        {
-            $office365HiddenFromAddressListsEnabled = "True"
-        }
-
-        if ($functionHiddenFromAddressListEnabled -eq $FALSE)
-        {
-            $onPremHiddentFromAddressListEnabled = "False"
-        }
-        else 
-        {
-            $onPremHiddentFromAddressListEnabled = "True"
-        }
-
         out-logfile -string "On premises and exchange online value are valid."
 
         $functionObject = New-Object PSObject -Property @{
