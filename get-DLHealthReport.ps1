@@ -3066,10 +3066,12 @@ Function get-DLHealthReport
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
 
-        
                     out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
                 }
             }
+        }
+        New-HTMLFooter {
+            New-HTMLText -Text "Date of this report $(Get-Date)" -Color Blue -Alignment center
         }
     }-Online -ShowHTML    
 
