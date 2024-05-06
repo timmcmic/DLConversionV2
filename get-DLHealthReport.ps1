@@ -3481,6 +3481,162 @@ Function get-DLHealthReport
 
         #===========================================================================
 
+        out-logfile -string "Build HTML File for Mailbox Folder Permissions."
+
+        if ($allMailboxesFolderPermissions.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "On Premises Mailbox Folder Permissions For Group" {
+                new-htmlTable -DataTable ($allMailboxesFolderPermissions | select-object Identity,FolderName,AccessRights,SharingPermissionsFlags) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Full Mailbox Access."
+
+        if ($allObjectsFullMailboxAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "On Premises Mailbox with Group with Full Mailbox Access" {
+                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object Identity) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Members."
+
+        if ($allOffice365MemberOf.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group As A Member" {
+                new-htmlTable -DataTable ($allOffice365MemberOf | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Accept Messages From Senders Or Members."
+
+        if ($allOffice365Accept.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Accept Messages From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365Accept | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+        if ($allOffice365Reject.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Accept Messages From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365Reject | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 ManagedBy."
+
+        if ($allOffice365ManagedBy.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group ManagedBy Permissions" {
+                new-htmlTable -DataTable ($allOffice365ManagedBy | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+        if ($allOffice365BypassModeration.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Bypass Moderation From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365BypassModeration | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Forwarding Address."
+
+        if ($allOffice365ForwardingAddress.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group As ForwardingAddress" {
+                new-htmlTable -DataTable ($allOffice365ForwardingAddress | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Send As on Group."
+
+        if ($allOffice365SendAsAccessOnGroup.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with SendAs Rights on the Group" {
+                new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup | select-object Trustee) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Send As on Other Objects"
+
+        if ($allOffice365SendAsAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Having SendAs Rights" {
+                new-htmlTable -DataTable ($allOffice365SendAsAccess | select-object Identity) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML File for Mailbox Folder Permissions in Office 365."
+
+        if ($allOffice365MailboxFolderPermissions.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group As A Member" {
+                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions | select-object Identity,FolderName,AccessRights,SharingPermissionsFlags) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML File for FullMailbox Access Permissions in Office 365."
+
+        if ($allOffice365FullMailboxAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
         }
