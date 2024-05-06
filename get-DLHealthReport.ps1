@@ -4866,7 +4866,13 @@ th {
 
         out-logfile -string "Successful - import HTML file."
 
-        $html  = get-content $htmlFilePath
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         out-logfile -string "Adding generated HTML to current HTML file."
 
@@ -4884,7 +4890,13 @@ th {
 
         out-logfile -string "Successful - import HTML file."
 
-        $html  = get-content $htmlFilePath
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         out-logfile -string "Adding generated HTML to current HTML file."
 
@@ -4901,6 +4913,14 @@ th {
         $htmlFilePath = get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         $html  = get-content $htmlFilePath
 
@@ -4920,7 +4940,13 @@ th {
 
         out-logfile -string "Successful - import HTML file."
 
-        $html  = get-content $htmlFilePath
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         out-logfile -string "Adding generated HTML to current HTML file."
 
@@ -4938,7 +4964,13 @@ th {
 
         out-logfile -string "Successful - import HTML file."
 
-        $html  = get-content $htmlFilePath
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         out-logfile -string "Adding generated HTML to current HTML file."
 
@@ -4956,7 +4988,13 @@ th {
 
         out-logfile -string "Successful - import HTML file."
 
-        $html  = get-content $htmlFilePath
+        try {
+            $html  = get-content $htmlFilePath -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
 
         out-logfile -string "Adding generated HTML to current HTML file."
 
