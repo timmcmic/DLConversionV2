@@ -3146,7 +3146,7 @@ Function get-DLHealthReport
 
             if ($office365AttributeEval.count -gt 0)
             {
-                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "False"})
+                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "True"})
 
                 if ($errorMemberOnline -eq $FALSE)
                 {
