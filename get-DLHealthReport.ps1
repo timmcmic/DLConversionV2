@@ -4850,8 +4850,26 @@ th {
     #=============================================================================================================================================
     #=============================================================================================================================================
     #=============================================================================================================================================
-    
 
+    out-logfile -string "Obtain the HTML file already created."
+
+    $html0 = get-content $htmlFile
+    $finalHTML = $html0
+    $html1 = ""
+
+    try {
+        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput $false -isHealthCheck:$TRUE -errorAction STOP
+
+        $html1 = get-content $htmlFilePath
+
+        $finalHTML += $html1
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy"
+    }
+
+    $finalHTML | out-file $htmlFile
+    
     # build the properties and metrics #
     $telemetryEventProperties = @{
         DLConversionV2Command = $telemetryEventName
