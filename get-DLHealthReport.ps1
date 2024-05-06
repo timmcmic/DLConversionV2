@@ -3235,35 +3235,6 @@ Function get-DLHealthReport
 
             #===========================================================================
 
-            out-logfile -string "Build HTML for bypass moderation from senders or members."
-
-            if ($office365BypassModerationFromSendersOrMembersEval.count -gt 0)
-            {
-                [array]$office365BypassModerationFromSendersOrMembersEvalErrors = @($office365BypassModerationFromSendersOrMembersEval | where-object {$_.isValidMember -ne "True"})
-
-                if ($errorMembersOnly -eq $FALSE)
-                {
-                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers"
-
-                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
-                        new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                        } -AutoSize
-    
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($office365BypassModerationFromSendersOrMembersEvalErrors.count -gt 0)
-                {
-                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers ERRORS."
-
-                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
-                        new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                        } -AutoSize
-
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-            }
-
             #===========================================================================
 
         New-HTMLFooter {
