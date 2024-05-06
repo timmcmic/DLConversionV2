@@ -2986,7 +2986,21 @@ Function get-DLHealthReport
     New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
         New-HTMLSection -HeaderText ("Group Health Evaluation for: "+$groupSMTPAddress) {
-        }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -Invisible
+            
+            out-logfile -string "Split the on premises data from the Office 365 data."
+
+            [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
+
+            $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
+
+            out-logfile -string "Split the cloud data from the on premises data."
+
+            [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
+
+            $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
+
+            out-logfile -string "Generate HTML fragment for Office365MemberEval."
+        }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -BorderRadius 10px
     }-Online -ShowHTML    
 
 
