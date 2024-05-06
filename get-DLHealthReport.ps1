@@ -3731,95 +3731,55 @@ Function get-DLHealthReport
         
             if ($exchangeGrantSendOnBehalfToSMTP.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Active Directory Grant Send On Behalf To Expanded" {
+                    new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
-        
-                $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
-        
-                $htmlSections += $html_onPremExpandedGrantSend
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
         
             if ($office365AcceptMessagesFromSendersOrMembers.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 Accept Messages From Senders or Members Expanded" {
+                    new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembers) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-        
-                $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
-        
-                $htmlSections += $html_officeAcceptExpanded
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
         
             if ($office365RejectMessagesFromSendersOrMembers.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 Accept Messages From Senders or Members Expanded" {
+                    new-htmlTable -DataTable ($office365RejectMessagesFromSendersOrMembers) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
-        
-                $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
-        
-                $htmlSections += $html_officeRejectExpanded
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
         
             if ($office365ModeratedBy.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 ModeratedBy Expanded" {
+                    new-htmlTable -DataTable ($office365ModeratedBy) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
-        
-                $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
-        
-                $htmlSections += $html_officeModeratedExpanded
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
         
             if ($office365ManagedBy.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 ManagedBy Expanded" {
+                    new-htmlTable -DataTable ($office365ManagedBy) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
-        
-                $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
-        
-                $htmlSections += $html_officeManagedByExpanded
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
