@@ -4853,22 +4853,30 @@ th {
 
     out-logfile -string "Obtain the HTML file already created."
 
-    $html0 = get-content $htmlFile
-    $finalHTML = $html0
+    $html = get-content $htmlFile
+    $finalHTML = $html
     $html1 = ""
 
     try {
+        out-logfile -string "Invoking get-DLHierarchyFromLDAP"
+
         $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput $false -isHealthCheck:$TRUE -errorAction STOP
 
-        $html1 = get-content $htmlFilePath
+        out-logfile -string "Successful - import HTML file."
 
-        $finalHTML += $html1
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy"
         out-logfile -string $_
     }
 
+    out-logfile -string "Writing combined HTML file to disk."
+    
     $finalHTML | out-file $htmlFile
     
     # build the properties and metrics #
