@@ -3047,11 +3047,13 @@ Function get-DLHealthReport
 
                     out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
 
-                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                        } -AutoSize
-
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    new-htmlPanel{
+                        New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
+                            new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            } -AutoSize
+    
+                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }
                 }
         
                 if ($onPremMemberEvalErrors.count -gt 0)
