@@ -3639,7 +3639,7 @@ Function get-DLHealthReport
 
         if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
         {
-            New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+            New-HTMLSection -HeaderText "Office 365 Grant Send on Behalf To" {
                 new-htmlTable -DataTable ($allOffice365FullMailboxAccess) {
                 } -AutoSize
 
