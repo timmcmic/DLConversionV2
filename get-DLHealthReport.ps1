@@ -3086,7 +3086,7 @@ Function get-DLHealthReport
             out-logfile -string "Split the cloud data from the on premises data."
 
             [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
-            [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressEval | where-object {$_.isValidMember -ne "True"})
+            [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressesEval | where-object {$_.isValidMember -ne "True"})
 
             if ($office365ProxyAddressesEval.count -gt 0)
             {
