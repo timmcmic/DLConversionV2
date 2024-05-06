@@ -4851,6 +4851,8 @@ th {
     #=============================================================================================================================================
     #=============================================================================================================================================
 
+    Disable-AllPowerShellSessions
+
     out-logfile -string "Obtain the HTML file already created."
 
     $html = get-content $htmlFile
@@ -4860,7 +4862,7 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromLDAP"
 
-        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput $false -isHealthCheck:$TRUE -errorAction STOP
+        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
@@ -4876,7 +4878,7 @@ th {
     }
 
     out-logfile -string "Writing combined HTML file to disk."
-    
+
     $finalHTML | out-file $htmlFile
     
     # build the properties and metrics #
