@@ -3067,7 +3067,7 @@ Function get-DLHealthReport
                     out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
                 }
             }
-        }-HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"
+        }-TextSize "16" -TextColor "Black"
     }-Online -ShowHTML    
 
 
