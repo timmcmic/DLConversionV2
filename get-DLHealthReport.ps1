@@ -3590,7 +3590,7 @@ Function get-DLHealthReport
         if ($allOffice365SendAsAccessOnGroup.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Recipients with SendAs Rights on the Group" {
-                new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup | select-object Trustee) {
+                new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3603,7 +3603,7 @@ Function get-DLHealthReport
         if ($allOffice365SendAsAccess.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Recipients with Group Having SendAs Rights" {
-                new-htmlTable -DataTable ($allOffice365SendAsAccess | select-object Identity) {
+                new-htmlTable -DataTable ($allOffice365SendAsAccess) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3616,7 +3616,7 @@ Function get-DLHealthReport
         if ($allOffice365MailboxFolderPermissions.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Recipients with Group As A Member" {
-                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions | select-object Identity,FolderName,AccessRights,SharingPermissionsFlags) {
+                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3629,7 +3629,18 @@ Function get-DLHealthReport
         if ($allOffice365FullMailboxAccess.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                new-htmlTable -DataTable ($allOffice365FullMailboxAccess | select-object Identity) {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAccess) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        out-logfile -string "Build HTML File for Office 365 Grant Send on Behalf To."
+
+        if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAccess) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3688,7 +3699,7 @@ Function get-DLHealthReport
             if ($exchangeRejectMessagesSMTP.count)
             {
                 New-HTMLSection -HeaderText "Active Directory Reject Messages From Senders Or Members Expanded" {
-                    new-htmlTable -DataTable ($exchangeRejectMessagesSMTP | select-object Identity) {
+                    new-htmlTable -DataTable ($exchangeRejectMessagesSMTP) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3802,7 +3813,7 @@ Function get-DLHealthReport
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-            }    
+            }
         }
 
         if ($functionObject -ne $NULL)
