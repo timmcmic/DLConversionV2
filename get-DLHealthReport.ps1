@@ -3812,7 +3812,7 @@ Function get-DLHealthReport
                     new-HTMLChart {
                         New-ChartToolbar -Download
                         New-ChartLegend -Name 'Setting Count Summary'
-                        New-ChartBarOptions -DataLabelsFontSize 12
+                        New-ChartBarOptions -DataLabelsFontSize 12 -Distributed
                         foreach ($object in $functionObject.psobject.Properties)
                         {
                             New-ChartBar -Name $Object.Name -Value $Object.Value
