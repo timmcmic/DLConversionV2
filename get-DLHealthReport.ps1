@@ -3360,9 +3360,127 @@ Function get-DLHealthReport
 
             #===========================================================================
 
+            out-logfile -string "Build HTML file for groups member of."
 
+            if ($allgroupsmemberof.count -gt 0)
+            {
+                New-HTMLSection -HeaderText "Group Member Of Other Groups" {
+                    new-htmlTable -DataTable ($allgroupsmemberof | select-object distinguishedName) {
+                    } -AutoSize
+
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML file for groups accept messages from."
+
+            if ($allGroupsAccept.count -gt 0)
+            {
+                New-HTMLSection -HeaderText "Group Accept Messages from Senders or Members on Other Groups" {
+                    new-htmlTable -DataTable ($allGroupsAccept | select-object distinguishedName) {
+                    } -AutoSize
+
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
 
         }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for groups reject messages from."
+
+        if ($allGroupsReject.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group Reject Messages From Senders or Members on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsReject | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for groups managed by."
+
+        $allGroupsManagedByHTML = $allGroupsManagedBy + $allGroupsCoManagedByBL
+
+        if ($allGroupsManagedByHTML.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group ManagedBy on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsManagedByHTML | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for bypass moderation from senders or members."
+
+        if ($allGroupsBypassModeration.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group Bypass Moderation From Senders or Members on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsBypassModeration | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for grant send on behalf to."
+
+        if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Grant Send On Behalf To on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for forwarding."
+
+        if ($allUsersForwardingAddress.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Actve Directory Recipients With Group As ForwardingAddress" {
+                new-htmlTable -DataTable ($allUsersForwardingAddress | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for send as on group.."
+
+        if ($exchangeSendAsSMTP.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Active Directory Objects with SendAs on Group" {
+                new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object DN) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML of SendAs on other objects."
+
+        if ($allObjectsSendAsAccessNormalized.Count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Active Directory Objects with Group with SendAs Rights" {
+                new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized | select-object DN) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
         }
