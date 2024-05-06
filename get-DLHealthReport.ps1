@@ -4970,38 +4970,6 @@ th {
     out-logfile -string "Writing combined HTML file to disk."
 
     $finalHTML | out-file $htmlFile
-
-
-    Parameter(Mandatory = $true)]
-        [string]$groupObjectID,
-        #Define Microsoft Graph Parameters
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("China","Global","USGov","USGovDod")]
-        [string]$msGraphEnvironmentName="Global",
-        [Parameter(Mandatory=$true)]
-        [string]$msGraphTenantID="",
-        [Parameter(Mandatory=$false)]
-        [string]$msGraphCertificateThumbprint="",
-        [Parameter(Mandatory=$false)]
-        [string]$msGraphApplicationID="",
-        #Define other mandatory parameters
-        [Parameter(Mandatory = $true)]
-        [string]$logFolderPath,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowTelemetryCollection=$TRUE,
-        #Define other non-mandatory parameters.
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$expandGroupMembership=$TRUE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$expandDynamicGroupMembership=$false,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$enableTextOutput=$TRUE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$enableHTMLOutput=$TRUE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$reverseHierarchy=$FALSE,
-        [Parameter(Mandatory =$FALSE)]
-        [boolean]$isHealthCheck=$FALSE
     
     # build the properties and metrics #
     $telemetryEventProperties = @{
