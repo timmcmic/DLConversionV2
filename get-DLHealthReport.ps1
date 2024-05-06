@@ -3637,6 +3637,230 @@ Function get-DLHealthReport
 
         #===========================================================================
 
+        if ($includeVerboseOutput -eq $TRUE)
+        {
+            out-logfile -string "Creating HTML output for normalized membership."
+
+            if ($exchangeDLMembershipSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($exchangeDLMembershipSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+            
+            out-logfile -string "Creating HTML output for Azure AD Membership."
+        
+            if ($azureADDlMembership.count)
+            {
+                New-HTMLSection -HeaderText "Azure Active Directory Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($azureADDlMembership) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for Office 365 Membership."
+        
+            if ($office365DLMembership.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($office365DLMembership) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises accept messages from."
+        
+            if ($exchangeAcceptMessagesSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Accept Messages From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises reject messages from."
+        
+            if ($exchangeRejectMessagesSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Reject Messages From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeRejectMessagesSMTP | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+            
+            out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
+        
+            if ($exchangeModeratedBySMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory ModeratedBy Expanded" {
+                    new-htmlTable -DataTable ($exchangeModeratedBySMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
+        
+            if ($exchangeManagedBySMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory ManagedBy Expanded" {
+                    new-htmlTable -DataTable ($exchangeManagedBySMTP | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+        
+            if ($exchangeBypassModerationSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Bypass Moderation From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeBypassModerationSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+        
+            if ($exchangeGrantSendOnBehalfToSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Active Directory Grant Send On Behalf To Expanded</h2>'}
+        
+                $html_onPremExpandedGrantSend = ConvertTo-EnhancedHTMLFragment -inputObject $exchangeGrantSendOnBehalfToSMTP @params
+        
+                $htmlSections += $html_onPremExpandedGrantSend
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
+        
+            if ($office365AcceptMessagesFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+        
+                $html_officeAcceptExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365AcceptMessagesFromSendersOrMembers @params
+        
+                $htmlSections += $html_officeAcceptExpanded
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
+        
+            if ($office365RejectMessagesFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 Accept Messages From Senders or Members Expanded</h2>'}
+        
+                $html_officeRejectExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365RejectMessagesFromSendersOrMembers @params
+        
+                $htmlSections += $html_officeRejectExpanded
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
+        
+            if ($office365ModeratedBy.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 ModeratedBy Expanded</h2>'}
+        
+                $html_officeModeratedExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ModeratedBy @params
+        
+                $htmlSections += $html_officeModeratedExpanded
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
+        
+            if ($office365ManagedBy.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 ManagedBy Expanded</h2>'}
+        
+                $html_officeManagedByExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365ManagedBy @params
+        
+                $htmlSections += $html_officeManagedByExpanded
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
+        
+            if ($office365BypassModerationFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
+        
+                $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
+        
+                $htmlSections += $html_officeBypassExpanded
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+        
+            if ($office365GrantSendOnBehalfTo.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                $params = @{'As'='List';
+                            'MakeHiddenSection'=$true;
+                            'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
+        
+                $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
+        
+                $htmlSections += $html_officeGrantExpanded 
+            }    
+        }
+
         New-HTMLFooter {
             New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
         }
