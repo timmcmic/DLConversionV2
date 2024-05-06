@@ -3092,7 +3092,7 @@ Function get-DLHealthReport
 
                 out-logfile -string "Generate HTML fragment for Office365ProxyAddressEvale with All Object."
 
-                if ($errorMemberOnline -eq $FALSE)
+                if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
                         new-htmlTable -DataTable ($office365ProxyAddressesEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
@@ -3119,7 +3119,7 @@ Function get-DLHealthReport
 
                 out-logfile -string "Generate HTML fragment for OnPremisesProxyAddressEval with All Object."
 
-                if ($errorMemberOnline -eq $FALSE)
+                if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
                         new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
@@ -3148,7 +3148,7 @@ Function get-DLHealthReport
             {
                 [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isValidMember -ne "True"})
 
-                if ($errorMemberOnline -eq $FALSE)
+                if ($errorMembersOnly -eq $FALSE)
                 {
                     out-logfile -string "Generate HTML fragment for Office365AttributeEval"
 
