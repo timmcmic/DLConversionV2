@@ -3629,7 +3629,7 @@ Function get-DLHealthReport
         if ($allOffice365FullMailboxAccess.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAccess | select-object Identity) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3786,39 +3786,32 @@ Function get-DLHealthReport
         
             if ($office365BypassModerationFromSendersOrMembers.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 Bypass Moderation From Senders Or Memebers Expanded" {
+                    new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembers | select-object Identity) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 Bypass Moderation From Senders Or Memebers Expanded</h2>'}
-        
-                $html_officeBypassExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365BypassModerationFromSendersOrMembers @params
-        
-                $htmlSections += $html_officeBypassExpanded
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
         
             if ($office365GrantSendOnBehalfTo.count)
             {
-                New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                    new-htmlTable -DataTable ($allOffice365FullMailboxAcces | select-object Identity) {
+                New-HTMLSection -HeaderText "Office 365 Grant Send On Behalf To Expanded" {
+                    new-htmlTable -DataTable ($office365GrantSendOnBehalfTo | select-object Identity) {
                     } -AutoSize
     
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-
-                $params = @{'As'='List';
-                            'MakeHiddenSection'=$true;
-                            'PreContent'='<h2>&diams;Office 365 Grant Send On Behalf To Expanded</h2>'}
-        
-                $html_officeGrantExpanded = ConvertTo-EnhancedHTMLFragment -inputObject $office365GrantSendOnBehalfTo @params
-        
-                $htmlSections += $html_officeGrantExpanded 
             }    
+        }
+
+        if ($functionObject -ne $NULL)
+        {
+            New-HTMLSection -HeaderText "Distribution List Stats Count" {
+                new-htmlTable -DataTable ($office365GrantSendOnBehalfTo | select-object Identity) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
         }
 
         New-HTMLFooter {
