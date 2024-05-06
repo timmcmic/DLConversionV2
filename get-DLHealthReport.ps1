@@ -4877,9 +4877,131 @@ th {
         out-logfile -string $_
     }
 
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromLDAP Reverse"
+
+        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
+
+        $htmlFilePath = get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline Reverse"
+
+        $htmlFilePath = get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromGraph"
+
+        $htmlFilePath = get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenandID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromGraph Reverse"
+
+        $htmlFilePath = get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenandID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        $html  = get-content $htmlFilePath
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
     out-logfile -string "Writing combined HTML file to disk."
 
     $finalHTML | out-file $htmlFile
+
+
+    Parameter(Mandatory = $true)]
+        [string]$groupObjectID,
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$true)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
+        #Define other mandatory parameters
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowTelemetryCollection=$TRUE,
+        #Define other non-mandatory parameters.
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$expandGroupMembership=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$expandDynamicGroupMembership=$false,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$enableTextOutput=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$enableHTMLOutput=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$reverseHierarchy=$FALSE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$isHealthCheck=$FALSE
     
     # build the properties and metrics #
     $telemetryEventProperties = @{
