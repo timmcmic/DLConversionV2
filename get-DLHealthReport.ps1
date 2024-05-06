@@ -3808,9 +3808,15 @@ Function get-DLHealthReport
         if ($functionObject -ne $NULL)
         {
             New-HTMLSection -HeaderText "Distribution List Stats Count" {
-                new-htmlTable -DataTable ($functionObject) {
-                } -AutoSize
+                new-HTMLChart {
+                    New-ChartToolbar -Download
+                    New-ChartLegend -Name 'Setting Count Summary'
 
+                    foreach ($object in $functionObject.psobject.Properties)
+                    {
+                        New-ChartBar -Name $Object.Name -Value $Object.Value
+                    }
+                }
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
         }
 
