@@ -2985,91 +2985,89 @@ Function get-DLHealthReport
 
     New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
-        New-HTMLSection -HeaderText ("Group Health Evaluation for: "+$groupSMTPAddress) {
-            New-HTMLPanel{
-                out-logfile -string "Split the on premises data from the Office 365 data."
+        New-HTMLTab -Heading ("Group Health Evaluation for: "+$groupSMTPAddress) {
 
-                [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
+            out-logfile -string "Split the on premises data from the Office 365 data."
 
-                $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
+            [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
 
-                out-logfile -string "Split the cloud data from the on premises data."
+            $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
 
-                [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
+            out-logfile -string "Split the cloud data from the on premises data."
 
-                $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
+            [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
 
-                out-logfile -string "Generate HTML fragment for Office365MemberEval."
+            $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
 
-                if ($office365MemberEval.count -gt 0)
+            out-logfile -string "Generate HTML fragment for Office365MemberEval."
+
+            if ($office365MemberEval.count -gt 0)
+            {
+                out-logfile -string $office365MemberEval
+
+                [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
+
+                if ($errorMembersOnly -eq $FALSE)
                 {
-                    out-logfile -string $office365MemberEval
+                    out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
+                    New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable ($office365MemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
 
-                    [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
 
-                    if ($errorMembersOnly -eq $FALSE)
-                    {
-                        out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
-                        New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
-                            new-htmlTable -DataTable ($office365MemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
+                if ($office365MemberEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365MembersEval with ERRORS only."
 
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                    }
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
 
-                    if ($office365MemberEvalErrors.count -gt 0)
-                    {
-                        out-logfile -string "Generate HTML fragment for Office365MembersEval with ERRORS only."
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+            
+                    out-logfile -string "Exporting Office 365 member evaluation."
 
-                        New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
-                            new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
-
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                
-                        out-logfile -string "Exporting Office 365 member evaluation."
-
-                        out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
-                    }
+                    out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
                 }
             }
 
-            New-HTMLPanel{
-                out-logfile -string "Generate HTML fragment for OnPremMemberEval."
+            out-logfile -string "Generate HTML fragment for OnPremMemberEval."
 
-                if ($onPremMemberEval.count -gt 0)
+            if ($onPremMemberEval.count -gt 0)
+            {
+                out-logfile -string $onPremMemberEval
+        
+                [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
+        
+                if ($errorMembersOnly -eq $FALSE)
                 {
-                    out-logfile -string $onPremMemberEval
-            
-                    [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
-            
-                    if ($errorMembersOnly -eq $FALSE)
-                    {
 
-                        out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
 
-                        New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
-                            new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
 
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                    }
-            
-                    if ($onPremMemberEvalErrors.count -gt 0)
-                    {
-                        out-logfile -string "Generate HTML fragment for OnPremMemberEvale with ERRORS only."
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+        
+                if ($onPremMemberEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEvale with ERRORS only."
 
-                        New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365" {
-                            new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
 
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-            
-                        out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
-                    }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+        
+                    out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
                 }
             }
-        }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -BorderRadius 10px
+        }-HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"
     }-Online -ShowHTML    
 
 
