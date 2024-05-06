@@ -3011,7 +3011,7 @@ Function get-DLHealthReport
                 {
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
                     New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
-                        new-htmlTable -DataTable $office365MemberEval {
+                        new-htmlTable -DataTable ($office365MemberEval | select-object Member,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,PresentActiveDirectory,PresentAzureActiveDirectory,PresentExchangeOnline,ValidMember,ErrorMessage) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3020,9 +3020,9 @@ Function get-DLHealthReport
                 if ($office365MemberEvalErrors.count -gt 0)
                 {
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with ERRORS only."
-                    
+
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
-                        new-htmlTable -DataTable $office365MemberEvalErrors {
+                        new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object Member,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,PresentActiveDirectory,PresentAzureActiveDirectory,PresentExchangeOnline,ValidMember,ErrorMessage) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
