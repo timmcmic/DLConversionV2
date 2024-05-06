@@ -4866,6 +4866,7 @@ th {
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy"
+        out-logfile -string $_
     }
 
     $finalHTML | out-file $htmlFile
