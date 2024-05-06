@@ -3808,7 +3808,7 @@ Function get-DLHealthReport
         if ($functionObject -ne $NULL)
         {
             New-HTMLSection -HeaderText "Distribution List Stats Count" {
-                new-htmlTable -DataTable ($office365GrantSendOnBehalfTo) {
+                new-htmlTable -DataTable ($functionObject) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
