@@ -2983,7 +2983,8 @@ Function get-DLHealthReport
 
     out-logfile -string "Building the HTML report for export."
 
-    New-HTML -TitleText ("Group health reprot for: "+$groupObjectID) -FilePath $htmlFile {
+    New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
+        New-HTMLText -Text ("Group Health Report for: "+$groupSMTPAddress) -FontWeight 400 -FontStyle italic
         New-HTMLTableOption -DataStore JavaScript
 
     }-Online -ShowHTML    
