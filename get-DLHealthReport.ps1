@@ -3811,6 +3811,7 @@ Function get-DLHealthReport
                 new-HTMLChart {
                     New-ChartToolbar -Download
                     New-ChartLegend -Name 'Setting Count Summary'
+                    New-ChartBarOptions -Distributed
 
                     foreach ($object in $functionObject.psobject.Properties)
                     {
