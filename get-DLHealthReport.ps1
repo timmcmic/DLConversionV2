@@ -3081,15 +3081,15 @@ Function get-DLHealthReport
             out-logfile -string "Split the on premises data from the Office 365 data."
 
             [array]$onPremProxyAddressEval = @($office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"})
-            [array]$onPremProxyAddressEvalErrors = @($onPremProxyAddressEval | where-object {$_.isValidMember -ne "True"})
 
             out-logfile -string "Split the cloud data from the on premises data."
 
             [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
-            [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressesEval | where-object {$_.isValidMember -ne "True"})
 
             if ($office365ProxyAddressesEval.count -gt 0)
             {
+                [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressesEval | where-object {$_.isValidMember -ne "True"})
+
                 out-logfile -string "Generate HTML fragment for Office365ProxyAddressEvale with All Object."
 
                 if ($errorMemberOnline -eq $FALSE)
@@ -3115,6 +3115,8 @@ Function get-DLHealthReport
 
             if ($onPremProxyAddressEval.count -gt 0)
             {
+                [array]$onPremProxyAddressEvalErrors = @($onPremProxyAddressEval | where-object {$_.isValidMember -ne "True"})
+
                 out-logfile -string "Generate HTML fragment for OnPremisesProxyAddressEval with All Object."
 
                 if ($errorMemberOnline -eq $FALSE)
@@ -3142,10 +3144,9 @@ Function get-DLHealthReport
 
             out-logfile -string "Generate report for attribute verification."
 
-            [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "False"})
-
             if ($office365AttributeEval.count -gt 0)
             {
+                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isvValidMember -ne "True"})
 
                 if ($errorMemberOnline -eq $FALSE)
                 {
