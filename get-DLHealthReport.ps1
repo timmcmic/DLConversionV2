@@ -3615,7 +3615,7 @@ Function get-DLHealthReport
 
         if ($allOffice365MailboxFolderPermissions.count -gt 0)
         {
-            New-HTMLSection -HeaderText "Office 365 Recipients with Group As A Member" {
+            New-HTMLSection -HeaderText "All Office 365 Mailboxes with Mailbox Folder Permisssions" {
                 new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) {
                 } -AutoSize
 
