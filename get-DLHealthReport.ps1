@@ -2985,7 +2985,11 @@ Function get-DLHealthReport
 
     New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
-        New-HTMLSection -HeaderText ("Group Health Evaluation for: "+$groupSMTPAddress) {
+        New-HTMLHeader{
+            New-HTMLText -Text ("Group Health Evaluation for: "+$groupSMTPAddress) -FontSize 16 -Color White -BackGroundColor Black -Alignment center
+        }
+
+       New-HTMLMain{
 
             out-logfile -string "Split the on premises data from the Office 365 data."
 
@@ -3010,12 +3014,10 @@ Function get-DLHealthReport
                 if ($errorMembersOnly -eq $FALSE)
                 {
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
-                    New-HTMLPanel{
-                        New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
-                            new-htmlTable -DataTable ($office365MemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                    }
+                    New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable ($office365MemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($office365MemberEvalErrors.count -gt 0)
@@ -3047,13 +3049,11 @@ Function get-DLHealthReport
 
                     out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
 
-                    new-htmlPanel{
-                        New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
-                            new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            } -AutoSize
-    
-                        }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                    }
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
         
                 if ($onPremMemberEvalErrors.count -gt 0)
@@ -3070,7 +3070,7 @@ Function get-DLHealthReport
                     out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
                 }
             }
-        }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -BorderRadius 10px
+        }
     }-Online -ShowHTML    
 
 
