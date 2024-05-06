@@ -3032,6 +3032,40 @@ Function get-DLHealthReport
                     out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
                 }
             }
+
+            out-logfile -string "Generate HTML fragment for OnPremMemberEval."
+
+            if ($onPremMemberEval.count -gt 0)
+            {
+                out-logfile -string $onPremMemberEval
+        
+                [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
+        
+                if ($errorMembersOnly -eq $FALSE)
+                {
+
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+        
+                if ($onPremMemberEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEvale with ERRORS only."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+        
+                    out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
+                }
+            }
         }-HeaderTextAlignment "Center" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -BorderRadius 10px
     }-Online -ShowHTML    
 
