@@ -2986,7 +2986,7 @@ Function get-DLHealthReport
     New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
         New-HTMLHeader{
-            New-HTMLText -Text ("Group Health Evaluation for: "+$groupSMTPAddress) -FontSize 16 -Color White -BackGroundColor Black -Alignment center
+            New-HTMLText -Text ("*** Group Health Evaluation for: "+$groupSMTPAddress+" ***") -FontSize 24 -Color White -BackGroundColor Black -Alignment center
         }
 
        New-HTMLMain{
