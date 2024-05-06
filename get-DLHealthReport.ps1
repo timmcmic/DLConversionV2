@@ -4907,6 +4907,8 @@ th {
         out-logfile -string $_
     }
 
+    <#
+
     try {
         out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
 
@@ -4954,6 +4956,8 @@ th {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
         out-logfile -string $_
     }
+
+    #>
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph"
