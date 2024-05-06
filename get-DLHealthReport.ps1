@@ -3173,35 +3173,6 @@ Function get-DLHealthReport
 
             #===========================================================================
 
-            out-logfile -string "Build HTML for accept messages from senders or members."
-
-            if ($office365AcceptMessagesFromSendersOrMembersEval.count -gt 0)
-            {
-                [array]$office365AcceptMessagesFromSendersOrMembersEvalErrors = @($office365AcceptMessagesFromSendersOrMembersEval | where-object {$_.isValidMember -ne "True"})
-
-                if ($errorMembersOnly -eq $FALSE)
-                {
-                    out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers"
-
-                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
-                        new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                        } -AutoSize
-    
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($office365AcceptMessagesFromSendersOrMembersEvalErrors.count -gt 0)
-                {
-                    out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers ERRORS."
-
-                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
-                        new-htmlTable -DataTable ( $office365AcceptMessagesFromSendersOrMembersEvalErrors | select-object select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                        } -AutoSize
-
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-            }
-
             #===========================================================================
 
             #===========================================================================
