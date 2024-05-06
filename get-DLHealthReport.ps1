@@ -2983,15 +2983,11 @@ Function get-DLHealthReport
 
     out-logfile -string "Building the HTML report for export."
 
-    New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile 
-    {
+    New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
         New-HTMLTableOption -DataStore JavaScript
-        New-HTMLSection -Invisible 
-        {
-            New-HTMLPanel 
-            {
-                New-HTMLSummary -Title ("Group Health Report for: "+$groupSMTPAddress) 
-                {
+        New-HTMLSection -Invisible {
+            New-HTMLPanel {
+                New-HTMLSummary -Title ("Group Health Report for: "+$groupSMTPAddress) {
                 } -TitleRight "$(Get-Date)"   
             }    
         } 
