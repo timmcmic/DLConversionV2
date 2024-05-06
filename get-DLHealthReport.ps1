@@ -3151,7 +3151,7 @@ Function get-DLHealthReport
                 if ($errorMemberOnline -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Single Value Attribute Evaluation" {
-                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365AttributeEval | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
