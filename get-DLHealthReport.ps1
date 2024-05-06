@@ -3329,6 +3329,37 @@ Function get-DLHealthReport
 
             #===========================================================================
 
+            out-logfile -string "Build HTML for grant send on behalf to."
+
+            if ($office365GrantSendOnBehalfToEval.count -gt 0)
+            {
+                [array]$office365GrantSendOnBehalfToEvalErrors = @($office365GrantSendOnBehalfToEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Grant Send On Behalf To" {
+                        new-htmlTable -DataTable ($office365GrantSendOnBehalfToEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365GrantSendOnBehalfToEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Grant Send On Behalf To" {
+                        new-htmlTable -DataTable ( $office365GrantSendOnBehalfToEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
             
 
         }
