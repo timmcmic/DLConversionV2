@@ -3812,7 +3812,7 @@ Function get-DLHealthReport
                     foreach ($object in $functionObject.psObject.properties)
                     {
                         $string = ($object.name + " " + $object.value.tostring())
-                        new-htmlListItem -text $string -fontSize 12
+                        new-htmlListItem -text $string -fontSize 14
                     }
                 }
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
