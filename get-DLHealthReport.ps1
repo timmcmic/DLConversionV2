@@ -3486,7 +3486,16 @@ Function get-DLHealthReport
         if ($allMailboxesFolderPermissions.count -gt 0)
         {
             New-HTMLSection -HeaderText "On Premises Mailbox Folder Permissions For Group" {
-                new-htmlTable -DataTable ($allMailboxesFolderPermissions) {
+                new-htmlTable -DataTable ($allMailboxesFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        if ($allObjectsFullMailboxAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "On Premises Full Mailbox Access for Group" {
+                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3499,7 +3508,7 @@ Function get-DLHealthReport
         if ($allObjectsFullMailboxAccess.count -gt 0)
         {
             New-HTMLSection -HeaderText "On Premises Mailbox with Group with Full Mailbox Access" {
-                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object Identity) {
+                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object User,Identity,AccessRights) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3616,7 +3625,7 @@ Function get-DLHealthReport
         if ($allOffice365MailboxFolderPermissions.count -gt 0)
         {
             New-HTMLSection -HeaderText "All Office 365 Mailboxes with Mailbox Folder Permisssions" {
-                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) {
+                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3629,7 +3638,7 @@ Function get-DLHealthReport
         if ($allOffice365FullMailboxAccess.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
-                new-htmlTable -DataTable ($allOffice365FullMailboxAccess) {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAccess | select-object User,Identity,AccessRights) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3640,7 +3649,7 @@ Function get-DLHealthReport
         if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
         {
             New-HTMLSection -HeaderText "Office 365 Grant Send on Behalf To" {
-                new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo) {
+                new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo | select-object DisplayName,ExternalDirectoryObjectID,PrimarySMTPAddress,GroupType) {
                 } -AutoSize
 
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
