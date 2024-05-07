@@ -113,6 +113,7 @@
                                 out-logfile -string "The user was located successfully capturing information."
 
                                 $functionObject = New-Object PSObject -Property @{
+                                    Name = $functionObject.name
                                     DisplayName = $functionRecipient.displayName
                                     PrimarySMTPAddressOrUPN = $functionRecipient.primarySMTPAddress
                                     ExternalDirectoryObjectID = ("User_"+$functionRecipient.externalDirectoryObjectID)

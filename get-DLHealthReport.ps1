@@ -2980,7 +2980,863 @@ Function get-DLHealthReport
     #=============================================================================================================================================
     #=============================================================================================================================================
 
+
     out-logfile -string "Building the HTML report for export."
+
+    New-HTML -TitleText $groupSMTPAddress -FilePath $htmlFile {
+        New-HTMLTableOption -DataStore JavaScript
+        New-HTMLHeader{
+            New-HTMLText -Text ("*** Group Health Evaluation for: "+$groupSMTPAddress+" ***") -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+        }
+
+       New-HTMLMain{
+
+            #===========================================================================
+
+            out-logfile -string "Split the on premises data from the Office 365 data."
+
+            [array]$onPremMemberEval = @($office365MemberEval | where-object {$_.isPresentOnPremises -eq "Source"})
+
+            $onPremMemberEval = $onPremMemberEval | sort-object -property isValidMember
+
+            out-logfile -string "Split the cloud data from the on premises data."
+
+            [array]$office365MemberEval = @($office365MemberEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
+
+            $office365MemberEval = $office365MemberEval | sort-object -property isValidMember
+
+            out-logfile -string "Generate HTML fragment for Office365MemberEval."
+
+            if ($office365MemberEval.count -gt 0)
+            {
+                out-logfile -string $office365MemberEval
+
+                [array]$office365MemberEvalErrors = @($office365MemberEval | where {$_.errorMessage -ne "N/A"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
+                    New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable ($office365MemberEval | select-object DisplayName,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,OnPremObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365MemberEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365MembersEval with ERRORS only."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
+                        new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object DisplayName,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,OnPremObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+            
+                    out-logfile -string "Exporting Office 365 member evaluation."
+
+                    out-xmlFile -itemToExport $office365MemberEvalErrors -itemNameToExport $xmlFiles.office365MemberEvalErrorsXML.value
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generate HTML fragment for OnPremMemberEval."
+
+            if ($onPremMemberEval.count -gt 0)
+            {
+                out-logfile -string $onPremMemberEval
+        
+                [array]$onPremMemberEvalErrors = @($onPremMemberEval | where {$_.errorMessage -ne "N/A"})
+        
+                if ($errorMembersOnly -eq $FALSE)
+                {
+
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,ObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+        
+                if ($onPremMemberEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for OnPremMemberEvale with ERRORS only."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,ObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                    out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generate report for proxy address verification."
+
+            out-logfile -string "Split the on premises data from the Office 365 data."
+
+            [array]$onPremProxyAddressEval = @($office365ProxyAddressesEval | where-object {$_.isPresentOnPremises -eq "Source"})
+
+            out-logfile -string "Split the cloud data from the on premises data."
+
+            [array]$office365ProxyAddressesEval = @($office365ProxyAddressesEval | where-object {$_.isPresentInExchangeOnline -eq "Source"})
+
+            if ($office365ProxyAddressesEval.count -gt 0)
+            {
+                [array]$office365ProxyAddressEvalErrors = @($office365ProxyAddressesEval | where-object {$_.isValidMember -ne "True"})
+
+                out-logfile -string "Generate HTML fragment for Office365ProxyAddressEvale with All Object."
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
+                        new-htmlTable -DataTable ($office365ProxyAddressesEval  | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ProxyAddressEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Proxy Address ERRORS Evaluation :: Office 365 -> Active Directory" {
+                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            if ($onPremProxyAddressEval.count -gt 0)
+            {
+                [array]$onPremProxyAddressEvalErrors = @($onPremProxyAddressEval | where-object {$_.isValidMember -ne "True"})
+
+                out-logfile -string "Generate HTML fragment for OnPremisesProxyAddressEval with All Object."
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($onPremProxyAddressEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Proxy Address ERROR Evaluation :: Active Directory -> Office 365" {
+                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generate report for attribute verification."
+
+            if ($office365AttributeEval.count -gt 0)
+            {
+                [array]$office365AttributeEvalErrors = @($office365AttributeEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365AttributeEval"
+
+                    New-HTMLSection -HeaderText "Single Value Attribute Evaluation" {
+                        new-htmlTable -DataTable ($office365AttributeEval | select-object Attribute,OnPremsiesValue,AzureADValue,ExchangeOnlineValue,isValidInAzure,isValidInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365AttributeEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365AttributeEval ERRORS."
+
+                    New-HTMLSection -HeaderText "Single Value Attribute Evaluation ERRORS" {
+                        new-htmlTable -DataTable ( $office365AttributeEvalErrors | select-object Attribute,OnPremsiesValue,AzureADValue,ExchangeOnlineValue,isValidInAzure,isValidInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML for accept messages from senders or members."
+
+            if ($office365AcceptMessagesFromSendersOrMembersEval.count -gt 0)
+            {
+                [array]$office365AcceptMessagesFromSendersOrMembersEvalErrors = @($office365AcceptMessagesFromSendersOrMembersEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
+                        new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365AcceptMessagesFromSendersOrMembersEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
+                        new-htmlTable -DataTable ( $office365AcceptMessagesFromSendersOrMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML for reject messages from senders or members."
+
+            if ($office365RejectMessagesFromSendrsOfMembersEval.count -gt 0)
+            {
+                [array]$office365RejectMessagesFromSendrsOfMembersEvalErrors = @($office365RejectMessagesFromSendrsOfMembersEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
+                        new-htmlTable -DataTable ($office365RejectMessagesFromSendrsOfMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365RejectMessagesFromSendrsOfMembersEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
+                        new-htmlTable -DataTable ( $office365RejectMessagesFromSendrsOfMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+
+            out-logfile -string "Build HTML for bypass moderation from senders or members."
+
+            if ($office365BypassModerationFromSendersOrMembersEval.count -gt 0)
+            {
+                [array]$office365BypassModerationFromSendersOrMembersEvalErrors = @($office365BypassModerationFromSendersOrMembersEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
+                        new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365BypassModerationFromSendersOrMembersEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS:: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
+                        new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generate HTML for moderated by"
+
+            if ($office365ModeratedByEval.count -gt 0)
+            {
+                [array]$office365ModeratedByEvalErrors = @($office365ModeratedByEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ModeratedBy"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 ModeratedBy" {
+                        new-htmlTable -DataTable ($office365ModeratedByEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ModeratedByEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ModeratedBy ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 ModeratedBy" {
+                        new-htmlTable -DataTable ( $office365ModeratedByEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Generated HTML for managed by."
+
+            if ($office365ManagedByEval.count -gt 0)
+            {
+                [array]$office365ManagedByEvalErrors = @($office365ManagedByEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ManagedBy"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Managed By" {
+                        new-htmlTable -DataTable ($office365ManagedByEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365ManagedByEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365ManagedBy ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Managed By" {
+                        new-htmlTable -DataTable ( $office365ManagedByEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML for grant send on behalf to."
+
+            if ($office365GrantSendOnBehalfToEval.count -gt 0)
+            {
+                [array]$office365GrantSendOnBehalfToEvalErrors = @($office365GrantSendOnBehalfToEval | where-object {$_.isValidMember -ne "True"})
+
+                if ($errorMembersOnly -eq $FALSE)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo"
+
+                    New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Grant Send On Behalf To" {
+                        new-htmlTable -DataTable ($office365GrantSendOnBehalfToEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+    
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($office365GrantSendOnBehalfToEvalErrors.count -gt 0)
+                {
+                    out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo ERRORS."
+
+                    New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Grant Send On Behalf To" {
+                        new-htmlTable -DataTable ( $office365GrantSendOnBehalfToEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        } -AutoSize
+
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML file for groups member of."
+
+            if ($allgroupsmemberof.count -gt 0)
+            {
+                New-HTMLSection -HeaderText "Group Member Of Other Groups" {
+                    new-htmlTable -DataTable ($allgroupsmemberof | select-object distinguishedName) {
+                    } -AutoSize
+
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+
+            #===========================================================================
+
+            out-logfile -string "Build HTML file for groups accept messages from."
+
+            if ($allGroupsAccept.count -gt 0)
+            {
+                New-HTMLSection -HeaderText "Group Accept Messages from Senders or Members on Other Groups" {
+                    new-htmlTable -DataTable ($allGroupsAccept | select-object distinguishedName) {
+                    } -AutoSize
+
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for groups reject messages from."
+
+        if ($allGroupsReject.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group Reject Messages From Senders or Members on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsReject | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for groups managed by."
+
+        $allGroupsManagedByHTML = $allGroupsManagedBy + $allGroupsCoManagedByBL
+
+        if ($allGroupsManagedByHTML.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group ManagedBy on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsManagedByHTML | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for bypass moderation from senders or members."
+
+        if ($allGroupsBypassModeration.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Group Bypass Moderation From Senders or Members on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsBypassModeration | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for grant send on behalf to."
+
+        if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Grant Send On Behalf To on Other Groups" {
+                new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML file for forwarding."
+
+        if ($allUsersForwardingAddress.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Actve Directory Recipients With Group As ForwardingAddress" {
+                new-htmlTable -DataTable ($allUsersForwardingAddress | select-object distinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for send as on group.."
+
+        if ($exchangeSendAsSMTP.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Active Directory Objects with SendAs on Group" {
+                new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object DN) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML of SendAs on other objects."
+
+        if ($allObjectsSendAsAccessNormalized.Count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Active Directory Objects with Group with SendAs Rights" {
+                new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized | select-object DN) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML File for Mailbox Folder Permissions."
+
+        if ($allMailboxesFolderPermissions.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "On Premises Mailbox Folder Permissions For Group" {
+                new-htmlTable -DataTable ($allMailboxesFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Full Mailbox Access."
+
+        if ($allObjectsFullMailboxAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "On Premises Mailbox with Group with Full Mailbox Access" {
+                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object User,Identity,AccessRights) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Members."
+
+        if ($allOffice365MemberOf.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group As A Member" {
+                new-htmlTable -DataTable ($allOffice365MemberOf | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Accept Messages From Senders Or Members."
+
+        if ($allOffice365Accept.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Accept Messages From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365Accept | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+        if ($allOffice365Reject.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Accept Messages From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365Reject | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 ManagedBy."
+
+        if ($allOffice365ManagedBy.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group ManagedBy Permissions" {
+                new-htmlTable -DataTable ($allOffice365ManagedBy | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Building HTML for Office 365 Reject Messages From Senders Or Members."
+
+        if ($allOffice365BypassModeration.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Bypass Moderation From Senders Or Members" {
+                new-htmlTable -DataTable ($allOffice365BypassModeration | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Forwarding Address."
+
+        if ($allOffice365ForwardingAddress.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group As ForwardingAddress" {
+                new-htmlTable -DataTable ($allOffice365ForwardingAddress | select-object DistinguishedName) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Send As on Group."
+
+        if ($allOffice365SendAsAccessOnGroup.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with SendAs Rights on the Group" {
+                new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML for Office 365 Send As on Other Objects"
+
+        if ($allOffice365SendAsAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Recipients with Group Having SendAs Rights" {
+                new-htmlTable -DataTable ($allOffice365SendAsAccess) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML File for Mailbox Folder Permissions in Office 365."
+
+        if ($allOffice365MailboxFolderPermissions.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "All Office 365 Mailboxes with Mailbox Folder Permisssions" {
+                new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        out-logfile -string "Build HTML File for FullMailbox Access Permissions in Office 365."
+
+        if ($allOffice365FullMailboxAccess.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Mailbox with Group with Full Mailbox Access" {
+                new-htmlTable -DataTable ($allOffice365FullMailboxAccess | select-object User,Identity,AccessRights) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        out-logfile -string "Build HTML File for Office 365 Grant Send on Behalf To."
+
+        if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
+        {
+            New-HTMLSection -HeaderText "Office 365 Grant Send on Behalf To" {
+                new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo | select-object DisplayName,ExternalDirectoryObjectID,PrimarySMTPAddress,GroupType) {
+                } -AutoSize
+
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        #===========================================================================
+
+        if ($includeVerboseOutput -eq $TRUE)
+        {
+            out-logfile -string "Creating HTML output for normalized membership."
+
+            if ($exchangeDLMembershipSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($exchangeDLMembershipSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+            
+            out-logfile -string "Creating HTML output for Azure AD Membership."
+        
+            if ($azureADDlMembership.count)
+            {
+                New-HTMLSection -HeaderText "Azure Active Directory Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($azureADDlMembership) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for Office 365 Membership."
+        
+            if ($office365DLMembership.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Distribution List Membership Expanded" {
+                    new-htmlTable -DataTable ($office365DLMembership) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises accept messages from."
+        
+            if ($exchangeAcceptMessagesSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Accept Messages From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises reject messages from."
+        
+            if ($exchangeRejectMessagesSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Reject Messages From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeRejectMessagesSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+            
+            out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
+        
+            if ($exchangeModeratedBySMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory ModeratedBy Expanded" {
+                    new-htmlTable -DataTable ($exchangeModeratedBySMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
+        
+            if ($exchangeManagedBySMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory ManagedBy Expanded" {
+                    new-htmlTable -DataTable ($exchangeManagedBySMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+        
+            if ($exchangeBypassModerationSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Bypass Moderation From Senders Or Members Expanded" {
+                    new-htmlTable -DataTable ($exchangeBypassModerationSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
+        
+            if ($exchangeGrantSendOnBehalfToSMTP.count)
+            {
+                New-HTMLSection -HeaderText "Active Directory Grant Send On Behalf To Expanded" {
+                    new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
+        
+            if ($office365AcceptMessagesFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Accept Messages From Senders or Members Expanded" {
+                    new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembers) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
+        
+            if ($office365RejectMessagesFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Accept Messages From Senders or Members Expanded" {
+                    new-htmlTable -DataTable ($office365RejectMessagesFromSendersOrMembers) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
+        
+            if ($office365ModeratedBy.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 ModeratedBy Expanded" {
+                    new-htmlTable -DataTable ($office365ModeratedBy) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
+        
+            if ($office365ManagedBy.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 ManagedBy Expanded" {
+                    new-htmlTable -DataTable ($office365ManagedBy) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
+        
+            if ($office365BypassModerationFromSendersOrMembers.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Bypass Moderation From Senders Or Memebers Expanded" {
+                    new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembers) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        
+            out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
+        
+            if ($office365GrantSendOnBehalfTo.count)
+            {
+                New-HTMLSection -HeaderText "Office 365 Grant Send On Behalf To Expanded" {
+                    new-htmlTable -DataTable ($office365GrantSendOnBehalfTo) {
+                    } -AutoSize
+    
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        }
+
+        if ($functionObject -ne $NULL)
+        {
+            New-HTMLSection -HeaderText "Distribution List Stats Count" {
+                New-HTMLList{
+                    foreach ($object in $functionObject.psObject.properties)
+                    {
+                        $string = ($object.name + " " + $object.value.tostring())
+                        new-htmlListItem -text $string -fontSize 14
+                    }
+                }
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+        }
+
+        New-HTMLFooter {
+            New-HTMLText -Text "Date of this report $(Get-Date)" -FontSize 16 -Color White -BackGroundColor Black -Alignment center
+        }
+    }    
+
+
+    <#
 
     out-logfile -string "Define CSS for the report."
 
@@ -3990,11 +4846,167 @@ th {
         out-logfile -string "No HTML report to generate - no data provided."
     }
 
-    #=============================================================================================================================================
-    #=============================================================================================================================================
-    #=============================================================================================================================================
-    
+    #>
 
+    #=============================================================================================================================================
+    #=============================================================================================================================================
+    #=============================================================================================================================================
+
+    Disable-AllPowerShellSessions
+
+    out-logfile -string "Obtain the HTML file already created."
+
+    $html = get-content $htmlFile
+    $finalHTML = $html
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromLDAP"
+
+        get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromLDAP Reverse"
+
+        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
+
+        get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline Reverse"
+
+        get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromGraph"
+
+        get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    try {
+        out-logfile -string "Invoking get-DLHierarchyFromGraph Reverse"
+
+        get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+
+        out-logfile -string "Successful - import HTML file."
+
+        try {
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
+        }
+
+        out-logfile -string "Adding generated HTML to current HTML file."
+
+        $finalHTML += $html 
+    }
+    catch {
+        out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
+        out-logfile -string $_
+    }
+
+    out-logfile -string "Writing combined HTML file to disk."
+
+    $finalHTML | out-file $htmlFile
+    
     # build the properties and metrics #
     $telemetryEventProperties = @{
         DLConversionV2Command = $telemetryEventName
@@ -4070,6 +5082,10 @@ th {
     {
         out-logfile -string "" -isError:$TRUE
     }
+
+    Invoke-Item $htmlFile
+
+    start-sleepProgress -sleepSeconds 5 -sleepString "Sleeping after opening HTML file..."
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }

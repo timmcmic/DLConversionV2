@@ -87,7 +87,7 @@ function compare-recipientProperties
     }
     else 
     {
-        out-logfile -string $onPremData.msExchModerationFlags
+        out-logfile -string "No moderation flags present."
 
         $functionModerationFlags = $FALSE
 
@@ -1573,6 +1573,24 @@ function compare-recipientProperties
 
         out-logfile -string $functionHiddenFromAddressListEnabled 
     }
+
+    if ($office365Data.HiddenFromAddressListsEnabled -eq $FALSE)
+    {
+        $office365HiddenFromAddressListsEnabled = "False"
+    }
+    else 
+    {
+        $office365HiddenFromAddressListsEnabled = "True"
+    }
+
+    if ($functionHiddenFromAddressListEnabled -eq $FALSE)
+    {
+        $onPremHiddentFromAddressListEnabled = "False"
+    }
+    else 
+    {
+        $onPremHiddentFromAddressListEnabled = "True"
+    }
     
     if ($office365Data.HiddenFromAddressListsEnabled -eq $functionHiddenFromAddressListEnabled)
     {
@@ -1580,10 +1598,10 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            onpremisesvalue = $functionHiddenFromAddressListEnabled
+            onpremisesvalue = $onPremHiddentFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.HiddenFromAddressListsEnabled
+            ExchangeOnlineValue = $office365HiddenFromAddressListsEnabled
             isValidInExchangeOnline = "True"
             IsValidMember = "TRUE"
             ErrorMessage = "N/A"
@@ -1600,10 +1618,10 @@ function compare-recipientProperties
 
         $functionObject = New-Object PSObject -Property @{
             Attribute = "HiddenFromAddressListEnabled"
-            onpremisesvalue = $onPremData.hiddenFromAddressListEnabled
+            onpremisesvalue = $onPremHiddentFromAddressListEnabled
             AzureADValue = "N/A"
             isValidInAzure = "N/A"
-            ExchangeOnlineValue = $office365Data.hiddenFromAddressListEnabled
+            ExchangeOnlineValue = $office365HiddenFromAddressListsEnabled
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
             ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
