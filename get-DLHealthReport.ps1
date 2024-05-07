@@ -4853,6 +4853,8 @@ th {
 
     Disable-AllPowerShellSessions
 
+    import-module c:\Repository\DLHierarchy\DLHierarchy.psd1 -Force
+
     out-logfile -string "Obtain the HTML file already created."
 
     $html = get-content $htmlFile
@@ -4882,6 +4884,8 @@ th {
         out-logfile -string "Unable to generate LDAP Group Hierarchy"
         out-logfile -string $_
     }
+
+    import-module c:\Repository\DLHierarchy\DLHierarchy.psd1 -Force
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromLDAP Reverse"
@@ -4957,7 +4961,7 @@ th {
         out-logfile -string $_
     }
 
-    #>
+    
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph"
@@ -5006,6 +5010,8 @@ th {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
         out-logfile -string $_
     }
+
+    #>
 
     out-logfile -string "Writing combined HTML file to disk."
 
