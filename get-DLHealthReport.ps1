@@ -4906,8 +4906,6 @@ th {
         out-logfile -string $_
     }
 
-    <#
-
     try {
         out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
 
@@ -4956,7 +4954,7 @@ th {
         out-logfile -string $_
     }
 
-    
+    <#
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph"
