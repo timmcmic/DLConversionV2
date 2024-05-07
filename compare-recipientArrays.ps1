@@ -290,7 +290,7 @@ function compare-recipientArrays
                     out-logfile -string "Determined that the azure object was on premises security principal."
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -322,7 +322,7 @@ function compare-recipientArrays
                     out-logfile -string "Azure object is not an on premises security principal therefore no sid or user principal"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -454,7 +454,7 @@ function compare-recipientArrays
                 out-logfile -string "The object was not found in Azure AD -> BAD"
 
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $member.displayName
+                    Name = $member.name
                     PrimarySMTPAddress = $member.primarySMTPAddress
                     UserPrincipalName = $member.userPrincipalName
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -488,7 +488,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not found in Azure AD -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -509,7 +509,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not found in Azure AD -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -539,7 +539,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not found in Exchange Online -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -560,7 +560,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not found in Azure AD -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -590,7 +590,7 @@ function compare-recipientArrays
                     out-logfile -string "The object was not found in Exchange Online -> BAD"
 
                     $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -616,7 +616,7 @@ function compare-recipientArrays
                         out-logfile -string "The object is most likely a contact with an external mail address not represented in azure with a primary proxy address."
 
                         $functionObject = New-Object PSObject -Property @{
-                        Name = $member.displayName
+                        Name = $member.name
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -637,7 +637,7 @@ function compare-recipientArrays
                         out-logfile -string "The object was not found in Azure AD -> BAD"
 
                         $functionObject = New-Object PSObject -Property @{
-                            Name = $member.displayName
+                            Name = $member.name
                             PrimarySMTPAddress = $member.primarySMTPAddress
                             UserPrincipalName = $member.userPrincipalName
                             ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -796,7 +796,7 @@ function compare-recipientArrays
             foreach ($member in $onPremData)
             {
                 $functionObject = New-Object PSObject -Property @{
-                    Name = $member.displayName
+                    Name = $member.name
                     PrimarySMTPAddress = $member.primarySMTPAddress
                     UserPrincipalName = $member.userPrincipalName
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID

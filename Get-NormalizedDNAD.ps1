@@ -180,6 +180,7 @@
         $functionObject = New-Object PSObject -Property @{
             Alias = $functionTest.mailNickName
             Name = $functionTest.CN
+            DisplayName = $functionTest.displayName
             PrimarySMTPAddress = $functionTest.mail
             UserPrincipalName = $functionTest.userPrincipalName
             GUID = $functionTest.objectGUID
