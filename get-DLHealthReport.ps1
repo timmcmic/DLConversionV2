@@ -5082,5 +5082,7 @@ th {
         out-logfile -string "" -isError:$TRUE
     }
 
+    Invoke-Item $htmlFile
+
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
