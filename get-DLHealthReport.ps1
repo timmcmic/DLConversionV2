@@ -4909,12 +4909,12 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
 
-        $htmlFilePath = get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+        get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
@@ -4938,7 +4938,7 @@ th {
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
