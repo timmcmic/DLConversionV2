@@ -3017,7 +3017,7 @@ Function get-DLHealthReport
                 {
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
                     New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
-                        new-htmlTable -DataTable ($office365MemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365MemberEval) {
                         } -AutoSize
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
@@ -3027,7 +3027,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with ERRORS only."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Office 365 -> Azure Active Directory -> Active Directory" {
-                        new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365MemberEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3054,7 +3054,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for OnPremMemberEval with All Object."
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ($onPremMemberEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($onPremMemberEval) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3065,7 +3065,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for OnPremMemberEvale with ERRORS only."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Azure Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $onPremMemberEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3095,7 +3095,7 @@ Function get-DLHealthReport
                 if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
-                        new-htmlTable -DataTable ($office365ProxyAddressesEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365ProxyAddressesEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3106,7 +3106,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
 
                     New-HTMLSection -HeaderText "Proxy Address ERRORS Evaluation :: Office 365 -> Active Directory" {
-                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3122,7 +3122,7 @@ Function get-DLHealthReport
                 if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($onPremProxyAddressEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3133,7 +3133,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
 
                     New-HTMLSection -HeaderText "Proxy Address ERROR Evaluation :: Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3153,7 +3153,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365AttributeEval"
 
                     New-HTMLSection -HeaderText "Single Value Attribute Evaluation" {
-                        new-htmlTable -DataTable ($office365AttributeEval | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365AttributeEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3164,7 +3164,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365AttributeEval ERRORS."
 
                     New-HTMLSection -HeaderText "Single Value Attribute Evaluation ERRORS" {
-                        new-htmlTable -DataTable ( $office365AttributeEvalErrors | select-object Attribute,OnPremisesValue,isValidInAzure,AzureADValue,isValidInExchangeOnline,ExchangeOnlineValue,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365AttributeEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3184,7 +3184,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
-                        new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembersEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3195,7 +3195,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365AcceptMessagesFromSendersOrMembers ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Accept Messages From Senders or Members" {
-                        new-htmlTable -DataTable ( $office365AcceptMessagesFromSendersOrMembersEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365AcceptMessagesFromSendersOrMembersEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3215,7 +3215,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
-                        new-htmlTable -DataTable ($office365RejectMessagesFromSendrsOfMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365RejectMessagesFromSendrsOfMembersEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3226,7 +3226,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365RejectMessagesFromSendersOrMembers ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Reject Messages From Senders or Members" {
-                        new-htmlTable -DataTable ( $office365RejectMessagesFromSendrsOfMembersEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365RejectMessagesFromSendrsOfMembersEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3247,7 +3247,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
-                        new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3258,7 +3258,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365BypassModerationFromSendersOrMembers ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS:: Active Directory -> Office 365 Bypass Moderation From Senders Or Members" {
-                        new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3278,7 +3278,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ModeratedBy"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 ModeratedBy" {
-                        new-htmlTable -DataTable ($office365ModeratedByEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365ModeratedByEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3289,7 +3289,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ModeratedBy ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 ModeratedBy" {
-                        new-htmlTable -DataTable ( $office365ModeratedByEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365ModeratedByEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3309,7 +3309,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ManagedBy"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Managed By" {
-                        new-htmlTable -DataTable ($office365ManagedByEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365ManagedByEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3320,7 +3320,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ManagedBy ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERROR :: Active Directory -> Office 365 Managed By" {
-                        new-htmlTable -DataTable ( $office365ManagedByEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365ManagedByEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3340,7 +3340,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo"
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Office 365 Grant Send On Behalf To" {
-                        new-htmlTable -DataTable ($office365GrantSendOnBehalfToEval | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ($office365GrantSendOnBehalfToEval) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3351,7 +3351,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365GrantSendOnBehalfTo ERRORS."
 
                     New-HTMLSection -HeaderText "Member Analysis ERRORS :: Active Directory -> Office 365 Grant Send On Behalf To" {
-                        new-htmlTable -DataTable ( $office365GrantSendOnBehalfToEvalErrors | select-object Name,ExternalDirectoryObjectID,PrimarySMTPAddress,UserPrincipalName,ObjectSID,IsPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                        new-htmlTable -DataTable ( $office365GrantSendOnBehalfToEvalErrors) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
