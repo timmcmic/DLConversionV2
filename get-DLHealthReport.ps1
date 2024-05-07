@@ -4966,7 +4966,7 @@ th {
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
@@ -4985,12 +4985,12 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph Reverse"
 
-        $htmlFilePath = get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+        get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
