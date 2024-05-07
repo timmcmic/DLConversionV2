@@ -4961,7 +4961,7 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph"
 
-        $htmlFilePath = get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+        get-DLHierarchyFromGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphTenantID $msGraphTenantID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
