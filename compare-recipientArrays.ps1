@@ -286,90 +286,51 @@ function compare-recipientArrays
                 out-logfile -string $functionAzureObject
                 out-logfile -string $functionAzureObject.AdditionalProperties
 
-                if ($functionAzureObject.userPrincipalName -ne "")
+                out-logfile -string "Attempt to obtain a user principal name."
+
+                if ($functionAzureObject.AdditionalProperties.userPrincipalName -ne $NULL)
                 {
-                    out-logfile -string "No user principal name on Azure Object"
+                    out-logfile -string "Object has a user principal name."
+                    $functionUserPrincipalName = $functionAzureObject.AdditionalProperties.userPrincipalName
+                }
+                else 
+                {
+                    out-logfile string "Object does not have a user principal name."
                     $functionUserPrincipalName = "N/A"
                 }
-                else 
+
+                out-logfile -string $functionUserPrincipalName
+
+                out-logfile -string "Determine if the object is a security identifier - log on premises security ID."
+
+                if ($functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier -ne $NULL)
                 {
-                    out-logfile -string "User principal name on Azure Object"
-                    $functionUserPrincipalName = $functionAzureObject.userPrincipalName
-                }
-
-                if ($functionAzureObject.AdditionalProperties.'@odata.type' -eq "#Microsoft.Graph.Group")
-                {
-                    out-logfile -string "Determined that the azure object was on premises security principal."
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        DisplayName = $member.displayName
-                        PrimarySMTPAddress = $functionPrimarySMTPAddress
-                        UserPrincipalName = "N/A"
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier
-                        isPresentOnPremises = "False"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "Source"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string $functionObject
+                    out-logfile -string "Object has an on premsies object SID - add to the object."
+                    $functionOnPremisesObjectSID = $functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier
                 }
                 else 
                 {
-                    out-logfile -string "Azure object is not an on premises security principal therefore no sid or user principal"
-
-                    if ($functionAzureObject.userPrincipalName -ne $NULL)
-                    {
-                        $functionUserPrincipalName = $functionAzureObject.userPrincipalName
-                    }
-                    else 
-                    {
-                        $functionUserPrincipalName = "N/A"
-                    }
-
-                    if ($functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier -ne $NULL)
-                    {
-                        $functionObjectSID = $functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier
-                    }
-                    else 
-                    {
-                        $functionObjectSID = "N/A"
-                    }
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        DisplayName = $member.displayName
-                        PrimarySMTPAddress = $functionPrimarySMTPAddress
-                        UserPrincipalName = $functionUserPrincipalName
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID =$functionObjectSID
-                        isPresentOnPremises = "False"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "Source"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
-                    }
-
-                    out-logfile -string $functionObject
-
-                    out-logfile -string "Determine if the object has a user principal name."
-
-                    if ($functionAzureObject.userPrincipalName -ne $NULL)
-                    {
-                        out-logfile -string "Object was a security principal with user principal name."
-
-                        $functionObject.userprincipalName = $functionAzureObject.userPrincipalName
-                    }
-                    else 
-                    {
-                        out-logfile -string "Object was security principal without a user principal name - do nothing."
-                    }
-
-                    out-logfile -string $functionObject
+                    out-logfile -string "Object does not have an on premsies object sid."
+                    $functionOnPremisesObjectSID = "N/A"
                 }
+
+                out-logfile -string $functionOnPremisesObjectSID
+
+                $functionObject = New-Object PSObject -Property @{
+                    Name = $member.name
+                    DisplayName = $member.displayName
+                    PrimarySMTPAddress = $functionPrimarySMTPAddress
+                    UserPrincipalName = $functionUserPrincipalName
+                    ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                    OnPremObjectSID = $functionOnPremisesObjectSID
+                    isPresentOnPremises = "False"
+                    isPresentInAzure = "True"
+                    isPresentInExchangeOnline = "Source"
+                    IsValidMember = "FALSE"
+                    ErrorMessage = "N/A"
+                }
+
+                out-logfile -string $functionObject
 
                 out-logfile -string "Being Office 365 -> On premises evaluation."
                 out-logfile -string "The objects are matched either by external directory object id, object sid, or primary SMTP address."
