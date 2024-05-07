@@ -457,7 +457,7 @@ function compare-recipientArrays
                     Name = $member.name
                     DisplayName = $member.displayName
                     PrimarySMTPAddress = $member.primarySMTPAddress
-                    UserPrincipalName = $member.userPrincipalName
+                    UserPrincipalName = "N/A"
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
                     ObjectSID ="N/A"
                     isPresentOnPremises = "False"
