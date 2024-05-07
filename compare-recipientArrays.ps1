@@ -372,7 +372,7 @@ function compare-recipientArrays
 
                     $onPremDataByExternalDirectoryObjectID.remove($functionExternalDirectoryObjectID)
                 }
-                elseif ($onPremDataBySID.ContainsKey($functionObject.objectSID))
+                elseif ($onPremDataBySID.ContainsKey($functionObject.OnPremObjectSID ))
                 {
                     out-logfile -string ("The object was located by object SID: "+$functionObject.objectSID)
                     $functionObject.isPresentOnPremises = "True"
@@ -382,7 +382,7 @@ function compare-recipientArrays
 
                     $functionReturnArray += $functionObject
 
-                    $functionOnPremObject = $onPremDataBySID[$functionObject.objectSID]
+                    $functionOnPremObject = $onPremDataBySID[$functionObject.OnPremObjectSID ]
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $functionOnPremObject.name
