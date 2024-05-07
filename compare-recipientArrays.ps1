@@ -286,6 +286,17 @@ function compare-recipientArrays
                 out-logfile -string $functionAzureObject
                 out-logfile -string $functionAzureObject.AdditionalProperties
 
+                if ($functionAzureObject.userPrincipalName -ne "")
+                {
+                    out-logfile -string "No user principal name on Azure Object"
+                    $functionUserPrincipalName = "N/A"
+                }
+                else 
+                {
+                    out-logfile -string "User principal name on Azure Object"
+                    $functionUserPrincipalName = $functionAzureObject.userPrincipalName
+                }
+
                 if ($functionAzureObject.AdditionalProperties.'@odata.type' -eq "#Microsoft.Graph.Group")
                 {
                     out-logfile -string "Determined that the azure object was on premises security principal."
