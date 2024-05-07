@@ -241,6 +241,7 @@ function compare-recipientArrays
         foreach ($member in $office365Data)
         {
             out-logfile -string ("Evaluating member: "+$member.externalDirectoryObjectID)
+            out-logfile -string $member
 
             out-logfile -string "In this case start comparison by external directory object id - all Office 365 objects have it unless it's a room distribution list."
             out-logfile -string "Starting Exchange Online -> Azure Evaluation"
