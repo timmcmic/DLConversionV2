@@ -3492,14 +3492,6 @@ Function get-DLHealthReport
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
         }
 
-        if ($allObjectsFullMailboxAccess.count -gt 0)
-        {
-            New-HTMLSection -HeaderText "On Premises Full Mailbox Access for Group" {
-                new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
-                } -AutoSize
-
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-        }
 
         #===========================================================================
 
