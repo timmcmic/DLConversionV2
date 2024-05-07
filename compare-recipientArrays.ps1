@@ -304,7 +304,7 @@ function compare-recipientArrays
                         ErrorMessage = "N/A"
                     }
 
-                    out-logfiles -string $functionObject
+                    out-logfile -string $functionObject
                 }
                 else 
                 {
