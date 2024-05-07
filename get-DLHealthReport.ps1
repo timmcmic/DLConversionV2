@@ -5084,5 +5084,7 @@ th {
 
     Invoke-Item $htmlFile
 
+    start-sleepProgress -sleepSeconds 5 -sleepString "Sleeping after opening HTML file..."
+
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
