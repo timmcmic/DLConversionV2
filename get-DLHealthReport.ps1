@@ -4859,17 +4859,16 @@ th {
 
     $html = get-content $htmlFile
     $finalHTML = $html
-    $html1 = ""
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromLDAP"
 
-        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
+        get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
@@ -4895,7 +4894,7 @@ th {
         out-logfile -string "Successful - import HTML file."
 
         try {
-            $html  = get-content $htmlFilePath -errorAction STOP
+            $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
         catch {
             out-logfile -string $_
