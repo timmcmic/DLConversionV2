@@ -303,6 +303,8 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "N/A"
                     }
+
+                    out-logfiles -string $functionObject
                 }
                 else 
                 {
@@ -340,6 +342,8 @@ function compare-recipientArrays
                         ErrorMessage = "N/A"
                     }
 
+                    out-logfile -string $functionObject
+
                     out-logfile -string "Determine if the object has a user principal name."
 
                     if ($functionAzureObject.userPrincipalName -ne $NULL)
@@ -352,6 +356,8 @@ function compare-recipientArrays
                     {
                         out-logfile -string "Object was security principal without a user principal name - do nothing."
                     }
+
+                    out-logfile -string $functionObject
                 }
 
                 out-logfile -string "Being Office 365 -> On premises evaluation."
