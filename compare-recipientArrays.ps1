@@ -295,7 +295,7 @@ function compare-recipientArrays
                 }
                 else 
                 {
-                    out-logfile string "Object does not have a user principal name."
+                    out-logfile -string "Object does not have a user principal name."
                     $functionUserPrincipalName = "N/A"
                 }
 
