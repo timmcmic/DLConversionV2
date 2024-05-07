@@ -4906,8 +4906,6 @@ th {
         out-logfile -string $_
     }
 
-    <#
-
     try {
         out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline"
 
@@ -4935,7 +4933,7 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromExchangeOnline Reverse"
 
-        $htmlFilePath = get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+        get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
 
         out-logfile -string "Successful - import HTML file."
 
@@ -4955,8 +4953,6 @@ th {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
         out-logfile -string $_
     }
-
-    #>
 
     try {
         out-logfile -string "Invoking get-DLHierarchyFromGraph"
