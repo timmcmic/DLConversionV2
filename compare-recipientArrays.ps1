@@ -291,6 +291,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -323,6 +324,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $functionPrimarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -357,6 +359,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $functionOnPremObject.name
+                        DisplayName = $functionOnPremObject.displayName
                         PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
                         UserPrincipalName = $functionOnPremObject.userPrincipalName
                         ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
@@ -388,6 +391,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $functionOnPremObject.name
+                        DisplayName = $functionOnPremObject.displayName
                         PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
                         UserPrincipalName = $functionOnPremObject.userPrincipalName
                         ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
@@ -421,6 +425,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $functionOnPremObject.name
+                        DisplayName = $functionOnPremObject.displayName
                         PrimarySMTPAddress = $functionOnPremObject.primarySMTPAddress
                         UserPrincipalName = $functionOnPremObject.userPrincipalName
                         ExternalDirectoryObjectID = $functionOnPremObject.externalDirectoryObjectID
@@ -455,6 +460,7 @@ function compare-recipientArrays
 
                 $functionObject = New-Object PSObject -Property @{
                     Name = $member.name
+                    DisplayName = $member.displayName
                     PrimarySMTPAddress = $member.primarySMTPAddress
                     UserPrincipalName = $member.userPrincipalName
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -489,6 +495,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -510,6 +517,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -540,6 +548,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -561,6 +570,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -591,6 +601,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -617,6 +628,7 @@ function compare-recipientArrays
 
                         $functionObject = New-Object PSObject -Property @{
                         Name = $member.name
+                        DisplayName = $member.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = $member.userPrincipalName
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -638,6 +650,7 @@ function compare-recipientArrays
 
                         $functionObject = New-Object PSObject -Property @{
                             Name = $member.name
+                            DisplayName = $member.displayName
                             PrimarySMTPAddress = $member.primarySMTPAddress
                             UserPrincipalName = $member.userPrincipalName
                             ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -686,6 +699,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
+                        DisplayName = $onPremData[$i].displayName
                         PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
@@ -726,6 +740,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
+                        DisplayName = $onPremData[$i].displayName
                         PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
@@ -765,6 +780,7 @@ function compare-recipientArrays
 
                     $functionObject = New-Object PSObject -Property @{
                         Name = $onPremData[$i].name
+                        DisplayName = $onPremData[$i].displayName
                         PrimarySMTPAddress = $onPremData[$i].primarySMTPAddress
                         UserPrincipalName = $onPremData[$i].userPrincipalName
                         ExternalDirectoryObjectID = $onPremData[$i].externalDirectoryObjectID
@@ -797,6 +813,7 @@ function compare-recipientArrays
             {
                 $functionObject = New-Object PSObject -Property @{
                     Name = $member.name
+                    DisplayName = $memeber.displayName
                     PrimarySMTPAddress = $member.primarySMTPAddress
                     UserPrincipalName = $member.userPrincipalName
                     ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -826,6 +843,7 @@ function compare-recipientArrays
                     
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.displayName
+                        DisplayName = $memeber.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
@@ -840,6 +858,7 @@ function compare-recipientArrays
                 else {
                     $functionObject = New-Object PSObject -Property @{
                         Name = $member.displayName
+                        DisplayName = $memeber.displayName
                         PrimarySMTPAddress = $member.primarySMTPAddress
                         UserPrincipalName = "N/A"
                         ExternalDirectoryObjectID = $member.externalDirectoryObjectID
