@@ -302,10 +302,44 @@ function compare-recipientArrays
                         IsValidMember = "FALSE"
                         ErrorMessage = "N/A"
                     }
+                }
+                else 
+                {
+                    out-logfile -string "Azure object is not an on premises security principal therefore no sid or user principal"
 
-                    out-logfile -string $functionObject.objectSID
+                    if ($functionAzureObject.userPrincipalName -ne $NULL)
+                    {
+                        $functionUserPrincipalName = $functionAzureObject.userPrincipalName
+                    }
+                    else 
+                    {
+                        $functionUserPrincipalName = "N/A"
+                    }
 
-                    out-logfile -string "Determine if the security principal was a user with a upn."
+                    if ($functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier -ne $NULL)
+                    {
+                        $functionObjectSID = $functionAzureObject.AdditionalProperties.onPremisesSecurityIdentifier
+                    }
+                    else 
+                    {
+                        $functionObjectSID = "N/A"
+                    }
+
+                    $functionObject = New-Object PSObject -Property @{
+                        Name = $member.name
+                        DisplayName = $member.displayName
+                        PrimarySMTPAddress = $functionPrimarySMTPAddress
+                        UserPrincipalName = $functionUserPrincipalName
+                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
+                        ObjectSID =$functionObjectSID
+                        isPresentOnPremises = "False"
+                        isPresentInAzure = "True"
+                        isPresentInExchangeOnline = "Source"
+                        IsValidMember = "FALSE"
+                        ErrorMessage = "N/A"
+                    }
+
+                    out-logfile -string "Determine if the object has a user principal name."
 
                     if ($functionAzureObject.userPrincipalName -ne $NULL)
                     {
@@ -316,24 +350,6 @@ function compare-recipientArrays
                     else 
                     {
                         out-logfile -string "Object was security principal without a user principal name - do nothing."
-                    }
-                }
-                else 
-                {
-                    out-logfile -string "Azure object is not an on premises security principal therefore no sid or user principal"
-
-                    $functionObject = New-Object PSObject -Property @{
-                        Name = $member.name
-                        DisplayName = $member.displayName
-                        PrimarySMTPAddress = $functionPrimarySMTPAddress
-                        UserPrincipalName = "N/A"
-                        ExternalDirectoryObjectID = $member.externalDirectoryObjectID
-                        ObjectSID ="N/A"
-                        isPresentOnPremises = "False"
-                        isPresentInAzure = "True"
-                        isPresentInExchangeOnline = "Source"
-                        IsValidMember = "FALSE"
-                        ErrorMessage = "N/A"
                     }
                 }
 
