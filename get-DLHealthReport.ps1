@@ -3095,7 +3095,7 @@ Function get-DLHealthReport
                 if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
-                        new-htmlTable -DataTable ($office365ProxyAddressesEval) {
+                        new-htmlTable -DataTable ($office365ProxyAddressesEval  | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3106,7 +3106,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
 
                     New-HTMLSection -HeaderText "Proxy Address ERRORS Evaluation :: Office 365 -> Active Directory" {
-                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors) {
+                        new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -3122,7 +3122,7 @@ Function get-DLHealthReport
                 if ($errorMembersOnly -eq $FALSE)
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ($onPremProxyAddressEval) {
+                        new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
@@ -3133,7 +3133,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365ProxyAddressEval ERRORS."
 
                     New-HTMLSection -HeaderText "Proxy Address ERROR Evaluation :: Active Directory -> Office 365" {
-                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors) {
+                        new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
