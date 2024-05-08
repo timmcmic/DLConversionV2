@@ -1548,6 +1548,109 @@ Function Start-DistributionListMigration
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
+
+                out-logfile -string "Record routing contact configuration."
+
+                if ($routingContactConfig -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Hybrid Routing Contact" {
+                        New-HTMLList{
+                            foreach ($object in  $routingContactConfig.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                out-logfile -string "Record routing contact configuration."
+
+                if ($routingDynamicGroupConfig -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Hybrid Routing Group" {
+                        New-HTMLList{
+                            foreach ($object in  $routingDynamicGroupConfig.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
+
+                out-logfile -string "Generate timeline."
+
+                new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
+                    new-HTMLTimeLIne {
+                        new-HTMLTimeLineEntry -HeadingText "Migration Start Time" -Date $htmlStartTime
+                        new-HTMLTimeLineEntry -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
+                        new-HTMLTimeLineEntry -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                        new-HTMLTimeLineEntry -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                        new-HTMLTimeLineEntry -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                        new-HTMLTimeLineEntry -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                        new-HTMLTimeLineEntry -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                        new-HTMLTimeLineEntry -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                        new-HTMLTimeLineEntry -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                        new-HTMLTimeLineEntry -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                        new-HTMLTimeLineEntry -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                        new-HTMLTimeLineEntry -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                        new-HTMLTimeLineEntry -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
+                        new-HTMLTimeLineEntry -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
+                        new-HTMLTimeLineEntry -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                        new-HTMLTimeLineEntry -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
+                        new-HTMLTimeLineEntry -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
+                        new-HTMLTimeLineEntry -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
+                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                        new-HTMLTimeLineEntry -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                        new-HTMLTimeLineEntry -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                        new-HTMLTimeLineEntry -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
+                        new-HTMLTimeLineEntry -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                        new-HTMLTimeLineEntry -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
+                        new-HTMLTimeLineEntry -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
+                        new-HTMLTimeLineEntry -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
+                        new-HTMLTimeLineEntry -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
+                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
+                        new-HTMLTimeLineEntry -HeadingText "END" -Date $htmlEndTime
+                    }
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
             }
         } -online -ShowHTML
     }
