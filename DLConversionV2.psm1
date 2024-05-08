@@ -6273,8 +6273,7 @@ Function Start-DistributionListMigration
                 if ($global:postCreateErrors.count -gt 0)
                 {
                     new-htmlSection -HeaderText ("On Premises Replacement Errors"){
-                        new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering 
-                        {
+                        new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
@@ -6282,13 +6281,10 @@ Function Start-DistributionListMigration
                 if ($onPremReplaceErrors.count -gt 0)
                 {
                     new-htmlSection -HeaderText ("On Premises Replacement Errors"){
-                        new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering 
-                        {
+                        new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
-
-
             }
             else 
             {
