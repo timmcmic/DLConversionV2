@@ -6225,11 +6225,6 @@ Function Start-DistributionListMigration
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
-    if ($telemetryError -eq $TRUE)
-    {
-        out-logfile -string "" -isError:$TRUE
-    }
-
     #Prepare the HTML file for output.
     #Define the HTML file.
 
@@ -6336,5 +6331,10 @@ Function Start-DistributionListMigration
         }
     }
 
+    if ($telemetryError -eq $TRUE)
+    {
+        out-logfile -string "" -isError:$TRUE
+    }
+    
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
