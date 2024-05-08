@@ -852,6 +852,119 @@ Function Start-DistributionListMigration
         }
     }
 
+    function generate-HTMLFile
+    {
+        #Prepare the HTML file for output.
+        #Define the HTML file.
+
+        out-logfile -string "Preparring to generate HTML file."
+
+        $functionHTMLSuffix = "html"
+        $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
+
+        out-logfile -string $global:functionHTMLFile
+        $headerString = ("Migration Summary for: "+$groupSMTPAddress)
+
+        New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
+            New-HTMLHeader {
+                New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+            }
+            new-htmlMain
+            {
+                #Define HTML table options.
+
+                New-HTMLTableOption -DataStore JavaScript
+
+                #If there are errors output error message - otherwise success.
+
+                if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
+                {
+                    New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
+
+                    #Output list of summary error objects
+
+                    New-HTMLSection -HeaderText "Error Count Summary" {
+                        New-HTMLList{
+                                new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
+                            }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                    #For each error category - output the list of errors.
+
+                    if ($global:postCreateErrors.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
+                            new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+
+                    if ($onPremReplaceErrors.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("On Premises Replacement Errors"){
+                            new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+
+                    if ($office365ReplaceErrors.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
+                            new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+
+                    if ($global:office365ReplacePermissionsErrors.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+
+                    if ($onPremReplacePermissionsError.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+
+                    if ($global:generalErrors.count -gt 0)
+                    {
+                        new-htmlSection -HeaderText ("General Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+                }
+                else 
+                {
+                    New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
+                }
+
+                #Output the original DL Configuration
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
+                    New-HTMLList{
+                        foreach ($object in $originalDLConfiguration)
+                        {
+                            $string = ($object.name + " " + $object.value.tostring())
+                            new-htmlListItem -text $string -fontSize 14
+                        }
+                    }
+        
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }
+        } -online -ShowHTML
+    }
+
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
@@ -2935,6 +3048,7 @@ Function Start-DistributionListMigration
 
         if ($isHealthCheck -eq $FALSE)
         {
+            generate-HTMLFile
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
@@ -6225,116 +6339,7 @@ Function Start-DistributionListMigration
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
-    #Prepare the HTML file for output.
-    #Define the HTML file.
-
-    out-logfile -string "Preparring to generate HTML file."
-
-    $functionHTMLSuffix = "html"
-    $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
-
-    out-logfile -string $global:functionHTMLFile
-    
-    $headerString = ("Migration Summary for: "+$groupSMTPAddress)
-
-    New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
-        New-HTMLHeader {
-            New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
-        }
-        new-htmlMain
-        {
-            #Define HTML table options.
-
-            New-HTMLTableOption -DataStore JavaScript
-
-            #If there are errors output error message - otherwise success.
-
-            if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
-            {
-                New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
-
-                #Output list of summary error objects
-
-                New-HTMLSection -HeaderText "Error Count Summary" {
-                    New-HTMLList{
-                            new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
-                            new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
-                            new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
-                            new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
-                            new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
-                            new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
-                        }
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-
-                #For each error category - output the list of errors.
-
-                if ($global:postCreateErrors.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
-                        new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($onPremReplaceErrors.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises Replacement Errors"){
-                        new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($office365ReplaceErrors.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
-                        new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($global:office365ReplacePermissionsErrors.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
-                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($onPremReplacePermissionsError.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
-                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-
-                if ($global:generalErrors.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("General Errors"){
-                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
-                }
-            }
-            else 
-            {
-                New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
-            }
-
-            #Output the original DL Configuration
-
-            New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
-                New-HTMLList{
-                    foreach ($object in $originalDLConfiguration)
-                    {
-                        $string = ($object.name + " " + $object.value.tostring())
-                        new-htmlListItem -text $string -fontSize 14
-                    }
-                }
-    
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
-        }
-    } -online -ShowHTML
+    generate-HTMLFile
 
     if ($telemetryError -eq $TRUE)
     {
