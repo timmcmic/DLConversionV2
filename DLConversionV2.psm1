@@ -1294,7 +1294,104 @@ Function Start-DistributionListMigration
                         new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
 
+                out-logfile -string "Generate HTML for all on premises dependencies."
+
+                if ($allGroupsMemberOf.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Member Of"){
+                        new-htmlTable -DataTable ($allGroupsMemberOf) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsReject.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Reject"){
+                        new-htmlTable -DataTable ($allGroupsReject) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsAccept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Accept"){
+                        new-htmlTable -DataTable ($allGroupsAccept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsBypassModeration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group ModeratedBy"){
+                        new-htmlTable -DataTable ($allGroupsBypassModeration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allUsersForwardingAddress.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Forwarding On Objects"){
+                        new-htmlTable -DataTable ($allUsersForwardingAddress) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendOnBehalf Objects"){
+                        new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsManagedBy.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group ManagedBy Objects"){
+                        new-htmlTable -DataTable ($allGroupsManagedBy) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allObjectsFullMailboxAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group FullMailboxAccess Objects"){
+                        new-htmlTable -DataTable ($allObjectsFullMailboxAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allObjectSendAsAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendAsAccess Objects"){
+                        new-htmlTable -DataTable ($allObjectSendAsAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allObjectsSendAsAccessNormalized.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendAsAccessNormalized Objects"){
+                        new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allMailboxesFolderPermissions.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group MailboxFolderPermissions Objects"){
+                        new-htmlTable -DataTable ($allMailboxesFolderPermissions) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allGroupsCoManagedByBL.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group CoManagedBy Objects"){
+                        new-htmlTable -DataTable ($allGroupsCoManagedByBL) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
             }
         } -online -ShowHTML
