@@ -1040,9 +1040,13 @@ Function Start-DistributionListMigration
                                     $string = ($object.name + " " + $value.tostring())
                                 }
                             }
-                            else
+                            elseif ($object.value -ne $NULL)
                             {
                                 $string = ($object.name + " " + $object.value.tostring())
+                            }
+                            else
+                            {
+                                $string = ($object.name)
                             }
 
                             new-htmlListItem -text $string -fontSize 14
