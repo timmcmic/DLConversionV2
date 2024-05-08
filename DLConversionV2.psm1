@@ -1058,30 +1058,33 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Generate HTML for Original DL Configuration Updated"
 
-                New-HTMLSection -HeaderText "Original DL Configuration Updated (Active Directory)" {
-                    New-HTMLList{
-                        foreach ($object in $originalDLConfigurationUpdated.psObject.properties)
-                        {
-                            if ($object.Value.count -gt 1)
+                if ($originalDLConfigurationPostMigration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Original DL Configuration Updated (Active Directory)" {
+                        New-HTMLList{
+                            foreach ($object in $originalDLConfigurationUpdated.psObject.properties)
                             {
-                                foreach ($value in $object.Value)
+                                if ($object.Value.count -gt 1)
                                 {
-                                    $string = ($object.name + " " + $value.tostring())
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
                                     new-htmlListItem -text $string -fontSize 14
                                 }
                             }
-                            elseif ($object.value -ne $NULL)
-                            {
-                                $string = ($object.name + " " + $object.value.tostring())
-                                new-htmlListItem -text $string -fontSize 14                            }
-                            else
-                            {
-                                $string = ($object.name)
-                                new-htmlListItem -text $string -fontSize 14
-                            }
                         }
-                    }
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
 
                 out-logfile -string "Generate HTML for Original Graph Configuration"
 
@@ -1166,58 +1169,133 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Generate HTML for Office 365 DL Configuration Post Migration"
 
-                New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
-                    New-HTMLList{
-                        foreach ($object in  $office365DLConfigurationPostMigration.psObject.properties)
-                        {
-                            if ($object.Value.count -gt 1)
+                if ($office365DLConfigurationPostMigration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
+                        New-HTMLList{
+                            foreach ($object in  $office365DLConfigurationPostMigration.psObject.properties)
                             {
-                                foreach ($value in $object.Value)
+                                if ($object.Value.count -gt 1)
                                 {
-                                    $string = ($object.name + " " + $value.tostring())
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
                                     new-htmlListItem -text $string -fontSize 14
                                 }
                             }
-                            elseif ($object.value -ne $NULL)
-                            {
-                                $string = ($object.name + " " + $object.value.tostring())
-                                new-htmlListItem -text $string -fontSize 14                            }
-                            else
-                            {
-                                $string = ($object.name)
-                                new-htmlListItem -text $string -fontSize 14
-                            }
                         }
-                    }
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }
 
                 out-logfile -string "Generate HTML for on premsies group membership."
 
-                new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($originalDLConfiguration.member) -Filtering {
-                    } -AutoSize
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                if ($originalDLConfiguration.member.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Membership"){
+                        new-htmlTable -DataTable ($originalDLConfiguration.member) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
 
                 out-logfile -string "Generate HTML for MS Graph Group membership."
 
-                new-htmlSection -HeaderText ("Graph Group Membership"){
-                    new-htmlTable -DataTable ($msGraphDlMembership | select-object ID,AdditionalProperties.DisplayName) -Filtering {
-                    } -AutoSize
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                if ($msGraphDLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Graph Group Membership"){
+                        new-htmlTable -DataTable ($msGraphDlMembership | select-object ID) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+    
+                }
 
                 out-logfile -string "Generate HTML for Office 365 DL Membership"
 
-                new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($office365DLMembership) -Filtering {
-                    } -AutoSize
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                if ($office365DLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 DL Membership"){
+                        new-htmlTable -DataTable ($office365DLMembership) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
 
                 out-logfile -string "Generate HTML for Office 365 DL Membership Post Migration"
 
-                new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($office365DLMembershipPostMigration) -Filtering {
-                    } -AutoSize
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                if ($office365DLMembershipPostMigration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 DL Membership Post Migration"){
+                        new-htmlTable -DataTable ($office365DLMembershipPostMigration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                out-logfile -string "Generate HTML for all on premsies normalized attributes."
+
+                if ($exchangeDLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises DL Membership Normalized"){
+                        new-htmlTable -DataTable ($exchangeDLMembershipSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeRejectMessagesSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Reject Normalized"){
+                        new-htmlTable -DataTable ($exchangeRejectMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeAcceptMessagesSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises ManagedBy Normalized"){
+                        new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeModeratedBySMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises ModeratedBy Normalized"){
+                        new-htmlTable -DataTable ($exchangeModeratedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeBypassModerationSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises BypassModeration Normalized"){
+                        new-htmlTable -DataTable ($exchangeBypassModerationSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises GrantSendOnBehalfTo Normalized"){
+                        new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($exchangeSendAsSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises SendAs Normalized"){
+                        new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                }
             }
         } -online -ShowHTML
     }
