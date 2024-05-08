@@ -874,9 +874,37 @@ Function Start-DistributionListMigration
 
                 New-HTMLTableOption -DataStore JavaScript
 
-                if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+                if (($global:preCreateErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
                 {
                     New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
+
+                    out-logfile -string "Generate HTML for pre create errors."
+
+                    if ($global:preCreateErrors.count -gt 0)
+                    {
+                        out-logfile -string "Precreate errors exist."
+
+                        new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
+                            new-htmlTable -DataTable ($global:preCreateErrors) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
+                    else 
+                    {
+                        out-logfile -string "Precreate errors do not exist."
+                    }
+
+                    out-logfile -string "GEnerate HTML for test office 365 errors."
+
+                    if ($global:testOffice365Errors.count -gt 0)
+                    {
+                        out-logfile -string "Test Office 365 Errors exist."
+
+                        new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
+                            new-htmlTable -DataTable ($global:testOffice365Errors) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }
                 }
                 else 
                 {
