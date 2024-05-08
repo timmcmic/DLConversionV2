@@ -874,7 +874,7 @@ Function Start-DistributionListMigration
 
                 New-HTMLTableOption -DataStore JavaScript
 
-                if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
+                if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
                 {
                     New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
                 }
