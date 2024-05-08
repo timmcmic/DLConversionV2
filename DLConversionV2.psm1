@@ -1033,36 +1033,36 @@ Function Start-DistributionListMigration
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
                     New-HTMLList{
-                        new-htmlListItem -text ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
-                        new-htmlListItem -text ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
-                        new-htmlListItem -text ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
-                        new-htmlListItem -text ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count)
-                        new-htmlListItem -text ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
-                        new-htmlListItem -text ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
-                        new-htmlListItem -text ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
-                        new-htmlListItem -text ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
-                        new-htmlListItem -text ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
-                        new-htmlListItem -text ("The number of groups with accept permissions = "+$allGroupsAccept.count)
-                        new-htmlListItem -text ("The number of groups with reject permissions = "+$allGroupsReject.count)
-                        new-htmlListItem -text ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
-                        new-htmlListItem -text ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
-                        new-htmlListItem -text ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
-                        new-htmlListItem -text ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count)
-                        new-htmlListItem -text ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
-                        new-htmlListItem -text ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
-                        new-htmlListItem -text ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
-                        new-htmlListItem -text ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
-                        new-htmlListItem -text ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
-                        new-htmlListItem -text ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
-                        new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
-                        new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
-                        new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)  
+                        new-htmlListItem -text ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups with accept permissions = "+$allGroupsAccept.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups with reject permissions = "+$allGroupsReject.count) -fontSize 14
+                        new-htmlListItem -text ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count) -fontSize 14
+                        new-htmlListItem -text ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count) -fontSize 14
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
 
