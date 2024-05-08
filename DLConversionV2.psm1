@@ -18,6 +18,7 @@
 
 Function Start-DistributionListMigration 
 {
+    $htmlStartTime = get-date
     <#
     .SYNOPSIS
 
@@ -784,6 +785,8 @@ Function Start-DistributionListMigration
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     }
 
+    $htmlFunctionStartTime = get-Date
+
     out-logfile -string "Testing for supported version of Powershell engine."
 
     test-powershellVersion
@@ -1063,6 +1066,23 @@ Function Start-DistributionListMigration
                         new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count) -fontSize 14
                         new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count) -fontSize 14
                         new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count) -fontSize 14
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Telemetry Times"
+
+                New-HTMLSection -HeaderText "Telemetry Time" {
+                    New-HTMLList{
+                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryElapsedSeconds) -fontSize 14
+                        new-htmlListItem -text ("TimeToNormalizeDNs = "+$telemetryNormalizeDN) -fontSize 14
+                        new-htmlListItem -text ("TimeToValidateCloudRecipients = "+$telemetryValidateCloudRecipients) -fontSize 14
+                        new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
+                        new-htmlListItem -text ("TimeToCollectOffice365Dependency = "+$telemetryCollectOffice365Dependency) -fontSize 14
+                        new-htmlListItem -text ("TimePendingRemoveDLOffice365 = "+$telemetryTimeToRemoveDL) -fontSize 14
+                        new-htmlListItem -text ("TimeToCreateOffice365DLComplete = "+$telemetryCreateOffice365DL) -fontSize 14
+                        new-htmlListItem -text ("TimeToCreateOffice365DLFirstPass = "+$telemetryCreateOffice365DLFirstPass) -fontSize 14
+                        new-htmlListItem -text ("TimeToReplaceOnPremDependency = "+$telemetryReplaceOnPremDependency) -fontSize 14
+                        new-htmlListItem -text ("TimeToReplaceOffice365Dependency = "+$telemetryReplaceOffice365Dependency) -fontSize 14
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
 
@@ -1571,6 +1591,8 @@ Function Start-DistributionListMigration
 
     #Perform cleanup of any strings so that no spaces existin trailing or leading.
 
+    $htmlStartValidationTime = get-date
+
     $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
     $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
     $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
@@ -1811,6 +1833,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END PARAMETER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlStartPowershellSessions = get-date
+
     Out-Logfile -string "Determine Exchange Schema Version"
 
     try{
@@ -2030,6 +2054,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlCaptureOnPremisesDLInfo = get-date
+
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
     Out-LogFile -string "Getting the original DL Configuration"
@@ -2061,6 +2087,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
 
     Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
+
+    $htmlCaptureOnPremSendAs = get-date
 
     Out-LogFile -string "Determine if administrator desires to audit send as."
 
@@ -2120,6 +2148,8 @@ Function Start-DistributionListMigration
         $allObjectsSendAsAccess=@()
     }
 
+    $htmlCaptureOnPremFullMailboxAccess = get-date
+
     Out-LogFile -string "Determine if administrator desires to audit full mailbox access."
 
     if ($retainFullMailboxAccessOnPrem -eq $TRUE)
@@ -2165,6 +2195,8 @@ Function Start-DistributionListMigration
     {
         $allObjectsFullMailboxAccess = @()
     }
+
+    $htmlCaptureOnPremMailboxFolderPermissions = get-date
 
     out-logfile -string "Determine if the administrator has choosen to audit folder permissions on premsies."
 
@@ -2230,6 +2262,8 @@ Function Start-DistributionListMigration
     }
 
     #exit #Debug Exit
+
+    $htmlCaptureOffice365DLConfiguration = get-date
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
@@ -2297,6 +2331,8 @@ Function Start-DistributionListMigration
 
     #>
 
+    $htmlCaptureGraphDLConfiguration = get-date
+
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -2320,6 +2356,8 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
     }
 
+    $htmlCaptureGraphDLMembership = get-date
+
     out-logfile -string "Recording Graph DL membership."
 
     if ($allowNonSyncedGroup -eq $FALSE)
@@ -2342,6 +2380,8 @@ Function Start-DistributionListMigration
     else {
         $msGraphDLMembership=@()
     }
+
+    $htmlCaptureOffice365DLMembership = get-date
 
     out-logfile -string "Recording Office 365 DL Membership"
 
@@ -2391,6 +2431,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlStartGroupValidation = get-date
+
     if ($allowNonSyncedGroup -eq $FALSE)
     {
         Out-LogFile -string "Perform a safety check to ensure that the distribution list is directory sync."
@@ -2423,6 +2465,8 @@ Function Start-DistributionListMigration
     #Membership of attributes is via DN - these need to be normalized to SMTP addresses in order to find users in Office 365.
 
     #Start with DL membership and normallize.
+
+    $htmlStartAttributeNormalization = get-date
 
     $telemetryFunctionStartTime = get-universalDateTime
 
@@ -3092,6 +3136,8 @@ Function Start-DistributionListMigration
     #At this point we have obtained all the information relevant to the individual group.
     #Validate that the discovered dependencies are valid in Office 365.
 
+    $htmlStartCloudValidation = get-date
+
     $forLoopCounter=0 #Resetting counter at next set of queries.
 
     $telemetryFunctionStartTime = get-universalDateTime
@@ -3656,6 +3702,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlCaptureOnPremisesDependencies = get-date
+
     $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
@@ -4083,6 +4131,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "START RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlRecordOffice365Dependencies = get-date
+
     $telemetryFunctionStartTime = get-universalDateTime
 
     #Process normal mail enabled groups.
@@ -4412,6 +4462,8 @@ Function Start-DistributionListMigration
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
+    $htmlCreateOffice365StubGroup = get-date
+
     #EXIT #Debug Exit
 
     #We can begin the process of recreating the distribution group in Exchange Online.
@@ -4497,6 +4549,8 @@ Function Start-DistributionListMigration
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
     #Setting these first must occur since moderators have to be established before moderation can be enabled.
+
+    $htmlFirstPassAttributes = get-date
 
     out-logFile -string "Setting the multivalued attributes of the migrated group for the first pass."
 
@@ -4645,6 +4699,8 @@ Function Start-DistributionListMigration
 
     #If there are multiple threads in use hold all of them for thread 
 
+    $htmlMoveToNonSyncOU = get-date
+
     out-logfile -string "Determine if multiple migration threads are in use..."
 
     if ($totalThreadCount -eq 0)
@@ -4679,6 +4735,8 @@ Function Start-DistributionListMigration
 
     #If there are multiple threads have all threads > 1 sleep for 15 seconds while thread one deletes all status files.
     #This should cover the 5 seconds that any other threads may be sleeping looking to read the status directory.
+
+    $htmlStartADConnectFirstPass = get-date
 
     if ($totalThreadCount -gt 0)
     {
@@ -4766,6 +4824,8 @@ Function Start-DistributionListMigration
     }
 
     #Replicate domain controllers so that the change is received as soon as possible.()
+
+    $htmlReplicateActiveDirectoryFirstPass = get-date
     
     if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
@@ -4782,6 +4842,8 @@ Function Start-DistributionListMigration
     }
 
     #If group deletion via graph is allowed - do it at this time.
+
+    $htmlRemoveGroupViaGraph = get-date
 
     out-logfile -string "If delete via graph is in use - process the deletion via graph."
 
@@ -4803,6 +4865,8 @@ Function Start-DistributionListMigration
 
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+    $htmlStartADConnectSecondPass = get-date
 
     if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
     {
@@ -4851,6 +4915,8 @@ Function Start-DistributionListMigration
     
     #At this time we have processed the deletion to azure.
     #We need to wait for that deletion to occur in Exchange Online.
+
+    $htmlTestCloudDLDeletion = get-date
 
     $telemetryFunctionStartTime = get-universalDateTime
 
@@ -4907,6 +4973,8 @@ Function Start-DistributionListMigration
 
     #Now it is time to set the multi valued attributes on the DL in Office 365.
     #Setting these first must occur since moderators have to be established before moderation can be enabled.
+
+    $htmlSecondPassAttributes = get-date
 
     out-logFile -string "Setting the multivalued attributes of the migrated group for the first pass."
 
@@ -5003,6 +5071,8 @@ Function Start-DistributionListMigration
 
     out-logFile -string ("Capture the DL status post migration.")
 
+    $htmlCaptureOffice365InfoPostMigration = get-date
+
     $stopLoop = $FALSE
     [int]$loopCounter = 0
 
@@ -5097,6 +5167,8 @@ Function Start-DistributionListMigration
     ###Rename the group by adding a ! to the name - this ensures that if the group is every accidentally mail enabled it will not soft match the migrated group.
     ###We'll stamp custom attribute flags on it to ensure that we know the group has been mirgated - in case it's a member of another group to be migrated.
 
+    $htmlRenameorOriginalGroup = get-date
+
     if ($retainOriginalGroup -eq $TRUE)
     {
         Out-LogFile -string "Administrator has choosen to retain the original group."
@@ -5153,6 +5225,8 @@ Function Start-DistributionListMigration
         Out-LogFile -string "Administrator has choosen to regain the original group."
         out-logfile -string "Disabling the mail attributes on the group."
 
+        $htmlDisableOriginalGroup = get-date
+
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
         
@@ -5203,6 +5277,8 @@ Function Start-DistributionListMigration
         out-xmlFile -itemToExport $originalDLConfigurationUpdated -itemNameTOExport (($xmlFiles.originalDLConfigurationUpdatedXML.value)+"-PostMailDisabledGroup")
 
         Out-LogFile -string "Move the original group back to the OU it came from.  The group will no longer be soft matched."
+
+        $htmlMoveToOriginalOU = get-date
 
         [int]$loopCounter=0
         [boolean]$stopLoop=$FALSE
@@ -5266,6 +5342,8 @@ Function Start-DistributionListMigration
 
     #Now it is time to create the routing contact.
 
+    $htmlCreateRoutingContact = get-date
+
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
 
@@ -5314,8 +5392,6 @@ Function Start-DistributionListMigration
         } while ($stopLoop -eq $FALSE)
     }
     
-    
-
     $stopLoop = $FALSE
     [int]$loopCounter = 0
 
@@ -5359,6 +5435,8 @@ Function Start-DistributionListMigration
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
     #Moving the creation of hybrid mail flow here to ensure that mail routing happens at the next ad replication cycle.
+
+    $htmlEnableHybridMailFlow = get-date
 
     if ($enableHybridMailflow -eq $TRUE)
     {
@@ -5555,6 +5633,7 @@ Function Start-DistributionListMigration
         out-xmlfile -itemToExport $routingDynamicGroupConfig -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
     }
 
+    $htmlStartADReplicationThirdPass = get-date
 
     #At this time the contact is created - issuing a replication of domain controllers and sleeping one minute.
     #We've gotta get the contact pushed out so that cross domain operations function - otherwise reconciling memership fails becuase the contacts not available.
@@ -5571,6 +5650,8 @@ Function Start-DistributionListMigration
     }
 
     $forLoopCounter=0 #Restting loop counter for next series of operations.
+
+    $htmlStartReplaceOnPremisesDependencies = get-date
 
     #At this time we are ready to begin resetting the on premises dependencies.
 
@@ -6103,6 +6184,8 @@ Function Start-DistributionListMigration
 
     $telemetryFunctionStartTime = get-universalDateTime
 
+    $htmlStartReplaceOffice365Dependencies = get-date
+
     out-logfile -string "Processing Office 365 Accept Messages From"
 
     if ($allOffice365Accept.count -gt 0)
@@ -6552,6 +6635,8 @@ Function Start-DistributionListMigration
         $global:generalErrors+=$isErrorObject
     }
 
+    $htmlRemoveOnPremGroup = get-date
+
     #If the administrator has selected to not retain the group - remove it.
 
     if ($retainOriginalGroup -eq $FALSE)
@@ -6640,6 +6725,8 @@ Function Start-DistributionListMigration
    }
 
    #Replicate domain controllers so that the change is received as soon as possible.()
+
+   $htmlStartADReplicationFourthPath = get-date
    
    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
@@ -6657,6 +6744,8 @@ Function Start-DistributionListMigration
 
    #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
    #Note:  If this is not done we are subject to sitting and waiting for it to complete.
+
+   $htmlStartADConnectThirdPass = get-date
 
    if (($global:threadNumber -eq 0) -or ($global:threadNumber -eq 1))
    {
@@ -6835,6 +6924,8 @@ Function Start-DistributionListMigration
     }
 
     #Archive the files into a date time success folder.
+
+    $htmlEndTime = get-date
 
     $telemetryEndTime = get-universalDateTime
     $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
