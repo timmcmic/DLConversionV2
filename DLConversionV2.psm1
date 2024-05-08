@@ -655,6 +655,7 @@ Function Start-DistributionListMigration
         msGraphDLMembershipXML = @{"Value" = "msGraphADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
+        office365DLMembership = @{"Value" = "office365DLMembership" ; "Description" = "Original Office 365 DL Membership"}
     }
 
     #Define the property sets that will be cleared on the on premises object.
@@ -716,6 +717,7 @@ Function Start-DistributionListMigration
     $msGraphDLConfiguration = $NULL #This holds the Azure AD DL configuration
     $msGraphDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
+    $office365DLMembership=$NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
 
@@ -1975,6 +1977,7 @@ Function Start-DistributionListMigration
             out-logfile -string $_
             out-logfile -string "Unable to obtain Azure Active Directory DL Configuration" -isError:$TRUE
         }
+
     }
 
     if ($msGraphDLConfiguration -ne $NULL)
@@ -2007,6 +2010,26 @@ Function Start-DistributionListMigration
     }
     else {
         $msGraphDLMembership=@()
+    }
+
+    out-logfile -string "Recording Office 365 DL Membership"
+
+    if ($allowNonSyncedGroup -eq $FALSE)
+    {
+        try{
+            $office365DLMembership = @(get-O365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP)
+        }
+        catch{
+           out-logfile -string "Unable to obtain the Office 365 DL membership"
+           out-logfile -string $_ -isError:$TRUE
+        }
+    }
+
+    if ($office365DLMembership.count -gt 0)
+    {
+        out-logfile -string "Creating an XML file backup of the Office 365 Original DL Membership"
+
+        out-xmlFile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365DLMembership.value
     }
 
     <#
