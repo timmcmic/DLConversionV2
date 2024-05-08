@@ -6329,12 +6329,12 @@ Function Start-DistributionListMigration
     
             }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
         }
-    }
+    } -online -ShowHTML
 
     if ($telemetryError -eq $TRUE)
     {
         out-logfile -string "" -isError:$TRUE
     }
-    
+
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
 }
