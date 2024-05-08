@@ -863,12 +863,18 @@ Function Start-DistributionListMigration
         $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
 
         out-logfile -string $global:functionHTMLFile
-        $headerString = ("Migration Summary for: "+$groupSMTPAddress)
+        $headerString = ("Migration Summary for "+$groupSMTPAddress)
 
         New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
             New-HTMLHeader {
                 New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
             }
+            new-htmlMain{
+                #Define HTML table options.
+
+                New-HTMLTableOption -DataStore JavaScript
+            }
+
         } -online -ShowHTML
     }
 
