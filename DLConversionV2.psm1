@@ -1033,7 +1033,15 @@ Function Start-DistributionListMigration
                     New-HTMLList{
                         foreach ($object in $originalDLConfiguration.psObject.properties)
                         {
-                            $string = ($object.name + " " + $object.value.tostring())
+                            if ($object.Value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                            }
+                            else
+                            {
+                                $string = $object.name
+                            }
+
                             new-htmlListItem -text $string -fontSize 14
                         }
                     }
