@@ -1107,6 +1107,94 @@ Function Start-DistributionListMigration
                         }
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Office 365 DL Configuration"
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Exchange Online)" {
+                    New-HTMLList{
+                        foreach ($object in $office365DLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Office 365 Group Configuration"
+
+                New-HTMLSection -HeaderText "Original Group Configuration (Exchange Online)" {
+                    New-HTMLList{
+                        foreach ($object in  $office365GroupConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Office 365 DL Configuration Post Migration"
+
+                New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
+                    New-HTMLList{
+                        foreach ($object in  $office365DLConfigurationPostMigration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for on premsies group membership."
+
+                new-htmlSection -HeaderText ("On Premises Group Membership"){
+                    new-htmlTable -DataTable ($exchangeDLMembershipSMTP) -Filtering {
+                    } -AutoSize
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
             }
         } -online -ShowHTML
     }
