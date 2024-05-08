@@ -910,7 +910,7 @@ Function Start-DistributionListMigration
                         out-logfile -string "Precreate errors do not exist."
                     }
 
-                    out-logfile -string "GEnerate HTML for test office 365 errors."
+                    out-logfile -string "Generate HTML for test office 365 errors."
 
                     if ($global:testOffice365Errors.count -gt 0)
                     {
@@ -921,55 +921,106 @@ Function Start-DistributionListMigration
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else 
+                    {
+                        out-logfile -string "Test Office 365 Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for post office 365 group creation errors."
 
                     if ($global:postCreateErrors.count -gt 0)
                     {
+                        out-logfile -string "Post Office 365 Group Creation Errors exist."
+
                         new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
                             new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else 
+                    {
+                        Out-logfile -string "Post Office 365 GRoup Creation Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate html for On Premises Replacement Errors"
 
                     if ($onPremReplaceErrors.count -gt 0)
                     {
+                        out-logfile -string "On premsies replacement errors exist."
+
                         new-htmlSection -HeaderText ("On Premises Replacement Errors"){
                             new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else
+                    {
+                        out-logfile -string "On premises replacement errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for Office 365 Replacement Errors."
 
                     if ($office365ReplaceErrors.count -gt 0)
                     {
+                        out-logfile -string "Office 365 Replacement Errors exist."
+
                         new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
                             new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else 
+                    {
+                        out-logfile -string "Office 365 Replacement Errors do not eixst."
+                    }
+
+                    out-logfile -string "Generate HTML for Office 365 Replace Permissions Errors"
 
                     if ($global:office365ReplacePermissionsErrors.count -gt 0)
                     {
+                        out-logfile -string "Office 365 Replace Permissions Errors exist."
+
                         new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
                             new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else
+                    {
+                        out-logfile -string "Office 365 Replace Permissions Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for On Premises Replace Permissions Errors"
 
                     if ($onPremReplacePermissionsError.count -gt 0)
                     {
+                        out-logfile -string "On Premises Replace Permissions Errors exist."
+
                         new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
                             new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
+                    else 
+                    {
+                        out-logfile -string "On Premises Replace Permissions Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for General Errors"
 
                     if ($global:generalErrors.count -gt 0)
                     {
+                        out-logfile -string "General Errors exist."
+
                         new-htmlSection -HeaderText ("General Errors"){
                             new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
-
+                    else 
+                    {
+                        out-logfile -string "General Errors do not exist"
+                    }
                 }
                 else 
                 {
