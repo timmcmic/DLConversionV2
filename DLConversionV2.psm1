@@ -1031,7 +1031,7 @@ Function Start-DistributionListMigration
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
                     New-HTMLList{
-                        foreach ($object in $originalDLConfiguration)
+                        foreach ($object in $originalDLConfiguration.psObject.properties)
                         {
                             $string = ($object.name + " " + $object.value.tostring())
                             new-htmlListItem -text $string -fontSize 14
