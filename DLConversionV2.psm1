@@ -1030,8 +1030,8 @@ Function Start-DistributionListMigration
                 out-logfile -string "Generate HTML for Original DL Configuration"
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
-                    new-htmlTable -DataTable ($originalDLConfiguration) -Filtering {
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    new-htmlTable -DataTable ($orignalDLConfiguration) -Filtering {
+                    } -AutoSize
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
 
                 out-logfile -string "Generate HTML for Original DL Configuration Updated"
