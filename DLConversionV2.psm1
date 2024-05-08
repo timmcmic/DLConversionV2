@@ -1030,7 +1030,23 @@ Function Start-DistributionListMigration
                 out-logfile -string "Generate HTML for Original DL Configuration"
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
-                    New-HTMLText -text $originalDLConfiguration
+                    New-HTMLList{
+                        foreach ($object in $originalDLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                }
+                            }
+                            else
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                            }
+
+                            new-htmlListItem -text $string -fontSize 14
+                        }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
 
                 out-logfile -string "Generate HTML for Original DL Configuration Updated"
