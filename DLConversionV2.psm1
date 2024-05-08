@@ -1194,7 +1194,7 @@ Function Start-DistributionListMigration
                 out-logfile -string "Generate HTML for on premsies group membership."
 
                 new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($originalDLConfiguration.members) -Filtering {
+                    new-htmlTable -DataTable ($originalDLConfiguration.member) -Filtering {
                     } -AutoSize
                 } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
 
