@@ -713,13 +713,11 @@ Function Start-DistributionListMigration
 
     $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
     $office365GroupConfiguration = $NULL #This holds the office 365 group configuration for the group to be migrated.
-    $azureADDlConfiguration = $NULL #This holds the Azure AD DL configuration
-    $azureADDlMembership = $NULL
-    $msGraphADDlConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDLConfiguration = $NULL #This holds the Azure AD DL configuration
     $msGraphDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
-    $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
+    $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
 
     #Declare some variables for string processing as items move around.
 
@@ -6230,6 +6228,73 @@ Function Start-DistributionListMigration
     if ($telemetryError -eq $TRUE)
     {
         out-logfile -string "" -isError:$TRUE
+    }
+
+    #Prepare the HTML file for output.
+    #Define the HTML file.
+
+    $functionHTMLSuffix = "html"
+    $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
+    $headerString = ("Migration Summary for: "+$groupSMTPAddress)
+
+    New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
+        New-HTMLHeader
+        {
+            New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+        }
+        new-htmlMain
+        {
+            #Define HTML table options.
+
+            New-HTMLTableOption -DataStore JavaScript
+
+            #If there are errors output error message - otherwise success.
+
+            if (($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0))
+            {
+                New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
+
+                #Output list of summary error objects
+
+                New-HTMLSection -HeaderText "Error Count Summary" {
+                    New-HTMLList{
+                            new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
+                            new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
+                            new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
+                            new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
+                            new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
+                            new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                #For each error category - output the list of errors.
+
+                if ($global:postCreateErrors.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Replacement Errors"){
+                        new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering 
+                        {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($onPremReplaceErrors.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Replacement Errors"){
+                        new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering 
+                        {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+
+            }
+            else 
+            {
+                New-HTMLText -Text "MIGRATION SUCCESSFUL" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
+            }
+        }
     }
 
     Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
