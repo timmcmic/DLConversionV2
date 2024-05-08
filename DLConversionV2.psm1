@@ -878,6 +878,22 @@ Function Start-DistributionListMigration
                 {
                     New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
 
+                    out-logfile -string "Generate Error Summary List"
+
+                    New-HTMLSection -HeaderText "Error Count Summary" {
+                        New-HTMLList{
+                                new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count.count) -fontSize 14
+                                new-htmlListItem -text ("Test Office 365 Errors: "+$global:testOffice365Errors.count) -fontSize 14
+                                new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
+                            }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+
                     out-logfile -string "Generate HTML for pre create errors."
 
                     if ($global:preCreateErrors.count -gt 0)
