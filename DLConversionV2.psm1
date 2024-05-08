@@ -6228,8 +6228,13 @@ Function Start-DistributionListMigration
     #Prepare the HTML file for output.
     #Define the HTML file.
 
+    out-logfile -string "Preparring to generate HTML file."
+
     $functionHTMLSuffix = "html"
     $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
+
+    out-logfile -string $global:functionHTMLFile
+    
     $headerString = ("Migration Summary for: "+$groupSMTPAddress)
 
     New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
