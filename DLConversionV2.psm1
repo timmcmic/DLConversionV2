@@ -1047,6 +1047,7 @@ Function Start-DistributionListMigration
 
                             new-htmlListItem -text $string -fontSize 14
                         }
+                    }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
 
                 out-logfile -string "Generate HTML for Original DL Configuration Updated"
