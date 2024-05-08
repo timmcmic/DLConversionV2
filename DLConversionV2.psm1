@@ -1194,7 +1194,28 @@ Function Start-DistributionListMigration
                 out-logfile -string "Generate HTML for on premsies group membership."
 
                 new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($exchangeDLMembershipSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                    new-htmlTable -DataTable ($originalDLConfiguration.members) -Filtering {
+                    } -AutoSize
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for MS Graph Group membership."
+
+                new-htmlSection -HeaderText ("On Premises Group Membership"){
+                    new-htmlTable -DataTable ($msGraphDlMembership) -Filtering {
+                    } -AutoSize
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Office 365 DL Membership"
+
+                new-htmlSection -HeaderText ("On Premises Group Membership"){
+                    new-htmlTable -DataTable ($office365DLMembership) -Filtering {
+                    } -AutoSize
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Office 365 DL Membership Post Migration"
+
+                new-htmlSection -HeaderText ("On Premises Group Membership"){
+                    new-htmlTable -DataTable ($office365DLMembershipPostMigration) -Filtering {
                     } -AutoSize
                 } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
             }
