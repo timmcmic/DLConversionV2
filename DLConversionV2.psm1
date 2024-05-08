@@ -18,7 +18,7 @@
 
 Function Start-DistributionListMigration 
 {
-    $htmlStartTime = get-date
+    
     <#
     .SYNOPSIS
 
