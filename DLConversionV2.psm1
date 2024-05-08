@@ -1038,18 +1038,18 @@ Function Start-DistributionListMigration
                                 foreach ($value in $object.Value)
                                 {
                                     $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
                                 }
                             }
                             elseif ($object.value -ne $NULL)
                             {
                                 $string = ($object.name + " " + $object.value.tostring())
-                            }
+                                new-htmlListItem -text $string -fontSize 14                            }
                             else
                             {
                                 $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
                             }
-
-                            new-htmlListItem -text $string -fontSize 14
                         }
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
