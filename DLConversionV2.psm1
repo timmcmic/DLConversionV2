@@ -866,7 +866,9 @@ Function Start-DistributionListMigration
         $headerString = ("Migration Summary for: "+$groupSMTPAddress)
 
         New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
-            
+            New-HTMLHeader {
+                New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+            }
         } -online -ShowHTML
     }
 
