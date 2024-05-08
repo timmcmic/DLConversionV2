@@ -391,6 +391,8 @@ Function Start-DistributionListMigration
         [boolean]$isHealthCheck=$FALSE
     )
 
+    $htmlStartTime = get-date
+
     #Establish required MS Graph Scopes
 
     $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
