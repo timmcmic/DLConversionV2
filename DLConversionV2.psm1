@@ -6320,6 +6320,19 @@ Function Start-DistributionListMigration
             {
                 New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
             }
+
+            #Output the original DL Configuration
+
+            New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
+                New-HTMLList{
+                    foreach ($object in $originalDLConfiguration)
+                    {
+                        $string = ($object.name + " " + $object.value.tostring())
+                        new-htmlListItem -text $string -fontSize 14
+                    }
+                }
+    
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
         }
     }
 
