@@ -1200,8 +1200,8 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Generate HTML for MS Graph Group membership."
 
-                new-htmlSection -HeaderText ("On Premises Group Membership"){
-                    new-htmlTable -DataTable ($msGraphDlMembership) -Filtering {
+                new-htmlSection -HeaderText ("Graph Group Membership"){
+                    new-htmlTable -DataTable ($msGraphDlMembership | select-object ID,AdditionalProperties.DisplayName) -Filtering {
                     } -AutoSize
                 } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
 
