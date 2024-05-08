@@ -1085,7 +1085,7 @@ Function Start-DistributionListMigration
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Azure Active Directory)" {
                     New-HTMLList{
-                        foreach ($object in $mgGraphDLConfiguration.psObject.properties)
+                        foreach ($object in $msGraphDLConfiguration.psObject.properties)
                         {
                             if ($object.Value.count -gt 1)
                             {
