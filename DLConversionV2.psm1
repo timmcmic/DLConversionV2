@@ -1046,6 +1046,46 @@ Function Start-DistributionListMigration
                         }
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Original DL Configuration Updated"
+
+                New-HTMLSection -HeaderText "Original DL Configuration Updated (Active Directory)" {
+                    New-HTMLList{
+                        foreach ($object in $originalDLConfigurationUPdated.psObject.properties)
+                        {
+                            if ($object.Value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                            }
+                            else
+                            {
+                                $string = $object.name
+                            }
+
+                            new-htmlListItem -text $string -fontSize 14
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
+                out-logfile -string "Generate HTML for Original Graph Configuration"
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Azure Active Directory)" {
+                    New-HTMLList{
+                        foreach ($object in $msGraphDLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                            }
+                            else
+                            {
+                                $string = $object.name
+                            }
+
+                            new-htmlListItem -text $string -fontSize 14
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
             }
         } -online -ShowHTML
     }
