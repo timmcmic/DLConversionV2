@@ -1029,6 +1029,43 @@ Function Start-DistributionListMigration
                     New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
                 }
 
+                out-logfile -string "Generate HTML for Summary Counts."
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
+                    New-HTMLList{
+                        new-htmlListItem -text ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
+                        new-htmlListItem -text ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count)
+                        new-htmlListItem -text ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count)
+                        new-htmlListItem -text ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count)
+                        new-htmlListItem -text ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count)
+                        new-htmlListItem -text ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
+                        new-htmlListItem -text ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
+                        new-htmlListItem -text ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
+                        new-htmlListItem -text ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
+                        new-htmlListItem -text ("The number of groups with accept permissions = "+$allGroupsAccept.count)
+                        new-htmlListItem -text ("The number of groups with reject permissions = "+$allGroupsReject.count)
+                        new-htmlListItem -text ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+                        new-htmlListItem -text ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
+                        new-htmlListItem -text ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
+                        new-htmlListItem -text ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count)
+                        new-htmlListItem -text ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
+                        new-htmlListItem -text ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
+                        new-htmlListItem -text ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
+                        new-htmlListItem -text ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
+                        new-htmlListItem -text ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
+                        new-htmlListItem -text ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
+                        new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
+                        new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count)
+                        new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count)  
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+
                 out-logfile -string "Generate HTML for Original DL Configuration"
 
                 New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
@@ -1390,6 +1427,104 @@ Function Start-DistributionListMigration
                 {
                     new-htmlSection -HeaderText ("On Premises Group CoManagedBy Objects"){
                         new-htmlTable -DataTable ($allGroupsCoManagedByBL) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                out-logfile -string "Generate HTML for all Office 365 dependencies."
+
+                if ($allOffice365MemberOf.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Member of Other Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365MemberOf) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365Accept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365Accept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365Reject.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Reject Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Reject) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365BypassModeration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 BypassModeration Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365BypassModeration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365ManagedBy.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ManagedBy Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365ManagedBy) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 GrantSendOnBehalfTo Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365ForwardingAddress.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365ForwardingAddress) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365FullMailboxAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365FullMailboxAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365SendAsAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 SendAs on Other Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365SendAsAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365SendAsAccessOnGroup.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 SendAs On Group"){
+                        new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($allOffice365MailboxFolderPermissions.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
+                        new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
