@@ -6238,8 +6238,7 @@ Function Start-DistributionListMigration
     $headerString = ("Migration Summary for: "+$groupSMTPAddress)
 
     New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
-        New-HTMLHeader
-        {
+        New-HTMLHeader {
             New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
         }
         new-htmlMain
@@ -6265,7 +6264,6 @@ Function Start-DistributionListMigration
                             new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
                             new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
                         }
-                    }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
 
                 #For each error category - output the list of errors.
