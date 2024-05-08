@@ -6270,7 +6270,7 @@ Function Start-DistributionListMigration
 
                 if ($global:postCreateErrors.count -gt 0)
                 {
-                    new-htmlSection -HeaderText ("On Premises Replacement Errors"){
+                    new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
                         new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
@@ -6283,10 +6283,42 @@ Function Start-DistributionListMigration
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                 }
+
+                if ($office365ReplaceErrors.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
+                        new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($global:office365ReplacePermissionsErrors.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
+                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($onPremReplacePermissionsError.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
+                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
+
+                if ($global:generalErrors.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("General Errors"){
+                        new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                }
             }
             else 
             {
-                New-HTMLText -Text "MIGRATION SUCCESSFUL" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
+                New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
             }
         }
     }
