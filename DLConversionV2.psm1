@@ -885,7 +885,7 @@ Function Start-DistributionListMigration
                         out-logfile -string "Precreate errors exist."
 
                         new-htmlSection -HeaderText ("Pre Office 365 Group Create Errors"){
-                            new-htmlTable -DataTable ($global:preCreateErrors) -Filtering  {
+                            new-htmlTable -DataTable ($global:preCreateErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
                     }
