@@ -889,7 +889,7 @@ Function Start-DistributionListMigration
 
                     New-HTMLSection -HeaderText "Error Count Summary" {
                         New-HTMLList{
-                                new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count.count) -fontSize 14
+                                new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count) -fontSize 14
                                 new-htmlListItem -text ("Test Office 365 Errors: "+$global:testOffice365Errors.count) -fontSize 14
                                 new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
                                 new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
