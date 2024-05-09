@@ -1263,7 +1263,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group Membership"){
                         new-htmlTable -DataTable ($originalDLConfiguration.member) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Generate HTML for MS Graph Group membership."
@@ -1273,7 +1273,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Graph Group Membership"){
                         new-htmlTable -DataTable ($msGraphDlMembership | select-object ID) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
     
                 }
 
@@ -1284,7 +1284,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 DL Membership"){
                         new-htmlTable -DataTable ($office365DLMembership) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Generate HTML for Office 365 DL Membership Post Migration"
@@ -1294,7 +1294,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 DL Membership Post Migration"){
                         new-htmlTable -DataTable ($office365DLMembershipPostMigration) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Generate HTML for all on premsies normalized attributes."
@@ -1304,7 +1304,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises DL Membership Normalized"){
                         new-htmlTable -DataTable ($exchangeDLMembershipSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeRejectMessagesSMTP.count -gt 0)
@@ -1312,7 +1312,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Reject Normalized"){
                         new-htmlTable -DataTable ($exchangeRejectMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeAcceptMessagesSMTP.count -gt 0)
@@ -1320,7 +1320,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Accept Normalized"){
                         new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeManagedBySMTP.count -gt 0)
@@ -1328,7 +1328,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Accept Normalized"){
                         new-htmlTable -DataTable ($exchangeManagedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
 
@@ -1337,7 +1337,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises ModeratedBy Normalized"){
                         new-htmlTable -DataTable ($exchangeModeratedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeBypassModerationSMTP.count -gt 0)
@@ -1345,7 +1345,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises BypassModeration Normalized"){
                         new-htmlTable -DataTable ($exchangeBypassModerationSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
@@ -1353,7 +1353,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises GrantSendOnBehalfTo Normalized"){
                         new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($exchangeSendAsSMTP.count -gt 0)
@@ -1361,7 +1361,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises SendAs Normalized"){
                         new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Generate HTML for all on premises dependencies."
@@ -1371,7 +1371,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group Member Of"){
                         new-htmlTable -DataTable ($allGroupsMemberOf) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsReject.count -gt 0)
@@ -1379,7 +1379,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group Reject"){
                         new-htmlTable -DataTable ($allGroupsReject) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsAccept.count -gt 0)
@@ -1387,7 +1387,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group Accept"){
                         new-htmlTable -DataTable ($allGroupsAccept) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsBypassModeration.count -gt 0)
@@ -1395,7 +1395,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group ModeratedBy"){
                         new-htmlTable -DataTable ($allGroupsBypassModeration) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allUsersForwardingAddress.count -gt 0)
@@ -1403,7 +1403,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group Forwarding On Objects"){
                         new-htmlTable -DataTable ($allUsersForwardingAddress) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
@@ -1411,7 +1411,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group SendOnBehalf Objects"){
                         new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsManagedBy.count -gt 0)
@@ -1419,7 +1419,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group ManagedBy Objects"){
                         new-htmlTable -DataTable ($allGroupsManagedBy) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allObjectsFullMailboxAccess.count -gt 0)
@@ -1427,7 +1427,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group FullMailboxAccess Objects"){
                         new-htmlTable -DataTable ($allObjectsFullMailboxAccess) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allObjectSendAsAccess.count -gt 0)
@@ -1435,7 +1435,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group SendAsAccess Objects"){
                         new-htmlTable -DataTable ($allObjectSendAsAccess) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allObjectsSendAsAccessNormalized.count -gt 0)
@@ -1443,7 +1443,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group SendAsAccessNormalized Objects"){
                         new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allMailboxesFolderPermissions.count -gt 0)
@@ -1451,7 +1451,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group MailboxFolderPermissions Objects"){
                         new-htmlTable -DataTable ($allMailboxesFolderPermissions) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allGroupsCoManagedByBL.count -gt 0)
@@ -1459,7 +1459,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("On Premises Group CoManagedBy Objects"){
                         new-htmlTable -DataTable ($allGroupsCoManagedByBL) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Generate HTML for all Office 365 dependencies."
@@ -1469,7 +1469,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 Member of Other Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365MemberOf) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365Accept.count -gt 0)
@@ -1477,7 +1477,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365Accept.count -gt 0)
@@ -1485,7 +1485,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365Reject.count -gt 0)
@@ -1493,7 +1493,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 Reject Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365Reject) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365BypassModeration.count -gt 0)
@@ -1501,7 +1501,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 BypassModeration Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365BypassModeration) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365ManagedBy.count -gt 0)
@@ -1509,7 +1509,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 ManagedBy Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365ManagedBy) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
@@ -1517,7 +1517,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 GrantSendOnBehalfTo Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365ForwardingAddress.count -gt 0)
@@ -1525,7 +1525,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365ForwardingAddress) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365FullMailboxAccess.count -gt 0)
@@ -1533,7 +1533,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365FullMailboxAccess) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365SendAsAccess.count -gt 0)
@@ -1541,7 +1541,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 SendAs on Other Groups Objects"){
                         new-htmlTable -DataTable ($allOffice365SendAsAccess) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365SendAsAccessOnGroup.count -gt 0)
@@ -1549,7 +1549,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 SendAs On Group"){
                         new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 if ($allOffice365MailboxFolderPermissions.count -gt 0)
@@ -1557,7 +1557,7 @@ Function Start-DistributionListMigration
                     new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
                         new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) -Filtering {
                         } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
                 }
 
                 out-logfile -string "Record routing contact configuration."
@@ -1624,44 +1624,44 @@ Function Start-DistributionListMigration
 
                 new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
                     new-HTMLTimeLIne {
-                        new-HTMLTimeLineEntry -HeadingText "Migration Start Time" -Date $htmlStartTime
-                        new-HTMLTimeLineEntry -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
-                        new-HTMLTimeLineEntry -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
-                        new-HTMLTimeLineEntry -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
-                        new-HTMLTimeLineEntry -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
-                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
-                        new-HTMLTimeLineEntry -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
-                        new-HTMLTimeLineEntry -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
-                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
-                        new-HTMLTimeLineEntry -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
-                        new-HTMLTimeLineEntry -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                        new-HTMLTimeLineEntry -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
-                        new-HTMLTimeLineEntry -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
-                        new-HTMLTimeLineEntry -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
-                        new-HTMLTimeLineEntry -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
-                        new-HTMLTimeLineEntry -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
-                        new-HTMLTimeLineEntry -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
-                        new-HTMLTimeLineEntry -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
-                        new-HTMLTimeLineEntry -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
-                        new-HTMLTimeLineEntry -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
-                        new-HTMLTimeLineEntry -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
-                        new-HTMLTimeLineEntry -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
-                        new-HTMLTimeLineEntry -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
-                        new-HTMLTimeLineEntry -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
-                        new-HTMLTimeLineEntry -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
-                        new-HTMLTimeLineEntry -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
-                        new-HTMLTimeLineEntry -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
-                        new-HTMLTimeLineEntry -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
-                        new-HTMLTimeLineEntry -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
-                        new-HTMLTimeLineEntry -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
-                        new-HTMLTimeLineEntry -HeadingText "END" -Date $htmlEndTime
+                        new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
+                        new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
+                        new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                        new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                        new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                        new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                        new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                        new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                        new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
+                        new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
+                        new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                        new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
+                        new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
+                        new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
+                        new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                        new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
+                        new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
+                        new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
+                        new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
                     }
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
             }
         } -online -ShowHTML
     }
