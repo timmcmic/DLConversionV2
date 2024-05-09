@@ -1036,7 +1036,7 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Generate HTML for Summary Counts."
 
-                New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
+                New-HTMLSection -HeaderText "Group Statistics" {
                     New-HTMLList{
                         new-htmlListItem -text ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count) -fontSize 14
                         new-htmlListItem -text ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count) -fontSize 14
