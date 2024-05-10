@@ -3098,6 +3098,7 @@ Function get-DLHealthReport
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
                         new-htmlTable -DataTable ($office365ProxyAddressesEval  | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row -color white -CaseSensitive:$false
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
@@ -3125,6 +3126,7 @@ Function get-DLHealthReport
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Active Directory -> Office 365" {
                         new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row -color white -CaseSensitive:$false
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
