@@ -4857,6 +4857,9 @@ th {
     out-logfile -string "Obtain the HTML file already created."
 
     $html = get-content $htmlFile
+
+    out-logfile -string "Add current HTML file to the final HTML file."
+
     $finalHTML = $html
 
     try {
@@ -4864,7 +4867,7 @@ th {
 
         get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
-        out-logfile -string "Successful - import HTML file."
+        out-logfile -string "Attempt to import get-DLHierarchyFromLDAP."
 
         try {
             $html  = get-content $global:functionHTMLFile -errorAction STOP
@@ -4874,7 +4877,7 @@ th {
             out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
         }
 
-        out-logfile -string "Adding generated HTML to current HTML file."
+        out-logfile -string "Adding get-DLHierarchyFromLDAP to final HTML.."
 
         $finalHTML += $html 
     }
@@ -4886,9 +4889,9 @@ th {
     try {
         out-logfile -string "Invoking get-DLHierarchyFromLDAP Reverse"
 
-        $htmlFilePath = get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
+        get-DLHierarchyFromLdap -groupObjectID $originalDLConfiguration.objectGUID -globalCatalogServer $globalCatalogServer -activeDirectoryCredential $activeDirectoryCredential -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
 
-        out-logfile -string "Successful - import HTML file."
+        out-logfile -string "Successful - LDAP Reverse import HTML file."
 
         try {
             $html  = get-content $global:functionHTMLFile -errorAction STOP
@@ -4898,7 +4901,7 @@ th {
             out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
         }
 
-        out-logfile -string "Adding generated HTML to current HTML file."
+        out-logfile -string "Adding LDAP Reverse generated HTML to current HTML file."
 
         $finalHTML += $html 
     }
@@ -4912,8 +4915,8 @@ th {
 
         get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -errorAction STOP
 
-        out-logfile -string "Successful - import HTML file."
-
+        out-logfile -string "Successful - import Exchange Online HTML file."
+ 
         try {
             $html  = get-content $global:functionHTMLFile -errorAction STOP
         }
@@ -4922,7 +4925,7 @@ th {
             out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
         }
 
-        out-logfile -string "Adding generated HTML to current HTML file."
+        out-logfile -string "Adding Exchange Online generated HTML to current HTML file."
 
         $finalHTML += $html 
     }
@@ -4936,7 +4939,7 @@ th {
 
         get-DLHierarchyFromExchangeOnline -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -logFolderPath $logFolderPath -allowTelemetryCollection $allowTelemetryCollection -enableTextOutput:$false -isHealthCheck:$TRUE -reverseHierarchy $TRUE -errorAction STOP
 
-        out-logfile -string "Successful - import HTML file."
+        out-logfile -string "Successful - Exchange Online Reverse import HTML file."
 
         try {
             $html  = get-content $global:functionHTMLFile -errorAction STOP
@@ -4946,7 +4949,7 @@ th {
             out-logfile -string "Unable to import the HTML file generated." -isError:$TRUE
         }
 
-        out-logfile -string "Adding generated HTML to current HTML file."
+        out-logfile -string "Adding Exchange Online Reverse generated HTML to current HTML file."
 
         $finalHTML += $html 
     }
