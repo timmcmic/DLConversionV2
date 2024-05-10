@@ -2933,7 +2933,7 @@ Function get-DLHealthReport
 
     $functionObject = New-Object PSObject -Property @{
         OnPremisesMemberCount = $exchangeDLMembershipSMTP.count
-        AzureADMemberCount = $azureADDlMembership.count
+        AzureADMemberCount = $msGraphDLMembership.count
         Office365DLMemberCount = $office365DLMembership.count
         OnPremisesAcceptMessagesFromSendersOrMembersCount = $exchangeAcceptMessagesSMTP.count
         Office365AcceptMessagesFromSendersOrMembersCount = $office365AcceptMessagesFromSendersOrMembers.count
