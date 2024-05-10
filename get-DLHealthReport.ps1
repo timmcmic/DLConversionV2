@@ -4879,7 +4879,15 @@ th {
 
         out-logfile -string "Adding get-DLHierarchyFromLDAP to final HTML.."
 
-        $finalHTML += $html 
+        $finalHTML += $html
+        
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy"
@@ -4903,7 +4911,15 @@ th {
 
         out-logfile -string "Adding LDAP Reverse generated HTML to current HTML file."
 
-        $finalHTML += $html 
+        $finalHTML += $html
+
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
@@ -4928,6 +4944,14 @@ th {
         out-logfile -string "Adding Exchange Online generated HTML to current HTML file."
 
         $finalHTML += $html 
+
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
@@ -4952,6 +4976,14 @@ th {
         out-logfile -string "Adding Exchange Online Reverse generated HTML to current HTML file."
 
         $finalHTML += $html 
+
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
@@ -4976,6 +5008,14 @@ th {
         out-logfile -string "Adding generated HTML to current HTML file."
 
         $finalHTML += $html 
+
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
@@ -5000,6 +5040,14 @@ th {
         out-logfile -string "Adding generated HTML to current HTML file."
 
         $finalHTML += $html 
+
+        try {
+            $finalHTML | out-file $htmlFile -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to add new HTML content to current HTML File."
+            out-logfile -string $_ -isError:$TRUE
+        }
     }
     catch {
         out-logfile -string "Unable to generate LDAP Group Hierarchy Reverse"
@@ -5007,8 +5055,6 @@ th {
     }
 
     out-logfile -string "Writing combined HTML file to disk."
-
-    $finalHTML | out-file $htmlFile
     
     # build the properties and metrics #
     $telemetryEventProperties = @{
