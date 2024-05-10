@@ -3018,8 +3018,9 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
                     New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
                         new-htmlTable -DataTable ($office365MemberEval | select-object DisplayName,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,OnPremObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
                         } -AutoSize
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365MemberEvalErrors.count -gt 0)
@@ -3030,7 +3031,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365MemberEvalErrors | select-object DisplayName,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,OnPremObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
             
                     out-logfile -string "Exporting Office 365 member evaluation."
 
@@ -3055,9 +3056,10 @@ Function get-DLHealthReport
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
                         new-htmlTable -DataTable ($onPremMemberEval | select-object Name,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,ObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
         
                 if ($onPremMemberEvalErrors.count -gt 0)
@@ -3068,7 +3070,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $onPremMemberEvalErrors | select-object Name,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,ObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
 
                     out-xmlFile -itemToExport $onPremMemberEvalErrors -itemNameToExport $xmlFiles.onPremMemberEvalErrorsXML.value
                 }
@@ -3096,9 +3098,10 @@ Function get-DLHealthReport
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
                         new-htmlTable -DataTable ($office365ProxyAddressesEval  | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365ProxyAddressEvalErrors.count -gt 0)
@@ -3109,7 +3112,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365ProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3125,7 +3128,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($onPremProxyAddressEval | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($onPremProxyAddressEvalErrors.count -gt 0)
@@ -3136,7 +3139,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $onPremProxyAddressEvalErrors | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3156,7 +3159,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365AttributeEval | select-object Attribute,OnPremsiesValue,AzureADValue,ExchangeOnlineValue,isValidInAzure,isValidInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365AttributeEvalErrors.count -gt 0)
@@ -3167,7 +3170,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365AttributeEvalErrors | select-object Attribute,OnPremsiesValue,AzureADValue,ExchangeOnlineValue,isValidInAzure,isValidInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3187,7 +3190,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365AcceptMessagesFromSendersOrMembersEvalErrors.count -gt 0)
@@ -3198,7 +3201,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365AcceptMessagesFromSendersOrMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3218,7 +3221,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365RejectMessagesFromSendrsOfMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365RejectMessagesFromSendrsOfMembersEvalErrors.count -gt 0)
@@ -3229,7 +3232,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365RejectMessagesFromSendrsOfMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3250,7 +3253,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembersEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365BypassModerationFromSendersOrMembersEvalErrors.count -gt 0)
@@ -3261,7 +3264,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365BypassModerationFromSendersOrMembersEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3281,7 +3284,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365ModeratedByEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365ModeratedByEvalErrors.count -gt 0)
@@ -3292,7 +3295,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365ModeratedByEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3312,7 +3315,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365ManagedByEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365ManagedByEvalErrors.count -gt 0)
@@ -3323,7 +3326,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365ManagedByEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3343,7 +3346,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ($office365GrantSendOnBehalfToEval | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
     
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
                 if ($office365GrantSendOnBehalfToEvalErrors.count -gt 0)
@@ -3354,7 +3357,7 @@ Function get-DLHealthReport
                         new-htmlTable -DataTable ( $office365GrantSendOnBehalfToEvalErrors | select-object Name,DisplayName,PrimarySMTPAddress,ExternalDirectory,objectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
                         } -AutoSize
 
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                 }
             }
 
@@ -3368,7 +3371,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($allgroupsmemberof | select-object distinguishedName) {
                     } -AutoSize
 
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
 
             #===========================================================================
@@ -3381,7 +3384,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($allGroupsAccept | select-object distinguishedName) {
                     } -AutoSize
 
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
 
         }
@@ -3396,7 +3399,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allGroupsReject | select-object distinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3411,7 +3414,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allGroupsManagedByHTML | select-object distinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3424,7 +3427,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allGroupsBypassModeration | select-object distinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3437,7 +3440,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo | select-object distinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3450,7 +3453,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allUsersForwardingAddress | select-object distinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3463,7 +3466,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object DN) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3476,7 +3479,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized | select-object DN) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3489,7 +3492,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allMailboxesFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
 
@@ -3503,7 +3506,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allObjectsFullMailboxAccess | select-object User,Identity,AccessRights) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3516,7 +3519,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365MemberOf | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3529,7 +3532,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365Accept | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3542,7 +3545,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365Reject | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3555,7 +3558,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365ManagedBy | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3568,7 +3571,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365BypassModeration | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3581,7 +3584,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365ForwardingAddress | select-object DistinguishedName) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3594,7 +3597,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3607,7 +3610,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365SendAsAccess) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3620,7 +3623,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions | select-object User,FolderName,Identity,AccessRights,SharingPermissionsFlags) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3633,7 +3636,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365FullMailboxAccess | select-object User,Identity,AccessRights) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         out-logfile -string "Build HTML File for Office 365 Grant Send on Behalf To."
@@ -3644,7 +3647,7 @@ Function get-DLHealthReport
                 new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo | select-object DisplayName,ExternalDirectoryObjectID,PrimarySMTPAddress,GroupType) {
                 } -AutoSize
 
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         #===========================================================================
@@ -3659,7 +3662,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeDLMembershipSMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
             
             out-logfile -string "Creating HTML output for Azure AD Membership."
@@ -3670,7 +3673,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($azureADDlMembership) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for Office 365 Membership."
@@ -3681,7 +3684,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365DLMembership) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized on premises accept messages from."
@@ -3692,7 +3695,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized on premises reject messages from."
@@ -3703,7 +3706,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeRejectMessagesSMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
             
             out-logfile -string "Creating HTML output for normalized on premises moderatedBy."
@@ -3714,7 +3717,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeModeratedBySMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized on premises ManagedBy."
@@ -3725,7 +3728,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeManagedBySMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
@@ -3736,7 +3739,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeBypassModerationSMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized on premises Bypass Moderation."
@@ -3747,7 +3750,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Accept Messages From Senders Or Members."
@@ -3758,7 +3761,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365AcceptMessagesFromSendersOrMembers) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Reject Messages From Senders Or Members."
@@ -3769,7 +3772,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365RejectMessagesFromSendersOrMembers) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 ModeratedBy."
@@ -3780,7 +3783,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365ModeratedBy) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 ManagedBy."
@@ -3791,7 +3794,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365ManagedBy) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Bypass Moderation From Senders Or Members."
@@ -3802,7 +3805,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365BypassModerationFromSendersOrMembers) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         
             out-logfile -string "Creating HTML output for normalized Office 365 Grant Send On Behalf To."
@@ -3813,7 +3816,7 @@ Function get-DLHealthReport
                     new-htmlTable -DataTable ($office365GrantSendOnBehalfTo) {
                     } -AutoSize
     
-                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
             }
         }
 
@@ -3827,7 +3830,7 @@ Function get-DLHealthReport
                         new-htmlListItem -text $string -fontSize 14
                     }
                 }
-            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px
+            }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
         }
 
         New-HTMLFooter {
