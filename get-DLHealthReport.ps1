@@ -3018,7 +3018,7 @@ Function get-DLHealthReport
                     out-logfile -string "Generate HTML fragment for Office365MembersEval with All Object."
                     New-HTMLSection -HeaderText "Member Analysis :: Office 365 -> Azure Active Directory -> Active Directory" {
                         new-htmlTable -DataTable ($office365MemberEval | select-object DisplayName,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,OnPremObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row -color white
                         } -AutoSize
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
@@ -3056,7 +3056,7 @@ Function get-DLHealthReport
 
                     New-HTMLSection -HeaderText "Member Analysis :: Active Directory -> Azure Active Directory -> Office 365" {
                         new-htmlTable -DataTable ($onPremMemberEval | select-object Name,UserPrincipalName,PrimarySMTPAddress,ExternalDirectoryObjectID,ObjectSID,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row -color white
                         } -AutoSize
 
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
@@ -3098,7 +3098,7 @@ Function get-DLHealthReport
                 {
                     New-HTMLSection -HeaderText "Proxy Address Evaluation :: Office 365 -> Active Directory" {
                         new-htmlTable -DataTable ($office365ProxyAddressesEval  | select-object ProxyAddress,isPresentOnPremises,isPresentInAzure,isPresentInExchangeOnline,isValidMember,ErrorMessage) {
-                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row
+                            New-HTMLTableCondition -Name 'isvalidMember' -Type string -Operator eq -Value 'FALSE' -BackgroundColor Red -row -color white
                         } -AutoSize
     
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
