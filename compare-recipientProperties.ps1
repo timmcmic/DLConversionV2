@@ -18,6 +18,8 @@ function compare-recipientProperties
     $functionoofReplyToOriginator=$NULL
     $functionHiddenFromAddressListEnabled =$NULL
 
+    $valueOnPremisesNotEqualOffice365Exception = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN compare-recipientProperties"
@@ -67,7 +69,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.groupType            
             isValidInExchangeOnline = "True"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
         }
 
         out-logfile -string $functionObject
@@ -125,7 +127,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.bypassNestedModerationEnabled           
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
         }
 
         out-logfile -string $functionObject
@@ -189,7 +191,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
         }
 
         out-logfile -string $functionObject
@@ -253,7 +255,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.MemberJoinRestriction          
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
         }
 
         out-logfile -string $functionObject
@@ -307,7 +309,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.ReportToManagerEnabled          
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -363,7 +365,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.ReportToOriginatorEnabled         
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -419,7 +421,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.SendOofMessageToOriginatorEnabled        
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -825,7 +827,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute1      
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -864,7 +866,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute2      
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -903,7 +905,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute3      
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -942,7 +944,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute4     
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -982,7 +984,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute5
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1021,7 +1023,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute6
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1060,7 +1062,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute7
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1099,7 +1101,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute8
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1138,7 +1140,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute9
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1177,7 +1179,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute10
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1216,7 +1218,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute11
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1255,7 +1257,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute12
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1294,7 +1296,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute13
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1333,7 +1335,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute14
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1372,7 +1374,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.customAttribute15
             isValidInExchangeOnline = "False"
             IsValidMember = "False"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1624,7 +1626,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365HiddenFromAddressListsEnabled
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1680,7 +1682,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.ModerationEnabled
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1817,7 +1819,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.RequireSenderAuthenticationEnabled
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1876,7 +1878,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.simpledisplayname
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
@@ -1951,7 +1953,7 @@ function compare-recipientProperties
             ExchangeOnlineValue = $office365Data.SendModerationNotifications
             isValidInExchangeOnline = "False"
             IsValidMember = "FALSE"
-            ErrorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueOnPremisesNotEqualOffice365Exception'</a>"
         }
 
         out-logfile -string $functionObject
