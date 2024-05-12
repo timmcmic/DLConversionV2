@@ -21,6 +21,7 @@ function compare-recipientArrays
     )
 
     [array]$functionReturnArray = @()
+    $blogURL = "https://timmcmic.wordpress.com"
 
 
     Out-LogFile -string "********************************************************************************"
@@ -208,7 +209,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is not present in on premises directory - this is bad."
                     $functionObject.isValidMember = "False"
-                    $functionObject.errorMessage = "EXCEPTION_OFFICE365_PROXY_MISSING_ONPREMISES_DIRECTORY"
+                    $functionObject.errorMessage = "<a href='$blogUrl' rel=noopener noreferrer>EXCEPTION_OFFICE365_PROXY_MISSING_ONPREMISES_DIRECTORY</a>"
                 }
             }
             else 
