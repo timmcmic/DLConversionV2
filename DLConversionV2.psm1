@@ -2753,7 +2753,7 @@ Function Start-DistributionListMigration
 
             try 
             {
-                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.$onPremADAttributes.onPremAcceptMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
 
                 out-logfile -string $normalizedTest
 
