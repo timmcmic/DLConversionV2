@@ -493,7 +493,7 @@ function compare-recipientProperties
         {
             out-logfile -string "Azure AD mail nickname value not equal exchange online value."
 
-            $functionObject.errorMessage = "VALUE_AZUREAD_NOT_EQUAL_OFFICE365_EXCEPTION"
+            $functionObject.errorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_AZUREAD_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
 
             out-logfile -string $functionObject
 
@@ -1530,7 +1530,7 @@ function compare-recipientProperties
         {
             out-logfile -string "Azure AD to Exchange Online values are not valid."
 
-            $functionObject.errorMessage = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
+            $functionObject.errorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
 
             out-logfile -string $functionObject
 
@@ -1746,7 +1746,7 @@ function compare-recipientProperties
         }
         else
         {
-            $functionObject.errorMessage = "VALUE_AZURE_NOT_EQUAL_OFFICE365_EXCEPTION"
+            $functionObject.errorMessage = "<a href='$blogUrl' rel=noopener noreferrer>VALUE_AZURE_NOT_EQUAL_OFFICE365_EXCEPTION</a>"
 
             out-logfile -string $functionObject
 

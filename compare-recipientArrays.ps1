@@ -160,7 +160,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is not present in Exchange Online - this is bad."
                     $functionObject.isValidMember = "False"
-                    $functionObject.errorMessage = "EXCEPTION_ONPREMSIES_PROXY_MISSING_EXCHANGE_ONLINE"
+                    $functionObject.errorMessage = "<a href='$blogUrl' rel=noopener noreferrer>EXCEPTION_ONPREMSIES_PROXY_MISSING_EXCHANGE_ONLINE</a>"
                 }
             }
             else 
@@ -443,7 +443,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "The object was not located in the on premises membership - NOT GOOD."
 
-                    $functionObject.ErrorMessage = "MEMBER_OFFICE365_NOT_IN_ONPREMISES_EXCEPTION"
+                    $functionObject.ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>MEMBER_OFFICE365_NOT_IN_ONPREMISES_EXCEPTION</a>"
 
                     out-logfile -string $functionObject
 
