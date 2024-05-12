@@ -1622,7 +1622,7 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Generate timeline."
 
-                new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
+                new-htmlSection -HeaderText ("Migration Timeline Highlights"){
                     new-HTMLTimeLIne {
                         new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
                         new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
