@@ -18,6 +18,8 @@ function compare-recipientProperties
     $functionoofReplyToOriginator=$NULL
     $functionHiddenFromAddressListEnabled =$NULL
 
+    $blogURL = "https://timmcmic.wordpress.com"
+
     $valueOnPremisesNotEqualOffice365Exception = "VALUE_ONPREMISES_NOT_EQUAL_OFFICE365_EXCEPTION"
     $valueErrorMessageNotApplicable = "N/A"
     $valueAzureADNotEqualOffice365Exception = "VALUE_AZUREAD_NOT_EQUAL_OFFICE365_EXCEPTION"
