@@ -368,6 +368,7 @@ Function get-DLHealthReport
 
     $telemetryDLConversionV2Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
+    $telemetryDLHierarchyVersionVersion = $NULL
     $telemetryAzureADVersion = $NULL
     $telemetryMSGraphAuthentication = $NULL
     $telemetryMSGraphUsers = $NULL
@@ -429,6 +430,7 @@ Function get-DLHealthReport
         aadConnectPowershellSessionName = @{ "Value" = "AADConnect" ; "Description" = "Static AADConnect powershell session name" }
         ADGlobalCatalogPowershellSessionName = @{ "Value" = "ADGlobalCatalog" ; "Description" = "Static AD Domain controller powershell session name" }
         exchangeOnlinePowershellModuleName = @{ "Value" = "ExchangeOnlineManagement" ; "Description" = "Static Exchange Online powershell module name" }
+        DLHierarchyPowershellModuleName = @{ "Value" = "DLHierarchy" ; "Description" = "Static name for the DLHierarchy module" }
         activeDirectoryPowershellModuleName = @{ "Value" = "ActiveDirectory" ; "Description" = "Static active directory powershell module name" }
         azureActiveDirectoryPowershellModuleName = @{ "Value" = "AzureAD" ; "Description" = "Static azure active directory powershell module name" }
         msGraphAuthenticationPowershellModuleName = @{ "Value" = "Microsoft.Graph.Authentication" ; "Description" = "Static ms graph powershell name authentication" }
@@ -874,6 +876,10 @@ Function get-DLHealthReport
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
    $telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the DLHierarchy Module."
+
+   $telemetryDLHierarchyVersion = Test-PowershellModule -powerShellModuleName $corevariables.dlhierarchypowershellmodulename.value -powershellversiontest:$TRUE
 
    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
@@ -5072,6 +5078,7 @@ th {
         DLConversionV2Command = $telemetryEventName
         DLConversionV2Version = $telemetryDLConversionV2Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
+        DLHierarchyVersion = $telemetryDLHierarchyVersion
         MSGraphAuthentication = $telemetryMSGraphAuthentication
         MSGraphUsers = $telemetryMSGraphUsers
         MSGraphGroups = $telemetryMSGraphGroups
