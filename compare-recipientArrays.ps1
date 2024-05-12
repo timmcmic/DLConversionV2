@@ -30,6 +30,7 @@ function compare-recipientArrays
     $valueExceptionOffice365ProxyMissingOnPremisesDirectoryException = "EXCEPTION_OFFICE365_PROXY_MISSING_ONPREMISES_DIRECTORY"
     $valueExceptionOffice365ProxyMissingAzureActiveDirectory = "EXCEPTION_OFFICE365_PROXY_MISSING_AZURE_ACTIVE_DIRECTORY"
     $valueMemberOffice365NotInAzureException = "MEMBER_OFFICE365_NOT_IN_AZURE_EXCEPTION"
+    $valueMemberonPremisesNotInOffice365Exception = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN compare-recipientArrays"
@@ -507,7 +508,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -560,7 +561,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -613,7 +614,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "MEMBER_ONPREMISES_NOT_IN_OFFICE365_EXCEPTION"
+                        ErrorMessage = "<a href='$blogUrl' rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
