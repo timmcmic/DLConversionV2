@@ -82,6 +82,8 @@ function start-collectOffice365FullMailboxAccess
         $bringMyOwnMailboxes=@()
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     $windowTitle = "Start-collectOffice365FullMailboxAccess"
     $host.ui.RawUI.WindowTitle = $windowTitle
 

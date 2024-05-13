@@ -74,6 +74,8 @@ function start-collectOnPremMailboxFolders
         $bringMyOwnMailboxes=$NULL
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     $windowTitle = "Start-collectOnPremMailboxFolders"
     $host.ui.RawUI.WindowTitle = $windowTitle
 

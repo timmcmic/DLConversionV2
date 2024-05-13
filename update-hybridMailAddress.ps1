@@ -106,6 +106,8 @@ Function update-hybridMailAddress
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Initialize telemetry collection.
 
     $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"

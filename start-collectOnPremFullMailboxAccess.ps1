@@ -69,6 +69,8 @@ function start-collectOnPremFullMailboxAccess
         $bringMyOwnMailboxes=$NULL
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     $windowTitle = "Start-collectOnPremFullMailboxAccess"
     $host.ui.RawUI.WindowTitle = $windowTitle
 

@@ -189,6 +189,8 @@ Function start-multipleTestPreOffice365Group
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Initialize telemetry collection.
 
     #Establish required MS Graph Scopes

@@ -456,7 +456,9 @@ Function Start-DistributionListMigration
 
     #Define global variables.
 
-    $global:threadNumber=$threadNumberAssigned
+    $global:threadNumber=$threadNumberAssigned    
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
 
     if ($isHealthCheck -eq $FALSE)
     {

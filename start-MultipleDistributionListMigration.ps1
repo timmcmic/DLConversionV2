@@ -248,6 +248,8 @@ Function Start-MultipleDistributionListMigration
         [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Establish required MS Graph Scopes
 
     $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")

@@ -21,7 +21,6 @@ function compare-recipientArrays
     )
 
     [array]$functionReturnArray = @()
-    $blogURL = "https://timmcmic.wordpress.com"
 
     $memberOnPremNotInOffice365Exception = "MEMBER_ONPREM_NOT_IN_OFFICE365_EXCEPTION"
     $valueErrorMessageNotApplicable = "N/A"
@@ -171,7 +170,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is not present in Exchange Online - this is bad."
                     $functionObject.isValidMember = "False"
-                    $functionObject.errorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>$valueExceptionOnPremisesProxyMissingExchangeOnline</a>"
+                    $functionObject.errorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>$valueExceptionOnPremisesProxyMissingExchangeOnline</a>"
                 }
             }
             else 
@@ -184,7 +183,7 @@ function compare-recipientArrays
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "False"
                     isValidMember = "False"
-                    ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueExceptionONPremisesProxyMissingAzureActiveDirectory'</a>"
+                    ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueExceptionONPremisesProxyMissingAzureActiveDirectory'</a>"
                 }
             }
 
@@ -220,7 +219,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "Email address is not present in on premises directory - this is bad."
                     $functionObject.isValidMember = "False"
-                    $functionObject.errorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueExceptionOffice365ProxyMissingOnPremisesDirectoryException'</a>"
+                    $functionObject.errorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueExceptionOffice365ProxyMissingOnPremisesDirectoryException'</a>"
                 }
             }
             else 
@@ -233,7 +232,7 @@ function compare-recipientArrays
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "Source"
                     isValidMember = "False"
-                    ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueExceptionOffice365ProxyMissingAzureActiveDirectory'</a>"
+                    ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueExceptionOffice365ProxyMissingAzureActiveDirectory'</a>"
                 }
             }
 
@@ -454,7 +453,7 @@ function compare-recipientArrays
                 {
                     out-logfile -string "The object was not located in the on premises membership - NOT GOOD."
 
-                    $functionObject.ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>MEMBER_OFFICE365_NOT_IN_ONPREMISES_EXCEPTION</a>"
+                    $functionObject.ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>MEMBER_OFFICE365_NOT_IN_ONPREMISES_EXCEPTION</a>"
 
                     out-logfile -string $functionObject
 
@@ -476,7 +475,7 @@ function compare-recipientArrays
                     isPresentInAzure = "False"
                     isPresentInExchangeOnline = "Source"
                     IsValidMember = "FALSE"
-                    ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberOffice365NotInAzureException'</a>"
+                    ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberOffice365NotInAzureException'</a>"
                 }
 
                 out-logfile -string $functionObject
@@ -511,7 +510,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -533,7 +532,7 @@ function compare-recipientArrays
                         isPresentInAzure = "False"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -564,7 +563,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -586,7 +585,7 @@ function compare-recipientArrays
                         isPresentInAzure = "False"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -617,7 +616,7 @@ function compare-recipientArrays
                         isPresentInAzure = "True"
                         isPresentInExchangeOnline = "False"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberonPremisesNotInOffice365Exception'</a>"
                     }
 
                     out-logfile -string $functionObject
@@ -666,7 +665,7 @@ function compare-recipientArrays
                             isPresentInAzure = "False"
                             isPresentInExchangeOnline = "False"
                             IsValidMember = "FALSE"
-                            ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
+                            ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberOnPremisesNotInAzureException'</a>"
                         }
                     }
                     
@@ -829,7 +828,7 @@ function compare-recipientArrays
                     isPresentInAzure = "N/A"
                     isPresentInExchangeOnline = "False"
                     IsValidMember = "FALSE"
-                    ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$memberOnPremNotInOffice365Exception'</a>"
+                    ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$memberOnPremNotInOffice365Exception'</a>"
                 }
 
                 $functionReturnArray += $functionObject
@@ -859,7 +858,7 @@ function compare-recipientArrays
                         isPresentInAzure = "N/A"
                         isPresentInExchangeOnline = "True"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueAmbiguousMemberInOffice365NotOnPremException'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueAmbiguousMemberInOffice365NotOnPremException'</a>"
                     }
                 }
                 else {
@@ -874,7 +873,7 @@ function compare-recipientArrays
                         isPresentInAzure = "N/A"
                         isPresentInExchangeOnline = "True"
                         IsValidMember = "FALSE"
-                        ErrorMessage = "<a href='$blogUrl' target=_blank rel=noopener noreferrer>'$valueMemberInOffice365NotOnPremException'</a>"
+                        ErrorMessage = "<a href='$global:blogURL' target=_blank rel=noopener noreferrer>'$valueMemberInOffice365NotOnPremException'</a>"
                     }
                 }
 
