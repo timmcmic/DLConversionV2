@@ -166,6 +166,8 @@ Function test-preO365GroupConversion
         [int]$totalThreadCount=0
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Establish required MS Graph Scopes
 
     $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")

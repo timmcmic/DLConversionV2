@@ -345,6 +345,8 @@ Function Start-Office365GroupMigration
         [boolean]$isHealthCheck=$FALSE
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
 
     if (($isHealthCheck -eq $FALSE) -and ($exchangeOnlineCertificateThumbprint -ne ""))
     {

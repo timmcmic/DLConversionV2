@@ -135,6 +135,8 @@
             [string]$customRoutingDomain = ""
         )
 
+        $global:blogURL = "https://timmcmic.wordpress.com"
+
         #Declare function variables.
 
         $global:logFile=$NULL #This is the global variable for the calculated log file name

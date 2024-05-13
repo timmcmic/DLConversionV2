@@ -188,6 +188,7 @@ Function restore-MigratedDistributionList
 
     #================================================================================
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
 
     #Initialize telemetry collection.
 

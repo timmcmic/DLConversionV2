@@ -82,6 +82,8 @@ function start-collectOffice365MailboxFolders
         $bringMyOwnMailboxes=$NULL
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     $windowTitle = "Start-collectOffice365MailboxFolders"
     $host.ui.RawUI.WindowTitle = $windowTitle
 

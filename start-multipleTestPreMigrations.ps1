@@ -194,6 +194,8 @@ Function start-MultipleTestPreMigrations
         [string]$dlNameSuffix=""
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Initialize telemetry collection.
 
     #Establish required MS Graph Scopes

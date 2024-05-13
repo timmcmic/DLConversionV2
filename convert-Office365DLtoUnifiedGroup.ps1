@@ -282,6 +282,8 @@ Function Convert-Office365DLtoUnifiedGroup
         [boolean]$isHealthCheck=$FALSE
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     #Null out parameters that cannot be utilized with this function.
 
     [string]$exchangeOnlineCertificateThumbPrint=""

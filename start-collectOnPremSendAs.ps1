@@ -67,6 +67,8 @@ function start-collectOnPremSendAs
         $bringMyOwnRecipients=$NULL
     )
 
+    $global:blogURL = "https://timmcmic.wordpress.com"
+
     $windowTitle = "Start-collectOnPremSendAs"
     $host.ui.RawUI.WindowTitle = $windowTitle
 
