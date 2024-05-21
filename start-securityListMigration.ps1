@@ -333,14 +333,23 @@ Function Start-SecurityListMigration
         [string]$msGraphCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphApplicationID="",
+        [Parameter(Mandatory=$false)]
+        [boolean]$removeGroupViaGraph = $false,
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
         #Defining optional parameters for retention and upgrade
         [Parameter(Mandatory = $false)]
+        [string]$dnNoSyncOU = "NotSet",
+        [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
         [boolean]$enableHybridMailflow = $FALSE,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Security","Distribution","None")]
+        [string]$groupTypeOverride="None",
+        [Parameter(Mandatory = $false)]
+        [boolean]$triggerUpgradeToOffice365Group=$FALSE,
         [Parameter(Mandatory=$false)]
         [boolean]$overrideCentralizedMailTransportEnabled=$FALSE,
         [Parameter(Mandatory=$false)]
@@ -381,11 +390,6 @@ Function Start-SecurityListMigration
         [Parameter(Mandatory =$FALSE)]
         [boolean]$isHealthCheck=$FALSE
     )
-
-    #This module assumes the orinal security group needs to be retained therefore the mail is being split off.
-    #Hard code the group type override to distribution.
-
-    [string]$groupTypeOverride="Distribution"
 
     $htmlStartTime = get-date
 
@@ -1638,14 +1642,17 @@ Function Start-SecurityListMigration
                         new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
                         new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
                         new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
-                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
                         new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
                         new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                        new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
                         new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
                         new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
                         new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
                         new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
                         new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
                         new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
                         new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
@@ -1734,6 +1741,33 @@ Function Start-SecurityListMigration
     }
 
     $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
+    
+    $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
+    
+    $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
+    
+    <#
+    if ($azureTenantID -ne $NULL)
+    {
+        $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
+    }
+
+    if ($azureCertificateThumbprint -ne $NULL)
+    {
+        $azureCertificateThumbprint = remove-StringSpace -stringToFix $azureCertificateThumbPrint
+    }
+
+    if ($azureEnvironmentName -ne $NULL)
+    {
+        $azureEnvironmentName = remove-StringSpace -stringToFix $azureEnvironmentName
+    }
+
+    if ($azureApplicationID -ne $NULL)
+    {
+        $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
+    }
+
+    #>
 
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -1753,6 +1787,13 @@ Function Start-SecurityListMigration
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
+
+    <#
+    if ($azureADCreential -ne $NULL)
+    {
+        out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
+    }
+    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1808,6 +1849,17 @@ Function Start-SecurityListMigration
 
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
+    out-logfile -string "Validating and DN for no sync OU is specified if not health check"
+
+    if (($isHealthCheck -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
+    {
+        out-logfile -string "A no sync OU DN is required when not performing a health check." -isError:$TRUE        
+    }
+    else 
+    {
+        out-logfile -string "A no sync OU DN is not required for this operation as it is a health check."
+    }
+
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
     $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
@@ -1830,6 +1882,22 @@ Function Start-SecurityListMigration
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
+    <#
+
+    #Validate that only one method of engaging exchange online was specified.
+
+    Out-LogFile -string "Validating Azure AD Credentials."
+
+    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount $totalThreadCount
+
+    #Validate that all information for the certificate connection has been provieed.
+
+    out-logfile -string "Validation all components available for AzureAD Cert Authentication"
+
+    start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
+
+    #>
+
     if ($msGraphCertificateThumbprint -eq "")
     {
         out-logfile -string "Validation all components available for MSGraph Cert Auth"
@@ -1842,6 +1910,12 @@ Function Start-SecurityListMigration
     }
 
     #exit #Debug exit.
+
+    #Validate that an OU was specified <if> retain group is not set to true.
+
+    Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
+
+    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
     out-logfile -string "Testing for enable hybrid mail flow enablement."
 
@@ -1929,6 +2003,14 @@ Function Start-SecurityListMigration
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
+   <#
+
+   out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
+
+   $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
+
+   #>
+
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
    $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
@@ -1940,6 +2022,39 @@ Function Start-SecurityListMigration
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   #Create the azure ad connection
+
+   <#
+
+   Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
+
+   if ($azureCertificateThumbprint -eq "")
+   {
+      #User specified non-certifate authentication credentials.
+
+        try {
+            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the Azure AD powershell session using credentials."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+   elseif ($azureCertificateThumbprint -ne "")
+   {
+      #User specified thumbprint authentication.
+
+        try {
+            new-AzureADPowershellSession -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
+        }
+        catch {
+            out-logfile -string "Unable to create the exchange online connection using certificate."
+            out-logfile -string $_ -isError:$TRUE
+        }
+   }
+
+   #>
 
    #exit #Debug Exit
 
@@ -2292,6 +2407,8 @@ Function Start-SecurityListMigration
         $office365GroupConfiguration="DistributionListIsNonSynced"
     }
 
+    
+    
     Out-LogFile -string $office365DLConfiguration
 
     Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
@@ -3632,7 +3749,71 @@ Function Start-SecurityListMigration
     $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
-    
+
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors.Count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
+        }
+
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:preCreateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -like $nestedGroupException)
+                {
+                    out-logfile -string "Nested group exception written to CSV."
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
+        }
+
+        if ($isHealthCheck -eq $FALSE)
+        {
+            generate-HTMLFile
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+        }  
+    }
+
+    if ($isHealthCheck -eq $TRUE)
+    {
+        return
+    }
+
+    #Exit #Debug Exit
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
@@ -4283,18 +4464,9 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
 
-            if ($groupTypeOverride -eq "Distribution")
-            {
-                foreach ($object in $allOffice365ManagedBy)
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: " + $object.primarySMTPAddress +" The group being migrated was found on the Owners attribute of this group.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner.")
+            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
 
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-                }
-            }
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -4316,18 +4488,9 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
 
-            if ($groupTypeOverride -eq "Distribution")
-            {
-                foreach ($object in $allOffice365SendAsAccess)
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_SENDAS_NOT_ALLOWED: " + $object.identity +" The group being migrated has SendAs rights on this object.  The group must remain as security.  Remove the send as rights or remove the group type override.")
+            out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
 
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-                }
-            }
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -4350,18 +4513,9 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $xmlFiles.allOffice365FullMailboxAccessXML.value
 
-            if ($groupTypeOverride -eq "Distribution")
-            {
-                foreach ($object in $allOffice365FullMailboxAccess)
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_FULLMAILBOXACCESS_NOT_ALLOWED: " + $object.identity +" The group being migrated has FullMailboxAccess rights on this object.  The group must remain as security.  Remove the full mailbox access rights or remove the group type override.")
+            out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
 
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-                }
-            }
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -4373,18 +4527,9 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $xmlFiles.allOffice365MailboxesFolderPermissionsXML.value
 
-            if ($groupTypeOverride -eq "Distribution")
-            {
-                foreach ($object in $allOffice365FullMailboxAccess)
-                {
-                    $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_MAILBOXFOLDERPERMISSIONS_NOT_ALLOWED: " + $object.identity +" The group being migrated has folder permissions on this mailbox folder.  The group must remain as security.  Remove the mailbox folder permission or remove the group type override.")
+            out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
 
-                    out-logfile -string $object
-    
-                    $global:preCreateErrors+=$object
-                }
-            }
+            $groupTypeOverride="Security"
         }
         else 
         {
@@ -4432,70 +4577,6 @@ Function Start-SecurityListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
-    
-    #At this time we have validated the on premises pre-requisits for group migration.
-    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
-
-    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
-    {
-        #Write the XML files first so that the error table is complete without separation.
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-        }
-
-        if ($global:testOffice365Errors.Count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
-        }
-
-        out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
-        out-logfile -string "+++++"
-        out-logfile -string ""
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            foreach ($preReq in $global:preCreateErrors)
-            {
-                write-errorEntry -errorEntry $preReq
-
-                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
-
-                if ($preReq.isErrorMessage -like $nestedGroupException)
-                {
-                    out-logfile -string "Nested group exception written to CSV."
-                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
-                }
-            }
-        }
-
-        if ($global:testOffice365Errors.count -gt 0)
-        {
-            foreach ($preReq in $global:testOffice365Errors)
-            {
-                write-errorEntry -errorEntry $prereq
-            }
-        }
-
-        if ($isHealthCheck -eq $FALSE)
-        {
-            generate-HTMLFile
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
-        }
-        else
-        {
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
-        }  
-    }
-
-    if ($isHealthCheck -eq $TRUE)
-    {
-        return
-    }
-
-    #Exit #Debug Exit
 
     $htmlCreateOffice365StubGroup = get-date
 
