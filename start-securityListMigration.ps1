@@ -3632,71 +3632,7 @@ Function Start-SecurityListMigration
     $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
-
-    #At this time we have validated the on premises pre-requisits for group migration.
-    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
-
-    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
-    {
-        #Write the XML files first so that the error table is complete without separation.
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-        }
-
-        if ($global:testOffice365Errors.Count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
-        }
-
-        out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
-        out-logfile -string "+++++"
-        out-logfile -string ""
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            foreach ($preReq in $global:preCreateErrors)
-            {
-                write-errorEntry -errorEntry $preReq
-
-                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
-
-                if ($preReq.isErrorMessage -like $nestedGroupException)
-                {
-                    out-logfile -string "Nested group exception written to CSV."
-                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
-                }
-            }
-        }
-
-        if ($global:testOffice365Errors.count -gt 0)
-        {
-            foreach ($preReq in $global:testOffice365Errors)
-            {
-                write-errorEntry -errorEntry $prereq
-            }
-        }
-
-        if ($isHealthCheck -eq $FALSE)
-        {
-            generate-HTMLFile
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
-        }
-        else
-        {
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
-        }  
-    }
-
-    if ($isHealthCheck -eq $TRUE)
-    {
-        return
-    }
-
-    #Exit #Debug Exit
-
+    
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
     Out-LogFile -string "********************************************************************************"
@@ -4496,6 +4432,70 @@ Function Start-SecurityListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
+    
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors.Count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
+        }
+
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:preCreateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -like $nestedGroupException)
+                {
+                    out-logfile -string "Nested group exception written to CSV."
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
+        }
+
+        if ($isHealthCheck -eq $FALSE)
+        {
+            generate-HTMLFile
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+        }  
+    }
+
+    if ($isHealthCheck -eq $TRUE)
+    {
+        return
+    }
+
+    #Exit #Debug Exit
 
     $htmlCreateOffice365StubGroup = get-date
 
