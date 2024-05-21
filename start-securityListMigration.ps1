@@ -4352,7 +4352,7 @@ Function Start-SecurityListMigration
                 foreach ($object in $allOffice365ManagedBy)
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: " + $object.primarySMTPAddress +" The group being migrated was found on the Owners attribute of this group.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner."
+                    $object.isErrorMessage = ("GROUP_OVERRIDE_MANAGER_NOT_ALLOWED: " + $object.primarySMTPAddress +" The group being migrated was found on the Owners attribute of this group.  The administrator has requested migration as Distribution not Security.  To remain an owner the group must be migrated as Security - remove override or remove owner.")
 
                     out-logfile -string $object
     
@@ -4385,7 +4385,7 @@ Function Start-SecurityListMigration
                 foreach ($object in $allOffice365SendAsAccess)
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_SENDAS_NOT_ALLOWED: " + $object.identity +" The group being migrated has SendAs rights on this object.  The group must remain as security.  Remove the send as rights or remove the group type override."
+                    $object.isErrorMessage = ("GROUP_OVERRIDE_SENDAS_NOT_ALLOWED: " + $object.identity +" The group being migrated has SendAs rights on this object.  The group must remain as security.  Remove the send as rights or remove the group type override.")
 
                     out-logfile -string $object
     
@@ -4419,7 +4419,7 @@ Function Start-SecurityListMigration
                 foreach ($object in $allOffice365FullMailboxAccess)
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_FULLMAILBOXACCESS_NOT_ALLOWED: " + $object.identity +" The group being migrated has FullMailboxAccess rights on this object.  The group must remain as security.  Remove the full mailbox access rights or remove the group type override."
+                    $object.isErrorMessage = ("GROUP_OVERRIDE_FULLMAILBOXACCESS_NOT_ALLOWED: " + $object.identity +" The group being migrated has FullMailboxAccess rights on this object.  The group must remain as security.  Remove the full mailbox access rights or remove the group type override.")
 
                     out-logfile -string $object
     
@@ -4442,7 +4442,7 @@ Function Start-SecurityListMigration
                 foreach ($object in $allOffice365FullMailboxAccess)
                 {
                     $object.isError=$TRUE
-                    $object.isErrorMessage = ("GROUP_OVERRIDE_MAILBOXFOLDERPERMISSIONS_NOT_ALLOWED: " + $object.identity +" The group being migrated has folder permissions on this mailbox folder.  The group must remain as security.  Remove the mailbox folder permission or remove the group type override."
+                    $object.isErrorMessage = ("GROUP_OVERRIDE_MAILBOXFOLDERPERMISSIONS_NOT_ALLOWED: " + $object.identity +" The group being migrated has folder permissions on this mailbox folder.  The group must remain as security.  Remove the mailbox folder permission or remove the group type override.")
 
                     out-logfile -string $object
     
