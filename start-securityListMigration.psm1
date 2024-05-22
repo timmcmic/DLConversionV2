@@ -392,6 +392,7 @@ Function Start-SecurityListMigration
     )
 
     $htmlStartTime = get-date
+    $htmlErrorFound = $FALSE
 
     #Establish required MS Graph Scopes
 
@@ -661,6 +662,7 @@ Function Start-SecurityListMigration
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
         office365DLMembership = @{"Value" = "office365DLMembership" ; "Description" = "Original Office 365 DL Membership"}
+        generalErrorsXML = @{"Value" = "generalErrors" ; "Description" = "XML file for general errors discovered."}
     }
 
     #Define the property sets that will be cleared on the on premises object.
@@ -745,6 +747,7 @@ Function Start-SecurityListMigration
     #Define new arrays to check for errors instead of failing.
 
     [array]$global:preCreateErrors=@()
+    [array]$global:permissionsWarning=@()
     [array]$global:testOffice365Errors=@()
     [array]$global:postCreateErrors=@()
     [array]$onPremReplaceErrors=@()
@@ -1022,7 +1025,7 @@ Function Start-SecurityListMigration
                         out-logfile -string "General Errors exist."
 
                         new-htmlSection -HeaderText ("General Errors"){
-                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            new-htmlTable -DataTable ($global:generalErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
@@ -1622,48 +1625,51 @@ Function Start-SecurityListMigration
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                out-logfile -string "Generate timeline."
+                if ($htmlErrorFound -eq $FALSE)
+                {
+                    out-logfile -string "Generate timeline."
 
-                new-htmlSection -HeaderText ("Migration Timeline Highlights"){
-                    new-HTMLTimeLIne {
-                        new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
-                        new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
-                        new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
-                        new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
-                        new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
-                        new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
-                        new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
-                        new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
-                        new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
-                        new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
-                        new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
-                        new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
-                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
-                        new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
-                        new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
-                        new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
-                        new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
-                    }
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                    new-htmlSection -HeaderText ("Migration Timeline Highlights"){
+                        new-HTMLTimeLIne {
+                            new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
+                            new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
+                            new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                            new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                            new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                            new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                            new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
+                            new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
+                            new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                            new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
+                            new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
+                            new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                            new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                            new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                            new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
+                            new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                            new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
+                            new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
+                            new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
+                            new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
+                        }
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
             }
         } -online -ShowHTML
     }
@@ -3750,68 +3756,6 @@ Function Start-SecurityListMigration
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
 
-    #At this time we have validated the on premises pre-requisits for group migration.
-    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
-
-    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
-    {
-        #Write the XML files first so that the error table is complete without separation.
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
-        }
-
-        if ($global:testOffice365Errors.Count -gt 0)
-        {
-            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
-        }
-
-        out-logfile -string "+++++"
-        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
-        out-logfile -string "+++++"
-        out-logfile -string ""
-
-        if ($global:preCreateErrors.count -gt 0)
-        {
-            foreach ($preReq in $global:preCreateErrors)
-            {
-                write-errorEntry -errorEntry $preReq
-
-                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
-
-                if ($preReq.isErrorMessage -like $nestedGroupException)
-                {
-                    out-logfile -string "Nested group exception written to CSV."
-                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
-                }
-            }
-        }
-
-        if ($global:testOffice365Errors.count -gt 0)
-        {
-            foreach ($preReq in $global:testOffice365Errors)
-            {
-                write-errorEntry -errorEntry $prereq
-            }
-        }
-
-        if ($isHealthCheck -eq $FALSE)
-        {
-            generate-HTMLFile
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
-        }
-        else
-        {
-            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
-        }  
-    }
-
-    if ($isHealthCheck -eq $TRUE)
-    {
-        return
-    }
-
     #Exit #Debug Exit
 
     Out-LogFile -string "********************************************************************************"
@@ -4464,9 +4408,20 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365ManagedBy
             out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
 
-            out-logfile -string "Setting group type override to security - the group type may have changed on premises after the permission was added."
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "A group tyoe override to distribution was provided.  This group has permissions that require security rights."
 
-            $groupTypeOverride="Security"
+                foreach ($member in $allOffice365ManagedBy)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "GROUP_OVERRIDE_EXCEPTION_MANAGEDBY:  The migrated group has managedBy rights on Office 365 objects and cannot be overridden from security to distribution."
+                        errorMessageDetail = ("User: "+$member.displayName+" "+$member.primarySMTPAddress+" has managedBy rights with the migrated groups.  Either remove group override or remove the right to migrate as distribution group.")
+                    }
+
+                    $global:generalErrors+= $isErrorObject
+                }
+            }
         }
         else 
         {
@@ -4488,9 +4443,20 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365SendAsAccess
             out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
 
-            out-logfile -string "Resetting group type to security - this is required for send as permissions and may have been changed on premsies."
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "A group tyoe override to distribution was provided.  This group has permissions that require security rights."
 
-            $groupTypeOverride="Security"
+                foreach ($member in $allOffice365SendAsAccess)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "GROUP_OVERRIDE_EXCEPTION_SENDAS:  The migrated group has sendAs rights on Office 365 objects and cannot be overridden from security to distribution."
+                        errorMessageDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
+                    }
+
+                    $global:generalErrors+= $isErrorObject
+                }
+            }
         }
         else 
         {
@@ -4501,21 +4467,51 @@ Function Start-SecurityListMigration
         {
             out-logfile -string $allOffice365SendAsAccessOnGroup
             out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
+
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "A group tyoe override to distribution was provided.  Ensure the migrated group does not have send as rights to intself."
+
+                foreach ($member in $allOffice365SendAsAccessOnGroup)
+                {
+                    if ($member.trustee -eq $office365DLConfiguration.name)
+                    {
+                        out-logfile -string "The trustee name matches the Office 365 DL Configuration name."
+
+                        $isErrorObject = new-Object psObject -property @{
+                            errorMessage = "GROUP_OVERRIDE_EXCEPTION_SENDASONGROUP:  The migrated group has sendAs rights on itself and cannot be overridden from security to distribution."
+                            errorMessageDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
+                        }
+    
+                        $global:generalErrors+= $isErrorObject
+                    }
+                }
+            }
         }
         else
         {
             $allOffice365SendAsAccessOnGroup=@()
         }
         
-
         if ($allOffice365FullMailboxAccess -ne $NULL)
         {
             out-logfile -string $allOffice365FullMailboxAccess
             out-xmlFile -itemToExport $allOffice365FullMailboxAccess -itemNameToExport $xmlFiles.allOffice365FullMailboxAccessXML.value
 
-            out-logfile -string "Resetting group type to security - this is required for mailbox permissions but may have changed on premises."
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "A group tyoe override to distribution was provided.  This group has permissions that require security rights."
 
-            $groupTypeOverride="Security"
+                foreach ($member in $allOffice365FullMailboxAccess)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "GROUP_OVERRIDE_EXCEPTION_FULLMAILBOXACCESS:  The migrated group has full mailbox access rights on Office 365 objects and cannot be overridden from security to distribution."
+                        errorMessageDetail = ("User: "+$member.Identity+" has full mailbox access rights with the migrated groups.  Either remove group override or remove the full maibox access right to migrate as distribution group.")
+                    }
+
+                    $global:generalErrors+= $isErrorObject
+                }
+            }
         }
         else 
         {
@@ -4527,9 +4523,20 @@ Function Start-SecurityListMigration
             out-logfile -string $allOffice365MailboxFolderPermissions
             out-xmlfile -itemToExport $allOffice365MailboxFolderPermissions -itemNameToExport $xmlFiles.allOffice365MailboxesFolderPermissionsXML.value
 
-            out-logfile -string "Resetting group type to security - this is required for mailbox folder permissions but may have changed on premsies."
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "A group tyoe override to distribution was provided.  This group has permissions that require security rights."
 
-            $groupTypeOverride="Security"
+                foreach ($member in $allOffice365MailboxFolderPermissions)
+                {
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "GROUP_OVERRIDE_EXCEPTION_MAILBOXFOLDERPERMISSION:  The migrated group has mailbox folder permissions rights on Office 365 objects and cannot be overridden from security to distribution."
+                        errorMessageDetail = ("FolderID: "+$member.Identity+" has mailbos folder rights with the migrated groups.  Either remove group override or remove the mailbox folder rights to migrate as distribution group.")
+                    }
+
+                    $global:generalErrors+= $isErrorObject
+                }
+            }
         }
         else 
         {
@@ -4577,6 +4584,82 @@ Function Start-SecurityListMigration
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
+
+    #At this time we have validated the on premises pre-requisits for group migration.
+    #If anything is not in order - this code will provide the summary list to the customer and then trigger end.
+
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:generalErrors.count -gt 0))
+    {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors.Count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
+        }
+
+        if ($global:generalErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:generalErrors -itemNameToExport $xmlFiles.generalErrors.value
+        }
+
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:preCreateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -like $nestedGroupException)
+                {
+                    out-logfile -string "Nested group exception written to CSV."
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
+        }
+
+        if ($global:generalErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:generalErrors)
+            {
+                write-errorEntry -errorEntry $prereq -type "GeneralError"
+            }
+        }
+
+        if ($isHealthCheck -eq $FALSE)
+        {
+            $htmlErrorFound = $TRUE
+            generate-HTMLFile
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+        }  
+    }
+
+    if ($isHealthCheck -eq $TRUE)
+    {
+        return
+    }
 
     $htmlCreateOffice365StubGroup = get-date
 
