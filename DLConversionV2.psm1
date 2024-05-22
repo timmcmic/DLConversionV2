@@ -1024,7 +1024,7 @@ Function Start-DistributionListMigration
                         out-logfile -string "General Errors exist."
 
                         new-htmlSection -HeaderText ("General Errors"){
-                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            new-htmlTable -DataTable ($global:generalErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
