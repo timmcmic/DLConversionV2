@@ -333,14 +333,9 @@ Function Start-SecurityListMigration
         [string]$msGraphCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphApplicationID="",
-        [Parameter(Mandatory=$false)]
-        [boolean]$removeGroupViaGraph = $false,
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
-        #Defining optional parameters for retention and upgrade
-        [Parameter(Mandatory = $false)]
-        [string]$dnNoSyncOU = "NotSet",
         [Parameter(Mandatory = $false)]
         [boolean]$retainOriginalGroup = $TRUE,
         [Parameter(Mandatory = $false)]
@@ -795,7 +790,6 @@ Function Start-SecurityListMigration
     $htmlFunctionStartTime = get-Date
 
     out-logfile -string "Testing for supported version of Powershell engine."
-
     test-powershellVersion
 
     function session-toImport
@@ -1747,33 +1741,9 @@ Function Start-SecurityListMigration
     }
 
     $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
-    
-    $dnNoSyncOU = remove-StringSpace -stringToFix $dnNoSyncOU
-    
+        
     $groupTypeOverride=remove-stringSpace -stringToFix $groupTypeOverride
-    
-    <#
-    if ($azureTenantID -ne $NULL)
-    {
-        $azureTenantID = remove-StringSpace -stringToFix $azureTenantID
-    }
 
-    if ($azureCertificateThumbprint -ne $NULL)
-    {
-        $azureCertificateThumbprint = remove-StringSpace -stringToFix $azureCertificateThumbPrint
-    }
-
-    if ($azureEnvironmentName -ne $NULL)
-    {
-        $azureEnvironmentName = remove-StringSpace -stringToFix $azureEnvironmentName
-    }
-
-    if ($azureApplicationID -ne $NULL)
-    {
-        $azureApplicationID = remove-stringSpace -stringToFix $azureApplicationID
-    }
-
-    #>
 
     $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
     $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
@@ -1793,13 +1763,6 @@ Function Start-SecurityListMigration
     {
         Out-LogFile -string ("ExchangeOnlineUserName = "+ $exchangeOnlineCredential.UserName.toString())
     }
-
-    <#
-    if ($azureADCreential -ne $NULL)
-    {
-        out-logfile -string ("AzureADUserName = "+$azureADCredential.userName.toString())
-    }
-    #>
 
     Out-LogFile -string "********************************************************************************"
 
@@ -1855,17 +1818,6 @@ Function Start-SecurityListMigration
 
     #Test to ensure that if any of the aadConnect parameters are passed - they are passed together.
 
-    out-logfile -string "Validating and DN for no sync OU is specified if not health check"
-
-    if (($isHealthCheck -eq $FALSE) -and ($dnNoSyncOU -eq "NotSet"))
-    {
-        out-logfile -string "A no sync OU DN is required when not performing a health check." -isError:$TRUE        
-    }
-    else 
-    {
-        out-logfile -string "A no sync OU DN is not required for this operation as it is a health check."
-    }
-
     Out-LogFile -string "Validating that both AADConnectServer and AADConnectCredential are specified"
 
     $coreVariables.useAADConnect.value = start-parameterValidation -aadConnectServer $aadConnectServer -aadConnectCredential $aadConnectCredential
@@ -1888,22 +1840,6 @@ Function Start-SecurityListMigration
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    <#
-
-    #Validate that only one method of engaging exchange online was specified.
-
-    Out-LogFile -string "Validating Azure AD Credentials."
-
-    start-parameterValidation -azureADCredential $azureADCredential -azureCertificateThumbPrint $azureCertificateThumbprint -threadCount $totalThreadCount
-
-    #Validate that all information for the certificate connection has been provieed.
-
-    out-logfile -string "Validation all components available for AzureAD Cert Authentication"
-
-    start-parameterValidation -azureCertificateThumbPrint $azureCertificateThumbprint -azureTenantID $azureTenantID -azureApplicationID $azureApplicationID
-
-    #>
-
     if ($msGraphCertificateThumbprint -eq "")
     {
         out-logfile -string "Validation all components available for MSGraph Cert Auth"
@@ -1916,12 +1852,6 @@ Function Start-SecurityListMigration
     }
 
     #exit #Debug exit.
-
-    #Validate that an OU was specified <if> retain group is not set to true.
-
-    Out-LogFile -string "Validating that if retain original group is false a non-sync OU is specified."
-
-    start-parametervalidation -retainOriginalGroup $retainOriginalGroup -doNoSyncOU $doNoSyncOU
 
     out-logfile -string "Testing for enable hybrid mail flow enablement."
 
@@ -2009,13 +1939,6 @@ Function Start-SecurityListMigration
 
    $telemetryDLConversionV2Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
-   <#
-
-   out-logfile -string "Calling Test-PowershellModule to validate the AzureAD Powershell Module version installed."
-
-   $telemetryAzureADVersion = Test-PowershellModule -powershellModuleName $corevariables.azureActiveDirectoryPowershellModuleName.value -powershellVersionTest:$TRUE
-
-   #>
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
@@ -2028,39 +1951,6 @@ Function Start-SecurityListMigration
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
-
-   #Create the azure ad connection
-
-   <#
-
-   Out-LogFile -string "Calling nea-AzureADPowershellSession to create new connection to azure active directory."
-
-   if ($azureCertificateThumbprint -eq "")
-   {
-      #User specified non-certifate authentication credentials.
-
-        try {
-            New-AzureADPowershellSession -azureADCredential $azureADCredential -azureEnvironmentName $azureEnvironmentName
-        }
-        catch {
-            out-logfile -string "Unable to create the Azure AD powershell session using credentials."
-            out-logfile -string $_ -isError:$TRUE
-        }
-   }
-   elseif ($azureCertificateThumbprint -ne "")
-   {
-      #User specified thumbprint authentication.
-
-        try {
-            new-AzureADPowershellSession -azureCertificateThumbprint $azureCertificateThumbprint -azureApplicationID $azureApplicationID -azureTenantID $azureTenantID -azureEnvironmentName $azureEnvironmentName
-        }
-        catch {
-            out-logfile -string "Unable to create the exchange online connection using certificate."
-            out-logfile -string $_ -isError:$TRUE
-        }
-   }
-
-   #>
 
    #exit #Debug Exit
 
