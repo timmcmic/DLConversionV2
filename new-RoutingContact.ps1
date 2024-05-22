@@ -176,7 +176,7 @@
 
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to locate a mail.onmicrosoft.com address either on premises or office 365.  This may indicated larger failures to set SMTP addresses.  Manual correction required and run enable-hybridMailFlowPostMigration to fix."
-                errorMessaegDetail = $errorMessageDetail
+                errorMessageDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject

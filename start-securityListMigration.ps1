@@ -5604,7 +5604,7 @@ Function Start-SecurityListMigration
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
-                errorMessaegDetail = $errorMessageDetail
+                errorMessageDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject

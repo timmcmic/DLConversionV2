@@ -4412,7 +4412,7 @@ Function Start-DistributionListMigration
                 {
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "GROUP_OVERRIDE_EXCEPTION_MANAGEDBY:  The migrated group has managedBy rights on Office 365 objects and cannot be overridden from security to distribution."
-                        errorMessaegDetail = ("User: "+$member.displayName+" "+$member.primarySMTPAddress+" has managedBy rights with the migrated groups.  Either remove group override or remove the right to migrate as distribution group.")
+                        errorMessageDetail = ("User: "+$member.displayName+" "+$member.primarySMTPAddress+" has managedBy rights with the migrated groups.  Either remove group override or remove the right to migrate as distribution group.")
                     }
 
                     $global:generalErrors+= $isErrorObject
@@ -4447,7 +4447,7 @@ Function Start-DistributionListMigration
                 {
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "GROUP_OVERRIDE_EXCEPTION_SENDAS:  The migrated group has sendAs rights on Office 365 objects and cannot be overridden from security to distribution."
-                        errorMessaegDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
+                        errorMessageDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
                     }
 
                     $global:generalErrors+= $isErrorObject
@@ -4476,7 +4476,7 @@ Function Start-DistributionListMigration
 
                         $isErrorObject = new-Object psObject -property @{
                             errorMessage = "GROUP_OVERRIDE_EXCEPTION_SENDASONGROUP:  The migrated group has sendAs rights on itself and cannot be overridden from security to distribution."
-                            errorMessaegDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
+                            errorMessageDetail = ("User: "+$member.Identity+" has sendAs rights with the migrated groups.  Either remove group override or remove the sendAs right to migrate as distribution group.")
                         }
     
                         $global:generalErrors+= $isErrorObject
@@ -4502,7 +4502,7 @@ Function Start-DistributionListMigration
                 {
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "GROUP_OVERRIDE_EXCEPTION_FULLMAILBOXACCESS:  The migrated group has full mailbox access rights on Office 365 objects and cannot be overridden from security to distribution."
-                        errorMessaegDetail = ("User: "+$member.Identity+" has full mailbox access rights with the migrated groups.  Either remove group override or remove the full maibox access right to migrate as distribution group.")
+                        errorMessageDetail = ("User: "+$member.Identity+" has full mailbox access rights with the migrated groups.  Either remove group override or remove the full maibox access right to migrate as distribution group.")
                     }
 
                     $global:generalErrors+= $isErrorObject
@@ -4527,7 +4527,7 @@ Function Start-DistributionListMigration
                 {
                     $isErrorObject = new-Object psObject -property @{
                         errorMessage = "GROUP_OVERRIDE_EXCEPTION_MAILBOXFOLDERPERMISSION:  The migrated group has mailbox folder permissions rights on Office 365 objects and cannot be overridden from security to distribution."
-                        errorMessaegDetail = ("FolderID: "+$member.Identity+" has mailbos folder rights with the migrated groups.  Either remove group override or remove the mailbox folder rights to migrate as distribution group.")
+                        errorMessageDetail = ("FolderID: "+$member.Identity+" has mailbos folder rights with the migrated groups.  Either remove group override or remove the mailbox folder rights to migrate as distribution group.")
                     }
 
                     $global:generalErrors+= $isErrorObject
@@ -5682,7 +5682,7 @@ Function Start-DistributionListMigration
         {
             $isErrorObject = new-Object psObject -property @{
                 errorMessage = "Unable to enable the mail routing contact as a full recipient.  Manually enable the mail routing contact."
-                errorMessaegDetail = $errorMessageDetail
+                errorMessageDetail = $errorMessageDetail
             }
 
             out-logfile -string $isErrorObject
