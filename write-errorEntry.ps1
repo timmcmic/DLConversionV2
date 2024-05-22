@@ -15,22 +15,35 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $errorEntry
+            $errorEntry,
+            [Parameter(Mandatory = $false)]
+            $type="None"
         )
 
-        out-logfile -string "====="
-        out-logfile -string ("Alias: "+$errorEntry.alias)
-        out-logfile -string ("Name: "+$errorEntry.name)
-        out-logfile -string ("PrimarySMTPAddressOrUPN: "+$errorEntry.primarySMTPAddressOrUPN)
-        out-logfile -string ("RecipientType: "+$errorEntry.RecipientType)
-        out-logfile -string ("GroupType: "+$errorEntry.GroupType)
-        out-logfile -string ("RecipientOrUser: "+$errorEntry.recipientoruser)
-        out-logfile -string ("ExternalDirectoryObjectID:" +$errorEntry.externalDirectoryObjectID)
-        out-logfile -string ("OnPremADAttribute: "+$errorEntry.onPremADAttribute)
-        out-logfile -string ("DN: "+$errorEntry.DN)
-        out-logfile -string ("ParentGroupSMTPAddress: "+$errorEntry.parentGroupSMTPAddress)
-        out-logfile -string ("isAlreadyMigrated: "+$errorEntry.isAlreadyMigrated)
-        out-logfile -string ("isError: "+$errorEntry.isError)
-        out-logfile -string ("isErrorMessage: "+$errorEntry.isErrorMessage)
-        out-logfile -string "====="
+        if ($type -eq "None")
+        {
+            out-logfile -string "====="
+            out-logfile -string ("Alias: "+$errorEntry.alias)
+            out-logfile -string ("Name: "+$errorEntry.name)
+            out-logfile -string ("PrimarySMTPAddressOrUPN: "+$errorEntry.primarySMTPAddressOrUPN)
+            out-logfile -string ("RecipientType: "+$errorEntry.RecipientType)
+            out-logfile -string ("GroupType: "+$errorEntry.GroupType)
+            out-logfile -string ("RecipientOrUser: "+$errorEntry.recipientoruser)
+            out-logfile -string ("ExternalDirectoryObjectID:" +$errorEntry.externalDirectoryObjectID)
+            out-logfile -string ("OnPremADAttribute: "+$errorEntry.onPremADAttribute)
+            out-logfile -string ("DN: "+$errorEntry.DN)
+            out-logfile -string ("ParentGroupSMTPAddress: "+$errorEntry.parentGroupSMTPAddress)
+            out-logfile -string ("isAlreadyMigrated: "+$errorEntry.isAlreadyMigrated)
+            out-logfile -string ("isError: "+$errorEntry.isError)
+            out-logfile -string ("isErrorMessage: "+$errorEntry.isErrorMessage)
+            out-logfile -string "====="
+        }
+        else 
+        {
+            out-logfile -string "====="
+            out-logfile -string ("ErrorMessage: "+$errorEntry.errorMessage)
+            out-logfile -string ("ErrorMessageDetail: "+$errorEntry.errorMessageDetail)
+            out-logfile -string "====="
+        }
+
     }
