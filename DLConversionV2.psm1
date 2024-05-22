@@ -392,6 +392,7 @@ Function Start-DistributionListMigration
     )
 
     $htmlStartTime = get-date
+    $htmlErrorFound = $FALSE
 
     #Establish required MS Graph Scopes
 
@@ -1624,48 +1625,51 @@ Function Start-DistributionListMigration
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                out-logfile -string "Generate timeline."
+                if ($htmlErrorFound -eq $FALSE)
+                {
+                    out-logfile -string "Generate timeline."
 
-                new-htmlSection -HeaderText ("Migration Timeline Highlights"){
-                    new-HTMLTimeLIne {
-                        new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
-                        new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
-                        new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
-                        new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
-                        new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
-                        new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
-                        new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
-                        new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
-                        new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
-                        new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
-                        new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
-                        new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
-                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
-                        new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
-                        new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
-                        new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
-                        new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
-                    }
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                    new-htmlSection -HeaderText ("Migration Timeline Highlights"){
+                        new-HTMLTimeLIne {
+                            new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
+                            new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
+                            new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                            new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                            new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                            new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                            new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
+                            new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
+                            new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                            new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
+                            new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
+                            new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                            new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                            new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                            new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
+                            new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                            new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
+                            new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
+                            new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
+                            new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
+                            new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
+                            new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
+                        }
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
             }
         } -online -ShowHTML
     }
@@ -4642,6 +4646,7 @@ Function Start-DistributionListMigration
 
         if ($isHealthCheck -eq $FALSE)
         {
+            $htmlErrorFound = $TRUE
             generate-HTMLFile
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
