@@ -2307,32 +2307,6 @@ Function Start-SecurityListMigration
 
     out-xmlfile -itemToExport $office365GroupConfiguration -itemNameToExport $xmlFiles.office365GroupConfigurationXML.value
 
-    <#
-
-    out-logfile -string "Capture the original Azure AD distribution list informaiton"
-
-    if ($allowNonSyncedGroup -eq $FALSE)
-    {
-        try{
-            $azureADDLConfiguration = get-AzureADDLConfiguration -office365DLConfiguration $office365DLConfiguration
-        }
-        catch{
-            out-logfile -string $_
-            out-logfile -string "Unable to obtain Azure Active Directory DL Configuration"
-        }
-    }
-
-    if ($azureADDLConfiguration -ne $NULL)
-    {
-        out-logfile -string $azureADDLConfiguration
-
-        out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
-
-        out-xmlFile -itemToExport $azureADDLConfiguration -itemNameToExport $xmlFiles.azureDLConfigurationXML.value
-    }
-
-    #>
-
     $htmlCaptureGraphDLConfiguration = get-date
 
     out-logfile -string "Capture the original Graph AD distribution list informaiton"
@@ -2404,30 +2378,6 @@ Function Start-SecurityListMigration
 
         out-xmlFile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365DLMembership.value
     }
-
-    <#
-    out-logfile -string "Recording Azure AD DL membership."
-
-    if ($allowNonSyncedGroup -eq $FALSE)
-    {
-        try {
-            $azureADDLMembership = get-AzureADMembership -groupobjectID $azureADDLConfiguration.objectID -errorAction STOP
-        }
-        catch {
-            out-logfile -string "Unable to obtain Azure AD DL Membership."
-            out-logfile -string $_
-        }
-    }
-
-    if ($azureADDLMembership -ne $NULL)
-    {
-        out-logfile -string "Creating an XML file backup of the Azure AD DL Configuration"
-
-        out-xmlFile -itemToExport $azureADDLMembership -itemNameToExport $xmlFiles.azureDLMembershipXML.value
-    }
-
-    #>
-
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
