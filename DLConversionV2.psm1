@@ -4481,7 +4481,6 @@ Function Start-DistributionListMigration
     
                         $global:generalErrors+= $isErrorObject
                     }
-                    }
                 }
             }
         }
@@ -4635,7 +4634,7 @@ Function Start-DistributionListMigration
 
         if ($global:generalErrors.count -gt 0)
         {
-            foreach ($preRequ in $global:generalErrors)
+            foreach ($preReq in $global:generalErrors)
             {
                 write-errorEntry -errorEntry $prereq -type "GeneralError"
             }
