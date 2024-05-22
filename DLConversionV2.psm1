@@ -4466,7 +4466,7 @@ Function Start-DistributionListMigration
 
             if ($groupTypeOverride -eq "Distribution")
             {
-                out-lofile -string "A group tyoe override to distribution was provided.  Ensure the migrated group does not have send as rights to intself."
+                out-logfile -string "A group tyoe override to distribution was provided.  Ensure the migrated group does not have send as rights to intself."
 
                 foreach ($member in $allOffice365SendAsAccessOnGroup)
                 {
