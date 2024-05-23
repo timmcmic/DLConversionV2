@@ -3648,6 +3648,22 @@ Function Start-DistributionListMigration
 
         foreach ($member in $exchangeSendAsSMTP)
         {
+            if ($groupTypeOverride -eq "Distribution")
+            {
+                out-logfile -string "Group type override distribution - ensure that group does not have permissions."
+
+                if ($member.PrimarySMTPAddressOrUPN -eq $originalDLConfiguration.mail)
+                {
+                    out-logfile -string "Calculated email address matches address of group to be migrated - log error as this will not work when overridden."
+
+                    $isErrorObject = new-Object psObject -property @{
+                        errorMessage = "GROUP_OVERRIDE_EXCEPTION_SENDASONPREMISES:  The migrated group has sendAs rights on premises objects and cannot be overridden from security to distribution."
+                        errorMessageDetail = "The group to be migrated has send as rights to itself and group type override is set to distribution.  Remove the send as permission <or> remove group type override."
+                    }
+
+                    $global:generalErrors+= $isErrorObject
+                }
+            }
             #Reset error variable.
 
             $isTestError="No"
