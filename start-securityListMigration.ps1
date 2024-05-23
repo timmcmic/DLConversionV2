@@ -4451,7 +4451,7 @@ Function Start-SecurityListMigration
 
         if ($global:generalErrors.count -gt 0)
         {
-            out-xmlFile -itemToExport $global:generalErrors -itemNameToExport $xmlFiles.generalErrors.value
+            out-xmlFile -itemToExport $global:generalErrors -itemNameToExport $xmlFiles.generalErrorsXML.value
         }
 
         out-logfile -string "+++++"
