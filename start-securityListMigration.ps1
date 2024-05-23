@@ -5040,13 +5040,13 @@ Function Start-SecurityListMigration
             {
                 out-logfile -string "Invoking test-cloudDLPresent using AD Connect information since multi-threaded."
 
-                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
+                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.primarySMTPAddress -aadConnectPowershellSessionName $coreVariables.aadConnectPowershellSessionName.value -errorAction SilentlyContinue
             }
             else 
             {
                 out-logfile -string "Invoking test-cloudDLPresent without using AD Connect information since not specified with multi-threaded migration."
 
-                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction SilentlyContinue            
+                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.primarySMTPAddres -errorAction SilentlyContinue            
             }
         }
         catch {
