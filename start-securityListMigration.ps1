@@ -4486,11 +4486,6 @@ Function Start-SecurityListMigration
         }  
     }
 
-    if ($isHealthCheck -eq $TRUE)
-    {
-        return
-    }
-
     $htmlCreateOffice365StubGroup = get-date
 
     #EXIT #Debug Exit
@@ -4727,6 +4722,8 @@ Function Start-SecurityListMigration
     #When all threads have reached this point it is safe to have them all move their DLs to the non-Sync OU.
 
     #If there are multiple threads in use hold all of them for thread 
+
+    #DISABLE
 
     $htmlMoveToNonSyncOU = get-date
 
