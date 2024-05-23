@@ -5046,7 +5046,7 @@ Function Start-SecurityListMigration
             {
                 out-logfile -string "Invoking test-cloudDLPresent without using AD Connect information since not specified with multi-threaded migration."
 
-                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.primarySMTPAddres -errorAction SilentlyContinue            
+                test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.primarySMTPAddress -errorAction SilentlyContinue            
             }
         }
         catch {
@@ -5058,7 +5058,7 @@ Function Start-SecurityListMigration
         try {
             out-logfile -string "Invoking test-cloudDLPresent with no ADConnect information (single threaded)."
 
-            test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction SilentlyContinue
+            test-CloudDLPresent -groupSMTPAddress $office365DLConfiguration.primarySMTPAddress -errorAction SilentlyContinue
         }
         catch {
             out-logfile -string $_ -isError:$TRUE
