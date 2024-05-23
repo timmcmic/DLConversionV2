@@ -4777,7 +4777,7 @@ Function Start-SecurityListMigration
 
         do {
             try {
-                set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfigurationUpdated.Name -dlSAMAccountName $originalDLConfigurationUpdated.SAMAccountName -dn $originalDLConfigurationUpdated.distinguishedName -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+                set-newDLName -globalCatalogServer $globalCatalogServer -dlName $originalDLConfiguration.Name -dlSAMAccountName $originalDLConfiguration.SAMAccountName -dn $originalDLConfiguration.distinguishedName -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
 
                 $stopLoop=$TRUE
             }
