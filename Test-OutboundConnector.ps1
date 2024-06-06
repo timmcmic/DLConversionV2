@@ -48,7 +48,7 @@
                     out-logfile -string "Centralized transport is enabled."
                     out-logfile -string "When centralized mail transport is enabled - if the migrated group contains any on premises mailboxes the public MX is utilized for routing."
                     out-logfile -string "If not properly tested this could lead to NDRs or messages appearing as external to on premises resources."
-                    out-logfile -string "Migrating this DL can only be accomplished by acknowledging centralized mail transport is enabled using the -overrideCentalizedMailTransportEnabled:$TRUE"
+                    out-logfile -string "Migrating this DL can only be accomplished by acknowledging centralized mail transport is enabled using the -overrideCentralizedMailTransportEnabled:$TRUE"
                     out-logfile -string $outboundConnector.name
                     out-logfile -string $outboundConnector.RouteAllMessagesViaOnPremises
                     out-logfile -string "***WARNING***" -isError:$true
