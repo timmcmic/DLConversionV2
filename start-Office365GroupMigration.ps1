@@ -680,6 +680,7 @@ Function Start-Office365GroupMigration
     $office365DLOwnersPostMigration=$NULL #This holds the Office 365 DL owners information post migration.
     $office365DLSubscribersPostMigration=$NULL #This holds the Office 365 DL subscribers information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
+    $exchangeOnlineConnectionInfo = $NULL
 
     #Declare some variables for string processing as items move around.
 
@@ -1238,6 +1239,11 @@ Function Start-Office365GroupMigration
         }
    }
 
+   out-logfile -string "Obtian the Exchange Online connection information."
+
+   $exchangeOnlineConnectionInfo = Get-ConnectionInformation
+
+   out-logfile -string $exchangeOnlineConnectionInfo
 
    #exit #debug exit
 
@@ -3557,7 +3563,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -exchangeOnlineConnectionInfo $exchangeOnlineConnectionInfo -errorAction STOP
 
             #If we made it this far then the group was created.
 
@@ -3629,7 +3635,7 @@ Function Start-Office365GroupMigration
     
     do {
         try {
-            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE -exchangeOnlineCredential $exchangeOnlineConnectionInfo -errorAction STOP
 
             $stopLoop = $TRUE
         }
@@ -4026,7 +4032,7 @@ Function Start-Office365GroupMigration
     
     do {
         try {
-            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -exchangeOnlineCredential $exchangeOnlineConnectionInfo -errorAction STOP
 
             $stopLoop = $TRUE
         }
