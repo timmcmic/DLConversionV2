@@ -297,6 +297,8 @@ Function Start-Office365GroupMigration
         [string]$msGraphCertificateThumbprint="",
         [Parameter(Mandatory=$false)]
         [string]$msGraphApplicationID="",
+        [Parameter(Mandatory=$false)]
+        [boolean]$removeGroupViaGraph = $false,
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
         [string]$logFolderPath,
@@ -678,6 +680,7 @@ Function Start-Office365GroupMigration
     $office365DLOwnersPostMigration=$NULL #This holds the Office 365 DL owners information post migration.
     $office365DLSubscribersPostMigration=$NULL #This holds the Office 365 DL subscribers information post migration
     $routingContactConfiguraiton=$NULL #This is the empty routing contact configuration.
+    $exchangeOnlineConnectionInfo = $NULL
 
     #Declare some variables for string processing as items move around.
 
@@ -1236,6 +1239,11 @@ Function Start-Office365GroupMigration
         }
    }
 
+   out-logfile -string "Obtian the Exchange Online connection information."
+
+   $exchangeOnlineConnectionInfo = Get-ConnectionInformation
+
+   out-logfile -string $exchangeOnlineConnectionInfo
 
    #exit #debug exit
 
@@ -3555,7 +3563,7 @@ Function Start-Office365GroupMigration
 
     do {
         try {
-            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+            $office365DLConfigurationPostMigration=new-office365Group -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -exchangeOnlineConnectionInfo $exchangeOnlineConnectionInfo -errorAction STOP
 
             #If we made it this far then the group was created.
 
@@ -3627,7 +3635,7 @@ Function Start-Office365GroupMigration
     
     do {
         try {
-            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -isFirstAttempt:$TRUE -exchangeOnlineCredential $exchangeOnlineConnectionInfo -errorAction STOP
 
             $stopLoop = $TRUE
         }
@@ -3899,6 +3907,25 @@ Function Start-Office365GroupMigration
         }
     }
 
+    out-logfile -string "If delete via graph is in use - process the deletion via graph."
+
+    if ($removeGroupViaGraph -eq $TRUE)
+    {
+        out-logfile -string "Remove group via graph is enabled."
+
+        try {
+            remove-groupViaGraph -groupObjectID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+            out-logfile -string "Group removal via graph was successful."
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to remove the group via graph - this is a hard failure."
+            out-logfile -string "Since the group is already gone - assume handeled via ad connect and continue."
+        }
+    }
+
+
     #Start the process of syncing the deletion to the cloud if the administrator has provided credentials.
     #Note:  If this is not done we are subject to sitting and waiting for it to complete.
 
@@ -4005,7 +4032,7 @@ Function Start-Office365GroupMigration
     
     do {
         try {
-            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -exchangeOnlineCredential $exchangeOnlineCredential -errorAction STOP
+            set-Office365GroupMV -originalDLConfiguration $originalDLConfiguration -office365DLConfiguration $office365DLConfiguration -office365DLConfigurationPostMigration $office365DLConfigurationPostMigration -exchangeDLMembership $exchangeDLMembershipSMTP -exchangeRejectMessage $exchangeRejectMessagesSMTP -exchangeAcceptMessage $exchangeAcceptMessagesSMTP -exchangeModeratedBy $exchangeModeratedBySMTP -exchangeManagedBy $exchangeManagedBySMTP -exchangeBypassMOderation $exchangeBypassModerationSMTP -exchangeGrantSendOnBehalfTo $exchangeGrantSendOnBehalfToSMTP -exchangeSendAsSMTP $exchangeSendAsSMTP -mailOnMicrosoftComDomain $mailOnMicrosoftComDomain -allowNonSyncedGroup $allowNonSyncedGroup -allOffice365SendAsAccessOnGroup $allOffice365SendAsAccessOnGroup -exchangeOnlineCredential $exchangeOnlineConnectionInfo -errorAction STOP
 
             $stopLoop = $TRUE
         }

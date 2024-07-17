@@ -33,7 +33,9 @@
             [Parameter(Mandatory = $true)]
             $originalDLConfiguration,
             [Parameter(Mandatory = $true)]
-            $office365DLConfiguration
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $true)]
+            $exchangeOnlineConnectionInfo
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -65,7 +67,7 @@
             $previousErrorAction = $ErrorActionPreference
             $ErrorActionPreference = 'Stop'
 
-            $functionDL = new-o365UnifiedGroup -displayname $functionName
+            $functionDL = new-o365UnifiedGroup -displayname $functionName -owner $exchangeOnlineConnectionInfo.userPrincipalName
 
             $ErrorActionPreference = $previousErrorAction 
     

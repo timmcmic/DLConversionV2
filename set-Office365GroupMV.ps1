@@ -63,7 +63,7 @@
             [Parameter(Mandatory=$FALSE)]
             [boolean]$isFirstAttempt=$false,
             [Parameter(Mandatory=$true)]
-            [psCredential]$exchangeOnlineCredential
+            $exchangeOnlineCredential
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -402,7 +402,7 @@
             {
                 out-logfile -string "Remove the migration user from owners which is added by default."
                 
-                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Owner" -links $exchangeOnlineCredential.userName -confirm:$FALSE -errorAction STOP
+                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Owner" -links $exchangeOnlineCredential.userPrincipalName -confirm:$FALSE -errorAction STOP
             }
             catch 
             {
@@ -415,7 +415,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove the migration administrator as an owner of the group."
-                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manual removal from owners required.")
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userPrincipalName+" - manual removal from owners required.")
                     ErrorMessageDetail = $_
                 }
 
@@ -428,7 +428,7 @@
             {
                 out-logfile -string "Remove the migration user from members which is added by default."
                 
-                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Member" -links $exchangeOnlineCredential.userName -confirm:$FALSE -errorAction STOP
+                remove-o365UnifiedGroupLinks -identity $functionExternalDirectoryObjectID -linkType "Member" -links $exchangeOnlineCredential.userPrincipalName -confirm:$FALSE -errorAction STOP
             }
             catch 
             {
@@ -441,7 +441,7 @@
                     Alias = $functionMailNickName
                     Name = $originalDLConfiguration.name
                     Attribute = "Unable to remove the migration administrator as an member of the group."
-                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userName+" - manual removal from members required.")
+                    ErrorMessage = ("Unable to remove" +$exchangeOnlineCredential.userPrincipalName+" - manual removal from members required.")
                     ErrorMessageDetail = $_
                 }
 
