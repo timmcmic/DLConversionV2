@@ -227,7 +227,7 @@
             out-logfile -string $entry
         }
 
-        if ($testReturn[-1].contains("ERROR"))
+        if ($testReturn[-1].contains("ERROR:"))
         {
             throw 
         }
