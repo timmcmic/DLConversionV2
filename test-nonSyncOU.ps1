@@ -175,7 +175,7 @@
             {
                 $returnData += ("Processing inclusion: "+$inclusion)
 
-                if ($args[0].contains($inclusion))
+                if ($args[1].contains($inclusion))
                 {
                     $returnData += "A parent OU or the OU itself was found on the list of inclusions."
                     $returnData += "Proceed with validating that an exclusion exists for the OU."
@@ -215,7 +215,7 @@
 
             return $returnData
             
-        } -ArgumentList $functionDomain
+        } -ArgumentList $functionDomain,$ou
 
         foreach ($entry in $testReturn)
         {
