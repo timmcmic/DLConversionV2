@@ -32,6 +32,8 @@
             $ou
         )
 
+        $functionDomain = $ou.Substring($ou.IndexOf("DC="))
+
         #Output all parameters bound or unbound and their associated values.
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -152,7 +154,7 @@
             {
                 $returnData += ("Evaluating directory partition: "+$partition)
 
-                if ($args[0].contains($partition.distinguishedName))
+                if ($args[0] -eq $partition.distinguishedName)
                 {
                     $returnData += ("Distinguished name parittion matching group found: "+$partition.distinguishedName)
                     $workingPartition = $partition
@@ -213,7 +215,7 @@
 
             return $returnData
             
-        } -ArgumentList $ou
+        } -ArgumentList $functionDomain
 
         foreach ($entry in $testReturn)
         {
