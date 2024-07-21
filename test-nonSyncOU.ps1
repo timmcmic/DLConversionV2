@@ -38,6 +38,9 @@
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
+        out-logfile -string ("Function domain name for testing: "+$functionDomain)
+        out-logfile -string ("Function OU for testing: "+$ou)
+
         #Declare function variables.
 
         $testReturn = $null
