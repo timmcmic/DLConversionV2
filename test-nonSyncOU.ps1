@@ -143,6 +143,7 @@
             catch {
                 $returnData += $_
                 $returnData += "ERROR:  Unable to convert imported applied synchroniztion file to JSON.  Unable to validate OU is a non-sync OU."
+                return $returnData
             }
 
             #JSON file succssfully found and imported.  Look for multiple partitions.
