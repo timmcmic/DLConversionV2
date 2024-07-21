@@ -142,6 +142,7 @@
 
             try {
                 $workingSettingsJSON = get-content -raw -path $workingSettingsFilePath -ErrorAction STOP
+                $returnData += "Successfully able to obtain the raw applied settings content."
             }
             catch {
                 $returnData += $_
@@ -153,6 +154,7 @@
 
             try {
                 $workingSettingsJSON = $workingSettingsJSON | ConvertFrom-Json -ErrorAction Stop
+                $returnData += "Successfully able to convert the raw content from JSON."
             }
             catch {
                 $returnData += $_
@@ -168,7 +170,7 @@
 
                 if ($args[0] -eq $partition.distinguishedName)
                 {
-                    $returnData += ("Distinguished name parittion matching group found: "+$partition.distinguishedName)
+                    $returnData += ("Distinguished name partition matching group found: "+$partition.distinguishedName)
                     $workingPartition = $partition
                 }
             }
@@ -205,10 +207,10 @@
                 {
                     $returnData += ("Processing exclusion: "+$exclusion)
 
-                    if ($exclusion -eq $args[0])
+                    if ($exclusion -eq $args[1])
                     {
                         $returnData += "Parent included / OU explicitly excluded."
-                        $returnData += "SUCESS:  The specified OU is excluded from synchronization"
+                        $returnData += "SUCCESS:  The specified OU is excluded from synchronization"
                         $exclusionFound = $true
                     }
                 }
@@ -216,7 +218,7 @@
             else
             {
                 $returnData += "Parent OU is excluded therefore the sub OU is excluded.."
-                $returnData += "SUCESS:  The specified OU is excluded from synchronization"
+                $returnData += "SUCCESS:  The specified OU is excluded from synchronization"
                 $exclusionFound = $true
             }
 
