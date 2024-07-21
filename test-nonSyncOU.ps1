@@ -101,6 +101,13 @@
             try
             {
                 $settingsFiles += get-childItem -Path $adConnectPath -Filter $fileFilter -errorAction STOP | Sort-Object $sortFilter -Descending
+
+                $returnData += "The following applied settings files were located:"
+
+                foreach ($file in $settingsFiles)
+                {
+                    $returnData+=$file
+                }
             }
             catch
             {
