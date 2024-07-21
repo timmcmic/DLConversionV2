@@ -106,7 +106,7 @@
 
                 foreach ($file in $settingsFiles)
                 {
-                    $returnData+=$file
+                    $returnData+=$file.name
                 }
             }
             catch
