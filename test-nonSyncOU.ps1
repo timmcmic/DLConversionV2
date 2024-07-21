@@ -93,6 +93,8 @@
             $returnData += ("ADConnect Program Data Path: "+$adConnectPath)
             $returnData += ("File filter: "+$fileFilter)
             $returnData += ("Sort filter: "+$sortFilter)
+            $returnData += ("OU: "+$args[1])
+            $returnData += ("DomainName: "+$args[0])
 
             #Obtain all of the applied settings files in the directory.
 
