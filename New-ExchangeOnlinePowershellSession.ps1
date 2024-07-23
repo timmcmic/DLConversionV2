@@ -103,7 +103,7 @@
                 {
                     Out-LogFile -string "Creating the exchange online powershell session."
     
-                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -LogDirectoryPath $debugLogPath -LogLevel All
+                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
                 }
                 catch 
                 {
@@ -116,7 +116,7 @@
                 {
                     Out-LogFile -string "Creating the exchange online powershell session."
     
-                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -LogDirectoryPath $debugLogPath -LogLevel All
+                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
                 }
                 catch 
                 {
@@ -130,7 +130,7 @@
             {
                 out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
 
-                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -LogDirectoryPath $debugLogPath -LogLevel All 
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All 
             } 
             catch 
             {
