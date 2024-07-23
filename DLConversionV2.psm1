@@ -508,7 +508,11 @@ Function Start-DistributionListMigration
             new-statusFile -logFolderPath $logFolderPath
 
             $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
+
+            
         }
+
+        $traceFilePath = $logFolderPath + $global:staticFolderName
     }
     
 
@@ -2067,7 +2071,7 @@ Function Start-DistributionListMigration
       #User specified non-certifate authentication credentials.
 
         try {
-            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using credentials."
