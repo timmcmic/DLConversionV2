@@ -2065,6 +2065,7 @@ Function Start-DistributionListMigration
    #Create the connection to exchange online.
 
    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
+   out-logfile -string ("Trace file path: "+$traceFilePath)
 
    if ($exchangeOnlineCertificateThumbPrint -eq "")
    {
