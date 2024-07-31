@@ -157,6 +157,8 @@
 
             $functionEmailAddresses = $functionEmailAddresses | select-object -unique
 
+            out-logfile -string "Unique list of proxy addresses to add to the group object."
+
             out-logfile -string $functionEmailAddresses
 
             $functionEmailAddressToRemove = $office365DLConfigurationPostMigration.primarySMTPAddress
