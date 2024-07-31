@@ -199,7 +199,7 @@
             while($maxRetries -lt 10)
 
             out-logfile -string "Debug sleep to manually change proxy address."
-            start-sleep -m 2
+            start-sleep -Seconds 180
 
             out-logfile -string "Bulk email address updating should be successful - test primary SMTP address"
 
