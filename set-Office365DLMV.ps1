@@ -209,7 +209,7 @@
 
                 try
                 {
-                    $functionGroupReturn = get-o365DistributionGroup -identity $functionExternalDirectoryObjectID -errorAction STOP
+                    $functionGroupReturn = get-o365DLConfiguration -groupSMTPAddress $functionExternalDirectoryObjectID -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Unable to obtain the group by external directory object id." -isError:$TRUE
