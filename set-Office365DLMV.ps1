@@ -181,6 +181,8 @@
                     Set-O365DistributionGroup -identity $functionExternalDirectoryObjectID -emailAddresses $functionEmailAddresses -errorAction STOP -BypassSecurityGroupManagerCheck
 
                     $maxRetries = 10 #The previous set was successful - so immediately bail.
+
+                    out-logfile -string "Attempt to update proxy addresses in bulk completed."
                 }
                 catch {
                     out-logfile -string "Error bulk updating email addresses on distribution group."
