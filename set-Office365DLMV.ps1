@@ -86,6 +86,7 @@
         [string]$functionMailNickname=""
         [string]$functionExternalDirectoryObjectID = ""
         [string]$functionEmailAddressToRemove = ""
+        $functionGroupReturn = $NULL
 
         [boolean]$isTestError=$false
         [array]$functionErrors=@()
@@ -196,6 +197,41 @@
                 }
             }
             while($maxRetries -lt 10)
+
+            out-logfile -string "Debug sleep to manually change proxy address."
+            start-sleep -m 2
+
+            out-logfile -string "Bulk email address updating should be successful - test primary SMTP address"
+
+            if ($isTestError -eq $FALSE)
+            {
+                out-logfile -string "A previous error was not detected during bulk email address updates - perform test."
+
+                try
+                {
+                    $functionGroupReturn = get-o365DistributionGroup -identity $functionExternalDirectoryObjectID -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to obtain the group by external directory object id." -isError:$TRUE
+                }
+
+                out-logfile -string ("Current primary SMTP address: "+$functionGroupReturn.primarySMTPAddress)
+                out-logfile -string ("Office 365 prior primary SMTP address: "+$office365DLConfiguration.primarySMTPAddress)
+
+                if ($functionGroupReturn.primarySMTPAddress -ne $office365DLConfiguration.primarySMTPAddress)
+                {
+                    out-logfile -string "Although previously though successful - bulk updating email addresses did not result in correct email addresses."
+                    $isTestError = $TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Bulk updating of proxy addresses was successful."
+                }
+            }
+            else 
+            {
+               out-logfile -string "An error was detected during bulk updates - proceed with normal logic."
+            }
 
             if ($isTestError -eq $TRUE)
             {
