@@ -287,6 +287,51 @@
                     }
                 }
             }
+
+            out-logfile -string "Debug sleep to reset smtp address for testing."
+            start-sleep -Seconds 180
+
+            out-logfile -string "Testing to ensure that new group primary SMTP address matches original group primary smtp address - loop until this is true."
+
+            $isTestError = $FALSE
+
+            $startSMTPCheck = get-UniversalDateTime
+
+            do
+            {
+                out-logfile -string "Final test of primary SMTP address."
+
+                try
+                {
+                    $functionGroupReturn = get-o365DLConfiguration -groupSMTPAddress $functionExternalDirectoryObjectID -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to obtain the group by external directory object id." -isError:$TRUE
+                }
+
+                out-logfile -string ("Current primary SMTP address: "+$functionGroupReturn.primarySMTPAddress)
+                out-logfile -string ("Office 365 prior primary SMTP address: "+$office365DLConfiguration.primarySMTPAddress)
+
+                if ($functionGroupReturn.primarySMTPAddress -ne $office365DLConfiguration.primarySMTPAddress)
+                {
+                    out-logfile -string "Although previously though successful - primary SMTP address still not updated."
+                    $isTestError = $TRUE
+
+                    start-sleepProgress -sleepString "Primary SMTP address updates successful but not yet present - sleeping." -sleepSeconds 120
+                }
+                else 
+                {
+                    out-logfile -string "Primary SMTP address was updated successfully."
+                    $isTestError = $FALSE
+                }
+            }until ($isTestError -eq $FALSE)
+
+            $endSMTPCheck = get-UniversalDateTime
+
+            $totalSMTPCheck = $endSMTPCheck = $startSMTPCheck
+            out-logfile -string ("Start SMTP Check: "+$startSMTPCheck)
+            out-logfile -string ("End SMTP Check: "+$endSMTPCheck)
+            out-logfile -string ("Total SMTP Check: "+$totalSMTPCheck)
             
             #Operation set complete - reset isError.
 
