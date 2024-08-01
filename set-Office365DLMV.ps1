@@ -288,9 +288,6 @@
                 }
             }
 
-            out-logfile -string "Debug sleep to reset smtp address for testing."
-            start-sleep -Seconds 180
-
             out-logfile -string "Testing to ensure that new group primary SMTP address matches original group primary smtp address - loop until this is true."
 
             $isTestError = $FALSE
