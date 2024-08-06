@@ -173,6 +173,10 @@
                     $returnData += ("Distinguished name partition matching group found: "+$partition.distinguishedName)
                     $workingPartition = $partition
                 }
+                else
+                {
+                    out-logfile -string "This is not the partition that you were looking for...use the force and find the next one..."
+                }
             }
 
             $returnData += ("Working domain partition: "+$workingPartition)
