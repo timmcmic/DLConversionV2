@@ -538,7 +538,7 @@
             }
             catch{
                 out-logfile -string "The routing contact could not be created."
-                out-logfile -string $_ -isError:$TRUE
+                out-logfile -string $_ 
             }
         }
 

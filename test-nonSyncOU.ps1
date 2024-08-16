@@ -175,7 +175,7 @@
                 }
                 else
                 {
-                    out-logfile -string "This is not the partition that you were looking for...use the force and find the next one..."
+                    $returnData += out-logfile -string "This is not the partition that you were looking for...use the force and find the next one..."
                 }
             }
 
