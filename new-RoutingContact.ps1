@@ -223,7 +223,12 @@
                 $usefulTemplateDomain = $usefulTemplate.split("@")
                 out-logfile -string $usefulTemplateDomain[1]
 
-                exit
+                out-logfile -string "Utilize the alias of the group to build the new onmicrosoft.com address."
+
+                $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
+                out-logfile -string $usefulRoutingAddress
+                $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain[1]
+                out-logfile -string $usefulRoutingAddress
             }
             else 
             {
