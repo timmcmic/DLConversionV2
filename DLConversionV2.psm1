@@ -5386,7 +5386,7 @@ Function Start-DistributionListMigration
                     out-logFile -string $_ -isError:$TRUE
                 }
                 else {
-                    start-sleeProgress -sleepString "Attempt to gather updated DL configuration failed - try again." -sleepSeconds 5
+                    start-sleepProgress -sleepString "Attempt to gather updated DL configuration failed - try again." -sleepSeconds 5
 
                     $loopCounter = $loopCounter + 1
                 } 
