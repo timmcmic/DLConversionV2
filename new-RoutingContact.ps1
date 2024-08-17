@@ -203,16 +203,16 @@
                             out-logfile -string ("Useful template found..."+$usefulTemplate)
                         }
                     }
-
-                    out-logfile -string "Extract the mail.onmicrosoft.com domain."
-
-                    $usefulTemplateDomain = $usefulTemplate.split("@")
-                    out-logfile -string $usefulTemplateDomain[1]
                 }
                 else 
                 {
                     out-logfile -string "Only a single email address policy exists with mail.onmicrosoft.com - this is ok."
                 }
+
+                out-logfile -string "Extract the mail.onmicrosoft.com domain."
+
+                $usefulTemplateDomain = $usefulTemplate.split("@")
+                out-logfile -string $usefulTemplateDomain[1]
 
                 exit
             }
