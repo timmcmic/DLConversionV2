@@ -236,11 +236,19 @@
                 {
                     out-logfile -string "The address was found - at this point use something random."
                 }
+                else 
+                {
+                    out-logfile -string "The address was not found - allow to be target address."
+                }
             }
             else 
             {
                 out-logfile -string "Distribution list does not have a target address - custom routing domain is in use."
             }
+
+            $functionTargetAddress = "smtp:"+$usefulRoutingAddress
+
+            out-logfile -string $functionTargetAddress
 
             exit
 
