@@ -235,6 +235,17 @@
                 if (test-o365Recipient -member $usefulRoutingAddress)
                 {
                     out-logfile -string "The address was found - at this point use something random."
+
+                    $newAddressOK = $false
+
+                    do {
+                        $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
+                        out-logfile -string ("New alias calculated: "+$newAlias)
+                        $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
+                        out-logfile -string $usefulRoutingAddress 
+                    } until (
+                        $newAddressOK -eq $true
+                    )
                 }
                 else 
                 {
