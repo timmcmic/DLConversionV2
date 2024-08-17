@@ -191,7 +191,14 @@
 
                 $usefulEmailAddressPolicy = $emailAddressPolicy | where {$_.EnabledEmailAddressTemplates -like ("*.mail.onmicrosoft.com")}
 
-                $usefulEmailAddressPolicy
+                if ($usefulEmailAddressPolicy.count -gt 0)
+                {
+                    out-logfile -string "Multiple policies exist with mail.onmicrosoft.com - this is ok."
+                }
+                else 
+                {
+                    out-logfile -string "Only a single email address policy exists with mail.onmicrosoft.com - this is ok."
+                }
 
                 exit
             }
