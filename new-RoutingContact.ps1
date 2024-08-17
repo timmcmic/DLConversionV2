@@ -177,31 +177,21 @@
             {
                 out-logfile -string "Distribution list does not have a target address - custom routing domain is not in use."
 
-                out-logfile -string "Extract the onmicrosoft.com address provisioned on the group."
+                out-logfile -string "Extract all email address policies from on premises."
 
-                foreach ($address in $office365DLConfiguration.emailAddresses)
-                {
-                    out-logfile -string ("Testing address: "+$address)
-
-                    if ($address.contains("onmicrosoft.com"))
-                    {
-                        out-logfile -string "Onmicrosoft.com address located."
-                        $tempAddress = $address
-                        out-logfile -string $tempAddress
-                    }
-
-                    out-logfile -string "Replacing domain with appropriate routing domain."
-
-                    $tempAddress = $tempAddress.replace("onmicrosoft.com","mail.onmicrosoft.com")
-
-                    out-logfile -string $tempAddress
-
-                    if (test-o365Recipient -member $tempAddress)
-                    {
-                        out-logfile -string "The calcualted remote routing address was located on another object."
-                        exit
-                    }
+                try {
+                    $emailAddressPolicy = get-emailAddressPolicy -errorAction STOP
                 }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to extract email address policy."
+                }
+
+                out-logfile -string "Find all email address policies where the mail.onmicrosoft.com domain is present."
+
+                $usefulEmailAddressPolicy = $emailAddressPolicy | where {$_.EnabledEmailAddressTemplates -like ("*.mail.onmicrosoft.com")}
+
+                exit
             }
             else 
             {
