@@ -195,24 +195,13 @@
                 {
                     out-logfile -string "Multiple policies exist with mail.onmicrosoft.com - this is ok."
 
-                    $templateFound = $false
-
                     foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
                     {
-                        out-logfile -string ("Testing template: "+$template)
-
-                        do 
+                        if ($template.contains("mail.onmicrosoft.com"))
                         {
-                            if ($template.contains("mail.onmicrosoft.com"))
-                            {
-                                $usefulTemplate = $template
-                                out-logfile -string ("Template found: "+$usefulTemplate)
-                                $templateFound = $true
-                            }
-                            
-                        } until (
-                            $templateFound = $true
-                        )
+                            $usefulTemplate = $template
+                            out-logfile -string ("Useful template found..."+$usefulTemplate)
+                        }
                     }
                 }
                 else 
