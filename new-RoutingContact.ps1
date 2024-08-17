@@ -190,7 +190,17 @@
                         out-logfile -string $tempAddress
                     }
 
-                    
+                    out-logfile -string "Replacing domain with appropriate routing domain."
+
+                    $tempAddress = $tempAddress.replace("onmicrosoft.com","mail.onmicrosoft.com")
+
+                    out-logfile -string $tempAddress
+
+                    if (test-o365Recipient -member $tempAddress)
+                    {
+                        out-logfile -string "The calcualted remote routing address was located on another object."
+                        exit
+                    }
                 }
             }
             else 
