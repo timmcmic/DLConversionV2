@@ -557,7 +557,7 @@
 
                 if ($loopCounter -lt 5)
                 {
-                    start-sleeProgress -sleepSeconds 5 -sleepString "Sleeping failed obtain contact..."
+                    start-sleepProgress -sleepSeconds 5 -sleepString "Sleeping failed obtain contact..."
                     $loopCounter=$loopCounter+1
                 }
                 else
