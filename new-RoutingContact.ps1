@@ -191,6 +191,8 @@
 
                 $usefulEmailAddressPolicy = $emailAddressPolicy | where {$_.EnabledEmailAddressTemplates -like ("*.mail.onmicrosoft.com")}
 
+                $usefulEmailAddressPolicy
+
                 exit
             }
             else 
