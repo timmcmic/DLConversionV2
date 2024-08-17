@@ -170,6 +170,35 @@
         
         if ($functionTargetAddress -eq $NULL)
         {
+            #This code was kinda cheap - essentailly there was no valid address for a target address.
+            #This really should not just fail - we should create and set one.
+
+            if ($customRoutingDomain -eq "")
+            {
+                out-logfile -string "Distribution list does not have a target address - custom routing domain is not in use."
+
+                out-logfile -string "Extract the onmicrosoft.com address provisioned on the group."
+
+                foreach ($address in $office365DLConfiguration.emailAddresses)
+                {
+                    out-logfile -string ("Testing address: "+$address)
+
+                    if ($address.contains("onmicrosoft.com"))
+                    {
+                        out-logfile -string "Onmicrosoft.com address located."
+                        $tempAddress = $address
+                        out-logfile -string $tempAddress
+                    }
+
+                    
+                }
+            }
+            else 
+            {
+                out-logfile -string "Distribution list does not have a target address - custom routing domain is in use."
+            }
+
+            <#
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
             out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
             out-logfile -string "Error enabling hybrid mail flow."
@@ -184,6 +213,8 @@
             $global:generalErrors+=$isErrorObject
 
             $functionTargetAddress = "ERROR-THISWILLNOTWORK@domain.local"
+
+            #>
 
         }
         else
