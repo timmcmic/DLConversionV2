@@ -207,6 +207,15 @@
                 else 
                 {
                     out-logfile -string "Only a single email address policy exists with mail.onmicrosoft.com - this is ok."
+
+                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    {
+                        if ($template.contains("mail.onmicrosoft.com"))
+                        {
+                            $usefulTemplate = $template
+                            out-logfile -string ("Useful template found..."+$usefulTemplate)
+                        }
+                    }
                 }
 
                 out-logfile -string "Extract the mail.onmicrosoft.com domain."
