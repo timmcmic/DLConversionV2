@@ -194,6 +194,11 @@
                 if ($usefulEmailAddressPolicy.count -gt 0)
                 {
                     out-logfile -string "Multiple policies exist with mail.onmicrosoft.com - this is ok."
+
+                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    {
+                        out-logfile -string ("Testing template: "+$template)
+                    }
                 }
                 else 
                 {
