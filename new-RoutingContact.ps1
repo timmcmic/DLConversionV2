@@ -229,11 +229,20 @@
                 out-logfile -string $usefulRoutingAddress
                 $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain[1]
                 out-logfile -string $usefulRoutingAddress
+
+                out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
+
+                if (test-o365Recipient -member $usefulRoutingAddress)
+                {
+                    out-logfile -string "The address was found - at this point use something random."
+                }
             }
             else 
             {
                 out-logfile -string "Distribution list does not have a target address - custom routing domain is in use."
             }
+
+            exit
 
             <#
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
