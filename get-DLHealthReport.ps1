@@ -673,6 +673,8 @@ Function get-DLHealthReport
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."
@@ -983,7 +985,7 @@ Function get-DLHealthReport
       #User specified non-certifate authentication credentials.
 
         try {
-            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+            New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using credentials."
@@ -995,7 +997,7 @@ Function get-DLHealthReport
       #User specified thumbprint authentication.
 
         try {
-            new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+            new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
         }
         catch {
             out-logfile -string "Unable to create the exchange online connection using certificate."

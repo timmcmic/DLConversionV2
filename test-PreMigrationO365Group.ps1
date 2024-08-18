@@ -229,6 +229,8 @@ Function Test-PreMigrationO365Group
 
     new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     #Output all parameters bound or unbound and their associated values.
 
     Out-LogFile -string "********************************************************************************"

@@ -105,6 +105,8 @@ function start-collectOnPremSendAs
 
     new-LogFile -groupSMTPAddress OnPremSendAsPermissions -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."

@@ -394,6 +394,8 @@ Function Start-MultipleDistributionListMigration
 
     new-LogFile -groupSMTPAddress $masterFileName -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."

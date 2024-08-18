@@ -314,6 +314,8 @@ Function restore-MigratedDistributionList
 
     new-LogFile -groupSMTPAddress ("Restore_"+(get-date -format FileDateTime)) -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     out-logfile -string "Testing for supported version of Powershell engine."
 
     test-powershellVersion

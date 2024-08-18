@@ -109,6 +109,8 @@ function start-collectOffice365MailboxFolders
 
     new-LogFile -groupSMTPAddress Office365MailboxFolderPermissions -logFolderPath $logFolderPath
 
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
     out-logfile -string "Output bound parameters..."
 
     #Output all parameters bound or unbound and their associated values.
@@ -141,7 +143,7 @@ function start-collectOffice365MailboxFolders
        #User specified non-certifate authentication credentials.
 
        try {
-        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath -isAudit:$TRUE
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath -isAudit:$TRUE
        }
        catch {
            out-logfile -string "Unable to create the exchange online connection using credentials."
@@ -155,7 +157,7 @@ function start-collectOffice365MailboxFolders
        #User specified thumbprint authentication.
 
        try {
-        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath -isAudit:$TRUE
+        new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath -isAudit:$TRUE
        }
        catch {
         out-logfile -string "Unable to create the exchange online connection using certificate."
