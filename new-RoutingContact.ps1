@@ -295,9 +295,11 @@
                 }
                 catch {
                     out-logfile -string $_
-                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
+                    out-logfile -string "Unable to add the calculated routing address to the distribution group." -isError:$TRUE
                 }
             }
+
+            out-logfile -string "New remote routing address calculated and stamped - moving on to creating contact."
 
             <#
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
