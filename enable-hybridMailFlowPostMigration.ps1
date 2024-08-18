@@ -184,6 +184,10 @@
 
         $traceFilePath = $logFolderPath + $global:staticFolderName
 
+        out-logfile -string $traceFilePath
+
+        exit
+
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
         write-hashTable -hashTable $xmlFiles
