@@ -272,6 +272,33 @@
 
             out-logfile -string $functionTargetAddress
 
+            out-logfile -string "Setting the target address on the Office 365 distribution group."
+
+            if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
+            {
+                out-logfile -string "Group type is unified - set email address with unified."
+
+                try {
+                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
+                }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
+                }
+            }
+            else
+            {
+                out-logfile -string "Group type is distribution - set email address with distribution."
+
+                try {
+                    set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP -bypassSecurityGroupManagerCheck
+                }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
+                }
+            }
+
             <#
             out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
             out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
