@@ -243,6 +243,17 @@
                         out-logfile -string ("New alias calculated: "+$newAlias)
                         $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
                         out-logfile -string $usefulRoutingAddress 
+
+                        if (!test-o365Recipient -member $usefulRoutingAddress)
+                        {
+                            out-logfile -string "Random address is not present in Office 365 - proceed."
+                            $newAddressOK = $true
+                        }
+                        else 
+                        {
+                            out-logfile -string "Random address is present in Office 365 - do it again."
+                            $newAddressOK = $false                        
+                        }
                     } until (
                         $newAddressOK -eq $true
                     )
