@@ -244,7 +244,7 @@
                         $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
                         out-logfile -string $usefulRoutingAddress 
 
-                        if (-not get-o365Recipient -identity $usefulRoutingAddress)
+                        if (-not (get-o365Recipient -identity $usefulRoutingAddress))
                         {
                             out-logfile -string "Random address is not present in Office 365 - proceed."
                             $newAddressOK = $true
