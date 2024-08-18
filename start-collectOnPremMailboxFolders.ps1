@@ -119,6 +119,8 @@ function start-collectOnPremMailboxFolders
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     #Output all parameters bound or unbound and their associated values.
 
     write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)

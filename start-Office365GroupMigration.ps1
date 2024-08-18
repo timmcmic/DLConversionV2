@@ -749,6 +749,8 @@ Function Start-Office365GroupMigration
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
         $traceFilePath = $logFolderPath + $global:staticFolderName
+
+        out-logfile -string ("Trace file path: "+$traceFilePath)
     }
 
     function session-toImport

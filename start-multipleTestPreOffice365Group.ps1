@@ -234,6 +234,8 @@ Function start-multipleTestPreOffice365Group
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOTICE"
     out-logfile -string "Telemetry collection is now enabled by default."

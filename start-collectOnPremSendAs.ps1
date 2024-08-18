@@ -107,6 +107,8 @@ function start-collectOnPremSendAs
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     if (($bringMyOwnRecipients -ne $NULL )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."

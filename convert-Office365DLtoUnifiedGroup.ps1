@@ -565,6 +565,8 @@ Function Convert-Office365DLtoUnifiedGroup
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
         $traceFilePath = $logFolderPath + $global:staticFolderName
+
+        out-logfile -string ("Trace file path: "+$traceFilePath)
     }
 
     out-logfile -string "********************************************************************************"

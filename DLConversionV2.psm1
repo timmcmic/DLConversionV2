@@ -513,6 +513,8 @@ Function Start-DistributionListMigration
         }
 
         $traceFilePath = $logFolderPath + $global:staticFolderName
+
+        out-logfile -string ("Trace file path: "+$traceFilePath)
     }
     
 

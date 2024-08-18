@@ -226,6 +226,8 @@ Function test-preO365GroupConversion
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     #Output all parameters bound or unbound and their associated values.
 
     Out-LogFile -string "********************************************************************************"

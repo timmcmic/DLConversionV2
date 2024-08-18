@@ -111,6 +111,8 @@ function start-collectOffice365MailboxFolders
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     out-logfile -string "Output bound parameters..."
 
     #Output all parameters bound or unbound and their associated values.

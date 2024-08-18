@@ -184,7 +184,7 @@
 
         $traceFilePath = $logFolderPath + $global:staticFolderName
 
-        out-logfile -string $traceFilePath
+        out-logfile -string ("Trace file path: "+$traceFilePath)
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 

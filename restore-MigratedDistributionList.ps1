@@ -316,6 +316,8 @@ Function restore-MigratedDistributionList
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
     out-logfile -string "Testing for supported version of Powershell engine."
 
     test-powershellVersion
