@@ -276,18 +276,6 @@
 
             if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
             {
-                out-logfile -string "Group type is unified - set email address with unified."
-
-                try {
-                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
-                }
-                catch {
-                    out-logfile -string $_
-                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
-                }
-            }
-            else
-            {
                 out-logfile -string "Group type is distribution - set email address with distribution."
 
                 try {
@@ -296,6 +284,18 @@
                 catch {
                     out-logfile -string $_
                     out-logfile -string "Unable to add the calculated routing address to the distribution group." -isError:$TRUE
+                }
+            }
+            else
+            {
+                out-logfile -string "Group type is unified - set email address with unified."
+
+                try {
+                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
+                }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
                 }
             }
 
