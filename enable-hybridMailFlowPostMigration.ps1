@@ -182,6 +182,8 @@
 
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
 
+        $traceFilePath = $logFolderPath + $global:staticFolderName
+
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
         write-hashTable -hashTable $xmlFiles
@@ -349,7 +351,7 @@
             #User specified non-certifate authentication credentials.
 
                 try {
-                    New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $logFolderPath
+                    New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
                 }
                 catch {
                     out-logfile -string "Unable to create the exchange online connection using credentials."
