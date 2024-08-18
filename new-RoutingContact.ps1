@@ -232,7 +232,7 @@
 
                 out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
 
-                if (test-o365Recipient -member $usefulRoutingAddress)
+                if (get-o365Recipient -identity $usefulRoutingAddress)
                 {
                     out-logfile -string "The address was found - at this point use something random."
 
@@ -244,7 +244,7 @@
                         $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
                         out-logfile -string $usefulRoutingAddress 
 
-                        if (!test-o365Recipient -member $usefulRoutingAddress)
+                        if (!get-o365Recipient -identity $usefulRoutingAddress)
                         {
                             out-logfile -string "Random address is not present in Office 365 - proceed."
                             $newAddressOK = $true
