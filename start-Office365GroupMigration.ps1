@@ -350,14 +350,6 @@ Function Start-Office365GroupMigration
     $global:blogURL = "https://timmcmic.wordpress.com"
 
 
-    if (($isHealthCheck -eq $FALSE) -and ($exchangeOnlineCertificateThumbprint -ne ""))
-    {
-        out-logfile -string "Unable to perform this migration using certificate authentication to Exchange Online."
-        out-logfile -string "Certificate authentication is only supported when running test pre-migration functions."
-        out-logfile -string "Certificate authentication does not support the new-unifiedGroup and set-unifiedGroup commands necessary to create a Office 365 group."
-        out-logfile -string "FAILURE:  Certificate authentication not supported" -isError:$TRUE
-    }
-
     #Establish required MS Graph Scopes
 
     $msGraphScopesRequired = @("User.Read.All", "Group.Read.All")
@@ -751,6 +743,14 @@ Function Start-Office365GroupMigration
         $traceFilePath = $logFolderPath + $global:staticFolderName
 
         out-logfile -string ("Trace file path: "+$traceFilePath)
+    }
+
+    if (($isHealthCheck -eq $FALSE) -and ($exchangeOnlineCertificateThumbprint -ne ""))
+    {
+        out-logfile -string "Unable to perform this migration using certificate authentication to Exchange Online."
+        out-logfile -string "Certificate authentication is only supported when running test pre-migration functions."
+        out-logfile -string "Certificate authentication does not support the new-unifiedGroup and set-unifiedGroup commands necessary to create a Office 365 group."
+        out-logfile -string "FAILURE:  Certificate authentication not supported" -isError:$TRUE
     }
 
     function session-toImport
