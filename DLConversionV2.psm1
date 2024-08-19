@@ -508,13 +508,7 @@ Function Start-DistributionListMigration
             new-statusFile -logFolderPath $logFolderPath
 
             $logFolderPath=$logFolderPath+$threadFolder[$global:threadNumber]
-
-            
         }
-
-        $traceFilePath = $logFolderPath + $global:staticFolderName
-
-        out-logfile -string ("Trace file path: "+$traceFilePath)
     }
     
 
