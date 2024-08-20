@@ -22,6 +22,9 @@
             $originalDLConfiguration
         )
 
+        $functionOnMicrosoftDomain = ""
+        $functionNameTest = "mail.onmicrosoft.com"
+
         #Output all parameters bound or unbound and their associated values.
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
@@ -63,7 +66,6 @@
         $tempAddress=$originalDLConfiguration.mail.split("@")
         $originalDLDomainNames+=$tempAddress[1]
         
-
         $originalDLDomainNames=$originalDLDomainNames | select-object -Unique
 
         out-logfile -string "Unique domain names on the group."
@@ -85,6 +87,18 @@
             }
         }
 
+        out-logfile -string "Find and return the onmicrosoft.com domain for other functions."
+
+        try {
+            $functionOnMicrosoftDomain = get-o365acceptedDomain | where {$_.domainName -like "*$functionNameTest"} -errorAction Stop
+        }
+        catch {
+            out-logfile -string $_
+            out-logfile -string "Unable to capture accepted domains for interpretation -> error." -isError:$TRUE
+        }
+
         Out-LogFile -string "END Test-AcceptedDomain"
         Out-LogFile -string "********************************************************************************"
+
+        return $functionOnMicrosoftDomain
     }

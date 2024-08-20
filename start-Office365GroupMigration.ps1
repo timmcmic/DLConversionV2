@@ -2284,7 +2284,7 @@ Function Start-Office365GroupMigration
     out-logfile -string "Begin accepted domain validation."
 
     try {
-        test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
+        $onMicrosoftDomain = test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
     }
     catch {
         out-logfile $_

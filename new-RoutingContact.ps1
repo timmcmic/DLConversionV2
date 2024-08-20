@@ -62,7 +62,9 @@
             [Parameter(Mandatory = $false)]
             [string]$isRetryOU = $false,
             [Parameter(Mandatory = $false)]
-            [string]$customRoutingDomain = ""
+            [string]$customRoutingDomain = "",
+            [Parameter(Mandatory = $false)]
+            [string]$mailOnMicrosoftComDomain = ""
         )
 
         #Define function variables.
