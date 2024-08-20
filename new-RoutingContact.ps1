@@ -62,9 +62,7 @@
             [Parameter(Mandatory = $false)]
             [string]$isRetryOU = $false,
             [Parameter(Mandatory = $false)]
-            [string]$customRoutingDomain = "",
-            [Parameter(Mandatory = $false)]
-            [string]$mailOnMicrosoftComDomain = ""
+            [string]$customRoutingDomain = ""
         )
 
         #Define function variables.
@@ -175,63 +173,61 @@
             #This code was kinda cheap - essentailly there was no valid address for a target address.
             #This really should not just fail - we should create and set one.
 
-            if (($customRoutingDomain -eq "") -and ($mailOnMicrosoftComDomain -eq ""))
+            if ($customRoutingDomain -eq "")
             {
                 out-logfile -string "Distribution list does not have a target address - custom routing domain is not in use."
 
-                out-logfile -string "Extract the mail.onmicrosoft.com domain."
+                out-logfile -string "Extract all email address policies from on premises."
 
-                $usefulTemplateDomain = test-acceptedDomain -isCloudTest:$false
+                try {
+                    $emailAddressPolicy = get-emailAddressPolicy -errorAction STOP
+                }
+                catch {
+                    out-logfile -string $_
+                    out-logfile -string "Unable to extract email address policy."
+                }
 
-                out-logfile -string "Utilize the alias of the group to build the new onmicrosoft.com address."
+                out-logfile -string "Find all email address policies where the mail.onmicrosoft.com domain is present."
 
-                $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
-                out-logfile -string $usefulRoutingAddress
-                $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain
-                out-logfile -string $usefulRoutingAddress
+                $usefulEmailAddressPolicy = $emailAddressPolicy | where {$_.EnabledEmailAddressTemplates -like ("*.mail.onmicrosoft.com")}
 
-                out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
-
-                if (get-o365Recipient -identity $usefulRoutingAddress)
+                if ($usefulEmailAddressPolicy.count -gt 0)
                 {
-                    out-logfile -string "The address was found - at this point use something random."
+                    out-logfile -string "Multiple policies exist with mail.onmicrosoft.com - this is ok."
 
-                    $newAddressOK = $false
-
-                    do {
-                        $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
-                        out-logfile -string ("New alias calculated: "+$newAlias)
-                        $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
-                        out-logfile -string $usefulRoutingAddress 
-
-                        if (-not (get-o365Recipient -identity $usefulRoutingAddress))
+                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    {
+                        if ($template.contains("mail.onmicrosoft.com"))
                         {
-                            out-logfile -string "Random address is not present in Office 365 - proceed."
-                            $newAddressOK = $true
+                            $usefulTemplate = $template
+                            out-logfile -string ("Useful template found..."+$usefulTemplate)
                         }
-                        else 
-                        {
-                            out-logfile -string "Random address is present in Office 365 - do it again."
-                            $newAddressOK = $false                        
-                        }
-                    } until (
-                        $newAddressOK -eq $true
-                    )
+                    }
                 }
                 else 
                 {
-                    out-logfile -string "The address was not found - allow to be target address."
+                    out-logfile -string "Only a single email address policy exists with mail.onmicrosoft.com - this is ok."
+
+                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    {
+                        if ($template.contains("mail.onmicrosoft.com"))
+                        {
+                            $usefulTemplate = $template
+                            out-logfile -string ("Useful template found..."+$usefulTemplate)
+                        }
+                    }
                 }
-            }
-            elseif ($mailOnMicrosoftComDomain -ne "")
-            {
-                out-logfile -string "We were able to obtain the onmicrosoft.com domain from Office 365 -> use this domain."
+
+                out-logfile -string "Extract the mail.onmicrosoft.com domain."
+
+                $usefulTemplateDomain = $usefulTemplate.split("@")
+                out-logfile -string $usefulTemplateDomain[1]
 
                 out-logfile -string "Utilize the alias of the group to build the new onmicrosoft.com address."
 
                 $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
                 out-logfile -string $usefulRoutingAddress
-                $usefulRoutingAddress = $usefulRoutingAddress + $mailOnMicrosoftComDomain
+                $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain[1]
                 out-logfile -string $usefulRoutingAddress
 
                 out-logfile -string "Test to ensure that calcluated address is not present in Office 365."

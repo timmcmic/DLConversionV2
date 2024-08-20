@@ -2284,15 +2284,12 @@ Function Start-Office365GroupMigration
     out-logfile -string "Begin accepted domain validation."
 
     try {
-        $onMicrosoftDomain = test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
+        test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
     }
     catch {
         out-logfile $_
         out-logfile -string "Unable to capture accepted domains for validation." -isError:$TRUE
     }
-
-    out-logfile -string "On microsoft domain found"
-    out-logfile -string $onMicrosoftDomain
 
     try {
         test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
@@ -4479,7 +4476,7 @@ Function Start-Office365GroupMigration
         out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -mailOnMicrosoftComDomain $onMicrosoftDomain
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
     
                 $stopLoop = $TRUE
             }
@@ -4501,7 +4498,7 @@ Function Start-Office365GroupMigration
         out-logfile -string "Calling new-routingContact with custom domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -mailOnMicrosoftComDomain $onMicrosoftDomain
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
     
                 $stopLoop = $TRUE
             }
