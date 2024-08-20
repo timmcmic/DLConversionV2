@@ -100,5 +100,5 @@
         Out-LogFile -string "END Test-AcceptedDomain"
         Out-LogFile -string "********************************************************************************"
 
-        return $functionOnMicrosoftDomain
+        return $functionOnMicrosoftDomain.domainName
     }

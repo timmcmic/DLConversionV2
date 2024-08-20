@@ -175,7 +175,7 @@
             #This code was kinda cheap - essentailly there was no valid address for a target address.
             #This really should not just fail - we should create and set one.
 
-            if ($customRoutingDomain -eq "")
+            if (($customRoutingDomain -eq "") -and ($mailOnMicrosoftComDomain -eq ""))
             {
                 out-logfile -string "Distribution list does not have a target address - custom routing domain is not in use."
 
@@ -230,6 +230,50 @@
                 $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
                 out-logfile -string $usefulRoutingAddress
                 $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain[1]
+                out-logfile -string $usefulRoutingAddress
+
+                out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
+
+                if (get-o365Recipient -identity $usefulRoutingAddress)
+                {
+                    out-logfile -string "The address was found - at this point use something random."
+
+                    $newAddressOK = $false
+
+                    do {
+                        $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
+                        out-logfile -string ("New alias calculated: "+$newAlias)
+                        $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
+                        out-logfile -string $usefulRoutingAddress 
+
+                        if (-not (get-o365Recipient -identity $usefulRoutingAddress))
+                        {
+                            out-logfile -string "Random address is not present in Office 365 - proceed."
+                            $newAddressOK = $true
+                        }
+                        else 
+                        {
+                            out-logfile -string "Random address is present in Office 365 - do it again."
+                            $newAddressOK = $false                        
+                        }
+                    } until (
+                        $newAddressOK -eq $true
+                    )
+                }
+                else 
+                {
+                    out-logfile -string "The address was not found - allow to be target address."
+                }
+            }
+            elseif ($mailOnMicrosoftComDomain -ne "")
+            {
+                out-logfile -string "We were able to obtain the onmicrosoft.com domain from Office 365 -> use this domain."
+
+                out-logfile -string "Utilize the alias of the group to build the new onmicrosoft.com address."
+
+                $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
+                out-logfile -string $usefulRoutingAddress
+                $usefulRoutingAddress = $usefulRoutingAddress + $mailOnMicrosoftComDomain
                 out-logfile -string $usefulRoutingAddress
 
                 out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
