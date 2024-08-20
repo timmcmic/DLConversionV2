@@ -442,6 +442,24 @@
         Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
         Out-LogFile -string "********************************************************************************"
 
+        if ($customRoutingDomain -eq "")
+        {
+            out-logfile -string "Determine the mail onmicrosoft domain necessary for cross premises routing."
+            try {
+                $mailOnMicrosoftComDomain = Get-MailOnMicrosoftComDomain -errorAction STOP
+            }
+            catch {
+                out-logfile -string $_
+                out-logfile -string "Unable to obtain the onmicrosoft.com domain." -errorAction STOP    
+            }
+        }
+        else 
+        {
+            out-logfile -string "The administrtor has specified a custome routing domain - maybe for legacy tenant implementations."
+    
+            $mailOnMicrosoftComDomain = $customRoutingDomain
+        }
+
         #First step - gather the Office 365 DL Information.
         #The DL should be present in the service and previously migrated.
 
@@ -536,7 +554,7 @@
             try{
                 out-logfile -string "Creating the routing contact that is missing."
 
-                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+                new-routingContact -originalDLConfiguration $office365DLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -isRetry:$TRUE -isRetryOU $OU -customRoutingDomain $mailOnMicrosoftComDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
 
                 out-logfile -string "The routing contact was created successfully."
             }
