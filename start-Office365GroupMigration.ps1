@@ -2291,6 +2291,9 @@ Function Start-Office365GroupMigration
         out-logfile -string "Unable to capture accepted domains for validation." -isError:$TRUE
     }
 
+    out-logfile -string "On microsoft domain found"
+    out-logfile -string $onMicrosoftDomain
+
     try {
         test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
     }
