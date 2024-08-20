@@ -173,103 +173,53 @@
             #This code was kinda cheap - essentailly there was no valid address for a target address.
             #This really should not just fail - we should create and set one.
 
-            if ($customRoutingDomain -eq "")
+            out-logfile -string "Group does not have a mail.onmicrosoft.com address or address at the custom routing domain - one must be calculated."
+
+            out-logfile -string ("Domain that will be utilized for the remote routing domain: "+$customRoutingDomain)
+
+            out-logfile -string ("Utilize the alias of the group to build the new onmicrosoft.com address: "+$office365DLConfiguration.alias)
+
+            $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
+            out-logfile -string $usefulRoutingAddress
+            $usefulRoutingAddress = $usefulRoutingAddress + $customRoutingDomain
+            out-logfile -string $usefulRoutingAddress
+
+            out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
+
+            if (get-o365Recipient -identity $usefulRoutingAddress)
             {
-                out-logfile -string "Distribution list does not have a target address - custom routing domain is not in use."
+                out-logfile -string "The address was found - at this point use something random."
 
-                out-logfile -string "Extract all email address policies from on premises."
+                $newAddressOK = $false
 
-                try {
-                    $emailAddressPolicy = get-emailAddressPolicy -errorAction STOP
-                }
-                catch {
-                    out-logfile -string $_
-                    out-logfile -string "Unable to extract email address policy."
-                }
+                do {
+                    $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
+                    out-logfile -string ("New alias calculated: "+$newAlias)
+                    $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
+                    out-logfile -string $usefulRoutingAddress 
 
-                out-logfile -string "Find all email address policies where the mail.onmicrosoft.com domain is present."
-
-                $usefulEmailAddressPolicy = $emailAddressPolicy | where {$_.EnabledEmailAddressTemplates -like ("*.mail.onmicrosoft.com")}
-
-                if ($usefulEmailAddressPolicy.count -gt 0)
-                {
-                    out-logfile -string "Multiple policies exist with mail.onmicrosoft.com - this is ok."
-
-                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    if (-not (get-o365Recipient -identity $usefulRoutingAddress))
                     {
-                        if ($template.contains("mail.onmicrosoft.com"))
-                        {
-                            $usefulTemplate = $template
-                            out-logfile -string ("Useful template found..."+$usefulTemplate)
-                        }
+                        out-logfile -string "Random address is not present in Office 365 - proceed."
+                        $newAddressOK = $true
                     }
-                }
-                else 
-                {
-                    out-logfile -string "Only a single email address policy exists with mail.onmicrosoft.com - this is ok."
-
-                    foreach ($template in $usefulEmailAddressPolicy[0].EnabledEmailAddressTemplates)
+                    else 
                     {
-                        if ($template.contains("mail.onmicrosoft.com"))
-                        {
-                            $usefulTemplate = $template
-                            out-logfile -string ("Useful template found..."+$usefulTemplate)
-                        }
+                        out-logfile -string "Random address is present in Office 365 - do it again."
+                        $newAddressOK = $false                        
                     }
-                }
-
-                out-logfile -string "Extract the mail.onmicrosoft.com domain."
-
-                $usefulTemplateDomain = $usefulTemplate.split("@")
-                out-logfile -string $usefulTemplateDomain[1]
-
-                out-logfile -string "Utilize the alias of the group to build the new onmicrosoft.com address."
-
-                $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
-                out-logfile -string $usefulRoutingAddress
-                $usefulRoutingAddress = $usefulRoutingAddress + $usefulTemplateDomain[1]
-                out-logfile -string $usefulRoutingAddress
-
-                out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
-
-                if (get-o365Recipient -identity $usefulRoutingAddress)
-                {
-                    out-logfile -string "The address was found - at this point use something random."
-
-                    $newAddressOK = $false
-
-                    do {
-                        $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
-                        out-logfile -string ("New alias calculated: "+$newAlias)
-                        $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
-                        out-logfile -string $usefulRoutingAddress 
-
-                        if (-not (get-o365Recipient -identity $usefulRoutingAddress))
-                        {
-                            out-logfile -string "Random address is not present in Office 365 - proceed."
-                            $newAddressOK = $true
-                        }
-                        else 
-                        {
-                            out-logfile -string "Random address is present in Office 365 - do it again."
-                            $newAddressOK = $false                        
-                        }
-                    } until (
-                        $newAddressOK -eq $true
-                    )
-                }
-                else 
-                {
-                    out-logfile -string "The address was not found - allow to be target address."
-                }
+                } until (
+                    $newAddressOK -eq $true
+                )
             }
             else 
             {
-                out-logfile -string "Distribution list does not have a target address - custom routing domain is in use."
+                out-logfile -string "The address was not found - allow to be target address."
             }
 
             $functionTargetAddress = "smtp:"+$usefulRoutingAddress
-
+            out-logfile-string $functionTargetAddress
+            $functionTargetAddress = $functionTargetAddress.ToUpper()
             out-logfile -string $functionTargetAddress
 
             out-logfile -string "Setting the target address on the Office 365 distribution group."
@@ -300,25 +250,6 @@
             }
 
             out-logfile -string "New remote routing address calculated and stamped - moving on to creating contact."
-
-            <#
-            out-logfile -string "Error - the group to have hybrid mail flow enabled does not have an address @domain.mail.onmicrosoft.com or an address at the custom routing domain specified."
-            out-logfile -string "Add an email address @domain.mail.onmicrosoft.com appropriate for your tenant in order to hybrid mail enable the list."
-            out-logfile -string "Error enabling hybrid mail flow."
-
-            $isErrorObject = new-Object psObject -property @{
-                errorMessage = "Unable to locate a mail.onmicrosoft.com address either on premises or office 365.  This may indicated larger failures to set SMTP addresses.  Manual correction required and run enable-hybridMailFlowPostMigration to fix."
-                errorMessaegDetail = $errorMessageDetail
-            }
-
-            out-logfile -string $isErrorObject
-
-            $global:generalErrors+=$isErrorObject
-
-            $functionTargetAddress = "ERROR-THISWILLNOTWORK@domain.local"
-
-            #>
-
         }
         else
         {
