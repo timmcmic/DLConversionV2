@@ -787,6 +787,10 @@ Function Start-DistributionListMigration
     if ($isHealthCheck -eq $FALSE)
     {
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+
+        $traceFilePath = $logFolderPath + $global:staticFolderName
+
+        out-logfile -string ("Trace file path: "+$traceFilePath)
     }
 
     $htmlFunctionStartTime = get-Date
