@@ -4476,7 +4476,7 @@ Function Start-Office365GroupMigration
         out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -mailOnMicrosoftComDomain $onMicrosoftDomain
     
                 $stopLoop = $TRUE
             }
@@ -4498,7 +4498,7 @@ Function Start-Office365GroupMigration
         out-logfile -string "Calling new-routingContact with custom domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $customRoutingDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -mailOnMicrosoftComDomain $onMicrosoftDomain
     
                 $stopLoop = $TRUE
             }
