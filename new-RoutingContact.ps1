@@ -218,7 +218,7 @@
             }
 
             $functionTargetAddress = "smtp:"+$usefulRoutingAddress
-            out-logfile-string $functionTargetAddress
+            out-logfile -string $functionTargetAddress
             $functionTargetAddress = $functionTargetAddress.ToUpper()
             out-logfile -string $functionTargetAddress
 
