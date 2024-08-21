@@ -229,7 +229,7 @@
                 out-logfile -string "Group type is distribution - set email address with distribution."
 
                 try {
-                    set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP -bypassSecurityGroupManagerCheck
+                    set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress.toLower()} -errorAction STOP -bypassSecurityGroupManagerCheck
                 }
                 catch {
                     out-logfile -string $_
@@ -241,7 +241,7 @@
                 out-logfile -string "Group type is unified - set email address with unified."
 
                 try {
-                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
+                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress.toLower()} -errorAction STOP
                 }
                 catch {
                     out-logfile -string $_
