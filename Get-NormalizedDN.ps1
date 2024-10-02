@@ -414,7 +414,7 @@
                         ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
                         GroupType = $functionTest.GroupType
                         RecipientOrUser = "Recipient"
-                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
+                        ExternalDirectoryObjectID = $NULL
                         OnPremADAttribute = $activeDirectoryAttribute
                         OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
                         DN = $DN
