@@ -87,6 +87,10 @@
         [string]$functionCustomAttribute1="MigratedByScript"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
+        [string]$functionCustomAttribute2=$office365DLConfiguration.externalDirectoryObjectID
+        out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
+
+        <#
 
         if ($originalDLConfiguration.mail -ne $NULL)
         {
@@ -112,6 +116,8 @@
             }
 
         }
+
+        #>
 
         out-logfile -string "Evaluate OU location to utilize."
 
