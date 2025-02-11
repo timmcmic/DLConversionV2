@@ -87,6 +87,7 @@
         [string]$functionExternalDirectoryObjectID = ""
         [string]$functionEmailAddressToRemove = ""
         $functionGroupReturn = $NULL
+        [string]$MemberAlreadyExistsException = "MemberAlreadyExistsException"
 
         [boolean]$isTestError=$false
         [array]$functionErrors=@()
@@ -541,31 +542,41 @@
                             out-logfile -string "Error on individual recipient add."
                             out-logfile -string "It is possible that the operation times out or server returns busy - sleep 15 and retry"
 
-                            start-sleepProgress -sleepSeconds 15 -sleepString "Sleeping due to error on individual add to retry."
-
-                            try 
+                            if ($error[0].CategoryInfo.Reason -eq $MemberAlreadyExistsException)
                             {
-                                add-O365DistributionGroupMember -identity $functionExternalDirectoryObjectID -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
+                                out-logfile -string "The exception is member already exists exception - skip this as it's possible the bulk update added some users."
+                                out-logfile -string "**MEMBERALREADYEXISTSEXCEPTION"
                             }
-                            catch 
+                            else 
                             {
-                                out-logfile -string ("Error processing recipient: "+$recipient)
+                                out-logfile -string "The exception is not member already exists - sleep and retry log error otherwise."
+                                
+                                start-sleepProgress -sleepSeconds 15 -sleepString "Sleeping due to error on individual add to retry."
 
-                                out-logfile -string $_
-
-                                $isErrorObject = new-Object psObject -property @{
-                                    PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
-                                    ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
-                                    Alias = $originalDLConfiguration.mailNickName
-                                    Name = $functionMailNickName
-                                    Attribute = "Cloud Distribution Group Member"
-                                    ErrorMessage = ("Member "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
-                                    ErrorMessageDetail = $_
+                                try 
+                                {
+                                    add-O365DistributionGroupMember -identity $functionExternalDirectoryObjectID -member $recipient -BypassSecurityGroupManagerCheck -errorAction STOP
                                 }
+                                catch 
+                                {
+                                    out-logfile -string ("Error processing recipient: "+$recipient)
 
-                                out-logfile -string $isErrorObject
+                                    out-logfile -string $_
 
-                                $functionErrors+=$isErrorObject
+                                    $isErrorObject = new-Object psObject -property @{
+                                        PrimarySMTPAddressorUPN = $originalDLConfiguration.mail
+                                        ExternalDirectoryObjectID = $office365DLConfiguration.externalDirectoryObjectID
+                                        Alias = $originalDLConfiguration.mailNickName
+                                        Name = $functionMailNickName
+                                        Attribute = "Cloud Distribution Group Member"
+                                        ErrorMessage = ("Member "+$recipient+" unable to add to cloud distribution group.  Manual addition required.")
+                                        ErrorMessageDetail = $_
+                                    }
+
+                                    out-logfile -string $isErrorObject
+
+                                    $functionErrors+=$isErrorObject
+                                }
                             }
                         }
                     }
