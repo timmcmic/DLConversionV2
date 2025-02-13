@@ -542,7 +542,9 @@
                             out-logfile -string "Error on individual recipient add."
                             out-logfile -string "It is possible that the operation times out or server returns busy - sleep 15 and retry"
 
-                            if ($error[0].CategoryInfo.Reason -eq $MemberAlreadyExistsException)
+                            out-logfile -string $_.CategoryInfo.Reason
+
+                            if ($_.CategoryInfo.Reason -eq $MemberAlreadyExistsException)
                             {
                                 out-logfile -string "The exception is member already exists exception - skip this as it's possible the bulk update added some users."
                                 out-logfile -string "**MEMBERALREADYEXISTSEXCEPTION"
