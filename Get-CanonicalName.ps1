@@ -69,7 +69,30 @@
     
                 $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -authType $activeDirectoryAuthenticationMethod -server $globalCatalogServer -errorAction STOP
 
-                $stopLoop = $TRUE
+                if ($functionTest.canonicalName -ne $NULL)
+                {
+                    out-logfile -string "The object was successfully located and has a canonical name."
+                    out-logfile -string $functionTest.canonicalName
+                    $stopLoop = $TRUE
+                }
+                else 
+                {
+                    out-logfile -string "Object not located by ad referral - attempting call with no GC information."
+
+                    $functionTest = get-adobject -filter {distinguishedname -eq $dn} -properties canonicalName -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+
+                    if ($functionTest.caonicalName -eq $NULL)
+                    {
+                        out-logfile -string "Object was still not located by ad referral - error."
+                        out-logfile -string "Error locating object for canonical name discovery." -isError:$TRUE
+                    }
+                    else 
+                    {
+                        out-logfile -string "The object was successfully located and has a canonical name."
+                        out-logfile -string $functionTest.canonicalName
+                        $stopLoop = $TRUE
+                    }
+                }
             }
             catch 
             {
@@ -86,7 +109,6 @@
                     start-sleepProgress -sleepString "Error with get-adobject -> sleep and try again." -sleepSeconds 5
 
                 }
-                
             }
     
         } until ($stopLoop -eq $TRUE)
