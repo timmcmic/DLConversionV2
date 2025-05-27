@@ -329,7 +329,7 @@ function start-collectOnPremMailboxFolders
 
         $MbxNumber++
 
-        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
+        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.GUID+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 

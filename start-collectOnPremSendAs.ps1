@@ -333,7 +333,7 @@ function start-collectOnPremSendAs
  
         $recipientNumber++
 
-        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+" Recipient Number: "+$recipientCounter+" of "+$totalRecipients
+        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+"_"+$recipient.GUID+" Recipient Number: "+$recipientCounter+" of "+$totalRecipients
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
