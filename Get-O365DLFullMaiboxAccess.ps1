@@ -118,9 +118,26 @@
                 out-logfile -string $_ -isError:$TRUE
             }
 
-            out-logfile "Obtaining all full mailbox access permissions in Office 365."
+            out-logfile -string "Obtaining all full mailbox access permissions in Office 365."
 
             $functionFullMailboxAccess = $collectedData | where {$_.usersid -eq $functionRecipient.sid}
+
+            out-logfile -string "Iterating through SID history if the group has SID history."
+
+            if ($functionRecipient.sidHistory.count -gt 0)
+            {
+                out-logfile -string "The group has SID history - verify if the SID is found via SID history."
+
+                foreach ($sidValue in $functionRecipient.sidHistory)
+                {
+                    out-logfile -string $sidValue
+                    $functionFullMailboxAccess += @($collectedData | where {$_.usersid -eq $sidValue})
+                }
+            }
+            else 
+            {
+                out-logfile -string "Group has no sid history."
+            }
         }
 
         Out-LogFile -string "END Get-O365DLFullMaiboxAccess"
