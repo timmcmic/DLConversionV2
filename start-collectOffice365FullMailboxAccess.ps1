@@ -291,7 +291,7 @@ function start-collectOffice365FullMailboxAccess
         }
 
         out-logfile -string ("Processing recipient = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+$mailboxCounter.toString()+" of "+$totalMailboxes.tostring())
+        out-logfile -string ("Processing recipient number: "+($mailboxCounter+1).toString()+" of "+$totalMailboxes.tostring())
  
         $mailboxNumber++
 
