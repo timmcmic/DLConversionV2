@@ -182,7 +182,7 @@ function start-collectOffice365FullMailboxAccess
                 out-logfile -string "Admin did not specify a mailbox subset."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
-                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress,externalDirectoryObjectID
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 

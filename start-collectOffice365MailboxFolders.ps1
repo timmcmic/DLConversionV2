@@ -181,7 +181,7 @@ function start-collectOffice365MailboxFolders
                 out-logFile -string "Obtaining all office 365 mailboxes."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
-                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName,externalDirectoryObjectID
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -199,7 +199,7 @@ function start-collectOffice365MailboxFolders
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
-                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
+                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName,externalDirectoryObjectID
                 }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
@@ -299,11 +299,11 @@ function start-collectOffice365MailboxFolders
             }
 
             out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
-            out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
+            out-logfile -string ("Processing mailbox number: "+($mailboxCounter+1).toString())
 
             $MbxNumber++
 
-            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
+            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Mailbox Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
 
             Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
@@ -318,7 +318,7 @@ function start-collectOffice365MailboxFolders
                     out-logfile -string "Pulling mailbox folder statistics."
     
                     #$auditFolders=get-exomailboxFolderStatistics -identity $mailbox.identity -UserPrincipalName $mailbox.userPrincipalName -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
-                    $auditFolders=get-o365mailboxFolderStatistics -identity $mailbox.identity -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
+                    $auditFolders=get-o365mailboxFolderStatistics -identity $mailbox.externalDirectoryObjectID -errorAction STOP | where {$_.FolderType -eq "User Created" -or $_.FolderType -eq "Inbox" -or $_.FolderType -eq "SentItems" -or $_.FolderType -eq "Contacts" -or $_.FolderType -eq "Calendar"} 
     
                     out-logfile -string "Mailbox folder statistics obtained."
 
