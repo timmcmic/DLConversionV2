@@ -219,13 +219,13 @@ function start-collectOnPremMailboxFolders
             }
             else 
             {
-                out-logFile -string "Obtaining all on premises mailboxes."
+                out-logFile -string "Bring your own mailboxes provided.."
 
                 foreach ($mailbox in $bringMyOwnMailboxes)
                 {
                     out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
-                        $auditMailboxes += get-mailbox -identity $mailbox.GUID -errorAction STOP | select-object identity,GUID
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,GUID
                     }
                     catch {
                         out-logfile -string $_
