@@ -295,7 +295,7 @@ function start-collectOffice365FullMailboxAccess
  
         $mailboxNumber++
 
-        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Recipient Number: "+$mailboxCounter+" of "+$totalMailboxes
+        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Recipient Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
