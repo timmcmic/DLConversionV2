@@ -209,7 +209,7 @@ function start-collectOnPremFullMailboxAccess
                 out-logFile -string "Obtaining all on premises mailboxes."
 
                 try {
-                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP | select-object Identity,GUID
+                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP | select-object Identity,primarySMTPAddress
                 }
                 catch {
                     out-logfile -string "Unable to capture on premises mailboxes."
@@ -229,7 +229,7 @@ function start-collectOnPremFullMailboxAccess
                 {
                     out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
-                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,GUID
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                     catch {
                         out-logfile -string $_
@@ -345,18 +345,18 @@ function start-collectOnPremFullMailboxAccess
         }
 
         out-logfile -string ("Processing recipient = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+($mailboxCounter+1).toString()+" of "+$totalMailboxes.tostring())
+        out-logfile -string ("Processing recipient number: "+$mailboxCounter.toString()+" of "+$totalMailboxes.tostring())
  
         $mailboxNumber++
 
-        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.GUID+" Recipient Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
+        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+" Recipient Number: "+$mailboxCounter+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
         $PercentComplete += $ProgressDelta
 
         try {
-            $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.guid | where {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
+            $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.identity | where {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."

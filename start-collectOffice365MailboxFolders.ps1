@@ -181,7 +181,7 @@ function start-collectOffice365MailboxFolders
                 out-logFile -string "Obtaining all office 365 mailboxes."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
-                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,externalDirectoryObjectID,primarySMTPAddress
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,primarySMTPAddress,userPrincipalName
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -199,7 +199,7 @@ function start-collectOffice365MailboxFolders
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
-                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,externalDirectoryObjectID,primarySMTPAddress
+                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
                 }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
@@ -299,11 +299,11 @@ function start-collectOffice365MailboxFolders
             }
 
             out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
-            out-logfile -string ("Processing mailbox number: "+($mailboxCounter+1).toString())
+            out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
 
             $MbxNumber++
 
-            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Mailbox Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
+            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
 
             Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 

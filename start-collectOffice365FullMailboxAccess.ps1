@@ -182,7 +182,7 @@ function start-collectOffice365FullMailboxAccess
                 out-logfile -string "Admin did not specify a mailbox subset."
 
                 #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
-                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,externalDirectoryObjectID,primarySMTPAddress
+                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -199,7 +199,7 @@ function start-collectOffice365FullMailboxAccess
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
-                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,externalDirectoryObjectID,primarySMTPAddress
+                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
                 }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -291,11 +291,11 @@ function start-collectOffice365FullMailboxAccess
         }
 
         out-logfile -string ("Processing recipient = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+($mailboxCounter+1).toString()+" of "+$totalMailboxes.tostring())
+        out-logfile -string ("Processing recipient number: "+$mailboxCounter.toString()+" of "+$totalMailboxes.tostring())
  
         $mailboxNumber++
 
-        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Recipient Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
+        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+" Recipient Number: "+$mailboxCounter+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
@@ -314,7 +314,7 @@ function start-collectOffice365FullMailboxAccess
             }
 
             #$auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | where {$_.user -notlike "NT Authority\Self"}
-            $auditFullMailboxAccess+=get-o365mailboxPermission -identity $mailbox.externalDirectoryObjectID | where {$_.user -notlike "NT Authority\Self"}
+            $auditFullMailboxAccess+=get-o365mailboxPermission -identity $mailbox.identity | where {$_.user -notlike "NT Authority\Self"}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."

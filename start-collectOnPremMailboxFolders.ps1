@@ -208,7 +208,7 @@ function start-collectOnPremMailboxFolders
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditMailboxes = get-mailbox -resultsize unlimited | select-object identity,GUID
+                $auditMailboxes = get-mailbox -resultsize unlimited | select-object identity,primarySMTPAddress
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -219,13 +219,13 @@ function start-collectOnPremMailboxFolders
             }
             else 
             {
-                out-logFile -string "Bring your own mailboxes provided.."
+                out-logFile -string "Obtaining all on premises mailboxes."
 
                 foreach ($mailbox in $bringMyOwnMailboxes)
                 {
                     out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
-                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,GUID
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                     catch {
                         out-logfile -string $_
@@ -325,11 +325,11 @@ function start-collectOnPremMailboxFolders
         }
 
         out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing mailbox number: "+($mailboxCounter+1).toString())
+        out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
 
         $MbxNumber++
 
-        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.GUID+" Mailbox Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
+        $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 

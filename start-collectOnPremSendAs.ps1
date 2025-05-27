@@ -193,7 +193,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditRecipients = get-recipient -resultsize unlimited | select-object identity,GUID
+                $auditRecipients = get-recipient -resultsize unlimited | select-object identity,primarySMTPAddress
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
@@ -211,7 +211,7 @@ function start-collectOnPremSendAs
                     out-logfile -string ("Testing recipient: "+$mailbox)
 
                     try{
-                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,GUID
+                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
                     }
                     catch {
                         out-logfile -string $_
@@ -329,18 +329,18 @@ function start-collectOnPremSendAs
         }
 
         out-logfile -string ("Processing recipient = "+$recipient.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+($recipientCounter+1).toString()+" of "+$totalRecipients.tostring())
+        out-logfile -string ("Processing recipient number: "+$recipientCounter.toString()+" of "+$totalRecipients.tostring())
  
         $recipientNumber++
 
-        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+"_"+$recipient.GUID+" Recipient Number: "+($recipientCounter+1)+" of "+$totalRecipients
+        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+" Recipient Number: "+$recipientCounter+" of "+$totalRecipients
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
         $PercentComplete += $ProgressDelta
 
         try {
-            $auditSendAs+=get-adPermission -identity $recipient.guid | where {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)} -errorAction STOP
+            $auditSendAs+=get-adPermission -identity $recipient.identity | where {($_.ExtendedRights -like "*send-as*") -and -not ($_.User -like "nt authority\self") -and ($_.isInherited -eq $false)} -errorAction STOP
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."
