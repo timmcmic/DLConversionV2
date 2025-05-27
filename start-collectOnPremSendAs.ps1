@@ -329,11 +329,11 @@ function start-collectOnPremSendAs
         }
 
         out-logfile -string ("Processing recipient = "+$recipient.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+$recipientCounter.toString()+" of "+$totalRecipients.tostring())
+        out-logfile -string ("Processing recipient number: "+($recipientCounter+1).toString()+" of "+$totalRecipients.tostring())
  
         $recipientNumber++
 
-        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+"_"+$recipient.GUID+" Recipient Number: "+$recipientCounter+" of "+$totalRecipients
+        $progressString = "Recipient Name: "+$recipient.primarySMTPAddress+"_"+$recipient.GUID+" Recipient Number: "+($recipientCounter+1)+" of "+$totalRecipients
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 

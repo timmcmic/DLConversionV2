@@ -345,11 +345,11 @@ function start-collectOnPremFullMailboxAccess
         }
 
         out-logfile -string ("Processing recipient = "+$mailbox.primarySMTPAddress)
-        out-logfile -string ("Processing recipient number: "+$mailboxCounter.toString()+" of "+$totalMailboxes.tostring())
+        out-logfile -string ("Processing recipient number: "+($mailboxCounter+1).toString()+" of "+$totalMailboxes.tostring())
  
         $mailboxNumber++
 
-        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.GUID+" Recipient Number: "+$mailboxCounter+" of "+$totalMailboxes
+        $progressString = "Recipient Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.GUID+" Recipient Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
 
         Write-Progress -Activity "Processing recipient" -Status $progressString -PercentComplete $PercentComplete -Id 1
 

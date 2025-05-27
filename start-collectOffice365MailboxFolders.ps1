@@ -299,11 +299,11 @@ function start-collectOffice365MailboxFolders
             }
 
             out-logfile -string ("Processing mailbox = "+$mailbox.primarySMTPAddress)
-            out-logfile -string ("Processing mailbox number: "+$mailboxCounter.toString())
+            out-logfile -string ("Processing mailbox number: "+($mailboxCounter+1).toString())
 
             $MbxNumber++
 
-            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
+            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+"_"+$mailbox.externalDirectoryObjectID+" Mailbox Number: "+($mailboxCounter+1)+" of "+$totalMailboxes
 
             Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
