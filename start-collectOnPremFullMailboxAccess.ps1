@@ -209,7 +209,7 @@ function start-collectOnPremFullMailboxAccess
                 out-logFile -string "Obtaining all on premises mailboxes."
 
                 try {
-                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP | select-object Identity,primarySMTPAddress
+                    $auditMailboxes = get-mailbox -resultsize unlimited -errorAction STOP | select-object Identity,GUID
                 }
                 catch {
                     out-logfile -string "Unable to capture on premises mailboxes."
@@ -229,7 +229,7 @@ function start-collectOnPremFullMailboxAccess
                 {
                     out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
-                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,GUID
                     }
                     catch {
                         out-logfile -string $_

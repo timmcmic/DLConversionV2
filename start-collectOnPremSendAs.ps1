@@ -193,7 +193,7 @@ function start-collectOnPremSendAs
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditRecipients = get-recipient -resultsize unlimited | select-object identity,primarySMTPAddress
+                $auditRecipients = get-recipient -resultsize unlimited | select-object identity,GUID
     
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
     
@@ -211,7 +211,7 @@ function start-collectOnPremSendAs
                     out-logfile -string ("Testing recipient: "+$mailbox)
 
                     try{
-                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                        $auditRecipients += get-recipient -identity $mailbox -errorAction STOP | select-object identity,GUID
                     }
                     catch {
                         out-logfile -string $_

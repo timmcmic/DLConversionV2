@@ -208,7 +208,7 @@ function start-collectOnPremMailboxFolders
             {
                 out-logFile -string "Obtaining all on premises mailboxes."
 
-                $auditMailboxes = get-mailbox -resultsize unlimited | select-object identity,primarySMTPAddress
+                $auditMailboxes = get-mailbox -resultsize unlimited | select-object identity,GUID
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
@@ -225,7 +225,7 @@ function start-collectOnPremMailboxFolders
                 {
                     out-logfile -string ("Processing mailbox: "+$mailbox)
                     try {
-                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,primarySMTPAddress
+                        $auditMailboxes += get-mailbox -identity $mailbox -errorAction STOP | select-object identity,GUID
                     }
                     catch {
                         out-logfile -string $_
