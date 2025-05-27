@@ -356,7 +356,7 @@ function start-collectOnPremFullMailboxAccess
         $PercentComplete += $ProgressDelta
 
         try {
-            $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.identity | where {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
+            $auditFullMailboxAccess+=get-mailboxPermission -identity $mailbox.guid | where {($_.isInherited -ne $TRUE) -and ($_.user -notlike "NT Authority\Self")}
         }
         catch {
             out-logfile -string "Error obtaining folder statistics."

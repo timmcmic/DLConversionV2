@@ -303,7 +303,7 @@ function start-collectOffice365MailboxFolders
 
             $MbxNumber++
 
-            $progressString = "Mailbox Name: "+$mailbox.primarySMTPAddress+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
+            $progressString = "Mailbox Name: "+$mailbox.externalDirectoryObjectID+" Mailbox Number: "+$mailboxCounter+" of "+$totalMailboxes
 
             Write-Progress -Activity "Processing mailbox" -Status $progressString -PercentComplete $PercentComplete -Id 1
 
