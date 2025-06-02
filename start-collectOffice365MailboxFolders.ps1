@@ -252,10 +252,14 @@ function start-collectOffice365MailboxFolders
 
                 $fileName=$office365MailboxFolderPermissions
                 $importFile=Join-path $logFolderPath $fileName
+
+                out-logfile -string $fileName
+                out-logfile -string $importFile
     
-                $auditFolderPermissions = import-clixml -Path $importFile
+                $auditFolderPermissions = import-clixml -Path $importFile -ErrorAction Stop
             }
             catch {
+                out-logfile -string $_
                 out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$TRUE
             }
         }
