@@ -246,6 +246,8 @@ Function Start-MultipleDistributionListMigration
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$retainFailedJobs=$false
     )
 
     $global:blogURL = "https://timmcmic.wordpress.com"
@@ -694,7 +696,17 @@ Function Start-MultipleDistributionListMigration
                 foreach ($job in $loopJobs)
                 {
                     out-logfile -string ("Job ID: "+$job.id+" State: "+$job.state)
-                    remove-job -id $job.id
+
+                    if (($job.state -eq "Failed") -and ($retainFailedJobs -eq $TRUE))
+                    {
+                        out-logfile -string "Skipping removal of failed jobs to allow for debug analysis."
+                    }
+                    else 
+                    {
+                        out-logfile -string "Removing job..."
+                        remove-job -id $job.id
+                    }
+                    
                 }  
             }
     
