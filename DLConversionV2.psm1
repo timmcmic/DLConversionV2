@@ -4334,7 +4334,9 @@ Function Start-DistributionListMigration
                 out-logfile -string "Group is type security on premises - therefore it may have send as rights."
 
                 try{
-                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
+                    #$allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $groupSMTPAddress -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
+                    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
+
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -4349,7 +4351,9 @@ Function Start-DistributionListMigration
         out-logfile -string ("The number of groups in Office 365 cloud only that the DL has send as rights on = "+$allOffice365SendAsAccess.count)
 
         try {
-            $allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            #$allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+            $allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
         }
         catch {
             out-logFile -string $_ -isError:$TRUE
