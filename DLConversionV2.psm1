@@ -6330,7 +6330,9 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedAccept.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch{
                 out-logfile -string $_
@@ -6382,7 +6384,9 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365UnifiedReject.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch{
                 out-logfile -string $_
@@ -6434,7 +6438,9 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365BypassModerationusers.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch{
                 out-logfile -string $_
@@ -6486,7 +6492,8 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365GrantSendOnBehalfTo.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
             }
             catch{
                 out-logfile -string $_
@@ -6538,7 +6545,9 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ManagedBy.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch{
                 out-logfile -string $_
@@ -6594,7 +6603,9 @@ Function Start-DistributionListMigration
 
             out-logfile -string ("Processing group = "+$member.primarySMTPAddress)
             try {
-                $isTestError=start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-replaceOffice365Members -office365Group $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-replaceOffice365Members -office365Group $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch {
                 out-logfile -string $_
@@ -6646,7 +6657,9 @@ Function Start-DistributionListMigration
             }
 
             try{
-                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ForwardingAddress.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                #$isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ForwardingAddress.value -office365Member $member -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+                $isTestError=start-ReplaceOffice365 -office365Attribute $office365Attributes.office365ForwardingAddress.value -office365Member $member -groupSMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+
             }
             catch{
                 out-logfile -string $_
