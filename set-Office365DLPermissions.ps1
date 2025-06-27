@@ -364,7 +364,7 @@
         }
         else 
         {
-            out-logfile -string "There are no full mailbox access permissions to process."  
+            out-logfile -string "There are no mailbox folder permissions to process."  
         }
 
         Out-LogFile -string "END set-Office365DLPermissions"
