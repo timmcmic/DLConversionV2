@@ -97,7 +97,7 @@
         {
             out-logfile -string "Recipient is a dynamic distribution group."
 
-            $functionCommand="set-o365DynamicDistributionGroup -identity $functionExternalDirectoryObjectID -$office365Attribute @{add=`"$groupSMTPAddress`"} -errorAction STOP"
+            $functionCommand="set-o365DynamicDistributionGroup -identity $functionExternalDirectoryObjectID -$office365Attribute `"$groupSMTPAddress`" -errorAction STOP"
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         elseif ($office365member.recipientType -eq $functionMailboxRecipientType)
