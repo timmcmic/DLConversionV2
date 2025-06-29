@@ -66,6 +66,8 @@
         $functionDynamicDistributionGroupRecipientType = "DynamicDistributionGroup"
         $functionForwarding = "ForwardingAddress"
 
+        $functionManagedBy = "ManagedBy"
+
         $functionExternalDirectoryObjectID = $office365Member.externalDirectoryObjectID
 
         #Declare function variables.
@@ -97,7 +99,17 @@
         {
             out-logfile -string "Recipient is a dynamic distribution group."
 
-            $functionCommand="set-o365DynamicDistributionGroup -identity $functionExternalDirectoryObjectID -$office365Attribute `"$groupSMTPAddress`" -errorAction STOP"
+            if ($office365Attribute -ne $functionManagedBy)
+            {
+                out-logfile -string "Attribute not managed by - proceed with add."
+                $functionCommand="set-o365DynamicDistributionGroup -identity $functionExternalDirectoryObjectID -$office365Attribute @{add=`"$groupSMTPAddress`"} -errorAction STOP"
+            }
+            else 
+            {
+                out-logfile -string "Attribute is managed by - single value no add."
+                $functionCommand="set-o365DynamicDistributionGroup -identity $functionExternalDirectoryObjectID -$office365Attribute `"$groupSMTPAddress`" -errorAction STOP"
+            }
+
             out-logfile -string ("The command to execute:  "+$functionCommand)
         }
         elseif ($office365member.recipientType -eq $functionMailboxRecipientType)
