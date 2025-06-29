@@ -245,7 +245,7 @@ Function Start-MultipleDistributionListMigration
         [string]$remoteDriveLetter=$NULL,
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
         [boolean]$retainFailedJobs=$false
     )
