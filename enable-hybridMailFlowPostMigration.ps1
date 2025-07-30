@@ -178,6 +178,8 @@
         $routingDynamicGroup=$NULL
         $office365DLConfiguration = $NULL
 
+        $functionDynamicDL = "msExchDynamicDistributionList"
+
         #Create the log file.
 
         new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
@@ -317,7 +319,19 @@
 
         if (Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential -isValidTest:$TRUE)
         {
-            out-logfile -string "An object exists with the same mail address as the migrated group.  Please review before proceeding." -isError:$TRUE
+            $functionObjectTest = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential
+
+            if ($functionObjectTest.objectClass[0] -eq $functionDynamicDL)
+            {
+                out-logfile -string "An existing dynamic DL was found with the same mail address as the migrated group."
+                out-logfile -string "Removing this dynamic group and allowing enable to recreate it."
+
+                remove-OnPremGroup -globalCatalogServer $coreVariables.globalCatalogWithPort.value -originalDLConfiguration $functionObjectTest -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+            }
+            else 
+            {
+                out-logfile -string "An object exists with the same mail address as the migrated group.  Please review before proceeding." -isError:$TRUE
+            }
         }
 
         Out-LogFile -string "END PARAMETER VALIDATION"
