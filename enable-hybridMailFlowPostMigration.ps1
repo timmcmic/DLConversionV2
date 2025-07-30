@@ -321,7 +321,7 @@
         {
             $functionObjectTest = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential
 
-            out-logfile -string $functionObjecTest.objectClass[0]
+            out-logfile -string $functionObjecTest.objectClass
 
             if ($functionObjectTest.objectClass[0] -eq $functionDynamicDL)
             {
