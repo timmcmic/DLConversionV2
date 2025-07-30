@@ -321,6 +321,8 @@
         {
             $functionObjectTest = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential
 
+            out-logfile -string $functionObjecTest.objectClass[0]
+
             if ($functionObjectTest.objectClass[0] -eq $functionDynamicDL)
             {
                 out-logfile -string "An existing dynamic DL was found with the same mail address as the migrated group."
