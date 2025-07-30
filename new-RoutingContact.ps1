@@ -71,6 +71,8 @@
         [string]$functionMigratedByScriptShort = "MigratedByScript"
         [int]$functionMaxLength = 64
         [string]$functionNameTest = ""
+        $functionPoliciesExcluded = @("{26491cfc-9e50-4857-861b-0cb8df22b5d7}")
+
 
         #Output all parameters bound or unbound and their associated values.
 
@@ -404,7 +406,7 @@
         #When the contact is provisioned we add the master account sid of self.  This tricks exchange commands into allowing us to assign permissions that are reserved for security principals.
 
         try {
-            new-adobject -server $globalCatalogServer -type "Contact" -name $functionName -displayName $functionDisplayName -description $functionDescription -path $functionOU -otherAttributes @{givenname=$functionFirstName;sn=$functionLastName;mail=$functionMail;extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2;targetAddress=$functionTargetAddress;msExchHideFromAddressLists=$functionHideFromAddressList;msExchRecipientDisplayType=$functionRecipientDisplayType;proxyAddresses=$functionProxyAddress;mailNickName=$functionMailNickname;msExchMasterAccountSid=$functionSelfAccountSid} -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+            new-adobject -server $globalCatalogServer -type "Contact" -name $functionName -displayName $functionDisplayName -description $functionDescription -path $functionOU -otherAttributes @{givenname=$functionFirstName;sn=$functionLastName;mail=$functionMail;extensionAttribute1=$functionCustomAttribute1;extensionAttribute2=$functionCustomAttribute2;targetAddress=$functionTargetAddress;msExchHideFromAddressLists=$functionHideFromAddressList;msExchRecipientDisplayType=$functionRecipientDisplayType;proxyAddresses=$functionProxyAddress;mailNickName=$functionMailNickname;msExchMasterAccountSid=$functionSelfAccountSid;msExchPoliciesExcluded=$functionPoliciesExcluded} -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         }
         catch {
             out-Logfile -string $_ -isError:$TRUE
