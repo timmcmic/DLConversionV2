@@ -84,7 +84,7 @@
             Out-LogFile -string ("ExchangeOnlineCredentialsUserName = "+$exchangeOnlineCredentials.userName.tostring())
             out-logfile -string ("Is certificate auth = "+$isCertAuth)
         }
-        elseif ($exchangeOnlineCertificate -ne "")
+        elseif ($exchangeOnlineCertificateThumbPrint -ne "")
         {
             Out-LogFile -string ("ExchangeOnlineCertificate = "+$exchangeOnlineCertificateThumbPrint)
             out-logfile -string ("ExchangeAppID = "+$exchangeOnlineAppID)
