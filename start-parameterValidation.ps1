@@ -341,7 +341,7 @@
 
                 $functionTrueFalse=$TRUE
 
-                if ($functionParamterSetName -eq $exchangeParameterSetNameMulti)
+                if ($functionParameterSetName -eq $exchangeParameterSetNameMulti)
                 {
                     test-credentials -credentialsToTest $exchangeCredential
 
