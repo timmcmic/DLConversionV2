@@ -1568,11 +1568,11 @@ Function Start-DistributionListMigration
 
                 out-logfile -string "Record routing contact configuration."
 
-                if ($routingContactConfig -ne $NULL)
+                if ($routingContactConfiguration -ne $NULL)
                 {
                     New-HTMLSection -HeaderText "Hybrid Routing Contact" {
                         New-HTMLList{
-                            foreach ($object in  $routingContactConfig.psObject.properties)
+                            foreach ($object in  $routingContactConfiguration.psObject.properties)
                             {
                                 if ($object.Value.count -gt 1)
                                 {
