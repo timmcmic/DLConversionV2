@@ -2377,6 +2377,11 @@ Function Start-DistributionListMigration
         out-logfile -string "Overriding any administrator action to delete the group as dependencies exist."
         $retainOriginalGroup = $TRUE
     }
+    elseif (($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
+    {
+        out-logfile -string "Overriding any adminsitrator action to delete the group as the group type is security - manual deltion always required."
+        $retainOriginalGroup = $true
+    }
     else 
     {
         out-logfile -string "Audit shows no dependencies for sendAs or full mailbox access - keeping administrator settings on group retention."    
