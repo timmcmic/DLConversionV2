@@ -5273,6 +5273,21 @@ Function Start-DistributionListMigration
         }
     } while ($stopLoop -eq $FALSE)
 
+    out-logfile -string "Removing the original group if specified by the administrator - the cloud group has created successfully."
+
+    if ($retainOriginalGroup -eq $FALSE)
+    {
+        $isTestError="No"
+
+        out-logfile -string "Deleting the original group."
+
+        $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+    }
+    else
+    {
+        $isTestError = "No"
+    }
+
     $telemetryFunctionEndTime = get-universalDateTime
 
     $telemetryCreateOffice365DL = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
@@ -6781,19 +6796,6 @@ Function Start-DistributionListMigration
     $htmlRemoveOnPremGroup = get-date
 
     #If the administrator has selected to not retain the group - remove it.
-
-    if ($retainOriginalGroup -eq $FALSE)
-    {
-        $isTestError="No"
-
-        out-logfile -string "Deleting the original group."
-
-        $isTestError=remove-OnPremGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $originalDLConfigurationUpdated -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
-    }
-    else
-    {
-        $isTestError = "No"
-    }
 
     if ($isTestError -eq "Yes")
     {
