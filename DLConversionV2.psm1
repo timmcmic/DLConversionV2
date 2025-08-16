@@ -2379,7 +2379,7 @@ Function Start-DistributionListMigration
     }
     elseif (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
     {
-        out-logfile -string "Overriding any adminsitrator action to delete the group as the group type is security - manual deltion always required."
+        out-logfile -string "Overriding any adminsitrator action to delete the group as the group type is security - manual deletion always required."
         $retainOriginalGroup = $true
     }
     else 
