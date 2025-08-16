@@ -5285,6 +5285,7 @@ Function Start-DistributionListMigration
     }
     else
     {
+        out-logfile -string "Retain original group is TRUE - do no deleet the group."
         $isTestError = "No"
     }
 
