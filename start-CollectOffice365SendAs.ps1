@@ -80,7 +80,7 @@ function start-collectOffice365SendAs
 
     $global:blogURL = "https://timmcmic.wordpress.com"
 
-    $windowTitle = "Start-collectOffice365FullMailboxAccess"
+    $windowTitle = "Start-collectOffice365SendAs"
     $host.ui.RawUI.WindowTitle = $windowTitle
 
     #Delare global variables.
