@@ -102,7 +102,7 @@ function start-collectOffice365SendAs
     [string]$office365RecipientList="office365RecipientListSendAs.xml"
     [string]$office365RecipientProcessed="office365RecipientProcessedSendAs.xml"
 
-    new-LogFile -groupSMTPAddress Office365FullMailboxAccessPermissions -logFolderPath $logFolderPath
+    new-LogFile -groupSMTPAddress Office365SendAsPermissions -logFolderPath $logFolderPath
 
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
