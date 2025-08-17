@@ -198,8 +198,8 @@ function start-collectOffice365MailboxFolders
                 foreach ($auditMailbox in $bringMyOwnMailboxes)
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
-                    #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
-                    $auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName,externalDirectoryObjectID
+                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName
+                    #$auditMailboxes += get-o365mailbox -identity $auditMailbox | select-object identity,primarySMTPAddress,userPrincipalName,externalDirectoryObjectID
                 }
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.

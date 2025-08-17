@@ -55,10 +55,6 @@ function start-collectOffice365FullMailboxAccess
 
     #>
 
-    #Portions of the audit code adapted from Tony Redmon's project.
-    #https://github.com/12Knocksinna/Office365itpros/blob/master/ReportPermissionsFolderLevel.PS1
-    #Don't tell him - he can get grumpy at times.
-
     [cmdletbinding()]
 
     Param
@@ -102,9 +98,9 @@ function start-collectOffice365FullMailboxAccess
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
-    [string]$office365RecipientFullMailboxAccess="office365RecipientFullMailboxAccess.xml"
-    [string]$office365MailboxList="office365MailboxListFullMailboxAccess.xml"
-    [string]$office365RecipientProcessed="office365RecipientProcessedFullMailboxAccess.xml"
+    [string]$office365RecipientFullMailboxAccess="office365RecipientSendAs.xml"
+    [string]$office365MailboxList="office365RecipientListSendAs.xml"
+    [string]$office365RecipientProcessed="office365RecipientProcessedSendAs.xml"
 
     new-LogFile -groupSMTPAddress Office365FullMailboxAccessPermissions -logFolderPath $logFolderPath
 
@@ -181,8 +177,8 @@ function start-collectOffice365FullMailboxAccess
                 out-logFile -string "Obtaining all Office 365 mailboxes."
                 out-logfile -string "Admin did not specify a mailbox subset."
 
-                #$auditMailboxes = get-exomailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
-                $auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress,externalDirectoryObjectID
+                $auditMailboxes = get-exorecipient -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress
+                #$auditMailboxes = get-o365mailbox -resultsize unlimited | select-object identity,userPrincipalName,primarySMTPAddress,externalDirectoryObjectID
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
