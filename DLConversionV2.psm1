@@ -4451,7 +4451,8 @@ Function Start-DistributionListMigration
 
             }
             catch {
-                <#Do this if a terminating exception happens#>
+                out-logfile -string 'Unable to obtain send as permissions from offline data.'
+                out-logfile -string $_ -isError:$TRUE
             }
 
             out-logfile -string $allOffice365SendAsAccess.Count
