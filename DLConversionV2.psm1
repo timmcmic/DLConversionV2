@@ -4458,7 +4458,7 @@ Function Start-DistributionListMigration
 
             out-logfile -string $allOffice365SendAsAccess.Count
 
-            start-sleep -s 160
+            start-sleep -s 5
 
         }
 
