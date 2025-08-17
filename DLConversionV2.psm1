@@ -4455,11 +4455,6 @@ Function Start-DistributionListMigration
                 out-logfile -string 'Unable to obtain send as permissions from offline data.'
                 out-logfile -string $_ -isError:$TRUE
             }
-
-            out-logfile -string $allOffice365SendAsAccess.Count
-
-            start-sleep -s 5
-
         }
 
         out-logfile -string ("The number of Office 365 mailboxes folders that have folder permissions for the migrated group ="+$allOffice365MailboxFolderPermissions.count)
