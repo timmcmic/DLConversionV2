@@ -4447,7 +4447,7 @@ Function Start-DistributionListMigration
             }
 
             try {
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress "" -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress "NoneRequired" -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
 
             }
             catch {
