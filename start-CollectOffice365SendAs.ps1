@@ -75,7 +75,7 @@ function start-collectOfficeSendAs
         [Parameter(Mandatory = $false)]
         [boolean]$retryCollection=$FALSE,
         [Parameter(Mandatory = $false)]
-        $bringMyOwnMailboxes=@()
+        $bringMyOwnRecipients=@()
     )
 
     $global:blogURL = "https://timmcmic.wordpress.com"
@@ -126,7 +126,7 @@ function start-collectOfficeSendAs
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    if (($bringMyOwnMailboxes.count -gt 0 )-and ($retryCollection -eq $TRUE))
+    if (($bringMyOwnRecipients.count -gt 0 )-and ($retryCollection -eq $TRUE))
     {
         out-logfile -string "You cannot bring your own mailboxes when you are retrying the collection."
         out-logfile -string "If mailboxes were previously provided - rerun command with just retry collection." -iserror:$TRUE -isAudit:$TRUE
@@ -172,7 +172,7 @@ function start-collectOfficeSendAs
         {
             out-logfile -string "Mailboxes are not retried - evaluating all or bring your own."
 
-            if ($bringMyOwnMailboxes.count -eq 0)
+            if ($bringMyOwnRecipients.count -eq 0)
             {
                 out-logFile -string "Obtaining all Office 365 mailboxes."
                 out-logfile -string "Admin did not specify a mailbox subset."
@@ -191,7 +191,7 @@ function start-collectOfficeSendAs
             {
                 out-logfile -string "Bring your own mailboxes was specified - evaluating only mailboxes specified."
 
-                foreach ($auditMailbox in $bringMyOwnMailboxes)
+                foreach ($auditMailbox in $bringMyOwnRecipients)
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
                     #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
