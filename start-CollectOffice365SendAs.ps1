@@ -1,4 +1,4 @@
-function start-collectOfficeSendAs
+function start-collectOffice365SendAs
 {
     <#
     .SYNOPSIS
