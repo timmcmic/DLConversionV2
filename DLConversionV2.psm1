@@ -6756,7 +6756,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -office365GroupConfiguration $office365GroupConfiguration  -errorAction STOP
         }
         catch 
         {
