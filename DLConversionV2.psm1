@@ -4437,6 +4437,7 @@ Function Start-DistributionListMigration
 
             $importFilePath=Join-path $importFile $xmlFiles.retainOffice365SendAsXML.value
 
+            out-logfile -string $importFilePath
 
             try {
                 $importData = import-CLIXML -path $importFilePath -errorAction STOP
