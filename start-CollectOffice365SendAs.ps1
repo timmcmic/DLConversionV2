@@ -94,12 +94,12 @@ function start-collectOffice365FullMailboxAccess
     #Declare function variables.
 
     $auditMailboxes=$NULL
-    [array]$auditFullMailboxAccess=@()
+    [array]$auditSendAsAccess=@()
     [int]$forCounter=0
     [int]$mailboxCounter=0
     [int]$totalMailboxes=0
-    [string]$office365RecipientFullMailboxAccess="office365RecipientSendAs.xml"
-    [string]$office365MailboxList="office365RecipientListSendAs.xml"
+    [string]$office365RecipientSendAsAccess="office365RecipientSendAs.xml"
+    [string]$office365RecipientList="office365RecipientListSendAs.xml"
     [string]$office365RecipientProcessed="office365RecipientProcessedSendAs.xml"
 
     new-LogFile -groupSMTPAddress Office365FullMailboxAccessPermissions -logFolderPath $logFolderPath
@@ -182,7 +182,7 @@ function start-collectOffice365FullMailboxAccess
 
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-                $fileName = $office365MailboxList
+                $fileName = $office365RecipientList
                 $exportFile=Join-path $logFolderPath $fileName
             
                 $auditMailboxes | export-clixml -path $exportFile
@@ -199,7 +199,7 @@ function start-collectOffice365FullMailboxAccess
                 }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
-                $fileName = $office365MailboxList
+                $fileName = $office365RecipientList
                 $exportFile=Join-path $logFolderPath $fileName
             
                 $auditMailboxes | export-clixml -path $exportFile
@@ -210,7 +210,7 @@ function start-collectOffice365FullMailboxAccess
             out-logfile -string "Retry operation - importing the mailboxes from previous export."
 
             try{
-                $fileName = $office365MailboxList
+                $fileName = $office365RecipientList
                 $importFile=Join-path $logFolderPath $fileName
 
                 $auditMailboxes = import-clixml -path $importFile
@@ -244,10 +244,10 @@ function start-collectOffice365FullMailboxAccess
 
             try {
 
-                $fileName=$office365RecipientFullMailboxAccess
+                $fileName=$office365RecipientSendAsAccess
                 $importFile=Join-path $logFolderPath $fileName
     
-                $auditFullMailboxAccess = import-clixml -Path $importFile
+                $auditSendAsAccess = import-clixml -Path $importFile
             }
             catch {
                 out-logfile -string "Unable to import the previously exported permissions." -isError:$TRUE -isAudit:$true
@@ -309,18 +309,16 @@ function start-collectOffice365FullMailboxAccess
                 $forCounter++    
             }
 
-            #$auditFullMailboxAccess+=get-exomailboxPermission -identity $mailbox.identity -userPrincipalName $mailbox.userPrincipalName | where {$_.user -notlike "NT Authority\Self"}
-            $auditFullMailboxAccess+=get-o365mailboxPermission -identity $mailbox.externalDirectoryObjectID | where {$_.user -notlike "NT Authority\Self"}
-        }
+            $auditSendAsAccess+=get-exorecipientPermission -identity $mailbox.externalDirectoryObjectID
         catch {
             out-logfile -string "Error obtaining folder statistics."
             out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
         }
 
-        $fileName = $office365RecipientFullMailboxAccess
+        $fileName = $office365RecipientSendAsAccess
         $exportFile=Join-path $logFolderPath $fileName
 
-        $auditFullMailboxAccess | Export-Clixml -Path $exportFile
+        $auditSendAsAccess | Export-Clixml -Path $exportFile
         
         $fileName = $office365RecipientProcessed
         $exportFile=Join-path $logFolderPath $fileName
