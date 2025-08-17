@@ -4447,12 +4447,16 @@ Function Start-DistributionListMigration
             }
 
             try {
-                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
+                $allOffice365SendAsAccess = Get-O365DLSendAs -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
 
             }
             catch {
                 <#Do this if a terminating exception happens#>
             }
+
+            out-logfile -string $allOffice365SendAsAccess.Count
+
+            start-sleep -s 160
 
         }
 
