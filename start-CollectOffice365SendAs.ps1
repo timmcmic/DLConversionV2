@@ -310,6 +310,7 @@ function start-collectOffice365FullMailboxAccess
             }
 
             $auditSendAsAccess+=get-exorecipientPermission -identity $mailbox.externalDirectoryObjectID
+            
         catch {
             out-logfile -string "Error obtaining folder statistics."
             out-logfile -string $_ -isError:$TRUE -isAudit:$TRUE
