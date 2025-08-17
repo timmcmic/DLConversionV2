@@ -4433,7 +4433,7 @@ Function Start-DistributionListMigration
 
         if ($useCollectedSendAsOffice365 -eq $TRUE)
         {
-            out-logfile -string "Administrator has opted to retain Office 365 Send As Permissions in Office 365"
+            out-logfile -string "Administrator has opted to retain Office 365 Send As Permissions in Office 365 using offline data."
 
             $importFilePath=Join-path $importFile $xmlFiles.retainOffice365SendAsXML.value
 
@@ -4447,7 +4447,7 @@ Function Start-DistributionListMigration
             }
 
             try {
-                $allOffice365SendAsAccess = Get-O365DLSendAs -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress "" -office365GroupConfiguration $office365GroupConfiguration -collectedData $importFile -errorAction STOP
 
             }
             catch {
