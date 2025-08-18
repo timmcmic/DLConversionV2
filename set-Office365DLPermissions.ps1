@@ -34,7 +34,7 @@
 
     #>
     Function set-Office365DLPermissions
-     {
+    {
         [cmdletbinding()]
 
         Param
@@ -52,7 +52,9 @@
             [AllowEmptyCollection()]
             [array]$allFolderPermissions=@(),
             [Parameter(Mandatory = $false)]
-            [string]$originalGroupPrimarySMTPAddress=""
+            [string]$originalGroupPrimarySMTPAddress="",
+            [Parameter(Mandatory = $false)]
+            $office365GroupConfiguration=$null
         )
 
         out-logfile -string "Output bound parameters..."
@@ -134,10 +136,13 @@
                 out-logfile -string ("Processing permission access rights = "+$permission.AccessRights)
 
                 out-logfile -string "Removing original permission to avoid orphaned SID"
+
+                
+                out-logfile -string "Attempting to remove permissions based on TrusteeSidString"
                 out-logfile -string $permission.TrusteeSidString
 
                 try {
-                    remove-o365RecipientPermission -identity $permission.identity -trustee $permission.TrusteeSidString -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
+                remove-o365RecipientPermission -identity $permission.identity -trustee $permission.TrusteeSidString -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Unable to remove the original Office 365 send as permission."
@@ -162,6 +167,7 @@
     
                     $global:office365ReplacePermissionsErrors+=$isErrorObject
                 }
+                
 
                 $isTestError = "No"
 

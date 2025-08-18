@@ -35,7 +35,9 @@
             [Parameter(Mandatory = $false)]
             [string]$isTrustee=$FALSE,
             [Parameter(Mandatory = $false)]
-            $office365GroupConfiguration
+            $office365GroupConfiguration,
+            [Parameter(Mandatory = $false)]
+            $collectedData=$null
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -54,7 +56,13 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        if ($isTrustee -eq $TRUE)
+        if ($collectedData -ne $NULL)
+        {
+            out-logfile -string "Collected data was provided - return data from offline analysis."
+
+            $functionSendAs = $collectedData | where {$_.trustee -eq $office365GroupConfiguration.Name}
+        }
+        elseif ($isTrustee -eq $TRUE)
         {
             try 
             {

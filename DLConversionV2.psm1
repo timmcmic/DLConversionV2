@@ -369,6 +369,8 @@ Function Start-DistributionListMigration
         [boolean]$useCollectedFolderPermissionsOnPrem=$FALSE,
         [Parameter(Mandatory = $false)]
         [boolean]$useCollectedFolderPermissionsOffice365=$FALSE,
+        [Parameter(Mandatory = $false)]
+        [boolean]$useCollectedSendAsOffice365=$FALSE,
         #Define paramters for naming conventions.
         [Parameter(Mandatory = $false)]
         [string]$dlNamePrefix="",
@@ -654,6 +656,7 @@ Function Start-DistributionListMigration
         retainOnPremRecipientFullMailboxAccessXML= @{ "Value" = "onPremRecipientFullMailboxAccess.xml" ; "Description" = "Import XML for pre-gathered full mailbox access rights "}
         retainOnPremMailboxFolderPermissionsXML= @{ "Value" = "onPremailboxFolderPermissions.xml" ; "Description" = "Import XML file for mailbox folder permissions"}
         retainOnPremRecipientSendAsXML= @{ "Value" = "onPremRecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions"}
+        retainOffice365SendAsXML = @{"Value"="office365RecipientSendAs.xml" ; "Description" = "Import XML file for send as permissions office 365."}
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         msGraphDLConfigurationXML = @{"Value" = "msGraphADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
@@ -4334,7 +4337,7 @@ Function Start-DistributionListMigration
         {
             out-logfile -string "Retain Office 365 send as set to try - invoke only if group is type security on premsies."
 
-            if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
+            if ((($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644")) -and ($useCollectedSendAsOffice365 -eq $FALSE))
             {
                 out-logfile -string "Group is type security on premises - therefore it may have send as rights."
 
@@ -4349,7 +4352,14 @@ Function Start-DistributionListMigration
             }
             else 
             {
-                out-logfile -string "Group is not security on premsies therefore has no send as rights in Office 365."
+                if (($originalDLConfiguration.groupType -eq "-2147483640") -or ($originalDLConfiguration.groupType -eq "-2147483646") -or ($originalDLConfiguration.groupType -eq "-2147483644"))
+                {
+                    out-logfile -string "Group is not security on premsies therefore has no send as rights in Office 365."
+                }
+                else 
+                {
+                    out-logfile -string "Adminsitrator elected to use offline data for send as - skipping."
+                }
             }
         }
 
@@ -4380,7 +4390,7 @@ Function Start-DistributionListMigration
                 $importFilePath=Join-path $importFile $xmlFiles.retainOffice365RecipientFullMailboxAccessXML.value
 
                 try {
-                    $importData = import-CLIXML -path $importFilePath
+                    $importData = import-CLIXML -path $importFilePath -errorAction STOP
                 }
                 catch {
                     out-logfile -string "Error importing the send as permissions from collect function."
@@ -4406,7 +4416,7 @@ Function Start-DistributionListMigration
             $importFilePath=Join-path $importFile $xmlFiles.retainMailboxFolderPermsOffice365XML.value
 
             try {
-                $importData = import-CLIXML -path $importFilePath
+                $importData = import-CLIXML -path $importFilePath -errorAction STOP
             }
             catch {
                 out-logfile -string "Error importing the send as permissions from collect function."
@@ -4417,6 +4427,32 @@ Function Start-DistributionListMigration
                 $allOffice365MailboxFolderPermissions = Get-O365DLMailboxFolderPermissions -groupSMTPAddress $groupSMTPAddress -collectedData $importData
             }
             catch {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+
+        if ($useCollectedSendAsOffice365 -eq $TRUE)
+        {
+            out-logfile -string "Administrator has opted to retain Office 365 Send As Permissions in Office 365 using offline data."
+
+            $importFilePath=Join-path $importFile $xmlFiles.retainOffice365SendAsXML.value
+
+            out-logfile -string $importFilePath
+
+            try {
+                $importData = import-CLIXML -path $importFilePath -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Error importing the send as permissions from collect function."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try {
+                $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress "NoneRequired" -office365GroupConfiguration $office365GroupConfiguration -collectedData $importData -errorAction STOP
+
+            }
+            catch {
+                out-logfile -string 'Unable to obtain send as permissions from offline data.'
                 out-logfile -string $_ -isError:$TRUE
             }
         }
@@ -6720,7 +6756,7 @@ Function Start-DistributionListMigration
 
         try 
         {
-            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -errorAction STOP
+            set-Office365DLPermissions -allSendAs $allOffice365SendAsAccess -allFullMailboxAccess $allOffice365FullMailboxAccess -allFolderPermissions $allOffice365MailboxFolderPermissions -allOnPremSendAs $allObjectsSendAsAccessNormalized -originalGroupPrimarySMTPAddress $office365DLConfigurationPostMigration.externalDirectoryObjectID -office365GroupConfiguration $office365GroupConfiguration  -errorAction STOP
         }
         catch 
         {
