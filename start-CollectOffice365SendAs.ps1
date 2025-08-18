@@ -310,7 +310,7 @@ function start-collectOffice365SendAs
             }
 
             #$auditSendAsAccess+=get-exorecipientPermission -identity $mailbox.externalDirectoryObjectID
-            $auditSendAsAccess+=get-o365RecipientPermission -identity $mailbox.externalDirectoryObjectID
+            $auditSendAsAccess+=get-o365RecipientPermission -identity $mailbox.externalDirectoryObjectID | where {($_.trustee -notLike "S-1-5-21*")}
         } 
         catch {
             out-logfile -string "Error obtaining folder statistics."
