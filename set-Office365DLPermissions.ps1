@@ -137,70 +137,37 @@
 
                 out-logfile -string "Removing original permission to avoid orphaned SID"
 
-                if ($permissions.TrustedSidString -ne $NULL)
-                {
-                    out-logfile -string "Attempting to remove permissions based on TrusteeSidString"
-                    out-logfile -string $permission.TrusteeSidString
+                
+                out-logfile -string "Attempting to remove permissions based on TrusteeSidString"
+                out-logfile -string $permission.TrusteeSidString
 
-                    try {
-                    remove-o365RecipientPermission -identity $permission.identity -trustee $permission.TrusteeSidString -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
-                    }
-                    catch {
-                        out-logfile -string "Unable to remove the original Office 365 send as permission."
-                        out-logfile -string $_
-
-                        $errorMessageDetail=$_
-                        $isTestError="Yes"
-                    }
-
-                    if ($isTestError -eq "Yes")
-                    {
-                        out-logfile -string "Error removing migrated DL to on premises DL send as on cloud object.."
-        
-                        $isErrorObject = new-Object psObject -property @{
-                            permissionIdentity = $permission.Identity
-                            attribute = "SendAs Permission"
-                            errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manual add required."
-                            errorMessageDetail = $errorMessageDetail
-                        }
-        
-                        out-logfile -string $isErrorObject
-        
-                        $global:office365ReplacePermissionsErrors+=$isErrorObject
-                    }
+                try {
+                remove-o365RecipientPermission -identity $permission.identity -trustee $permission.TrusteeSidString -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
                 }
-                else
-                {
-                    out-logfile -string "Attempting to remove permission based on original group SID."
-                    out-logfile -string $office365GroupConfiguration.sid
+                catch {
+                    out-logfile -string "Unable to remove the original Office 365 send as permission."
+                    out-logfile -string $_
 
-                    try {
-                    remove-o365RecipientPermission -identity $permission.identity -trustee $office365GroupConfiguration.sid -accessRights $permission.accessRights -confirm:$FALSE -errorAction STOP
-                    }
-                    catch {
-                        out-logfile -string "Unable to remove the original Office 365 send as permission."
-                        out-logfile -string $_
-
-                        $errorMessageDetail=$_
-                        $isTestError="Yes"
-                    }
-
-                    if ($isTestError -eq "Yes")
-                    {
-                        out-logfile -string "Error removing migrated DL to on premises DL send as on cloud object.."
-        
-                        $isErrorObject = new-Object psObject -property @{
-                            permissionIdentity = $permission.Identity
-                            attribute = "SendAs Permission"
-                            errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manual add required."
-                            errorMessageDetail = $errorMessageDetail
-                        }
-        
-                        out-logfile -string $isErrorObject
-        
-                        $global:office365ReplacePermissionsErrors+=$isErrorObject
-                    }
+                    $errorMessageDetail=$_
+                    $isTestError="Yes"
                 }
+
+                if ($isTestError -eq "Yes")
+                {
+                    out-logfile -string "Error removing migrated DL to on premises DL send as on cloud object.."
+    
+                    $isErrorObject = new-Object psObject -property @{
+                        permissionIdentity = $permission.Identity
+                        attribute = "SendAs Permission"
+                        errorMessage = "Unable to add the migrated distribution list with send as permissions to resource.  Manual add required."
+                        errorMessageDetail = $errorMessageDetail
+                    }
+    
+                    out-logfile -string $isErrorObject
+    
+                    $global:office365ReplacePermissionsErrors+=$isErrorObject
+                }
+                
 
                 $isTestError = "No"
 
