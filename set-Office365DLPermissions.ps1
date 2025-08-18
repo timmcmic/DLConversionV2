@@ -34,7 +34,7 @@
 
     #>
     Function set-Office365DLPermissions
-     {
+    {
         [cmdletbinding()]
 
         Param
@@ -52,7 +52,7 @@
             [AllowEmptyCollection()]
             [array]$allFolderPermissions=@(),
             [Parameter(Mandatory = $false)]
-            [string]$originalGroupPrimarySMTPAddress=""
+            [string]$originalGroupPrimarySMTPAddress="",
             [Parameter(Mandatory = $false)]
             $office365GroupConfiguration=$null
         )
