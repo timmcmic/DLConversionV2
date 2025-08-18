@@ -194,8 +194,8 @@ function start-collectOffice365SendAs
                 foreach ($auditMailbox in $bringMyOwnRecipients)
                 {
                     out-logfile -string ("Processing mailbox: "+$auditMailbox)
-                    #$auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
-                    $auditMailboxes += get-o365recipient -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress,externalDirectoryObjectID
+                    $auditMailboxes += get-exomailbox -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress
+                    #$auditMailboxes += get-o365recipient -identity $auditMailbox | select-object identity,userPrincipalName,primarySMTPAddress,externalDirectoryObjectID
                 }
                 #Exporting mailbox operations to csv - the goal here will be to allow retry.
 
