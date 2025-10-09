@@ -528,6 +528,8 @@ Function Start-DistributionListMigration
 
     #Define variables utilized in the core function that are not defined by parameters.
 
+    $globalCatalogPortNumber = ":3268"
+
     $coreVariables = @{ 
         useOnPremisesExchange = @{ "Value" = $FALSE ; "Description" = "Boolean determines if Exchange on premises should be utilized" }
         useAADConnect = @{ "Value" = $FALSE ; "Description" = "Boolean determines if an AADConnect isntance will be utilzied" }
@@ -541,8 +543,8 @@ Function Start-DistributionListMigration
         msGraphUsersPowershellModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
         msGraphGroupsPowershellModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
         dlConversionPowershellModule = @{ "Value" = "DLConversionV2" ; "Description" = "Static dlConversionv2 powershell module name" }
-        globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
-        globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
+        globalCatalogPort = @{ "Value" = $globalCatalogPortNumber ; "Description" = "Global catalog port definition" }
+        globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+$globalCatalogPortNumber) ; "Description" = "Global catalog server with port" }
     }
 
     #The variables below are utilized to define working parameter sets.
