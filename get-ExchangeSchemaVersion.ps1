@@ -58,7 +58,8 @@
         }
         catch
         {
-            out-logfile -string "Unable to get AD Root DSE."
+            out-logfile -string $_
+            out-logfile -string "Unable to get AD Root DSE." -isError:$TRUE
         }
 
         $functionSchemaNamingContext=($functionADRootDSE).SchemaNamingContext
