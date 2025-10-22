@@ -2206,6 +2206,21 @@ Function Start-DistributionListMigration
         out-logfile -string "Object located by mail address and group type is present - proceed."
         out-logfile -string $originalDLConfiguration.groupType.tostring()
     }
+
+    #Test to see if group is protected from deletion - if so fail as this will prevent moving to OU.
+
+    if ($originalDLConfiguration.ProtectedFromAccidentalDeletion -eq $TRUE)
+    {
+        out-logfile -string "The group to be migrated has the protect object from accidental deletion flag set to true."
+        out-logfile -string "This prevents the group from being moved to the non-sync OU - this flag must be set to false."
+        out-logfile -string $originalDLConfiguration.ProtectedFromAccidentalDeletion
+        out-logfile -string "Exception:  Protect Object From Accidental Deletion set on group - disable to allow migration." -isError:$TRUE
+    }
+    else 
+    {
+        out-logfile -string "The group is not protected from accidential deletion - proceed."
+        out-logfile -string $originalDLConfiguration.ProtectedFromAccidentalDeletion
+    }
     
     Out-LogFile -string "Log original DL configuration."
     out-logFile -string $originalDLConfiguration
