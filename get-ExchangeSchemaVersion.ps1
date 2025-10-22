@@ -76,7 +76,8 @@
             out-logfile -string $functionExchangeSchemaObject
         }
         catch{
-            out-logfile -string ("Unable to retrieve the Exchange Schema object.")
+            out-logfile -string $_
+            out-logfile -string ("Unable to retrieve the Exchange Schema object.") -isError:$TRUE
         }
       
         $functionExchangeRangeUpper = $functionExchangeSchemaObject.rangeUpper
