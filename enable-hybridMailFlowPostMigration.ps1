@@ -608,53 +608,63 @@
 
         out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-Updated")
 
-        #At this time the mail contact needs to be mail enabled.
+        if ($coreVariables.useOnPremisesExchange.value -eq $TRUE)
+        {
+            out-logfile -string "Exchange server information was specified - do more than create the routing contact."
 
-        try {
-            enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingcontactxml.Value -errorAction STOP
+            #At this time the mail contact needs to be mail enabled.
+
+            try {
+                enable-mailRoutingContact -globalCatalogServer $globalCatalogServer -routingContactConfig $routingContactConfiguration -routingXMLFile $xmlFiles.routingcontactxml.Value -errorAction STOP
+            }
+            catch {
+                out-logfile -string $_
+                out-logfile -string "Unable to mail enable the routing contact." -isError:$TRUE
+            }
+
+            #Obtain the updated routing contact.
+
+            try{
+                out-logfile -string "Re-obtaining the routing contact configuration."
+
+                $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            }
+            catch{
+                out-logfile -string $_
+                out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
+            }
+
+            out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-Updated2")
+
+            #The routing contact is now mail enabled.  Create the dynamic distribution group.
+
+            try {
+                out-logfile -string "Creating the dynamic distribution group for mail routing."
+
+                Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to create the dynamic distribution group."
+                out-logfile -string $_ -isError:$TRUE
+            }
+
+            try{
+                out-logfile -string "Re-obtaining the routing contact configuration."
+
+                $routingDynamicGroup = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
+            }
+            catch{
+                out-logfile -string $_
+                out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
+            }
+
+            out-xmlFile -itemToExport $routingDynamicGroup -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
         }
-        catch {
-            out-logfile -string $_
-            out-logfile -string "Unable to mail enable the routing contact." -isError:$TRUE
+        else 
+        {
+            out-logfile -string "Exchange server information was not specified, create just the routing contact without additinal mail enablement."
         }
-
-        #Obtain the updated routing contact.
-
-        try{
-            out-logfile -string "Re-obtaining the routing contact configuration."
-
-            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch{
-            out-logfile -string $_
-            out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
-        }
-
-        out-xmlFile -itemToExport $routingContactConfiguration -itemNameToExport (($xmlFiles.routingContactXML.value)+"-Updated2")
-
-        #The routing contact is now mail enabled.  Create the dynamic distribution group.
-
-        try {
-            out-logfile -string "Creating the dynamic distribution group for mail routing."
-
-            Enable-MailDyamicGroup -globalCatalogServer $globalCatalogServer -originalDLConfiguration $office365DLConfiguration -routingContactConfig $routingContactConfiguration -isRetry:$TRUE -errorAction STOP
-        }
-        catch {
-            out-logfile -string "Unable to create the dynamic distribution group."
-            out-logfile -string $_ -isError:$TRUE
-        }
-
-        try{
-            out-logfile -string "Re-obtaining the routing contact configuration."
-
-            $routingDynamicGroup = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential 
-        }
-        catch{
-            out-logfile -string $_
-            out-logfile -string "Unable to obtain the routing contact." -isError:$TRUE
-        }
-
-        out-xmlFile -itemToExport $routingDynamicGroup -itemNameToExport $xmlFiles.routingDynamicGroupXML.value
+        
 
         disable-allPowerShellSessions
 
