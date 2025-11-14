@@ -312,10 +312,12 @@
             out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
         }
 
+        <#
         if ($coreVariables.useOnPremisesExchange.value -eq $False)
         {
             out-logfile -string "Exchange on premises information must be provided in order to enable hybrid mail flow." -isError:$TRUE
         }
+        #>
 
         if (Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $coreVariables.globalCatalogWithPort.value -parameterSet "*" -errorAction STOP -adCredential $activeDirectoryCredential -isValidTest:$TRUE)
         {
