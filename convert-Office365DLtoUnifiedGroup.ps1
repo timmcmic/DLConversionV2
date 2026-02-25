@@ -882,6 +882,12 @@ Function Convert-Office365DLtoUnifiedGroup
         }
    }
 
+   out-logfile -string "Obtian the Exchange Online connection information."
+
+   $exchangeOnlineConnectionInfo = Get-ConnectionInformation
+
+   out-logfile -string $exchangeOnlineConnectionInfo
+
 
    #exit #Debug Exit
 
