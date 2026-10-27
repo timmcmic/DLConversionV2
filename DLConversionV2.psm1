@@ -7217,7 +7217,16 @@ Function Start-DistributionListMigration
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
-    generate-HTMLFile
+    try
+    {
+        generate-HTMLFile -errorAction STOP
+    }
+    catch
+    {
+        out-logfile -string $_
+        out-logfile -string "Unable to generate HTML report." -isError:$TRUE
+    }
+
 
     if ($telemetryError -eq $TRUE)
     {
