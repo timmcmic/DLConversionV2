@@ -3829,6 +3829,7 @@ Function Start-DistributionListMigration
         if ($isHealthCheck -eq $FALSE)
         {
             generate-HTMLFile
+            start-sleepProgress -sleepSeconds 5 -sleepstring "Allowing time for HTML to load."
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
@@ -7227,6 +7228,7 @@ Function Start-DistributionListMigration
         out-logfile -string "Unable to generate HTML report." -isError:$TRUE
     }
 
+    start-sleepProgress -sleepSeconds 5 -sleepstring "Allowing time for HTML to load."
 
     if ($telemetryError -eq $TRUE)
     {
