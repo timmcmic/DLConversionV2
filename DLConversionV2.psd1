@@ -12,7 +12,7 @@
 RootModule = '.\DLConversionV2.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.9.8.76'
+ModuleVersion = '2.9.8.77'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
