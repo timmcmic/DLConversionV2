@@ -802,7 +802,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Testing for supported version of Powershell engine."
 
-    test-powershellVersion
+    #test-powershellVersion
 
     function session-toImport
     {
@@ -3829,6 +3829,7 @@ Function Start-DistributionListMigration
         if ($isHealthCheck -eq $FALSE)
         {
             generate-HTMLFile
+            start-sleepProgress -sleepSeconds 5 -sleepstring "Allowing time for HTML to load."
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
@@ -7217,7 +7218,17 @@ Function Start-DistributionListMigration
         send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
     }
 
-    generate-HTMLFile
+    try
+    {
+        generate-HTMLFile -errorAction STOP
+    }
+    catch
+    {
+        out-logfile -string $_
+        out-logfile -string "Unable to generate HTML report." -isError:$TRUE
+    }
+
+    start-sleepProgress -sleepSeconds 5 -sleepstring "Allowing time for HTML to load."
 
     if ($telemetryError -eq $TRUE)
     {
