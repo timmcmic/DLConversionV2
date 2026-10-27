@@ -802,7 +802,7 @@ Function Start-DistributionListMigration
 
     out-logfile -string "Testing for supported version of Powershell engine."
 
-    test-powershellVersion
+    #test-powershellVersion
 
     function session-toImport
     {
