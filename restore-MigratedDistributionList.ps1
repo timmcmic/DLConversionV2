@@ -320,7 +320,7 @@ Function restore-MigratedDistributionList
 
     out-logfile -string "Testing for supported version of Powershell engine."
 
-    test-powershellVersion
+    #test-powershellVersion
 
     out-logfile -string "********************************************************************************"
     out-logfile -string "NOTICE"
